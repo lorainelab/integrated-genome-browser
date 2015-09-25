@@ -19,6 +19,7 @@ import java.awt.event.MouseMotionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -35,6 +36,12 @@ public class PropertySheetHelper extends DefaultTableCellRenderer implements
     public PropertySheetHelper(JTable table) {
         this.table = table;
     }
+
+    @Override
+    public int getHorizontalAlignment() {
+        return SwingConstants.LEFT;
+    }
+
 
     @Override
     public Component getTableCellRendererComponent(JTable table,

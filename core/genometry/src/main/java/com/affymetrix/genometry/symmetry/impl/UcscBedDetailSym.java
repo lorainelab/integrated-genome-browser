@@ -2,11 +2,13 @@ package com.affymetrix.genometry.symmetry.impl;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.SupportsGeneName;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.*;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.DESCRIPTION;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 public class UcscBedDetailSym extends UcscBedSym implements SupportsGeneName {
 
@@ -71,4 +73,47 @@ public class UcscBedDetailSym extends UcscBedSym implements SupportsGeneName {
         }
         return baos.toString();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.geneName);
+        hash = 67 * hash + Objects.hashCode(this.description);
+        hash = 67 * hash + Objects.hashCode(this.getID());
+        hash = 67 * hash + Objects.hashCode(this.getStart());
+        hash = 67 * hash + Objects.hashCode(this.getEnd());
+        hash = 67 * hash + Objects.hashCode(this.seq);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final UcscBedDetailSym other = (UcscBedDetailSym) obj;
+        if (!Objects.equals(this.geneName, other.geneName)) {
+            return false;
+        }
+        if (!Objects.equals(this.getID(), other.getID())) {
+            return false;
+        }
+        if (!Objects.equals(this.getStart(), other.getStart())) {
+            return false;
+        }
+        if (!Objects.equals(this.getEnd(), other.getEnd())) {
+            return false;
+        }
+        if (!Objects.equals(this.seq, other.seq)) {
+            return false;
+        }
+        if (!Objects.equals(this.description, other.description)) {
+            return false;
+        }
+        return true;
+    }
+
 }

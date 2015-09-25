@@ -436,8 +436,7 @@ public class ProtAnnotService {
         });
     }
 
-    JLabel emailErrorLabel;
-    JLabel dbSelectionErrorLabel;
+    JLabel errorLabel;
 
     private boolean showSetupModal() {
 
@@ -451,12 +450,9 @@ public class ProtAnnotService {
         emailPanel.add(new JLabel("Email:"));
         emailPanel.add(email, "width :300:");
         configParentPanel.add(emailPanel, "wrap");
-        emailErrorLabel = new JLabel("");
-        configParentPanel.add(emailErrorLabel, "wrap");
-        emailErrorLabel.setForeground(Color.red);
-        dbSelectionErrorLabel = new JLabel("");
-        configParentPanel.add(dbSelectionErrorLabel, "wrap");
-        dbSelectionErrorLabel.setForeground(Color.red);
+        errorLabel = new JLabel("");
+        configParentPanel.add(errorLabel, "wrap");
+        errorLabel.setForeground(Color.red);
         configParentPanel.add(new JLabel("The InterProScan Web service requires an email address."), "wrap");
         initSelectAll();
         configParentPanel.add(selectAllLabel, "wrap");
@@ -518,11 +514,13 @@ public class ProtAnnotService {
         matcher = pattern.matcher(email.getText());
         boolean validEmail = matcher.matches();
         if (!validEmail) {
-            emailErrorLabel.setText("Invalid email Address.");
-        } else {
-            emailErrorLabel.setText("");
+            setErrorMessage("Invalid email Address.");
         }
         return matcher.matches();
+    }
+
+    private void setErrorMessage(String str) {
+        errorLabel.setText(str);
     }
 
     private boolean isValidDBSelection() {
@@ -543,9 +541,7 @@ public class ProtAnnotService {
             }
         }
         if (!dbSelection) {
-            dbSelectionErrorLabel.setText("Invalid Database selection.");
-        } else {
-            dbSelectionErrorLabel.setText("");
+            setErrorMessage("Invalid Database selection.");
         }
         return dbSelection;
     }

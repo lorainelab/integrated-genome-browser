@@ -235,38 +235,6 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("caching remote file") {
             @Override
             protected Void runInBackground() {
-//                if (!getCacheEnabled()) {
-//                    return null;
-//                }
-//                if (backgroundCaching.add(url.toString())) {
-//                    try {
-//                        HttpHeader httpHeader = getHttpHeadersOnly(url.toString());
-//                        BigInteger requestSizeInMB = BigInteger.valueOf(httpHeader.getSize()).divide(new BigInteger("1000000"));
-//                        boolean doDownload = true;
-//                        if ((getCurrentCacheSize().add(requestSizeInMB)).compareTo(getMaxCacheSizeMB()) >= 0) {
-//
-//                            synchronized (RemoteFileDiskCacheService.this) {
-//                                Date now = new Date();
-//                                if (isPromptingUser) {
-//                                    return null;
-//                                }
-//                                if (delayPrompt && (lastPrompt.getTime() < (now.getTime() - 60000))) {
-//                                    delayPrompt = false;
-//                                } else if (delayPrompt) {
-//                                    return null;
-//                                }
-//                                isPromptingUser = true;
-//                            }
-//                            doDownload = promptUserAboutCacheSize(requestSizeInMB);
-//                            isPromptingUser = false;
-//                        }
-//                        if (doDownload) {
-//                            tryDownload(url, path);
-//                        }
-//                    } finally {
-//                        backgroundCaching.remove(url.toString());
-//                    }
-//                }
                 cacheSynchronously(url, path);
                 return null;
             }
@@ -500,6 +468,8 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             FileUtils.deleteQuietly(lockFile);
             FileUtils.deleteQuietly(finalFile);
             FileUtils.deleteQuietly(tmpFile);
+        } finally {
+            eventBus.post(new ChangeEvent());
         }
         return false;
     }

@@ -169,6 +169,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     GlyphI subSelectedGlyph = null;
     int selectStart;
     int selectEnd;
+    boolean draggedToZoom = false;
 
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -196,6 +197,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         }
 
         axismap.updateWidget(true);
+        draggedToZoom = true;
     }
 
     private boolean isAxisOperation(MouseEvent e) {
@@ -1044,7 +1046,14 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 //        }
         int id = e.getID();
         NeoMouseEvent nevt = (NeoMouseEvent) e;
-        if (id == MouseEvent.MOUSE_RELEASED && isAxisOperation(e)) {
+        if (e.getClickCount() == 2) {
+            if (!isAxisOperation(e)) {
+                zoomToSelection();
+            } else {
+                return;
+            }
+        }
+        if (id == MouseEvent.MOUSE_RELEASED && isAxisOperation(e) && draggedToZoom) {
             selectEnd = (int) nevt.getCoordX();
             logger.info("Start and end {},{}", selectStart, selectEnd);
             if (selectEnd < selectStart) {
@@ -1070,9 +1079,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             seqmap.zoom(NeoAbstractWidget.X, pixelPerCoord);
             seqmap.scroll(NeoAbstractWidget.X, Math.max(selectStart, min));
             seqmap.updateWidget();
-        }
-        if (e.getClickCount() == 2) {
-            zoomToSelection();
+            draggedToZoom = false;
         }
     }
 

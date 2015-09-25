@@ -84,7 +84,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     }
 
     @Subscribe
-    public void recordCustomerChange(ChangeEvent e) {
+    public void subscribeToChange(ChangeEvent e) {
         refresh();
     }
 

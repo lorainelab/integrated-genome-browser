@@ -1,16 +1,20 @@
 package com.affymetrix.igb.action;
 
 import static com.affymetrix.common.CommonUtils.APP_NAME;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
+import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.Set;
 import javafx.application.Platform;
@@ -47,31 +51,11 @@ public class AboutIGBAction extends GenericAction {
 
     private static final String ABOUT_CSS = "about/about.css";
     private static final String BOOTSTRAP_CSS = "about/bootstrap.min.css";
-    private static final String ABOUT_ANN = "about/about-ann.png";
-    private static final String ABOUT_DAVID = "about/about-david.png";
-    private static final String ABOUT_JOHN = "about/about-john.png";
-    private static final String ABOUT_TARUN = "about/about-tarun.png";
-    private static final String ABOUT_MASON = "about/about-mason.png";
-    private static final String ABOUT_NIH = "about/about-nih.png";
-    private static final String ABOUT_NSF = "about/about-nsf.png";
-    private static final String ABOUT_EJ_TECH = "about/ej-tech.png";
-    private static final String ABOUT_ATLASSIAN = "about/about-atlassian.jpg";
-    private static final String ABOUT_UNCC = "about/about-uncc.png";
     private static final String IGBL_LOGO = "about/igb.png";
 
     private static final Set<String> HTML_RESOURCES = Sets.newHashSet(
             ABOUT_CSS,
             BOOTSTRAP_CSS,
-            ABOUT_ANN,
-            ABOUT_DAVID,
-            ABOUT_JOHN,
-            ABOUT_TARUN,
-            ABOUT_MASON,
-            ABOUT_NIH,
-            ABOUT_NSF,
-            ABOUT_EJ_TECH,
-            ABOUT_ATLASSIAN,
-            ABOUT_UNCC,
             IGBL_LOGO
     );
 
@@ -98,7 +82,7 @@ public class AboutIGBAction extends GenericAction {
         frame = new JFrame("About Integrated Genome Browser");
         MigLayout layout = new MigLayout("fill", "[grow 100,fill]", "[grow 100,fill]");
         frame.setLayout(layout);
-        frame.setSize(new Dimension(551, 265));
+        frame.setSize(new Dimension(555, 461));
     }
 
     @Override
@@ -129,8 +113,7 @@ public class AboutIGBAction extends GenericAction {
             VBox.setVgrow(browser, Priority.ALWAYS);
             File tempDestinationDir = Files.createTempDir();
             tempDestinationDir.deleteOnExit();
-            File htmlFile = new File(tempDestinationDir, HTML_SOURCE);
-            FileUtils.copyURLToFile(AboutIGBAction.class.getClassLoader().getResource(HTML_SOURCE), htmlFile);
+
             HTML_RESOURCES.forEach(source -> {
                 try {
                     File sourceFile = new File(tempDestinationDir, source);
@@ -139,6 +122,11 @@ public class AboutIGBAction extends GenericAction {
                     logger.error(ex.getMessage(), ex);
                 }
             });
+            File htmlFile = new File(tempDestinationDir, HTML_SOURCE);
+            String htmlString = getClassPathResourceAsString(HTML_SOURCE);
+            String dataDir = PreferenceUtils.getAppDataDirectory();
+            htmlString = htmlString.replaceFirst("\\$\\{dataDirectory\\}", dataDir);
+            Files.write(htmlString, htmlFile, Charsets.UTF_8);
 
             webEngine.load(htmlFile.toURI().toURL().toExternalForm());
             webEngine.documentProperty().addListener((ObservableValue<? extends Document> prop, Document oldDoc, Document newDoc) -> {
@@ -150,6 +138,15 @@ public class AboutIGBAction extends GenericAction {
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
         }
+    }
+
+    private static String getClassPathResourceAsString(String resourcePath) {
+        try {
+            return CharStreams.toString(new InputStreamReader(AboutIGBAction.class.getClassLoader().getResourceAsStream(resourcePath)));
+        } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        return "";
     }
 
     private void setupWebResources(final WebEngine engine, JFXPanel panel) {
@@ -171,7 +168,6 @@ public class AboutIGBAction extends GenericAction {
             });
 
         });
-//        engine.executeScript(getClassPathResourceAsString("jiraCollectorDialog.js"));
     }
 
     public class JSLogger {

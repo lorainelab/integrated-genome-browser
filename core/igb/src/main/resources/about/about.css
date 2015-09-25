@@ -110,3 +110,13 @@
     /*max-height: 154px;*/
     /*max-width: 154px;*/
 }
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+.vertical-align {
+    display: flex;
+    align-items: center;
+}

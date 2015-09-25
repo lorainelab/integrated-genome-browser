@@ -79,7 +79,7 @@ public class AboutIGBAction extends GenericAction {
                 "22x22/actions/about_igb.png",
                 KeyEvent.VK_A, null, false);
         this.ordinal = 100;
-        frame = new JFrame("About Integrated Genome Browser");
+        frame = new JFrame();
         MigLayout layout = new MigLayout("fill", "[grow 100,fill]", "[grow 100,fill]");
         frame.setLayout(layout);
         frame.setSize(new Dimension(555, 461));

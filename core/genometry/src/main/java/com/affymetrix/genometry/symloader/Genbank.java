@@ -3,8 +3,8 @@ package com.affymetrix.genometry.symloader;
 /**
  * Genbank parser Adapted from Apollo Genbank parser
  */
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.symmetry.impl.GenbankSym;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -184,8 +185,8 @@ public final class Genbank extends SymLoader {
     private BioSeq currentSeq = null;
     protected final List<BioSeq> seqs = new ArrayList<>();
 
-    public Genbank(URI uri, String featureName, GenomeVersion seq_group) {
-        super(uri, featureName, seq_group);
+    public Genbank(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion seq_group) {
+        super(uri, indexUri, featureName, seq_group);
     }
 
     private static final List<LoadStrategy> strategyList = new ArrayList<>();

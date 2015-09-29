@@ -54,6 +54,7 @@ public abstract class SymLoader {
     public static final int UNKNOWN_CHROMOSOME_LENGTH = 1; // for unknown chromosomes when the length is not known
     public String extension;	// used for ServerUtils call
     public URI uri; //fwang4:qlmirror
+    protected URI indexUri;
     protected boolean isResidueLoader = false;	// Let other classes know if this is just residues
     protected volatile boolean isInitialized = false;
     protected final Map<BioSeq, File> chrList = new HashMap<>();
@@ -71,8 +72,8 @@ public abstract class SymLoader {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public SymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-        final Bundle bundle = FrameworkUtil.getBundle(SymLoaderTabix.class);
+    public SymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        final Bundle bundle = FrameworkUtil.getBundle(SymLoader.class);
         if (bundle != null) { // this could happen in unit tests
             bundleContext = bundle.getBundleContext();
             initCacheServiceTracker();
@@ -81,7 +82,19 @@ public abstract class SymLoader {
         this.featureName = featureName;
         this.genomeVersion = genomeVersion;
         extension = getExtension(uri);
+        if (indexUri.isPresent()) {
+            this.indexUri = indexUri.get();
+        }
     }
+
+    public URI getIndexUri() {
+        return indexUri;
+    }
+
+    public void setIndexUri(URI indexUri) {
+        this.indexUri = indexUri;
+    }
+
 
     protected void init() throws Exception {
         this.isInitialized = true;
@@ -167,9 +180,11 @@ public abstract class SymLoader {
     }
 
     protected void sortCreatedFiles() throws Exception {
-        //Now Sort all files
-        for (Entry<BioSeq, File> entry : chrList.entrySet()) {
-            chrSort.put(entry.getKey(), SortTabFile.sort(entry.getValue()));
+        synchronized (this) {
+            //Now Sort all files
+            for (Entry<BioSeq, File> entry : chrList.entrySet()) {
+                chrSort.put(entry.getKey(), SortTabFile.sort(entry.getValue()));
+            }
         }
     }
 
@@ -448,7 +463,7 @@ public abstract class SymLoader {
 
     public static List<BioSeq> getChromosomes(URI uri, String featureName, String groupID) throws Exception {
         GenomeVersion temp_group = new GenomeVersion(groupID);
-        SymLoader temp = new SymLoader(uri, featureName, temp_group) {
+        SymLoader temp = new SymLoader(uri, Optional.empty(), featureName, temp_group) {
         };
         List<? extends SeqSymmetry> syms = temp.getGenome();
         List<BioSeq> seqs = new ArrayList<>();

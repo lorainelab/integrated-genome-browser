@@ -2,8 +2,8 @@ package com.gene.bigwighandler;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.broad.igv.bbfile.BBFileHeader;
@@ -43,8 +44,8 @@ public class BigWigSymLoader extends SymLoader {
     private List<BioSeq> chromosomeList;
     private Map<String, String> realSeq2Seq;
 
-    public BigWigSymLoader(URI uri, String featureName, GenomeVersion group) {
-        super(uri, featureName, group);
+    public BigWigSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion group) {
+        super(uri, indexUri, featureName, group);
     }
 
     @Override

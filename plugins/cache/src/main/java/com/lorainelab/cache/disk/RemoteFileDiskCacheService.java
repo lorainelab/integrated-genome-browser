@@ -12,6 +12,7 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -44,6 +45,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -83,6 +85,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
     private final Preferences cachePrefsNode;
     private final Preferences cacheRequestNode;
     private volatile Collection<String> backgroundCaching;
+    private volatile Collection<String> backgroundValidating;
     private IgbService igbService;
     private volatile boolean isPromptingUser;
     private volatile boolean delayPrompt;
@@ -93,6 +96,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         cachePrefsNode = PreferenceUtils.getCachePrefsNode();
         cacheRequestNode = PreferenceUtils.getCacheRequestNode();
         backgroundCaching = Sets.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+        backgroundValidating = Sets.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
         isPromptingUser = false;
         eventBus = new EventBus();
     }
@@ -117,6 +121,39 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         }
         setCurrentCacheSize(getCacheSizeInMB());
         enforceEvictionPolicies();
+    }
+
+    private void validateCacheInBackground(URL url) {
+        synchronized (this) {
+            if (backgroundValidating.contains(url.toString())) {
+                LOG.debug("ignoring validation ({})", url);
+                return;
+            } else {
+                backgroundValidating.add(url.toString());
+            }
+        }
+        CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("validating cache") {
+            @Override
+            protected Void runInBackground() {
+                try {
+                    HttpHeader httpHeader = getHttpHeadersOnly(url.toString());
+                    String path = getCacheFolderPath(generateKeyFromUrl(url));
+                    CacheStatus cacheStatus = getCacheStatus(path);
+                    validateCacheRemotely(cacheStatus, httpHeader, url);
+                } catch (Exception ex) {
+                    LOG.error(ex.getMessage(), ex);
+                } finally {
+                    LOG.debug("finished validation ({})", url);
+                    backgroundValidating.remove(url.toString());
+                }
+                return null;
+            }
+
+            @Override
+            protected void finished() {
+            }
+        };
+        CThreadHolder.getInstance().execute(this, worker);
     }
 
     private enum CacheConfig {
@@ -196,46 +233,70 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         }
     }
 
-    private void cacheSynchronously(URL url, String path) {
+    private Optional<InputStream> cacheSynchronously(URL url, String path) {
         if (!getCacheEnabled()) {
-            return;
+            return Optional.empty();
         }
         if (backgroundCaching.add(url.toString())) {
             try {
                 HttpHeader httpHeader = getHttpHeadersOnly(url.toString());
                 BigInteger requestSizeInMB = BigInteger.valueOf(httpHeader.getSize()).divide(new BigInteger("1000000"));
                 boolean doDownload = true;
+                if (httpHeader.getSize() < getMinFileSizeBytes().longValue()) {
+                    try {
+                        return Optional.ofNullable(new BufferedInputStream(url.openStream()));
+                    } catch (IOException ex) {
+                        LOG.error(ex.getMessage(), ex);
+                        return Optional.empty();
+                    }
+                }
                 if ((getCurrentCacheSize().add(requestSizeInMB)).compareTo(getMaxCacheSizeMB()) >= 0) {
 
                     synchronized (RemoteFileDiskCacheService.this) {
                         Date now = new Date();
                         if (isPromptingUser) {
-                            return;
+                            return Optional.empty();
                         }
                         if (delayPrompt && (lastPrompt.getTime() < (now.getTime() - 60000))) {
                             delayPrompt = false;
                         } else if (delayPrompt) {
-                            return;
+                            return Optional.empty();
                         }
                         isPromptingUser = true;
                     }
                     doDownload = promptUserAboutCacheSize(requestSizeInMB);
                     isPromptingUser = false;
                 }
-                if (doDownload) {
-                    tryDownload(url, path);
+                if (doDownload && tryDownload(url, path)) {
+                    CacheStatus cacheStatus = getCacheStatus(url);
+                    if (cacheStatus.isDataExists() && !cacheStatus.isCorrupt()) {
+                        try {
+                            return Optional.ofNullable(new BufferedInputStream(
+                                    new FileInputStream(cacheStatus.getData())));
+                        } catch (FileNotFoundException ex) {
+                            LOG.error(ex.getMessage(), ex);
+                        }
+                    }
                 }
             } finally {
                 backgroundCaching.remove(url.toString());
             }
         }
+        return Optional.empty();
     }
 
     private void cacheInBackground(URL url, String path) {
         CThreadWorker< Void, Void> worker = new CThreadWorker<Void, Void>("caching remote file") {
             @Override
             protected Void runInBackground() {
-                cacheSynchronously(url, path);
+                try {
+                    Optional<InputStream> is = cacheSynchronously(url, path);
+                    if (is.isPresent()) {
+                        is.get().close();
+                    }
+                } catch (Exception ex) {
+                    LOG.error(ex.getMessage(), ex);
+                }
                 return null;
             }
 
@@ -345,39 +406,41 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
 
     @Override
     public Optional<InputStream> getFilebyUrl(URL url, boolean asynchronously) {
+        Stopwatch stopwatchTotal = Stopwatch.createStarted();
+        try {
 
-        if (!getCacheEnabled()) {
-            return Optional.empty();
-        }
-
-        String path = getCacheFolderPath(generateKeyFromUrl(url));
-        HttpHeader httpHeader = getHttpHeadersOnly(url.toString());
-        if (httpHeader.getSize() < getMinFileSizeBytes().longValue()) {
-            try {
-                return Optional.ofNullable(url.openStream());
-            } catch (IOException ex) {
-                LOG.error(ex.getMessage(), ex);
+            if (!getCacheEnabled()) {
                 return Optional.empty();
             }
-        }
-        CacheStatus cacheStatus = getCacheStatus(path);
-        if (cacheStatus.isCorrupt() && !deleteCorruptCacheEntry(path)) {
-            LOG.error("Cache entry is corrupt: {}", path);
-            return Optional.empty();
-        }
-        if (isCacheValid(cacheStatus, httpHeader, url)) {
-            try {
-                updateLastRequestDate(url);
-                return Optional.ofNullable(new FileInputStream(cacheStatus.getData()));
-            } catch (FileNotFoundException ex) {
-                LOG.error(ex.getMessage(), ex);
+
+            String path = getCacheFolderPath(generateKeyFromUrl(url));
+            CacheStatus cacheStatus = getCacheStatus(path);
+
+            if (cacheStatus.isCorrupt() && !deleteCorruptCacheEntry(path)) {
+                LOG.error("Cache entry is corrupt: {}", path);
                 return Optional.empty();
             }
-        }
-        if (asynchronously) {
-            cacheInBackground(url, path);
-        } else {
-            cacheSynchronously(url, path);
+            if (cacheStatus.isDataExists() && !cacheStatus.isCorrupt()) {
+                try {
+                    validateCacheInBackground(url);
+                    updateLastRequestDate(url);
+                    LOG.debug("cached data: {}", cacheStatus.getData().getAbsolutePath());
+                    return Optional.ofNullable(new BufferedInputStream(new FileInputStream(cacheStatus.getData())));
+                } catch (FileNotFoundException ex) {
+                    LOG.error(ex.getMessage(), ex);
+                    return Optional.empty();
+                }
+            }
+            if (asynchronously) {
+                cacheInBackground(url, path);
+            } else {
+                return cacheSynchronously(url, path);
+            }
+            return Optional.ofNullable(new BufferedInputStream(url.openStream()));
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+        } finally {
+            LOG.debug("total request({}): {}", url, stopwatchTotal.elapsed(TimeUnit.MILLISECONDS));
         }
         return Optional.empty();
     }
@@ -531,13 +594,12 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         return path.toString();
     }
 
-    private boolean isCacheValid(CacheStatus cacheStatus, HttpHeader httpHeader, URL url) {
+    private boolean validateCacheRemotely(CacheStatus cacheStatus, HttpHeader httpHeader, URL url) {
         if (cacheStatus.isDataExists()) {
             if (httpHeader.responseCode >= 400) {
                 //If remote file is unavailable
                 return true;
             }
-            //TODO:Mark invalid cache for deletion
             if (!Strings.isNullOrEmpty(httpHeader.getMd5())
                     && !Strings.isNullOrEmpty(cacheStatus.getMd5())) {
                 if (cacheStatus.getMd5().equals(httpHeader.getMd5())) {
@@ -550,6 +612,18 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
                 if (httpHeader.getLastModified() == cacheStatus.getLastModified()) {
                     return true;
                 }
+                clearCacheByUrl(url);
+                return false;
+            } else if (httpHeader.getLastModified() <= 0
+                    && !Strings.isNullOrEmpty(httpHeader.eTag)
+                    && !Strings.isNullOrEmpty(cacheStatus.getEtag())) {
+                if (cacheStatus.getEtag().equals(httpHeader.eTag)) {
+                    return true;
+                }
+                LOG.debug("invalid etag: remote {}, local {}", httpHeader.eTag, cacheStatus.getEtag());
+                clearCacheByUrl(url);
+                return false;
+            } else {
                 clearCacheByUrl(url);
                 return false;
             }

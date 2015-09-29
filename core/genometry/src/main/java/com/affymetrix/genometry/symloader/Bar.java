@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public final class Bar extends SymLoader {
 
@@ -27,8 +28,8 @@ public final class Bar extends SymLoader {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public Bar(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public Bar(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
     }
 
     @Override

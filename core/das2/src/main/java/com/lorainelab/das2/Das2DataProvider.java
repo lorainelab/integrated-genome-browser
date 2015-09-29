@@ -102,7 +102,7 @@ public final class Das2DataProvider extends BaseDataProvider implements DataProv
                     HttpRequest remoteHttpRequest = HttpRequest.get(genomeVersionContextUrl, true, "type", genomeVersionContextUrl + type.getUri());
                     final String typeParam = remoteHttpRequest.url().getQuery() + ";format=" + extension;
                     URI contextUri = new URI(genomeVersionContextUrl + type.getUri());
-                    Das2Symloader das2Symloader = new Das2Symloader(new URI(genomeVersionContextUrl), dataSetName, extension, typeParam.substring(5), dataContainer.getGenomeVersion());
+                    Das2Symloader das2Symloader = new Das2Symloader(new URI(genomeVersionContextUrl), Optional.empty(), dataSetName, extension, typeParam.substring(5), dataContainer.getGenomeVersion());
                     DataSet dataSet = new DataSet(contextUri, dataSetName, props, dataContainer, das2Symloader, false);
                     dataSet.setSupportsAvailabilityCheck(false);
                     dataSets.add(dataSet);

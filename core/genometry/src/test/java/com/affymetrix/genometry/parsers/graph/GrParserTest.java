@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
@@ -85,7 +86,7 @@ public class GrParserTest {
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         URL url = GrParserTest.class.getClassLoader().getResource(filename);
-        Gr gr = new Gr(url.toURI(), filename, genomeVersion);
+        Gr gr = new Gr(url.toURI(), Optional.empty(), filename, genomeVersion);
 
         String stream_name = "test_file";
         BioSeq aseq = genomeVersion.addSeq(stream_name, 948034);
@@ -122,7 +123,7 @@ public class GrParserTest {
         genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
-        Gr gr = new Gr(file.toURI(), file.getName(), genomeVersion);
+        Gr gr = new Gr(file.toURI(), Optional.empty(), file.getName(), genomeVersion);
         List<GraphSym> results = gr.getGenome();
 
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();

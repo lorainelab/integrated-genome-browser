@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -46,8 +47,8 @@ public class USeq extends SymLoader {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public USeq(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public USeq(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
     }
 
     public List<LoadStrategy> getLoadChoices() {

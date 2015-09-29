@@ -7,6 +7,7 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
+import java.util.Optional;
 import net.sf.picard.reference.IndexedFastaSequenceFile;
 import net.sf.picard.reference.ReferenceSequence;
 import net.sf.picard.reference.ReferenceSequenceFile;
@@ -24,8 +25,8 @@ public class FastaIdx extends FastaCommon {
     final IndexedFastaSequenceFile fastaFile;
     final SAMSequenceDictionary sequenceDict;
 
-    public FastaIdx(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, "", genomeVersion);
+    public FastaIdx(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, "", genomeVersion);
         if (!uri.toString().startsWith(FILE_PROTOCOL)) {
             fastaFile = null;
             sequenceDict = null;

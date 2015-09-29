@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -12,6 +12,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.samtools.SAMException;
@@ -35,7 +36,7 @@ public class SAM extends XAM implements LineProcessor {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SAM.class);
 
     public SAM(URI uri, String featureName, GenomeVersion seq_group) {
-        super(uri, featureName, seq_group);
+        super(uri, Optional.empty(), featureName, seq_group);
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.affymetrix.genometry.symloader.SymLoader;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component(name = BigBedHandler.COMPONENT_NAME, immediate = true, provide = FileTypeHandler.class)
 public class BigBedHandler implements FileTypeHandler {
@@ -36,9 +37,9 @@ public class BigBedHandler implements FileTypeHandler {
     }
 
     @Override
-    public SymLoader createSymLoader(URI uri, String featureName,
+    public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName,
             GenomeVersion genomeVersion) {
-        return new BigBedSymLoader(uri, featureName, genomeVersion);
+        return new BigBedSymLoader(uri, indexUri, featureName, genomeVersion);
     }
 
     @Override

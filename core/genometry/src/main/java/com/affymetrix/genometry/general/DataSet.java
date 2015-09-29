@@ -17,9 +17,11 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.ServerUtils;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ public final class DataSet {
     private SymLoader symL;
     private String method;
     private URI uri;
+    private URI indexUri;
     private boolean supportsAvailabilityCheck;
 
     private final boolean isReferenceSequence;
@@ -56,6 +59,11 @@ public final class DataSet {
     private final MutableSeqSymmetry requestSym = new SimpleMutableSeqSymmetry();
     // Request that are currently going on. (To avoid parsing more than once)
     private final MutableSeqSymmetry currentRequestSym = new SimpleMutableSeqSymmetry();
+
+    public DataSet(URI uri, URI indexUri, Map<String, String> dataSetProps, DataContainer dataContainer) {
+        this(uri, dataSetProps, dataContainer);
+        this.indexUri = indexUri;
+    }
 
     public DataSet(URI uri, Map<String, String> dataSetProps, DataContainer dataContainer) {
         this.uri = uri;
@@ -184,6 +192,18 @@ public final class DataSet {
         return (featureProps != null
                 && featureProps.containsKey("load_hint")
                 && featureProps.get("load_hint").equals(loadStrategy));
+    }
+
+    public Optional<URI> getIndex() {
+        if (getProperties().containsKey("index")) {
+            try {
+                URI indexUri = new URI(getProperties().get("index"));
+                return Optional.ofNullable(indexUri);
+            } catch (URISyntaxException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
+        }
+        return Optional.empty();
     }
 
     public String description() {
@@ -372,7 +392,7 @@ public final class DataSet {
      */
     public SymLoader getSymL() {
         if (symL == null) {
-            symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, detemineFriendlyName(uri), dataContainer.getGenomeVersion());
+            symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, getIndex(), detemineFriendlyName(uri), dataContainer.getGenomeVersion());
         }
         return symL;
     }

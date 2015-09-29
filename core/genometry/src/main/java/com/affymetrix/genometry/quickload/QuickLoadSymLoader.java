@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,19 +41,19 @@ public class QuickLoadSymLoader extends SymLoader {
     protected GenometryModel gmodel = GenometryModel.getInstance();
     protected boolean loadResidueAsTrack = false;
 
-    public QuickLoadSymLoader(URI uri, String featureName, GenomeVersion genomeVersion, boolean loadResidueAsTrack) {
-        this(uri, featureName, genomeVersion);
+    public QuickLoadSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion, boolean loadResidueAsTrack) {
+        this(uri, indexUri, featureName, genomeVersion);
         this.loadResidueAsTrack = loadResidueAsTrack;
     }
 
     //temporary hack --- this entire class should be removed and refactored in a set of utilities
-    public QuickLoadSymLoader(URI uri, String featureName, SymLoader symLoader, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public QuickLoadSymLoader(URI uri, Optional<URI> indexUri, String featureName, SymLoader symLoader, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
         this.symL = symLoader;
     }
 
-    public QuickLoadSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public QuickLoadSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class QuickLoadSymLoader extends SymLoader {
             return;
         }
         if (symL == null) {
-            this.symL = ServerUtils.determineLoader(extension, uri, featureName, genomeVersion);
+            this.symL = ServerUtils.determineLoader(extension, uri, Optional.ofNullable(indexUri), featureName, genomeVersion);
         }
         this.isResidueLoader = (this.symL != null && this.symL.isResidueLoader());
         if (isResidueLoader && loadResidueAsTrack) {

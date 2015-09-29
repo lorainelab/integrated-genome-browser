@@ -749,7 +749,7 @@ public final class GeneralLoadUtils {
             //TODO - remove quickloadsymloader and make general utils class of some sort
             QuickLoadSymLoader symLoader;
             if (!(dataSet.getSymL() instanceof QuickLoadSymLoader)) {
-                symLoader = new QuickLoadSymLoader(dataSet.getURI(), dataSet.getDataSetName(), dataSet.getSymL(), dataSet.getDataContainer().getGenomeVersion());
+                symLoader = new QuickLoadSymLoader(dataSet.getURI(), dataSet.getIndex(), dataSet.getDataSetName(), dataSet.getSymL(), dataSet.getDataContainer().getGenomeVersion());
             } else {
                 symLoader = (QuickLoadSymLoader) dataSet.getSymL();
             }
@@ -842,7 +842,8 @@ public final class GeneralLoadUtils {
                                 .filter(ds -> ds.isReferenceSequence())
                                 .findFirst();
                         if (refSeqDataSet.isPresent()) {
-                            residuesLoaded = loadReferenceSequenceFromUri(refSeqDataSet.get().getURI(), dataContainer, span, residuesLoaded);
+                                residuesLoaded = loadReferenceSequenceFromUri(refSeqDataSet.get().getURI(), refSeqDataSet.get().getIndex(), dataContainer, span, residuesLoaded);
+                            
                         }
                     }
                 }
@@ -852,7 +853,7 @@ public final class GeneralLoadUtils {
                         Optional<URI> sequenceFileUri = sequenceDataSetProvider.getSequenceFileUri(dataContainer.getGenomeVersion());
                         if (sequenceFileUri.isPresent()) {
                             final URI uri = sequenceFileUri.get();
-                            residuesLoaded = loadReferenceSequenceFromUri(uri, dataContainer, span, residuesLoaded);
+                            residuesLoaded = loadReferenceSequenceFromUri(uri, null, dataContainer, span, residuesLoaded);
                         }
                     }
                     if (dataProvider instanceof ReferenceSequenceProvider) {
@@ -878,12 +879,12 @@ public final class GeneralLoadUtils {
         return false;
     }
 
-    private static boolean loadReferenceSequenceFromUri(final URI uri, DataContainer dataContainer, SeqSpan span, boolean residuesLoaded) throws Exception {
+    private static boolean loadReferenceSequenceFromUri(final URI uri, final Optional<URI> indexUri, DataContainer dataContainer, SeqSpan span, boolean residuesLoaded) throws Exception {
         SymLoader syml = null;
         if (SymLoader.getExtension(uri).equalsIgnoreCase("2bit")) {
-            syml = new TwoBitNew(uri, "", dataContainer.getGenomeVersion());
+            syml = new TwoBitNew(uri, indexUri, "", dataContainer.getGenomeVersion());
         } else {
-            syml = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, detemineFriendlyName(uri), dataContainer.getGenomeVersion());
+            syml = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, indexUri, detemineFriendlyName(uri), dataContainer.getGenomeVersion());
         }
         String regionResidues = syml.getRegionResidues(span);
         if (!Strings.isNullOrEmpty(regionResidues)) {
@@ -973,7 +974,7 @@ public final class GeneralLoadUtils {
         return Ordering.from(String.CASE_INSENSITIVE_ORDER).immutableSortedCopy(speciesDataContainerReference.keySet());
     }
 
-    public static void openURI(URI uri, String fileName, GenomeVersion genomeVersion, String speciesName, boolean isReferenceSequence) {
+    public static void openURI(URI uri, Optional<URI> indexUri, String fileName, GenomeVersion genomeVersion, String speciesName, boolean isReferenceSequence) {
         // If server requires authentication then.
         // If it cannot be authenticated then don't add the feature.
         if (!LocalUrlCacher.isValidURI(uri)) {
@@ -981,7 +982,7 @@ public final class GeneralLoadUtils {
             return;
         }
 
-        DataSet dataSet = getDataSet(uri, fileName, speciesName, genomeVersion, isReferenceSequence);
+        DataSet dataSet = getDataSet(uri, indexUri, fileName, speciesName, genomeVersion, isReferenceSequence);
 
         if (dataSet != null) {
             addDataSet(dataSet);
@@ -1088,7 +1089,7 @@ public final class GeneralLoadUtils {
         return false;
     }
 
-    public static DataSet getDataSet(URI uri, String fileName, String speciesName, GenomeVersion genomeVersion, boolean isReferenceSequence) {
+    public static DataSet getDataSet(URI uri, Optional<URI> indexUri, String fileName, String speciesName, GenomeVersion genomeVersion, boolean isReferenceSequence) {
         DataSet dataSet = GeneralLoadUtils.getLoadedFeature(uri);
         // Test to determine if a feature with this uri is contained in the load mode table
         if (dataSet == null) {
@@ -1117,7 +1118,7 @@ public final class GeneralLoadUtils {
             if (!LocalUrlCacher.isValidURI(uri)) {
                 return null;
             }
-            SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, QuickLoadSymLoader.detemineFriendlyName(uri), dataContainer.getGenomeVersion());
+            SymLoader symL = ServerUtils.determineLoader(SymLoader.getExtension(uri), uri, indexUri, QuickLoadSymLoader.detemineFriendlyName(uri), dataContainer.getGenomeVersion());
             if (symL != null && symL.isResidueLoader() && !isReferenceSequence) {
                 featureProps = new HashMap<>();
                 featureProps.put("collapsed", "true");
@@ -1126,8 +1127,8 @@ public final class GeneralLoadUtils {
             String friendlyName = QuickLoadSymLoader.detemineFriendlyName(uri);
             QuickLoadSymLoader quickLoad
                     = SymLoader.getExtension(uri).endsWith("chp")
-                            ? new QuickLoadSymLoaderChp(uri, friendlyName, dataContainer.getGenomeVersion())
-                            : new QuickLoadSymLoader(uri, friendlyName, dataContainer.getGenomeVersion(), !isReferenceSequence);
+                            ? new QuickLoadSymLoaderChp(uri, indexUri, friendlyName, dataContainer.getGenomeVersion())
+                            : new QuickLoadSymLoader(uri, indexUri, friendlyName, dataContainer.getGenomeVersion(), !isReferenceSequence);
 
             dataSet = new DataSet(uri, fileName, featureProps, dataContainer, quickLoad, autoload, isReferenceSequence);
 
@@ -1297,7 +1298,7 @@ public final class GeneralLoadUtils {
      */
     public static void loadAllSymmetriesThread(final DataSet feature) {
         SymLoader symL = feature.getSymL();
-        QuickLoadSymLoader loadSymLoader = new QuickLoadSymLoader(feature.getURI(), feature.getDataSetName(), symL, feature.getDataContainer().getGenomeVersion());
+        QuickLoadSymLoader loadSymLoader = new QuickLoadSymLoader(feature.getURI(), feature.getIndex(), feature.getDataSetName(), symL, feature.getDataContainer().getGenomeVersion());
         final SeqMapView gviewer = IGB.getInstance().getMapView();
 
         CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(LOADING_MESSAGE_PREFIX + feature.getDataSetName()) {

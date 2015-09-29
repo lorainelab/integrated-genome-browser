@@ -1,40 +1,38 @@
 package com.affymetrix.genometry.symloader;
 
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.BAMSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.BAM_FLAG;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.CIGAR;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.MATE_START;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.NA;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.NH;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.CIGAR;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import net.sf.samtools.Cigar;
 import net.sf.samtools.CigarElement;
 import net.sf.samtools.CigarOperator;
-
-import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMProgramRecord;
 import net.sf.samtools.SAMReadGroupRecord;
+import net.sf.samtools.SAMRecord;
 import net.sf.samtools.SAMRecord.SAMTagAndValue;
 import net.sf.samtools.SAMSequenceDictionary;
 import net.sf.samtools.SAMSequenceRecord;
@@ -58,8 +56,8 @@ public abstract class XAM extends SymLoader {
     public static final String SHOWMASK = "showMask";
     public static final String INSRESIDUESPROP = "insResidues";
 
-    public XAM(URI uri, String featureName, GenomeVersion seq_group) {
-        super(uri, featureName, seq_group);
+    public XAM(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion seq_group) {
+        super(uri, indexUri, featureName, seq_group);
 
         strategyList.add(LoadStrategy.NO_LOAD);
         strategyList.add(LoadStrategy.VISIBLE);

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -56,7 +57,7 @@ public class BedParserTest {
 
         testFileResult(result);
 
-        BED bed = new BED(new File(filename).toURI(), filename, genomeVersion);
+        BED bed = new BED(new File(filename).toURI(), Optional.empty(), filename, genomeVersion);
         result = bed.getGenome();
         testFileResult(result);
     }
@@ -114,7 +115,7 @@ public class BedParserTest {
 
         File tempFile = createFileFromString(string);
 
-        BED bed = new BED(tempFile.toURI(), tempFile.getName(), genomeVersion);
+        BED bed = new BED(tempFile.toURI(), Optional.empty(), tempFile.getName(), genomeVersion);
         result = bed.getGenome();
         testStringResult(result);
     }
@@ -297,7 +298,7 @@ public class BedParserTest {
 
         File file = createFileFromString(string);
 
-        BED bed = new BED(file.toURI(), file.getName(), genomeVersion);
+        BED bed = new BED(file.toURI(), Optional.empty(), file.getName(), genomeVersion);
         syms = bed.getGenome();
 
         testWrite(syms, seq, string);
@@ -338,7 +339,7 @@ public class BedParserTest {
 
         File file = createFileFromString(string);
 
-        BED bed = new BED(file.toURI(), file.getName(), genomeVersion);
+        BED bed = new BED(file.toURI(), Optional.empty(), file.getName(), genomeVersion);
         syms = bed.getGenome();
 
         testWrite(syms, seq, string);
@@ -388,7 +389,7 @@ public class BedParserTest {
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         BioSeq seq = genomeVersion.addSeq("chr2L", 1965498);
 
-        BED bed = new BED(new File(filename).toURI(), filename, genomeVersion);
+        BED bed = new BED(new File(filename).toURI(), Optional.empty(), filename, genomeVersion);
 
         List<BioSeq> allSeq = bed.getChromosomeList();
         assertEquals(4, allSeq.size());

@@ -10,6 +10,7 @@ import com.affymetrix.genometry.symloader.SymLoader;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component(name = BigWigHandler.COMPONENT_NAME, immediate = true)
 public class BigWigHandler implements FileTypeHandler {
@@ -36,9 +37,9 @@ public class BigWigHandler implements FileTypeHandler {
     }
 
     @Override
-    public SymLoader createSymLoader(URI uri, String featureName,
+    public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName,
             GenomeVersion genomeVersion) {
-        return new BigWigSymLoader(uri, featureName, genomeVersion);
+        return new BigWigSymLoader(uri, indexUri, featureName, genomeVersion);
     }
 
     @Override

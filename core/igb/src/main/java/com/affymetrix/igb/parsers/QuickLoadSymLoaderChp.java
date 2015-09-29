@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is an extension of the QuickLoadSymLoader class, specifically for chp
@@ -22,8 +23,8 @@ import java.util.Map;
  */
 public class QuickLoadSymLoaderChp extends QuickLoadSymLoader {
 
-    public QuickLoadSymLoaderChp(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public QuickLoadSymLoaderChp(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
         if (!extension.endsWith("chp")) {
             throw new IllegalStateException("wrong QuickLoad for chp file");
         }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,8 +37,8 @@ public class TwoBit extends SymLoader {
 //		strategyList.add(LoadStrategy.CHROMOSOME);
     }
 
-    public TwoBit(URI uri, GenomeVersion genomeVersion, String seqName) {
-        super(uri, "", genomeVersion);
+    public TwoBit(URI uri, Optional<URI> indexUri, GenomeVersion genomeVersion, String seqName) {
+        super(uri, indexUri, "", genomeVersion);
         this.isResidueLoader = true;
         try {
             BioSeq retseq = TwoBitParser.parse(uri, genomeVersion, seqName);
@@ -51,8 +52,8 @@ public class TwoBit extends SymLoader {
         }
     }
 
-    public TwoBit(URI uri, String featureName, GenomeVersion group) {
-        super(uri, "", group);
+    public TwoBit(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion group) {
+        super(uri, indexUri, "", group);
         this.isResidueLoader = true;
     }
 

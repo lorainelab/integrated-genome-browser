@@ -1,15 +1,15 @@
 package com.affymetrix.genometry.symloader;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithResidues;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -20,7 +20,7 @@ public class ResidueTrackSymLoader extends SymLoader {
     private final SymLoader symL;
 
     public ResidueTrackSymLoader(SymLoader loader) {
-        super(loader.uri, loader.featureName, loader.genomeVersion);
+        super(loader.uri, Optional.ofNullable(loader.indexUri), loader.featureName, loader.genomeVersion);
         this.symL = loader;
     }
 

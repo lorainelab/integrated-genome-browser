@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -88,15 +89,15 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         return strategyList;
     }
 
-    public PSL(URI uri, String featureName, GenomeVersion genomeVersion) {
-        this(uri, featureName, genomeVersion, null, null, false, false, false);
+    public PSL(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        this(uri, indexUri, featureName, genomeVersion, null, null, false, false, false);
     }
 
-    public PSL(URI uri, String featureName, GenomeVersion target_group,
+    public PSL(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion target_group,
             GenomeVersion query_group, GenomeVersion other_group,
             boolean annotate_query, boolean annotate_target,
             boolean annotate_other) {
-        super(uri, featureName, target_group);
+        super(uri, indexUri, featureName, target_group);
         this.target_group = target_group;
         this.query_group = query_group;
         this.other_group = other_group;

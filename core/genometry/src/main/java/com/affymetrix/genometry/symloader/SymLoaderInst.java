@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -18,8 +19,8 @@ public class SymLoaderInst extends SymLoader {
 
     private final List<BioSeq> chromosomeList = new ArrayList<>();
 
-    public SymLoaderInst(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public SymLoaderInst(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
     }
 
     @Override

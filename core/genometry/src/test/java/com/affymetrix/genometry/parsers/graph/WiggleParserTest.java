@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -103,7 +104,7 @@ public class WiggleParserTest {
         genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
-        Wiggle wiggle = new Wiggle(url.toURI(), filename, genomeVersion);
+        Wiggle wiggle = new Wiggle(url.toURI(), Optional.empty(), filename, genomeVersion);
         BioSeq aseq = genomeVersion.addSeq("chr19", 59310300);
 
         List<GraphSym> results = wiggle.getGenome();
@@ -194,7 +195,7 @@ public class WiggleParserTest {
         genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
-        Wiggle wiggle = new Wiggle(url.toURI(), filename, genomeVersion);
+        Wiggle wiggle = new Wiggle(url.toURI(), Optional.empty(), filename, genomeVersion);
 
         List<GraphSym> results = wiggle.getGenome();
 
@@ -253,7 +254,7 @@ public class WiggleParserTest {
         genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
-        Wiggle wiggle = new Wiggle(url.toURI(), filename, genomeVersion);
+        Wiggle wiggle = new Wiggle(url.toURI(), Optional.empty(), filename, genomeVersion);
 
         List<GraphSym> results = wiggle.getGenome();
 
@@ -283,7 +284,7 @@ public class WiggleParserTest {
         genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
-        Wiggle wiggle = new Wiggle(url.toURI(), filename, genomeVersion);
+        Wiggle wiggle = new Wiggle(url.toURI(), Optional.empty(), filename, genomeVersion);
 
         List<GraphSym> results = wiggle.getGenome();
 
@@ -294,7 +295,7 @@ public class WiggleParserTest {
         wiggle.writeAnnotations(results, null, null, outstream);
 
         File outfile = createFileFromString(outstream.toString());
-        Wiggle outwiggle = new Wiggle(outfile.toURI(), outfile.getName(), genomeVersion);
+        Wiggle outwiggle = new Wiggle(outfile.toURI(), Optional.empty(), outfile.getName(), genomeVersion);
         List<GraphSym> outresults = outwiggle.getGenome();
 
         testResults2(url.getFile(), outresults, false);

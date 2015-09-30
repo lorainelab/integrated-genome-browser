@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,8 +32,8 @@ public abstract class IndexZoomSymLoader extends SymLoader {
     private BioSeq saveSeq;
     private GraphSym saveSym;
 
-    public IndexZoomSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public IndexZoomSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
     }
 
     protected abstract SymLoader getDataFileSymLoader() throws Exception;

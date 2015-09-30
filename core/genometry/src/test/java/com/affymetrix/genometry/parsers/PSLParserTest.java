@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -68,7 +69,7 @@ public class PSLParserTest {
 
         File file = createFileFromString(string);
         genomeVersion = new GenomeVersion("Test Group");
-        PSL psl = new PSL(file.toURI(), stream_name, genomeVersion, null, null,
+        PSL psl = new PSL(file.toURI(), Optional.empty(), stream_name, genomeVersion, null, null,
                 true, false, false);
         syms = psl.getGenome();
         seq = genomeVersion.getSeq("chrl");
@@ -93,7 +94,7 @@ public class PSLParserTest {
         genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
-        PSL psl = new PSL(file.toURI(), stream_name, genomeVersion, null, null,
+        PSL psl = new PSL(file.toURI(), Optional.empty(), stream_name, genomeVersion, null, null,
                 true, false, false);
         List<UcscPslSym> syms = psl.getGenome();
         BioSeq seq = genomeVersion.getSeq("target");
@@ -143,7 +144,7 @@ public class PSLParserTest {
         List<UcscPslSym> syms = instance.parse(istr, filename, null, genomeVersion, true, true);
         Collections.sort(syms, new UcscPslComparator());
 
-        PSL psl = new PSL(PSLParserTest.class.getClassLoader().getResource(filename).toURI(), filename, genomeVersion, null, null,
+        PSL psl = new PSL(PSLParserTest.class.getClassLoader().getResource(filename).toURI(), Optional.empty(), filename, genomeVersion, null, null,
                 true, true, false);
         List<BioSeq> seqs = psl.getChromosomeList();
 

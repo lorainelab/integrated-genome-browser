@@ -6,6 +6,7 @@ import com.affymetrix.genometry.symloader.UnindexedSymLoader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TallyUnindexedSymLoader extends UnindexedSymLoader {
 
@@ -16,7 +17,7 @@ public class TallyUnindexedSymLoader extends UnindexedSymLoader {
     }
 
     public TallyUnindexedSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+        super(uri, Optional.empty(), featureName, genomeVersion);
     }
 
     @Override

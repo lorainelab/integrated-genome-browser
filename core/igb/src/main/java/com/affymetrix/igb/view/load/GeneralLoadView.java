@@ -331,11 +331,16 @@ public final class GeneralLoadView {
                     Optional<InputStream> indexFileIs = Optional.empty();
                     try {
                         URL fileUrl = dataSet.getURI().toURL();
+                        Optional<URI> indexFile = dataSet.getIndex();
                         if (remoteFileCacheService != null && BedUtils.isRemoteBedFile(fileUrl)) {
                             fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, false);
-                            //cache index
-                            indexFileIs = remoteFileCacheService.getFilebyUrl(new URL(fileUrl.toString() + ".tbi"), false);
+                            if (indexFile.isPresent() && indexFile.toString().startsWith("http")) {
+                                indexFileIs = remoteFileCacheService.getFilebyUrl(new URL(indexFile.toString()), false);
+                            } else if (!indexFile.isPresent()) {
+                                indexFileIs = remoteFileCacheService.getFilebyUrl(new URL(fileUrl.toString() + ".tbi"), false);
+                            }
                         }
+
                     } catch (Exception ex) {
                         logger.error(ex.getMessage(), ex);
                     } finally {

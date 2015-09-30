@@ -1,20 +1,20 @@
 package com.affymetrix.genometry.symloader;
 
-import java.net.URI;
-
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.AnnotationWriter;
+import java.net.URI;
+import java.util.Optional;
 
 public class BedGraph extends Wiggle implements AnnotationWriter {
 
     private static final String TRACK_TYPE = "bedgraph";
 
     public BedGraph() {
-        this(null, null, null);
+        this(null, Optional.empty(), null, null);
     }
 
-    public BedGraph(URI uri, String featureName, GenomeVersion seq_group) {
-        super(uri, featureName, seq_group);
+    public BedGraph(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion seq_group) {
+        super(uri, indexUri, featureName, seq_group);
     }
 
     @Override

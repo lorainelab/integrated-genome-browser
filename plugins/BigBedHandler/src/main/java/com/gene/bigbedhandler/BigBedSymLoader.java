@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.broad.igv.bbfile.BBFileHeader;
@@ -42,8 +43,8 @@ public class BigBedSymLoader extends SymLoader {
     private List<BioSeq> chromosomeList;
     private Map<String, String> cleanSeq2Seq;
 
-    public BigBedSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public BigBedSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
     }
 
     private void initbbReader() {

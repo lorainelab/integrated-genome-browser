@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -54,7 +55,7 @@ public class GFF3ParserTest {
 //			// that this is GFF3 and create an instance of GFF3Parser to do the actual parsing.
 //			List result = instance.parse(istr, seq_group, true);
 //			testResults(result);
-            GFF3 gff3 = new GFF3(new File(filename).toURI(), new File(filename).getName(), genomeVersion, false);
+            GFF3 gff3 = new GFF3(new File(filename).toURI(), Optional.empty(), new File(filename).getName(), genomeVersion, false);
             testResults(gff3.getGenome());
 
             // Replacing test with above test. hiralv 08-16-10

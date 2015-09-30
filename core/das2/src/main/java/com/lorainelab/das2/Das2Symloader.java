@@ -17,6 +17,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +32,8 @@ public class Das2Symloader extends SymLoader {
     private final GenometryModel gmodel;
     private final String typeParam;
 
-    public Das2Symloader(URI contextRoot, String dataSetName, String extension, String typeParam, GenomeVersion genomeVersion) {
-        super(contextRoot, dataSetName, genomeVersion);
+    public Das2Symloader(URI contextRoot, Optional<URI> indexUri, String dataSetName, String extension, String typeParam, GenomeVersion genomeVersion) {
+        super(contextRoot, indexUri, dataSetName, genomeVersion);
         this.extension = DAS2_EXT;
         this.typeParam = typeParam;
         this.extension = extension;
@@ -103,12 +104,12 @@ public class Das2Symloader extends SymLoader {
                 logger.warn("ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {}", content_subtype);
                 return seqSyms;
             } else {
-                SymLoader symL = fileTypeHandler.createSymLoader(dataSetUri, featureName, aseq.getGenomeVersion());
+                SymLoader symL = fileTypeHandler.createSymLoader(dataSetUri, Optional.ofNullable(indexUri), featureName, aseq.getGenomeVersion());
                 symL.setExtension(content_subtype);
                 if (symL instanceof BAM) {
                     File bamfile = GeneralUtils.convertStreamToFile(bis, featureName);
                     bamfile.deleteOnExit();
-                    BAM bam = new BAM(bamfile.toURI(), featureName, aseq.getGenomeVersion());
+                    BAM bam = new BAM(bamfile.toURI(), Optional.ofNullable(indexUri), featureName, aseq.getGenomeVersion());
                     //for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
                     if (dataSetUri.getScheme().equals("http")) {
                         seqSyms = bam.parseAll(overlapSpan.getBioSeq(), dataSetUri.toString());

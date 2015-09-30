@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -106,8 +107,8 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
     // When grouping, do you want to use the first item encountered as the parent of the genomeVersion?
     boolean use_first_one_as_group = false;
 
-    public GFF(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public GFF(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
         setUseStandardFilters(true);
     }
 

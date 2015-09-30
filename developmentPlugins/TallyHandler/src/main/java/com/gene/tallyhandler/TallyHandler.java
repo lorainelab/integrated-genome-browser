@@ -11,6 +11,7 @@ import com.affymetrix.genometry.symloader.SymLoaderTabix;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,7 +34,7 @@ public class TallyHandler implements FileTypeHandler {
     }
 
     @Override
-    public SymLoader createSymLoader(URI uri, String featureName,
+    public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName,
             GenomeVersion genomeVersion) {
         SymLoader symLoader = null;
         String uriString = uri.toString();
@@ -43,7 +44,7 @@ public class TallyHandler implements FileTypeHandler {
         if (SymLoaderTabix.isTabix(uriString)) {
             TallyLineProcessor tlp = new TallyLineProcessor(featureName);
             try {
-                symLoader = new SymLoaderTabix(uri, featureName, genomeVersion, tlp);
+                symLoader = new SymLoaderTabix(uri, indexUri, featureName, genomeVersion, tlp);
             } catch (Exception ex) {
                 Logger.getLogger(TallyHandler.class.getName()).log(Level.SEVERE,
                         "Could not initialize tabix line reader for {0}.",

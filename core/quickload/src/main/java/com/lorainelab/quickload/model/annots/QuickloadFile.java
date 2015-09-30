@@ -34,6 +34,7 @@ public class QuickloadFile {
     protected String viewMode;
     protected String serverURL;
     protected String collapsed;
+    protected String index;
 
     private final Map<String, String> props = new HashMap<>();
 
@@ -99,6 +100,18 @@ public class QuickloadFile {
         this.loadHint = value;
         if (!Strings.isNullOrEmpty(value)) {
             props.put("load_hint", value);
+        }
+    }
+
+    public String getIndex() {
+        return index;
+    }
+
+    @XmlAttribute(name = "index")
+    public void setIndex(String value) {
+        this.index = value;
+        if (!Strings.isNullOrEmpty(value)) {
+            props.put("index", value);
         }
     }
 

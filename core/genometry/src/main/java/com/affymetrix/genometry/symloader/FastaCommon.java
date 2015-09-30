@@ -6,6 +6,7 @@ import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * common parent class for all Fasta SymLoaders
@@ -30,8 +31,8 @@ public abstract class FastaCommon extends SymLoader {
 //		strategyList.add(LoadStrategy.CHROMOSOME);
     }
 
-    public FastaCommon(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, "", genomeVersion);
+    public FastaCommon(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, "", genomeVersion);
         this.isResidueLoader = true;
     }
 

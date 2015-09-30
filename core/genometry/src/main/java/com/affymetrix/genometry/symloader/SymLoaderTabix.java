@@ -44,11 +44,11 @@ import org.broad.tribble.readers.TabixReader;
 import org.slf4j.LoggerFactory;
 
 /**
- * This SymLoader is intended to be used for data sources that are indexed with
- * a tabix file. This SymLoader uses the TabixReader from the Broad Institute
+ * This SymLoader is intended to be used for data sources that are indexed with a tabix file. This SymLoader uses the
+ * TabixReader from the Broad Institute
  */
 public class SymLoaderTabix extends SymLoader {
-    
+
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SymLoaderTabix.class);
 
     private static final int MAX_ACTIVE_POOL_OBJECTS = Runtime.getRuntime().availableProcessors() + 1;
@@ -56,7 +56,6 @@ public class SymLoaderTabix extends SymLoader {
     private final LineProcessor lineProcessor;
     private final GenericObjectPool<TabixReaderCached> pool;
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
-
 
     static {
         strategyList.add(LoadStrategy.NO_LOAD);
@@ -66,8 +65,8 @@ public class SymLoaderTabix extends SymLoader {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public SymLoaderTabix(final URI uri, String featureName, GenomeVersion genomeVersion, LineProcessor lineProcessor) throws Exception {
-        super(uri, featureName, genomeVersion);
+    public SymLoaderTabix(final URI uri, final Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion, LineProcessor lineProcessor) throws Exception {
+        super(uri, indexUri, featureName, genomeVersion);
         this.lineProcessor = lineProcessor;
         PoolableObjectFactory<TabixReaderCached> poolFactory = new TabixReaderPoolableObjectFactory();
         this.pool = new GenericObjectPool<>(poolFactory);
@@ -90,12 +89,10 @@ public class SymLoaderTabix extends SymLoader {
         this.pool.setTimeBetweenEvictionRunsMillis(5000);
     }
 
-    
     public final class TabixReaderCached extends TabixReader {
-        
+
         private String indexFile;
 
-        
         public TabixReaderCached(String fn, String indexFile) throws IOException {
             super(fn);
             this.indexFile = indexFile;
@@ -105,22 +102,18 @@ public class SymLoaderTabix extends SymLoader {
         public TabixReaderCached(String fn) throws IOException {
             super(fn);
         }
-        
+
         public TabixReaderCached(String fn, String idxFn, SeekableStream stream) throws IOException {
             super(fn, idxFn, stream);
         }
 
         @Override
         public void readIndex() throws IOException {
-            if(!Strings.isNullOrEmpty(indexFile)) {
+            if (!Strings.isNullOrEmpty(indexFile)) {
                 readIndex(SeekableStreamFactory.getInstance().getStreamFor(indexFile));
             }
         }
 
-        
-
-        
-        
     }
 
     @Override
@@ -154,7 +147,7 @@ public class SymLoaderTabix extends SymLoader {
             throw ex;
         } finally {
             pool.returnObject(tabixReader);
-            
+
         }
     }
 
@@ -210,7 +203,6 @@ public class SymLoaderTabix extends SymLoader {
         } finally {
             pool.returnObject(tabixReader);
 
-            
         }
     }
 
@@ -289,7 +281,7 @@ public class SymLoaderTabix extends SymLoader {
         try {
             URI uri = new URI(sym.uri.toString() + ".tbi");
             if (sym instanceof LineProcessor && LocalUrlCacher.isValidRequest(uri)) {
-                return new SymLoaderTabix(sym.uri, sym.featureName, sym.genomeVersion, (LineProcessor) sym);
+                return new SymLoaderTabix(sym.uri, Optional.ofNullable(sym.getIndexUri()), sym.featureName, sym.genomeVersion, (LineProcessor) sym);
             }
         } catch (URISyntaxException ex) {
             Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.SEVERE, null, ex);
@@ -320,30 +312,38 @@ public class SymLoaderTabix extends SymLoader {
                 uriString = uri.getPath();
             } else {
                 URL fileUrl = uri.toURL();
-                if( BedUtils.isRemoteBedFile(fileUrl)
+                if (BedUtils.isRemoteBedFile(fileUrl)
                         && remoteFileCacheService.cacheExists(fileUrl)) {
-                    Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, true);
-                    URL indexUrl = new URL(fileUrl.toString() + ".tbi");
-                    Optional<InputStream> indexFileIs = remoteFileCacheService.getFilebyUrl(indexUrl, true);
+                    Optional<InputStream> fileIs = Optional.empty();
+                    Optional<InputStream> indexFileIs = Optional.empty();
                     try {
+                        fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, true);
+                        if (indexUri != null) {
+                            
+                        } else {
+                            indexUri = new URI(fileUrl.toString() + ".tbi");
+                        }
+                        indexFileIs = remoteFileCacheService.getFilebyUrl(indexUri.toURL(), true);
                         if (fileIs.isPresent() && indexFileIs.isPresent()) {
                             CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
-                            CacheStatus indexFileCacheStatus = remoteFileCacheService.getCacheStatus(indexUrl);
-                            if (cacheStatus.isDataExists()) {
-                                return new TabixReaderCached(cacheStatus.getData().getAbsolutePath(),indexFileCacheStatus.getData().getAbsolutePath());
+                            CacheStatus indexFileCacheStatus = remoteFileCacheService.getCacheStatus(indexUri.toURL());
+                            if (cacheStatus.isDataExists() && indexFileCacheStatus.isDataExists()) {
+                                return new TabixReaderCached(cacheStatus.getData().getAbsolutePath(), indexFileCacheStatus.getData().getAbsolutePath());
                             }
                         }
+                    } catch (Exception ex) {
+                        logger.error(ex.getMessage(), ex);
                     } finally {
-                        if(fileIs.isPresent()) {
+                        if (fileIs.isPresent()) {
                             fileIs.get().close();
                         }
-                        if(indexFileIs.isPresent()) {
+                        if (indexFileIs.isPresent()) {
                             indexFileIs.get().close();
                         }
                     }
                 }
             }
-            return new TabixReaderCached(uriString,uriString+".tbi");
+            return new TabixReaderCached(uriString, uriString + ".tbi");
         }
 
         @Override

@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.broad.tribble.readers.LineReader;
@@ -74,8 +75,8 @@ public class BED extends SymLoader implements LineProcessor {
     private String bedFileType;
     private final GenometryModel gmodel;
 
-    public BED(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public BED(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
         gmodel = GenometryModel.getInstance();
         trackLineParser = new TrackLineParser();
         trackName = uri.toString();

@@ -113,7 +113,7 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
                 for (Type type : availableTypes) {
                     final String typeId = type.getId();
                     try {
-                        DasSymloader dasSymloader = new DasSymloader(new URI(contextRoot + "/" + typeId), typeId, genomeVersion);
+                        DasSymloader dasSymloader = new DasSymloader(new URI(contextRoot + "/" + typeId), Optional.empty(), typeId, genomeVersion);
                         DataSet dataSet = new DataSet(new URI(contextRoot + "/" + typeId), typeId, null, dataContainer, dasSymloader, false);
                         dataSets.add(dataSet);
                     } catch (URISyntaxException ex) {

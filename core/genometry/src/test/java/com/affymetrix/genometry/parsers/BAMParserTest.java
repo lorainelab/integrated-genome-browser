@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -44,7 +45,7 @@ public class BAMParserTest {
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         BioSeq seq = genomeVersion.addSeq("chr1", 197069962);
 
-        SymLoader symL = new BAM(new File(filename).toURI(), "featureName", genomeVersion);
+        SymLoader symL = new BAM(new File(filename).toURI(), Optional.empty(), "featureName", genomeVersion);
         assertNotNull(symL);
 
         List<? extends SeqSymmetry> result = symL.getChromosome(seq);

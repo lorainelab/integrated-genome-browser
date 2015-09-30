@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,9 +46,9 @@ public class Delegate extends QuickLoadSymLoader {
     private List<DelegateParent> dps;
     private final List<LoadUtils.LoadStrategy> strategyList;
 
-    public Delegate(URI uri, String featureName, GenomeVersion genomeVersion,
+    public Delegate(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion,
             Operator operator, List<DelegateParent> dps) {
-        super(uri, featureName, genomeVersion);
+        super(uri, indexUri, featureName, genomeVersion);
         this.operator = operator;
         this.dps = dps;
         strategyList = new ArrayList<>();

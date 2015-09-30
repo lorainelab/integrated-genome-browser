@@ -6,7 +6,6 @@ import com.affymetrix.genometry.SeqSpan;
 import static com.affymetrix.genometry.symloader.SymLoader.remoteFileCacheService;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.SeekableBufferedStream;
-import com.affymetrix.genometry.util.Timer;
 import com.lorainelab.cache.api.CacheStatus;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,8 +60,8 @@ public class TwoBitNew extends SymLoader {
 
     private final Map<BioSeq, String> chrMap = new HashMap<>();
 
-    public TwoBitNew(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public TwoBitNew(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
     }
 
     @Override
@@ -487,42 +486,6 @@ public class TwoBitNew extends SymLoader {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-//        if (args.length == 0) {
-//            System.out.println("Usage: <program> <input.2bit> [<seq_name> [<start> [<length>]]]");
-//            System.out.println("Resulting fasta data will be written in stdout.");
-//            return;
-//        }
-        TwoBitNew p = new TwoBitNew(new URI("http://igbquickload.org/quickload/H_sapiens_Feb_2009/H_sapiens_Feb_2009.2bit"), null, null);
-        //p.setCurrentSequence(p.getSequenceNames()[0]);
-        Timer timer = new Timer();
-        timer.start();
-        p.printFastaSequence(100000);
-        timer.print();
-        p.close();
-//        if (args.length == 1) {
-//            String[] names = p.getSequenceNames();
-//            for (int i = 0; i < names.length; i++) {
-//                p.setCurrentSequence(names[i]);
-//                p.printFastaSequence();
-//                p.close();
-//            }
-//        } else {
-//            String name = args[1];
-//            p.setCurrentSequence(name);
-//            if (args.length > 2) {
-//                long start = Long.parseLong(args[2]);
-//                p.skip(start);
-//            }
-//            if (args.length > 3) {
-//                long len = Long.parseLong(args[3]);
-//                p.printFastaSequence(len);
-//            } else {
-//                p.printFastaSequence();
-//            }
-//            p.close();
-//        }
-        p.closeParser();
-    }
+   
 
 }

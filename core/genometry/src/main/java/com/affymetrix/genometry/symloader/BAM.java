@@ -15,7 +15,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.SeekableFTPStream;
-import com.google.common.base.Optional;
+import com.lorainelab.cache.api.CacheStatus;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -60,8 +61,8 @@ public final class BAM extends XAM {
 
     protected SAMFileHeader header;
 
-    public BAM(URI uri, String featureName, GenomeVersion seq_group) {
-        super(uri, featureName, seq_group);
+    public BAM(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion seq_group) {
+        super(uri, indexUri, featureName, seq_group);
         strategyList.add(LoadStrategy.AUTOLOAD);
     }
 
@@ -84,14 +85,31 @@ public final class BAM extends XAM {
                 this.isInitialized = false;
                 return null;
             }
-            String baiUriStr = getBamIndexUriStr(uri);
-            indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
+            URI baiUri = indexUri;
+            if (indexUri == null) {
+                baiUri = URI.create(getBamIndexUriStr(uri));
+            }
+
+            Optional<InputStream> indexStream = remoteFileCacheService.getFilebyUrl(indexUri.toURL(), false);
+            if (indexStream.isPresent()) {
+                indexStream.get().close();
+            }
+            CacheStatus indexCacheStatus = remoteFileCacheService.getCacheStatus(indexUri.toURL());
+
             SeekableBufferedStream seekableStream = new SeekableBufferedStream(new SeekableHTTPStream(new URL(reachable_url)));
-            samFileReader = new SAMFileReader(seekableStream, indexFile, false);
+            if (indexCacheStatus.isDataExists() && !indexCacheStatus.isCorrupt()) {
+                samFileReader = new SAMFileReader(seekableStream, indexCacheStatus.getData(), false);
+            } else {
+                indexFile = LocalUrlCacher.convertURIToFile(baiUri);
+                samFileReader = new SAMFileReader(seekableStream, indexFile, false);
+            }
             samFileReader.setValidationStringency(ValidationStringency.SILENT);
         } else if (scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
-            String baiUriStr = getBamIndexUriStr(uri);
-            indexFile = LocalUrlCacher.convertURIToFile(URI.create(baiUriStr));
+            URI baiUri = indexUri;
+            if (indexUri == null) {
+                baiUri = URI.create(getBamIndexUriStr(uri));
+            }
+            indexFile = LocalUrlCacher.convertURIToFile(baiUri);
             samFileReader = new SAMFileReader(new SeekableBufferedStream(new SeekableFTPStream(uri.toURL())), indexFile, false);
             samFileReader.setValidationStringency(ValidationStringency.SILENT);
         } else {
@@ -222,10 +240,10 @@ public final class BAM extends XAM {
         SAMRecord mateSAMRecord = mateReader.queryMate(sr);
         //check to be sure the mate is in the same BioSeq else ignore mate
         if (mateSAMRecord.getAlignmentStart() > seq.getMax()) {
-            return Optional.absent();
+            return Optional.empty();
         } else {
             BAMSym mateBamSym = (BAMSym) convertSAMRecordToSymWithProps(mateSAMRecord, seq, uri.toString());
-            return Optional.fromNullable(mateBamSym);
+            return Optional.ofNullable(mateBamSym);
         }
     }
 
@@ -440,10 +458,10 @@ public final class BAM extends XAM {
         return "binary/BAM";
     }
 
-    public static List<? extends SeqSymmetry> parse(URI uri, InputStream istr, GenomeVersion genomeVersion, String featureName, SeqSpan overlap_span) throws Exception {
+    public static List<? extends SeqSymmetry> parse(URI uri, Optional<URI> indexUri, InputStream istr, GenomeVersion genomeVersion, String featureName, SeqSpan overlap_span) throws Exception {
         File bamfile = GeneralUtils.convertStreamToFile(istr, featureName);
         bamfile.deleteOnExit();
-        BAM bam = new BAM(bamfile.toURI(), featureName, genomeVersion);
+        BAM bam = new BAM(bamfile.toURI(), indexUri, featureName, genomeVersion);
         //for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
         if (uri.getScheme().equals(HTTP_PROTOCOL_SCHEME)) {
             return bam.parseAll(overlap_span.getBioSeq(), uri.toString());

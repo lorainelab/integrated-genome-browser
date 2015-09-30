@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import net.sf.samtools.seekablestream.SeekableStream;
 
 /**
@@ -36,8 +37,8 @@ public class BNIB extends SymLoader {
 //		strategyList.add(LoadStrategy.CHROMOSOME);
     }
 
-    public BNIB(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, "", genomeVersion);
+    public BNIB(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, "", genomeVersion);
         this.isResidueLoader = true;
     }
 

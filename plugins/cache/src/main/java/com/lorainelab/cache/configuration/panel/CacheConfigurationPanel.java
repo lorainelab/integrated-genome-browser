@@ -160,7 +160,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
 
     private JPanel initilizeCacheDataPanel() {
         JPanel panel = new JPanel(new MigLayout("ins 0", "[grow]", "[grow][grow]"));
-        panel.setBorder(BorderFactory.createTitledBorder("Data Sources"));
+        panel.setBorder(BorderFactory.createTitledBorder("Cache Entries"));
         JScrollPane sourcesScrollPane = new JScrollPane(cacheDataTable);
 
         initRemoveBtn();

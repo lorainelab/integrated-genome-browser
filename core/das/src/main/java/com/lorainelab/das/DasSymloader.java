@@ -14,6 +14,7 @@ import static com.lorainelab.das.utils.DasServerUtils.toExternalForm;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +31,8 @@ public class DasSymloader extends SymLoader {
     private Set<String> chromosomes;
     private final String contextRoot;
 
-    public DasSymloader(URI contextRoot, String typeName, GenomeVersion genomeVersion) {
-        super(contextRoot, typeName, genomeVersion);
+    public DasSymloader(URI contextRoot, Optional<URI> indexUri, String typeName, GenomeVersion genomeVersion) {
+        super(contextRoot, indexUri, typeName, genomeVersion);
         this.extension = DAS_EXT;
         this.contextRoot = contextRoot.toString().substring(0, contextRoot.toString().indexOf("/" + typeName));
         gmodel = GenometryModel.getInstance();

@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -175,7 +176,7 @@ public final class GFF3Parser implements Parser {
             }
             if ("##FASTA".equals(line)) {
                 try {
-                    Fasta fasta = new Fasta(null, null, seq_group);
+                    Fasta fasta = new Fasta(null, Optional.empty(), null, seq_group);
                     String residues = fasta.parse(it, seq, minV, maxV);
                     if (residues != null) {
                         BioSeqUtils.addResiduesToComposition(seq, residues, new SimpleSeqSpan(minV, maxV, seq));

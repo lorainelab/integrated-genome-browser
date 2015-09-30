@@ -2,8 +2,8 @@ package com.affymetrix.genometry.symloader;
 
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.BioSeqComparator;
 import com.affymetrix.genometry.parsers.AnnotationWriter;
@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -49,8 +50,8 @@ public final class Sgr extends SymLoader implements AnnotationWriter {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public Sgr(URI uri, String featureName, GenomeVersion seq_group) {
-        super(uri, featureName, seq_group);
+    public Sgr(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion seq_group) {
+        super(uri, indexUri, featureName, seq_group);
     }
 
     @Override

@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.samtools.SAMFileReader;
@@ -25,13 +26,13 @@ import net.sf.samtools.seekablestream.SeekableStream;
 
 public class BaiZoomSymLoader extends IndexZoomSymLoader {
     
-    public BaiZoomSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public BaiZoomSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
     }
 
     @Override
     protected SymLoader getDataFileSymLoader() throws Exception {
-        return FileTypeHolder.getInstance().getFileTypeHandler("bam").createSymLoader(getBamURI(uri), featureName, genomeVersion);
+        return FileTypeHolder.getInstance().getFileTypeHandler("bam").createSymLoader(getBamURI(uri), Optional.ofNullable(indexUri), featureName, genomeVersion);
     }
 
     private int getRefNo(String igbSeq, SAMSequenceDictionary ssd) {

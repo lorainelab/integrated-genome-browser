@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,8 +27,8 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
 
     private TabixReader tabixReader;
 
-    public TbiZoomSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public TbiZoomSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
     }
 
     private URI getFileURI(URI tbiUri) throws Exception {
@@ -41,7 +42,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
     @Override
     protected SymLoader getDataFileSymLoader() throws Exception {
         URI baseUri = getFileURI(uri);
-        return FileTypeHolder.getInstance().getFileTypeHandlerForURI(baseUri.toString()).createSymLoader(baseUri, featureName, genomeVersion);
+        return FileTypeHolder.getInstance().getFileTypeHandlerForURI(baseUri.toString()).createSymLoader(baseUri, Optional.ofNullable(indexUri), featureName, genomeVersion);
     }
 
     @Override

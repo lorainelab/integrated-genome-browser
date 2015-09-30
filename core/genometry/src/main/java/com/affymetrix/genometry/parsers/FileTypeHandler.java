@@ -3,6 +3,7 @@ package com.affymetrix.genometry.parsers;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symloader.SymLoader;
 import java.net.URI;
+import java.util.Optional;
 
 public interface FileTypeHandler {
 
@@ -25,11 +26,12 @@ public interface FileTypeHandler {
      * get an appropriate SymLoader for this file type
      *
      * @param uri the URI for the symloader
+     * @param indexUri
      * @param featureName the feature name for the symloader
      * @param genomeVersion the GenomeVersion for the symloader
      * @return the SymLoader to use
      */
-    public SymLoader createSymLoader(URI uri, String featureName, GenomeVersion genomeVersion);
+    public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion);
 
     /**
      * get a Parser for the file type

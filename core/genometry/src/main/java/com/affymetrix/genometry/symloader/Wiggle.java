@@ -4,6 +4,19 @@
  */
 package com.affymetrix.genometry.symloader;
 
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.comparator.BioSeqComparator;
+import com.affymetrix.genometry.parsers.AnnotationWriter;
+import com.affymetrix.genometry.parsers.TrackLineParser;
+import com.affymetrix.genometry.parsers.graph.BarParser;
+import com.affymetrix.genometry.parsers.graph.WiggleData;
+import com.affymetrix.genometry.style.GraphState;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -23,24 +36,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import com.affymetrix.genometry.GenomeVersion;
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.comparator.BioSeqComparator;
-import com.affymetrix.genometry.parsers.AnnotationWriter;
-import com.affymetrix.genometry.parsers.TrackLineParser;
-import com.affymetrix.genometry.parsers.graph.BarParser;
-import com.affymetrix.genometry.parsers.graph.WiggleData;
-import com.affymetrix.genometry.style.GraphState;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-
 import org.broad.tribble.readers.LineReader;
 
 /**
@@ -70,8 +69,8 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public Wiggle(URI uri, String featureName, GenomeVersion seq_group) {
-        super(uri, featureName, seq_group);
+    public Wiggle(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion seq_group) {
+        super(uri, indexUri, featureName, seq_group);
     }
 
     @Override

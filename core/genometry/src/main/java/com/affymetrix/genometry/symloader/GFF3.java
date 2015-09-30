@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -51,12 +52,12 @@ public class GFF3 extends SymLoader implements LineProcessor {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    public GFF3(URI uri, String featureName, GenomeVersion genomeVersion) {
-        this(uri, featureName, genomeVersion, MERGE_CDS);
+    public GFF3(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        this(uri, indexUri, featureName, genomeVersion, MERGE_CDS);
     }
 
-    public GFF3(URI uri, String featureName, GenomeVersion genomeVersion, boolean merge_cds) {
-        super(uri, featureName, genomeVersion);
+    public GFF3(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion, boolean merge_cds) {
+        super(uri, indexUri, featureName, genomeVersion);
         this.parser = new GFF3Parser();
         this.merge_cds = merge_cds;
     }

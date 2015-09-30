@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.broad.tribble.readers.LineReader;
@@ -44,8 +45,8 @@ public abstract class UnindexedSymLoader extends SymLoader {
     }
     private LineProcessor lineProcessor;
 
-    public UnindexedSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public UnindexedSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
         lineProcessor = createLineProcessor(featureName);
     }
 

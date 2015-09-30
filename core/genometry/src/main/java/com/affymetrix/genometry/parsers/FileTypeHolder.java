@@ -41,9 +41,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * all the FileTypeHandler implementations are saved here, included dynamically
@@ -51,6 +52,7 @@ import java.util.logging.Logger;
  */
 public class FileTypeHolder {
 
+    private static final Logger LOG = LoggerFactory.getLogger(FileTypeHolder.class);
     private static final FileTypeHolder instance = new FileTypeHolder();
     private final Map<String, FileTypeHandler> fileTypeHandlerMap;
     private final Map<String, FileTypeHandler> dummyHandlerMap;
@@ -83,7 +85,7 @@ public class FileTypeHolder {
             }
 
             @Override
-            public SymLoader createSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
+            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
                 SAM sam = new SAM(uri, featureName, genomeVersion);
                 return SymLoaderTabix.getSymLoader(sam);
             }
@@ -119,8 +121,8 @@ public class FileTypeHolder {
             }
 
             @Override
-            public SymLoader createSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-                BED bed = new BED(uri, featureName, genomeVersion);
+            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+                BED bed = new BED(uri, indexUri, featureName, genomeVersion);
                 return SymLoaderTabix.getSymLoader(bed);
             }
 
@@ -154,8 +156,8 @@ public class FileTypeHolder {
             }
 
             @Override
-            public SymLoader createSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-                final GFF3 gfF3 = new GFF3(uri, featureName, genomeVersion);
+            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+                final GFF3 gfF3 = new GFF3(uri, indexUri, featureName, genomeVersion);
                 return SymLoaderTabix.getSymLoader(gfF3);
             }
 
@@ -188,12 +190,12 @@ public class FileTypeHolder {
             }
 
             @Override
-            public SymLoader createSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
+            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
                 if (com.affymetrix.genometry.symloader.GFF3.isGFF3(uri)) {
-                    final GFF3 gfF3 = new GFF3(uri, featureName, genomeVersion);
+                    final GFF3 gfF3 = new GFF3(uri, indexUri, featureName, genomeVersion);
                     return SymLoaderTabix.getSymLoader(gfF3);
                 } else {
-                    final GFF gff = new GFF(uri, featureName, genomeVersion);
+                    final GFF gff = new GFF(uri, indexUri, featureName, genomeVersion);
                     return SymLoaderTabix.getSymLoader(gff);
                 }
             }
@@ -239,12 +241,12 @@ public class FileTypeHolder {
             }
 
             @Override
-            public SymLoader createSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-                SymLoader symLoader = new FastaIdx(uri, featureName, genomeVersion);
+            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+                SymLoader symLoader = new FastaIdx(uri, indexUri, featureName, genomeVersion);
                 if (!((FastaIdx) symLoader).isValid()) {
 //							Logger.getLogger(this.getClass().getName()).log(
 //									Level.WARNING, "unable to read index or dict for fasta file, reading full file");
-                    symLoader = new Fasta(uri, featureName, genomeVersion);
+                    symLoader = new Fasta(uri, indexUri, featureName, genomeVersion);
                 }
                 return symLoader;
             }
@@ -282,9 +284,9 @@ public class FileTypeHolder {
             }
 
             @Override
-            public SymLoader createSymLoader(URI uri, String featureName,
+            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName,
                     GenomeVersion genomeVersion) {
-                PSL psl = new PSL(uri, featureName, genomeVersion);
+                PSL psl = new PSL(uri, indexUri, featureName, genomeVersion);
                 psl.setIsLinkPsl(true);
                 psl.enableSharedQueryTarget(true);
                 return SymLoaderTabix.getSymLoader(psl);
@@ -332,9 +334,9 @@ public class FileTypeHolder {
             }
 
             @Override
-            public SymLoader createSymLoader(URI uri, String featureName,
+            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName,
                     GenomeVersion genomeVersion) {
-                PSL psl = new PSL(uri, featureName, genomeVersion);
+                PSL psl = new PSL(uri, indexUri, featureName, genomeVersion);
                 psl.enableSharedQueryTarget(true);
                 return SymLoaderTabix.getSymLoader(psl);
             }
@@ -383,8 +385,8 @@ public class FileTypeHolder {
             }
 
             @Override
-            public SymLoader createSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-                return SymLoaderTabix.getSymLoader(new Wiggle(uri, featureName, genomeVersion));
+            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+                return SymLoaderTabix.getSymLoader(new Wiggle(uri, indexUri, featureName, genomeVersion));
             }
 
             @Override
@@ -417,8 +419,8 @@ public class FileTypeHolder {
             }
 
             @Override
-            public SymLoader createSymLoader(URI uri, String featureName, GenomeVersion genomeVersion) {
-                return SymLoaderTabix.getSymLoader(new VCF(uri, featureName, genomeVersion));
+            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+                return SymLoaderTabix.getSymLoader(new VCF(uri, indexUri, featureName, genomeVersion));
             }
 
             @Override
@@ -457,7 +459,7 @@ public class FileTypeHolder {
             }
 
             @Override
-            public SymLoader createSymLoader(URI uri, String featureName,
+            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName,
                     GenomeVersion genomeVersion) {
                 return null;
             }
@@ -486,8 +488,8 @@ public class FileTypeHolder {
                     }
 
                     return parserClass.getConstructor().newInstance();
-                } catch (Exception x) {
-                    Logger.getLogger(FileTypeHolder.class.getName()).log(Level.SEVERE, "Failed to create Parser {0} reason = {1}", new Object[]{parserClass.getName(), x.getCause() == null ? x.getMessage() : x.getCause().getMessage()});
+                } catch (Exception ex) {
+                    LOG.error(ex.getMessage(), ex);
                     return null;
                 }
             }
@@ -503,13 +505,13 @@ public class FileTypeHolder {
             }
 
             @Override
-            public SymLoader createSymLoader(URI uri, String featureName,
+            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName,
                     GenomeVersion genomeVersion) {
                 try {
-                    Constructor<?> con = symLoaderClass.getConstructor(URI.class, String.class, GenomeVersion.class);
-                    return (SymLoader) con.newInstance(uri, featureName, genomeVersion);
-                } catch (Exception x) {
-                    Logger.getLogger(FileTypeHolder.class.getName()).log(Level.SEVERE, "Failed to create SymLoader {0} reason = {1}", new Object[]{symLoaderClass.getName(), x.getCause() == null ? x.getMessage() : x.getCause().getMessage()});
+                    Constructor<?> con = symLoaderClass.getConstructor(URI.class, Optional.class, String.class, GenomeVersion.class);
+                    return (SymLoader) con.newInstance(uri, indexUri, featureName, genomeVersion);
+                } catch (Exception ex) {
+                    LOG.error(ex.getMessage(), ex);
                     return null;
                 }
             }
@@ -548,7 +550,7 @@ public class FileTypeHolder {
         String[] extensions = fileTypeHandler.getExtensions();
         for (String extension : extensions) {
             if (map.get(extension) != null) {
-                Logger.getLogger(FileTypeHolder.class.getName()).log(Level.SEVERE, "duplicate SymLoaderFactory for extension {0}!!!", new Object[]{extension});
+                LOG.error("duplicate SymLoaderFactory for extension {0}!!!", extension);
             }
             map.put(extension, fileTypeHandler);
         }
@@ -563,7 +565,7 @@ public class FileTypeHolder {
         String[] extensions = fileTypeHandler.getExtensions();
         for (String extension : extensions) {
             if (fileTypeHandlerMap.get(extension) == null) {
-                Logger.getLogger(FileTypeHolder.class.getName()).log(Level.SEVERE, "missing removed SymLoaderFactory for extension {0}!!!", new Object[]{extension});
+                LOG.error("missing removed SymLoaderFactory for extension {0}!!!", extension);
             }
             fileTypeHandlerMap.remove(extension);
         }
@@ -636,7 +638,7 @@ public class FileTypeHolder {
             }
         }
         if (fileTypeHandler == null) {
-            Logger.getAnonymousLogger(FileTypeHolder.class.getName()).log(Level.SEVERE, "No file handler found for type {0} of uri {1}", new Object[]{extension, uri});
+            LOG.error("No file handler found for type {} of uri {}", extension, uri);
         }
         return fileTypeHandler;
     }

@@ -327,7 +327,7 @@ public class IgbServiceImpl implements IgbService {
 
     @Override
     public void openURI(URI uri, String fileName, GenomeVersion loadGroup, String speciesName, boolean isReferenceSequence) {
-        GeneralLoadUtils.openURI(uri, fileName, loadGroup, speciesName, isReferenceSequence);
+        GeneralLoadUtils.openURI(uri, Optional.empty(), fileName, loadGroup, speciesName, isReferenceSequence);
     }
 
     @Override

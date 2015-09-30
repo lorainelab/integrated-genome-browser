@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -159,8 +160,8 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private static final Pattern typePattern = Pattern.compile(",Type=\\w+,");
     private static final Pattern descriptionPattern = Pattern.compile(",Description=\\\"[^\\\"]+\\\",");
 
-    public VCF(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, featureName, genomeVersion);
+    public VCF(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, featureName, genomeVersion);
     }
 
     /**

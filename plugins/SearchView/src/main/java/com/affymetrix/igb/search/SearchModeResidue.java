@@ -41,6 +41,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -345,7 +346,7 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
         }
 
         public DummySymLoader(String trackId, String featureName, GenomeVersion genomeVersion) throws URISyntaxException {
-            super(new URI(trackId), featureName, genomeVersion);
+            super(new URI(trackId), Optional.empty(), featureName, genomeVersion);
         }
 
         @Override

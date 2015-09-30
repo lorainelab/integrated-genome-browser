@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
@@ -84,7 +85,7 @@ public class SgrParserTest {
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         URL url = SgrParserTest.class.getClassLoader().getResource(filename);
-        Sgr sgr = new Sgr(url.toURI(), filename, genomeVersion);
+        Sgr sgr = new Sgr(url.toURI(), Optional.empty(), filename, genomeVersion);
 
         List<GraphSym> results = sgr.getGenome();
 
@@ -133,7 +134,7 @@ public class SgrParserTest {
         genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
-        Sgr sgr = new Sgr(file.toURI(), file.getName(), genomeVersion);
+        Sgr sgr = new Sgr(file.toURI(), Optional.empty(), file.getName(), genomeVersion);
         List<GraphSym> results = sgr.getGenome();
 
         ByteArrayOutputStream outstream = new ByteArrayOutputStream();

@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -32,11 +33,11 @@ public class Fasta extends FastaCommon implements AnnotationWriter {
     private static final int COLUMNS = 50;
 
     public Fasta() {
-        this(null, null, null);
+        this(null, Optional.empty(), null, null);
     }
 
-    public Fasta(URI uri, String featureName, GenomeVersion genomeVersion) {
-        super(uri, "", genomeVersion);
+    public Fasta(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+        super(uri, indexUri, "", genomeVersion);
     }
 
     /**

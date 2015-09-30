@@ -9,8 +9,8 @@ import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.AnnotationWriter;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,11 +59,11 @@ public final class Gr extends SymLoader implements AnnotationWriter {
     }
 
     public Gr() {
-        super(null, null, null);
+        super(null, Optional.empty(), null, null);
     }
 
-    public Gr(URI uri, String featureName, GenomeVersion seq_group) {
-        super(uri, featureName, seq_group);
+    public Gr(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion seq_group) {
+        super(uri, indexUri, featureName, seq_group);
     }
 
     @Override

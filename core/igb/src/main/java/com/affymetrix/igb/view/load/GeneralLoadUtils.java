@@ -853,7 +853,7 @@ public final class GeneralLoadUtils {
                         Optional<URI> sequenceFileUri = sequenceDataSetProvider.getSequenceFileUri(dataContainer.getGenomeVersion());
                         if (sequenceFileUri.isPresent()) {
                             final URI uri = sequenceFileUri.get();
-                            residuesLoaded = loadReferenceSequenceFromUri(uri, null, dataContainer, span, residuesLoaded);
+                            residuesLoaded = loadReferenceSequenceFromUri(uri, Optional.empty(), dataContainer, span, residuesLoaded);
                         }
                     }
                     if (dataProvider instanceof ReferenceSequenceProvider) {

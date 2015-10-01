@@ -9,6 +9,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPJPanel;
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.cache.api.ChangeEvent;
 import com.lorainelab.cache.api.RemoteFileCacheService;
@@ -18,6 +19,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
@@ -31,6 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -315,7 +318,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     }
 
     private JTable getStyledJTable() {
-        JTable table = new JTable(cacheTableModel) {
+        JTable table = new JRPStyledTable("cache configuration table", cacheTableModel) {
 
             @Override
             public Component prepareRenderer(
@@ -326,6 +329,35 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
                 return c;
             }
         };
+        Collections.list(table.getColumnModel().getColumns()).forEach(column -> {
+
+            switch (column.getModelIndex()) {
+                case 0:
+                    //column.setMaxWidth(20);
+                    column.setPreferredWidth(500);
+                    DefaultTableCellRenderer cr = new DefaultTableCellRenderer() {
+                        @Override
+                        public int getHorizontalAlignment() {
+                            return SwingConstants.LEFT;
+                        }
+                    };
+
+                    column.setCellRenderer(cr);
+                    break;
+                case 1:
+                    column.setPreferredWidth(100);
+                    break;
+                case 2:
+                    column.setPreferredWidth(100);
+                    break;
+                case 3:
+                    column.setPreferredWidth(100);
+                    break;
+                case 4:
+                    column.setPreferredWidth(40);
+                    break;
+            }
+        });
         table.setRowSelectionAllowed(true);
         table.setShowGrid(true);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

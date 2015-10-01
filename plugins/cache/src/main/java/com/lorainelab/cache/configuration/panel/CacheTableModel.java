@@ -38,6 +38,7 @@ public class CacheTableModel extends AbstractTableModel {
         "Last Accessed",
         "Size (MB)"};
 
+
     @Activate
     public void activate() {
         refresh();

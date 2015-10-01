@@ -334,7 +334,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
             switch (column.getModelIndex()) {
                 case 0:
                     //column.setMaxWidth(20);
-                    column.setPreferredWidth(500);
+                    column.setPreferredWidth(200);
                     DefaultTableCellRenderer cr = new DefaultTableCellRenderer() {
                         @Override
                         public int getHorizontalAlignment() {

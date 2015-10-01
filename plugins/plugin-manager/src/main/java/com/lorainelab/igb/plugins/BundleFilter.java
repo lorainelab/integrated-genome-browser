@@ -1,4 +1,4 @@
-package com.affymetrix.igb.plugins;
+package com.lorainelab.igb.plugins;
 
 import org.osgi.framework.Bundle;
 

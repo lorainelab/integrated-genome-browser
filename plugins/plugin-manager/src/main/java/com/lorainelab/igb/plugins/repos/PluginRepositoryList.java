@@ -5,7 +5,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.common.PreferenceUtils;
-import com.affymetrix.igb.plugins.PluginsView;
+import com.lorainelab.igb.plugins.PluginsView;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 import com.google.common.hash.HashFunction;

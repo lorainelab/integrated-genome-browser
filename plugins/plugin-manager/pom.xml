@@ -97,6 +97,16 @@
             <artifactId>genoviz</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -148,7 +158,6 @@
                     <instructions>    
                         <Import-Package>*</Import-Package>
                         <Export-Package/>                        
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Description>An IgbTabPanel for managing OSGi OBR repositories for installing IGB plugins</Bundle-Description>
                         <Service-Component>*</Service-Component>
                     </instructions>

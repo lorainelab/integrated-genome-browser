@@ -1,4 +1,4 @@
-package com.affymetrix.igb.plugins;
+package com.lorainelab.igb.plugins;
 
 import java.awt.Component;
 import java.awt.Rectangle;

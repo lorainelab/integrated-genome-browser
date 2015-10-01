@@ -1,5 +1,6 @@
-package com.affymetrix.igb.plugins;
+package com.lorainelab.igb.plugins;
 
+import com.lorainelab.igb.plugins.BundleFilter;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
@@ -8,7 +9,7 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.igb.plugins.BundleTableModel.NameInfoPanel;
+import com.lorainelab.igb.plugins.BundleTableModel.NameInfoPanel;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;

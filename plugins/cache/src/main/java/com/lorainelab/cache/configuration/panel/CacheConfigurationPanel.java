@@ -328,6 +328,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         };
         table.setRowSelectionAllowed(true);
         table.setShowGrid(true);
+        table.setGridColor(Color.GRAY);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {

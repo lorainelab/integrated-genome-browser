@@ -83,8 +83,8 @@ public final class LocalUrlCacher {
     public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
     public static final String URL_NOT_REACHABLE = "URL_NOT_REACHABLE";
 
-    public static final int CONNECT_TIMEOUT = 8000;	// If you can't connect in 8 seconds, fail.
-    public static final int READ_TIMEOUT = 20000;		// If you can't read any data in 20 seconds, fail.
+    public static final int CONNECT_TIMEOUT = 30000;
+    public static final int READ_TIMEOUT = 60000;
 
     private static boolean offline = false;
 

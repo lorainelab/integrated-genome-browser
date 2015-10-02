@@ -90,11 +90,11 @@ public final class BAM extends XAM {
                 baiUri = URI.create(getBamIndexUriStr(uri));
             }
 
-            Optional<InputStream> indexStream = remoteFileCacheService.getFilebyUrl(indexUri.toURL(), false);
+            Optional<InputStream> indexStream = remoteFileCacheService.getFilebyUrl(baiUri.toURL(), false);
             if (indexStream.isPresent()) {
                 indexStream.get().close();
             }
-            CacheStatus indexCacheStatus = remoteFileCacheService.getCacheStatus(indexUri.toURL());
+            CacheStatus indexCacheStatus = remoteFileCacheService.getCacheStatus(baiUri.toURL());
 
             SeekableBufferedStream seekableStream = new SeekableBufferedStream(new SeekableHTTPStream(new URL(reachable_url)));
             if (indexCacheStatus.isDataExists() && !indexCacheStatus.isCorrupt()) {

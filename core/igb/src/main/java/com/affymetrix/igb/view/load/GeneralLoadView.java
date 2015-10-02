@@ -334,8 +334,8 @@ public final class GeneralLoadView {
                         Optional<URI> indexFile = dataSet.getIndex();
                         if (remoteFileCacheService != null && BedUtils.isRemoteBedFile(fileUrl)) {
                             fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, false);
-                            if (indexFile.isPresent() && indexFile.toString().startsWith("http")) {
-                                indexFileIs = remoteFileCacheService.getFilebyUrl(new URL(indexFile.toString()), false);
+                            if (indexFile.isPresent() && indexFile.get().toString().startsWith("http")) {
+                                indexFileIs = remoteFileCacheService.getFilebyUrl(new URL(indexFile.get().toString()), false);
                             } else if (!indexFile.isPresent()) {
                                 indexFileIs = remoteFileCacheService.getFilebyUrl(new URL(fileUrl.toString() + ".tbi"), false);
                             }

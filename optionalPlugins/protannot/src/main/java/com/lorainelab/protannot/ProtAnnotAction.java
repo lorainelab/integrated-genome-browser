@@ -554,11 +554,11 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     ImageExportService exportService;
 
     private void export() {
-        protAnnotService.exportAsXml(gview);
+        protAnnotService.exportAsXml(gview, frm);
     }
 
     void saveImage() {
-        protAnnotService.exportAsImage(gview);
+        protAnnotService.exportAsImage(gview, frm);
     }
 
     void print() {

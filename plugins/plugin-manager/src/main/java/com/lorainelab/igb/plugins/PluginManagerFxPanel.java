@@ -6,20 +6,35 @@
 package com.lorainelab.igb.plugins;
 
 import com.google.common.io.CharStreams;
+import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Map;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.slf4j.Logger;
@@ -40,7 +55,7 @@ public class PluginManagerFxPanel extends JFXPanel {
     @FXML
     private ComboBox filterOptions;
     @FXML
-    private ListView listView;
+    private ListView<String> listView;
     @FXML
     private Button updateAllBtn;
     @FXML
@@ -49,6 +64,7 @@ public class PluginManagerFxPanel extends JFXPanel {
     private VBox pane;
     private WebEngine webEngine;
     private String htmlTemplate;
+    private Map<String, PluginListItemMetadata> listData;
 
     @FXML
     private void initialize() {
@@ -56,6 +72,22 @@ public class PluginManagerFxPanel extends JFXPanel {
         htmlTemplate = getClassPathResourceAsString("pluginInfoTemplate.html");
         String html = htmlTemplate.replace("{pluginName}", "ProtAnnot");
         webEngine.loadContent(html);
+        listView.setCellFactory((ListView<String> l) -> new BuildCell());
+    }
+
+    public void updateListContent(Map<String, PluginListItemMetadata> list) {
+        Platform.runLater(() -> {
+            listData = list;
+            ObservableList<String> data = FXCollections.observableArrayList(list.keySet());
+            listView.setItems((ObservableList<String>) data);
+            listView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent event) {
+                    //TODO
+                }
+            });
+        });
     }
 
     private void updateWebContent() {
@@ -102,4 +134,48 @@ public class PluginManagerFxPanel extends JFXPanel {
         }
         return "";
     }
+
+    private PluginListItemMetadata getListItemMeta(String pluginName) {
+        return listData.get(pluginName);
+    }
+
+    private class BuildCell extends ListCell<String> {
+
+        @Override
+        public void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            PluginListItemMetadata pli = getListItemMeta(item);
+            if (!empty) {
+                Image image = new Image("plugin.png");
+                if (pli.isUpdatable()) {
+                    image = new Image("update.png");
+                }
+                ImageView pluginImage = new ImageView();
+                pluginImage.setFitWidth(16);
+                pluginImage.setPreserveRatio(true);
+                pluginImage.setSmooth(true);
+                pluginImage.setCache(true);
+                pluginImage.setImage(image);
+
+                HBox row = new HBox(5);
+
+                Text text = new Text(pli.getPluginName());
+                HBox spacer = new HBox();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                CheckBox cb = new CheckBox();
+                cb.setSelected(pli.isChecked());
+                cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    public void changed(ObservableValue ov,
+                            Boolean old_val, Boolean new_val) {
+                        //TODO
+                    }
+                });
+
+                row.getChildren().addAll(pluginImage, text, spacer, cb);
+                setGraphic(row);
+            }
+        }
+    }
+
 }

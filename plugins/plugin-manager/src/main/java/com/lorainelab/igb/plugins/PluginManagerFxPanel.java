@@ -75,6 +75,7 @@ public class PluginManagerFxPanel extends JFXPanel {
 
     @FXML
     private void initialize() {
+        listView.setCellFactory((ListView<String> l) -> new BuildCell());
         webEngine = description.getEngine();
         webEngine.load(PluginManagerFxPanel.class.getClassLoader().getResource("pluginInfoTemplate.html").toExternalForm());
     }

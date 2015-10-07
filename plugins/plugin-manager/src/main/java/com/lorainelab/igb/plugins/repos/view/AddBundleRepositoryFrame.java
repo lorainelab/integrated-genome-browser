@@ -9,7 +9,7 @@ import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.google.common.base.Strings;
-import com.lorainelab.igb.plugins.repos.PluginRepositoryListProvider;
+import com.lorainelab.igb.plugins.repos.PluginRepositoryList;
 import com.lorainelab.igb.preferences.model.PluginRepository;
 import java.awt.Component;
 import java.awt.HeadlessException;
@@ -34,11 +34,11 @@ public class AddBundleRepositoryFrame extends JFrame {
     private boolean isEditPanel;
     private JPanel parent;
     private PluginRepository currentRepo;
-    private PluginRepositoryListProvider pluginRepositoryListProvider;
+    private PluginRepositoryList pluginRepositoryList;
 
-    public AddBundleRepositoryFrame(JPanel parent, PluginRepositoryListProvider pluginRepositoryListProvider) {
+    public AddBundleRepositoryFrame(JPanel parent, PluginRepositoryList pluginRepositoryList) {
         this.parent = parent;
-        this.pluginRepositoryListProvider = pluginRepositoryListProvider;
+        this.pluginRepositoryList = pluginRepositoryList;
         initComponents();
         DocumentListener dl = new MyDocumentListener();
         nameText.getDocument().addDocumentListener(dl);
@@ -216,7 +216,7 @@ public class AddBundleRepositoryFrame extends JFrame {
             pluginRepository.setUrl(urlText.getText());
             pluginRepository.setEnabled(true);
             pluginRepository.setDefault(Boolean.toString(Boolean.FALSE));
-            pluginRepositoryListProvider.addPluginRepository(pluginRepository);
+            pluginRepositoryList.addPluginRepository(pluginRepository);
         }
 
         this.setVisible(false);

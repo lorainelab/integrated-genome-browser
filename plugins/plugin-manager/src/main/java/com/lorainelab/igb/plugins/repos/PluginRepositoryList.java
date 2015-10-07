@@ -3,13 +3,13 @@ package com.lorainelab.igb.plugins.repos;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.common.PreferenceUtils;
-import com.lorainelab.igb.plugins.PluginsView;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import com.lorainelab.igb.plugins.PluginsView;
 import com.lorainelab.igb.plugins.repos.view.BundleRepositoryTableModel;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = PluginRepositoryList.COMPONENT_NAME, immediate = true, provide = PluginRepositoryListProvider.class)
-public class PluginRepositoryList implements PluginRepositoryListProvider {
+@Component(name = PluginRepositoryList.COMPONENT_NAME, immediate = true, provide = PluginRepositoryList.class)
+public class PluginRepositoryList {
 
     public static final String COMPONENT_NAME = "PluginRepositoryList";
     private static final Logger logger = LoggerFactory.getLogger(PluginRepositoryList.class);
@@ -95,12 +95,10 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
         this.pluginsView = pluginsView;
     }
 
-    @Override
     public Set<PluginRepository> getPluginRepositories() {
         return pluginRepositories;
     }
 
-    @Override
     public void addPluginRepository(PluginRepository pluginRepository) {
         pluginRepositories.add(pluginRepository);
         if (pluginRepository.isEnabled()) {
@@ -113,7 +111,6 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
         bundleRepositoryTableModel.updateRepositories(pluginRepositories);
     }
 
-    @Override
     public void removePluginRepository(PluginRepository pluginRepository) {
         pluginRepositories.remove(pluginRepository);
         removeRepositoryToPrefs(pluginRepository);
@@ -141,7 +138,6 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
         node.put("enabled", pluginRepository.getEnabled());
     }
 
-    @Override
     public void updatePluginRepoPrefs(PluginRepository pluginRepository) {
         addRepositoryToPrefs(pluginRepository);
     }
@@ -173,7 +169,6 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
         return pluginRepository;
     }
 
-    @Override
     public void pluginRepositoryRefreshed(PluginRepository pluginRepository) {
         removePluginRepository(pluginRepository);
         //allow time for any async operations from remove to complete
@@ -186,7 +181,6 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
         timer.start();
     }
 
-    @Override
     public void pluginRepoAvailabilityChanged(PluginRepository pluginRepository) {
         if (pluginRepository.isEnabled()) {
             pluginsView.addPluginRepository(pluginRepository);
@@ -195,7 +189,6 @@ public class PluginRepositoryList implements PluginRepositoryListProvider {
         }
     }
 
-    @Override
     public BundleRepositoryTableModel getBundleRepositoryTableModel() {
         return bundleRepositoryTableModel;
     }

@@ -9,24 +9,16 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.embed.swing.JFXPanel;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
-import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -35,13 +27,16 @@ import net.miginfocom.swing.MigLayout;
 @Component(immediate = true, provide = PreferencesPanelProvider.class)
 public class PluginConfigurationPanel extends JRPJPanel implements PreferencesPanelProvider {
 
+    private static final Logger logger = LoggerFactory.getLogger(PluginConfigurationPanel.class);
     private static final int TAB_WEIGHT = 10;
     private static final String TAB_NAME = "Plugins";
-    private Text textPanel;
+    private PluginManagerFxPanel fxPanel;
 
     public PluginConfigurationPanel() {
         super(TAB_NAME);
-        setLayout(new MigLayout(new LC().fill().insetsAll("0")));
+        setLayout(new MigLayout("fill"));
+        fxPanel = new PluginManagerFxPanel();
+        add(fxPanel, "grow");
     }
 
     @Override
@@ -66,52 +61,7 @@ public class PluginConfigurationPanel extends JRPJPanel implements PreferencesPa
 
     @Activate
     public void activate() {
-        JFXPanel headerPanel = new JFXPanel();
-        JFXPanel contentPanel = new JFXPanel();
-        textPanel = new Text("hello world");
-        ListView<String> list = new ListView<>();
-        ObservableList<String> data = FXCollections.observableArrayList(
-                "plugin1", "plugin12", "plugin3", "plugin4", "plugin5",
-                "plugin6", "plugin7", "plugin8", "plugin9", "plugin10",
-                "plugin11", "plugin12", "plugin13", "plugin14", "plugin15", "plugin16", "plugin117",
-                "plugin18", "plugin19", "plugin20", "plugin21", "plugin22",
-                "plugin23", "plugin24", "plugin25", "plugin26", "plugin1", "plugin1", "plugin1",
-                "plugin1", "plugin1", "plugin1", "plugin1", "plugin1",
-                "plugin1", "plugin1");
 
-        
-
-        HBox header = new HBox(0);
-        TextField search = new TextField();
-        search.setPromptText("search...");
-        header.getChildren().add(search);
-        header.setPadding(new Insets(5));
-
-        HBox content = new HBox(0);
-        content.getChildren().addAll(list, textPanel);
-        
-       
-        Scene headerScene = new Scene(header);
-        headerPanel.setScene(headerScene);
-
-        Scene contentScene = new Scene(content);
-        contentPanel.setScene(contentScene);
-
-        list.setItems(data);
-        list.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent event) {
-                textPanel.setText("clicked on " + list.getSelectionModel().getSelectedItem());
-            }
-        });
-
-        list.setCellFactory((ListView<String> l) -> new BuildCell());
-
-        headerPanel.setVisible(true);
-        contentPanel.setVisible(true);
-        add(headerPanel, "grow, wrap");
-        add(contentPanel, "grow, push, span");
     }
 
     static class BuildCell extends ListCell<String> {
@@ -140,6 +90,5 @@ public class PluginConfigurationPanel extends JRPJPanel implements PreferencesPa
             setGraphic(row);
         }
     }
-
 
 }

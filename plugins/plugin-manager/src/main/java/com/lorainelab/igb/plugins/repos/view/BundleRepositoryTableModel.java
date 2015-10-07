@@ -1,6 +1,6 @@
 package com.lorainelab.igb.plugins.repos.view;
 
-import com.lorainelab.igb.plugins.repos.PluginRepositoryListProvider;
+import com.lorainelab.igb.plugins.repos.PluginRepositoryList;
 import com.lorainelab.igb.preferences.model.PluginRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class BundleRepositoryTableModel extends AbstractTableModel {
 
-    private final PluginRepositoryListProvider pluginRepositoryListProvider;
+    private final PluginRepositoryList pluginRepositoryList;
     private List<PluginRepository> pluginRepositories;
     public static final String REFRESH_COLOMN = "Refresh";
     public static final String NAME_COLOMN = "Name";
@@ -23,9 +23,9 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
     private final Class CLASSES[] = {String.class, String.class, String.class, Boolean.class};
     private PluginRepository selectedPluginRepository;
 
-    public BundleRepositoryTableModel(PluginRepositoryListProvider pluginRepositoryListProvider) {
-        this.pluginRepositoryListProvider = pluginRepositoryListProvider;
-        this.pluginRepositories = new ArrayList<>(pluginRepositoryListProvider.getPluginRepositories());
+    public BundleRepositoryTableModel(PluginRepositoryList pluginRepositoryList) {
+        this.pluginRepositoryList = pluginRepositoryList;
+        this.pluginRepositories = new ArrayList<>(pluginRepositoryList.getPluginRepositories());
     }
 
     public int getColumnIndex(String columnName) {
@@ -116,16 +116,16 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
         PluginRepository pluginRepository = pluginRepositories.get(rowIndex);
         switch (getColumnName(columnIndex)) {
             case REFRESH_COLOMN:
-                pluginRepositoryListProvider.pluginRepositoryRefreshed(pluginRepository);
+                pluginRepositoryList.pluginRepositoryRefreshed(pluginRepository);
             case NAME_COLOMN:
                 if (aValue instanceof String) {
                     pluginRepository.setName((String) aValue);
                 }
             case ENABLED_COLOMN:
                 pluginRepository.setEnabled(!Boolean.valueOf(pluginRepository.getEnabled()));
-                pluginRepositoryListProvider.pluginRepoAvailabilityChanged(pluginRepository);
+                pluginRepositoryList.pluginRepoAvailabilityChanged(pluginRepository);
         }
-        pluginRepositoryListProvider.updatePluginRepoPrefs(pluginRepository);
+        pluginRepositoryList.updatePluginRepoPrefs(pluginRepository);
         this.fireTableDataChanged();
     }
 

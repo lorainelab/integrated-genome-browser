@@ -12,7 +12,7 @@ import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.google.common.base.Charsets;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.io.Resources;
-import com.lorainelab.igb.plugins.repos.PluginRepositoryListProvider;
+import com.lorainelab.igb.plugins.repos.PluginRepositoryList;
 import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
 import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
 import com.lorainelab.igb.services.IgbService;
@@ -42,7 +42,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
     public static final String TAB_NAME = "Plugin Repositories";
     private static final int TAB_POSITION = 7;
     private BundleRepositoryTableModel tableModel;
-    private PluginRepositoryListProvider pluginRepositoryListProvider;
+    private PluginRepositoryList pluginRepositoryList;
     private final Icon refresh_icon;
     private AddBundleRepositoryFrame addBundleRepositoryFrame;
     private StyledJTable table;
@@ -56,9 +56,9 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
 
     @Activate
     public void activate() {
-        tableModel = pluginRepositoryListProvider.getBundleRepositoryTableModel();
+        tableModel = pluginRepositoryList.getBundleRepositoryTableModel();
         initializeTable();
-        addBundleRepositoryFrame = new AddBundleRepositoryFrame(this, pluginRepositoryListProvider);
+        addBundleRepositoryFrame = new AddBundleRepositoryFrame(this, pluginRepositoryList);
         initComponents();
         initializeSelectionListener();
     }
@@ -147,8 +147,8 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
     }
 
     @Reference(optional = false)
-    public void setPluginRepositoryList(PluginRepositoryListProvider pluginRepositoryListProvider) {
-        this.pluginRepositoryListProvider = pluginRepositoryListProvider;
+    public void setPluginRepositoryList(PluginRepositoryList pluginRepositoryList) {
+        this.pluginRepositoryList = pluginRepositoryList;
     }
 
     @Override
@@ -226,7 +226,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         // TODO add your handling code here:
         if (tableModel.getSelectedPluginRepository() != null) {
-            pluginRepositoryListProvider.removePluginRepository(tableModel.getSelectedPluginRepository());
+            pluginRepositoryList.removePluginRepository(tableModel.getSelectedPluginRepository());
         }
     }//GEN-LAST:event_removeButtonActionPerformed
 

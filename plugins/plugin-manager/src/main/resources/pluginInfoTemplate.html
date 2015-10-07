@@ -12,18 +12,52 @@
     </head>
 
     <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    Plugin Name: {pluginName}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <a class="btn btn-success"><i class="fa fa-download" style="margin-right: 5px;"></i>Install Plugin</a>
-                </div>
-            </div>
+        <div id="reactTest">
         </div>
+        <script src="pluginInfoTemplateResources/react.min.js"></script>
+        <script src="pluginInfoTemplateResources/JSXTransformer.js"></script>
+        <script type="text/jsx">
+         var PluginInfo = React.createClass({             
+         render: function() {
+         
+           var nameLine = 'Plugin Name: ' + this.props.pluginName;
+           var versionLine = 'Verson: ' + this.props.version;
+           var repositoryLine = 'Repository: ' + this.props.repository;
+
+           return   <div className="container">
+                        <div className="row">
+                            <div className="col-md-12">
+                                {nameLine}
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-12">
+                                {versionLine}
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-12">
+                                {repositoryLine}
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-12">
+                                <a className="btn btn-success"><i className=
+                                "fa fa-download"></i>Install Plugin</a>
+                            </div>
+                        </div>
+                    </div>
+;
+         }
+       });
+        
+         React.render(
+           <PluginInfo pluginName={'ProtAnnot'} version={'1.0.1'} repository={'BioViz'}/>,
+           document.getElementById('reactTest')
+         );
+
+        </script>
     </body>
 
 </html>

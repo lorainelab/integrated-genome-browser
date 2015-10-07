@@ -5,8 +5,13 @@
  */
 package com.lorainelab.igb.plugins;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
+import com.google.common.eventbus.EventBus;
 import com.google.common.io.CharStreams;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
+import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
+import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -18,7 +23,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -37,6 +41,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +49,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
+@Component(immediate = true)
 public class PluginManagerFxPanel extends JFXPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(PluginManagerFxPanel.class);
@@ -65,14 +71,12 @@ public class PluginManagerFxPanel extends JFXPanel {
     private WebEngine webEngine;
     private String htmlTemplate;
     private Map<String, PluginListItemMetadata> listData;
+    private EventBus eventBus;
 
     @FXML
     private void initialize() {
         webEngine = description.getEngine();
-        htmlTemplate = getClassPathResourceAsString("pluginInfoTemplate.html");
-        String html = htmlTemplate.replace("{pluginName}", "ProtAnnot");
-        webEngine.loadContent(html);
-        listView.setCellFactory((ListView<String> l) -> new BuildCell());
+        webEngine.load(PluginManagerFxPanel.class.getClassLoader().getResource("pluginInfoTemplate.html").toExternalForm());
     }
 
     public void updateListContent(Map<String, PluginListItemMetadata> list) {
@@ -80,13 +84,22 @@ public class PluginManagerFxPanel extends JFXPanel {
             listData = list;
             ObservableList<String> data = FXCollections.observableArrayList(list.keySet());
             listView.setItems((ObservableList<String>) data);
-            listView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                @Override
-                public void handle(MouseEvent event) {
-                    //TODO
-                }
+            listView.setOnMouseClicked((MouseEvent event) -> {
+                //TODO
             });
+        });
+    }
+
+    @Reference
+    public void setEventBus(PluginRepositoryEventPublisher eventManager) {
+        this.eventBus = eventManager.getPluginRepositoryEventBus();
+        eventBus.register(this);
+    }
+
+    @FXML
+    private void manageReposBtnAction() {
+        SwingUtilities.invokeLater(() -> {
+            eventBus.post(new ShowBundleRepositoryPanelEvent());
         });
     }
 

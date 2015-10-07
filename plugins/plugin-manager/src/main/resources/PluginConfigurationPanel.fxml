@@ -29,7 +29,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="manageReposBtn" mnemonicParsing="false" text="Manage Repositories...">
+            <Button fx:id="manageReposBtn" mnemonicParsing="false" onAction="#manageReposBtnAction" text="Manage Repositories...">
                <HBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </HBox.margin>

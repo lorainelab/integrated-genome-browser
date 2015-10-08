@@ -112,7 +112,9 @@
              Bridge.handleUpdateClick();
          },
          render: function() {
-         
+           if(!this.state.pluginName){
+               return <div></div>;
+           }
            var nameLine = 'Plugin Name: ' + this.state.pluginName;
            var versionLine = 'Verson: ' + this.state.version;
            var repositoryLine = 'Repository: ' + this.state.repository;

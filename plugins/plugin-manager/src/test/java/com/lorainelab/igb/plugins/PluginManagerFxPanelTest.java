@@ -12,6 +12,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import javafx.scene.paint.Color;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
 import org.junit.Test;
@@ -30,10 +31,21 @@ public class PluginManagerFxPanelTest {
         testFrame.setLayout(migLayout);
         testFrame.setSize(new Dimension(885, 541));
         PluginManagerFxPanel fxPanel = new PluginManagerFxPanel();
+        fxPanel.setMaterialDesignColors(getColors());
         fxPanel.updateListContent(getListItems());
         testFrame.add(fxPanel, "grow");
         testFrame.setVisible(true);
         Thread.sleep(150000);
+    }
+
+    private List<Color> getColors() {
+        return ImmutableList.of(
+                Color.rgb(156, 39, 176),
+                Color.rgb(233, 30, 99),
+                Color.rgb(244, 67, 54),
+                Color.rgb(33, 150, 243),
+                Color.rgb(63, 81, 181)
+        );
     }
 
     private List<PluginListItemMetadata> getListItems() throws IOException {

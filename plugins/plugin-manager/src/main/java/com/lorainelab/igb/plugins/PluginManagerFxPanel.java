@@ -28,6 +28,8 @@ import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -37,9 +39,15 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -76,6 +84,8 @@ public class PluginManagerFxPanel extends JFXPanel {
     private String htmlTemplate;
     private List<PluginListItemMetadata> listData;
     private EventBus eventBus;
+    private List<Color> materialDesignColors;
+    private int colorIndex = 0;
 
     @FXML
     private void initialize() {
@@ -86,6 +96,14 @@ public class PluginManagerFxPanel extends JFXPanel {
         jsobj.setMember("Bridge", new Bridge());
         jsobj.setMember("logger", new JSLogger());
         webEngine.load(PluginManagerFxPanel.class.getClassLoader().getResource("pluginInfoTemplate.html").toExternalForm());
+    }
+
+    public List<Color> getMaterialDesignColors() {
+        return materialDesignColors;
+    }
+
+    public void setMaterialDesignColors(List<Color> materialDesignColors) {
+        this.materialDesignColors = materialDesignColors;
     }
 
     public class JSLogger {
@@ -238,20 +256,38 @@ public class PluginManagerFxPanel extends JFXPanel {
         public void updateItem(PluginListItemMetadata plugin, boolean empty) {
             super.updateItem(plugin, empty);
             if (!empty) {
-                Image image = new Image("plugin.png");
+                Image updateImage;
+                ImageView updateImageView = new ImageView();
                 if (plugin.isUpdatable()) {
-                    image = new Image("fa-arrow-circle-up.png");
+                    updateImage = new Image("fa-arrow-circle-up.png");
+                    
+                    updateImageView.setFitWidth(16);
+                    updateImageView.setPreserveRatio(true);
+                    updateImageView.setSmooth(true);
+                    updateImageView.setCache(true);
+                    updateImageView.setImage(updateImage);
                 }
-                ImageView pluginImage = new ImageView();
-                pluginImage.setFitWidth(16);
-                pluginImage.setPreserveRatio(true);
-                pluginImage.setSmooth(true);
-                pluginImage.setCache(true);
-                pluginImage.setImage(image);
+                Pane pane = new Pane();
+                pane.setPrefHeight(35);
+                pane.setPrefWidth(35);
+                if ((colorIndex + 1) > materialDesignColors.size()) {
+                    colorIndex = 0;
+                }
+                Color paneColor = materialDesignColors.get(colorIndex);
+                colorIndex++;
+                pane.setBackground(new Background(new BackgroundFill(paneColor, CornerRadii.EMPTY, Insets.EMPTY)));
+                Text avatar = new Text();
+                avatar.setText(plugin.getPluginName().substring(0, 1).toUpperCase());
+                avatar.setFill(Color.rgb(255, 255, 255));
+                pane.getChildren().add(avatar);
+                avatar.setX(8);
+                avatar.setY(27);
+                avatar.setFont(Font.font(27));
 
                 HBox row = new HBox(5);
-
+                row.setAlignment(Pos.CENTER_LEFT);
                 Text text = new Text(plugin.getPluginName());
+
                 HBox spacer = new HBox();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
@@ -263,8 +299,11 @@ public class PluginManagerFxPanel extends JFXPanel {
                         //TODO
                     }
                 });
-
-                row.getChildren().addAll(pluginImage, text, spacer, cb);
+                if (updateImageView.getImage() != null) {
+                    row.getChildren().addAll(pane, text, spacer, updateImageView, cb);
+                } else {
+                    row.getChildren().addAll(pane, text, spacer, cb);
+                }
                 setGraphic(row);
             }
         }

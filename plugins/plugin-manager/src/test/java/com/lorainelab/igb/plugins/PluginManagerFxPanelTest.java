@@ -5,10 +5,13 @@
  */
 package com.lorainelab.igb.plugins;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.io.CharStreams;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import java.awt.Dimension;
-import java.util.Map;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
 import org.junit.Test;
@@ -20,7 +23,7 @@ import org.junit.Test;
 public class PluginManagerFxPanelTest {
 
     @Test
-    public void testPanelUI() throws InterruptedException {
+    public void testPanelUI() throws InterruptedException, IOException {
         JFrame testFrame = new JFrame("");
         MigLayout migLayout = new MigLayout("fill");
         testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -30,15 +33,14 @@ public class PluginManagerFxPanelTest {
         fxPanel.updateListContent(getListItems());
         testFrame.add(fxPanel, "grow");
         testFrame.setVisible(true);
-        Thread.sleep(10000);
+        Thread.sleep(150000);
     }
 
-    private Map<String, PluginListItemMetadata> getListItems() {
-        return ImmutableMap.of(
-                "ProtAnnot.1.0.0", new PluginListItemMetadata("ProtAnnot", Boolean.FALSE, Boolean.TRUE),
-                "23 and me.1.0.0", new PluginListItemMetadata("23 and me", Boolean.FALSE, Boolean.FALSE),
-                "Crisper Cas.1.0.0", new PluginListItemMetadata("Crisper Cas", Boolean.FALSE, Boolean.FALSE),
-                "Command Socket.1.0.0", new PluginListItemMetadata("Command Socket", Boolean.TRUE, Boolean.TRUE)
-        );
+    private List<PluginListItemMetadata> getListItems() throws IOException {
+        String readmeMarkdown = CharStreams.toString(new InputStreamReader(PluginManagerFxPanelTest.class.getClassLoader().getResourceAsStream("README.md")));
+        return ImmutableList.of(
+                new PluginListItemMetadata("ProtAnnot", "bioviz", "1.0.1", readmeMarkdown, Boolean.FALSE, Boolean.TRUE),
+                new PluginListItemMetadata("Crisper Cas", "bioviz", "1.0.1", "## test", Boolean.FALSE, Boolean.FALSE),
+                new PluginListItemMetadata("Command Socket", "bioviz", "1.0.1", "### test", Boolean.TRUE, Boolean.TRUE));
     }
 }

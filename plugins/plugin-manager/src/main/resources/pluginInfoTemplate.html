@@ -14,20 +14,123 @@
     <body>
         <div id="reactTest">
         </div>
+        <script src="pluginInfoTemplateResources/marked.min.js"></script>
         <script src="pluginInfoTemplateResources/react.min.js"></script>
-        <script src="pluginInfoTemplateResources/JSXTransformer.js"></script>
+        <script src="pluginInfoTemplateResources/react-dom.js"></script>
+        <script src="pluginInfoTemplateResources/JSXTransformer.js">
+            
+            
+        </script>
         <script type="text/jsx">
-         var PluginInfo = React.createClass({             
+            
+            console.log = function(message){
+                logger.log(message);
+            }
+            var _storeCallback;
+            var _name;
+            var _version;
+            var _description;
+            var _repository;
+            var _pluginIndex;
+            var _isUpdatable;
+            var _isInstalled;
+            
+            function updatePluginInfo(plugin) {
+                _name = plugin.pluginName;
+                _version = plugin.version;
+                _description = plugin.description;
+                _repository = plugin.repository;
+                _isInstalled = plugin.isInstalled;
+                _isUpdatable = plugin.isUpdatable;
+                PluginStore.emitChange();
+            }
+            
+            var PluginStore = {
+                register: function(callback) {
+                    _storeCallback = callback;
+                },
+                emitChange:function() {
+                    _storeCallback();
+                },
+                
+                getName: function() {
+                    return _name;
+                },
+                getVersion:function() {
+                    return _version;
+                },
+                getDescription: function() {
+                    return _description;
+                },
+                getRepository: function() {
+                    return _repository;
+                },
+                isUpdatable: function() {
+                    return _isUpdatable;
+                },
+                isInstalled: function() {
+                    return _isInstalled;
+                }
+
+            };
+            
+            var PluginInfo = React.createClass({  
+                
+                componentDidMount: function() {
+                    PluginStore.register(this._change);
+                },
+         getInitialState: function() {
+          return {pluginName: '',version:'',repository:'',description:'## helloWorld'};
+         },
+         _change: function() {
+           this.setState({
+               pluginName: PluginStore.getName(),
+               version: PluginStore.getVersion(), 
+               repository: PluginStore.getRepository(), 
+               description: PluginStore.getDescription(),
+               isInstalled:PluginStore.isInstalled(),
+               isUpDateable:PluginStore.isUpdatable()
+           });
+         },
+         _handleInstallClick: function(){
+             Bridge.installPlugin();
+         },
          render: function() {
          
-           var nameLine = 'Plugin Name: ' + this.props.pluginName;
-           var versionLine = 'Verson: ' + this.props.version;
-           var repositoryLine = 'Repository: ' + this.props.repository;
-
-           return   <div className="container">
+           var nameLine = 'Plugin Name: ' + this.state.pluginName;
+           var versionLine = 'Verson: ' + this.state.version;
+           var repositoryLine = 'Repository: ' + this.state.repository;
+           
+           var containerStyle = {
+            marginTop: '15' // 'ms' is the only lowercase vendor prefix
+           };
+           
+           var installBtnClassArg = 'btn pull-right';
+           var installBtnText = '';
+           if(this.state.isInstalled){
+               installBtnClassArg += ' btn-danger';
+               installBtnText= 'Uninstall Plugin';
+           }else{
+               installBtnClassArg += ' btn-success';
+               installBtnText= 'Install Plugin';
+           }
+           var updateBtnClassArg = 'btn btn-warning pull-right';
+           if(!this.state.isUpDateable){
+            updateBtnClassArg += ' hide';
+           }
+           console.log(this.state.description);
+           var descriptionHtml = marked(this.state.description, {sanitize: true});
+           console.log(descriptionHtml);
+           return   <div className="container" style={containerStyle}>
                         <div className="row">
-                            <div className="col-md-12">
+                            <div className="col-xs-6">
                                 {nameLine}
+                            </div>
+                            <div className="col-xs-6">
+                                <a className={installBtnClassArg} onClick={this._handleInstallClick}><i className=
+                                "fa fa-download" style={{marginRight:5}}></i>{installBtnText}</a>
+                             <a className={updateBtnClassArg} style={{marginRight:5}} onClick={this._handleInstallClick}><i className=
+                                "fa fa-arrow-circle-up" style={{marginRight:5}}></i>Update</a>
                             </div>
                         </div>
                         <div className="row">
@@ -40,11 +143,8 @@
                                 {repositoryLine}
                             </div>
                         </div>
-
                         <div className="row">
-                            <div className="col-md-12">
-                                <a className="btn btn-success"><i className=
-                                "fa fa-download"></i>Install Plugin</a>
+                            <div className="col-md-12" dangerouslySetInnerHTML={{__html:descriptionHtml}}>
                             </div>
                         </div>
                     </div>
@@ -52,8 +152,8 @@
          }
        });
         
-         React.render(
-           <PluginInfo pluginName={'ProtAnnot'} version={'1.0.1'} repository={'BioViz'}/>,
+         ReactDOM.render(
+           <PluginInfo />,
            document.getElementById('reactTest')
          );
 

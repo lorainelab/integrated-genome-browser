@@ -18,13 +18,21 @@
         <script src="pluginInfoTemplateResources/react.min.js"></script>
         <script src="pluginInfoTemplateResources/react-dom.js"></script>
         <script src="pluginInfoTemplateResources/JSXTransformer.js">
-            
-            
+
+
         </script>
         <script type="text/jsx">
             
             console.log = function(message){
                 logger.log(message);
+            }
+            
+            window.onclick = function (e) {
+                if (e.target.localName == 'a') {
+                    console.log(e.target);
+                     Bridge.openWebpage(e.target);
+                     e.preventDefault();
+                }
             }
             var _storeCallback;
             var _name;
@@ -35,13 +43,13 @@
             var _isUpdatable;
             var _isInstalled;
             
-            function updatePluginInfo(plugin) {
-                _name = plugin.pluginName;
-                _version = plugin.version;
-                _description = plugin.description;
-                _repository = plugin.repository;
-                _isInstalled = plugin.isInstalled;
-                _isUpdatable = plugin.isUpdatable;
+            function updatePluginInfo() {
+                _name = pluginInfo.getPluginName();
+                _version = pluginInfo.getVersion();
+                _description = pluginInfo.getDescription();
+                _repository = pluginInfo.getRepository();
+                _isInstalled = pluginInfo.isInstalled();
+                _isUpdatable = pluginInfo.isUpdatable();
                 PluginStore.emitChange();
             }
             
@@ -93,7 +101,15 @@
            });
          },
          _handleInstallClick: function(){
-             Bridge.installPlugin();
+             if(this.state.isInstalled){
+                Bridge.handleUnInstallClick();
+             }
+             else{
+                Bridge.installPlugin();
+             }
+         },
+         _handleUpdateClick: function(){
+             Bridge.handleUpdateClick();
          },
          render: function() {
          
@@ -118,10 +134,8 @@
            if(!this.state.isUpDateable){
             updateBtnClassArg += ' hide';
            }
-           console.log(this.state.description);
            var descriptionHtml = marked(this.state.description, {sanitize: true});
-           console.log(descriptionHtml);
-           return   <div className="container" style={containerStyle}>
+           return   <div className="container-fluid" style={containerStyle}>
                         <div className="row">
                             <div className="col-xs-6">
                                 {nameLine}
@@ -129,7 +143,7 @@
                             <div className="col-xs-6">
                                 <a className={installBtnClassArg} onClick={this._handleInstallClick}><i className=
                                 "fa fa-download" style={{marginRight:5}}></i>{installBtnText}</a>
-                             <a className={updateBtnClassArg} style={{marginRight:5}} onClick={this._handleInstallClick}><i className=
+                             <a className={updateBtnClassArg} style={{marginRight:5}} onClick={this._handleUpdateClick  }><i className=
                                 "fa fa-arrow-circle-up" style={{marginRight:5}}></i>Update</a>
                             </div>
                         </div>
@@ -150,7 +164,7 @@
                     </div>
 ;
          }
-       });
+       }); 
         
          ReactDOM.render(
            <PluginInfo />,

@@ -47,12 +47,8 @@ public class PluginListItemMetadata {
         return isUpdatable;
     }
 
-    public Boolean isChecked() {
+    public Boolean isInstalled() {
         return isInstalled;
-    }
-
-    public String toString() {
-        return "{" + "pluginName:\"" + pluginName + "\", repository:\"" + repository + "\", version:\"" + version + "\", description:\"" + description + "\", isUpdatable:" + isUpdatable + ", isInstalled:" + isInstalled + "}";
     }
 
 }

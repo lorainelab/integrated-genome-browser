@@ -12,8 +12,11 @@ import com.google.common.io.CharStreams;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
 import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import javafx.application.Platform;
@@ -43,6 +46,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.swing.SwingUtilities;
 import netscape.javascript.JSObject;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +81,7 @@ public class PluginManagerFxPanel extends JFXPanel {
     @FXML
     private void initialize() {
         listView.setCellFactory((ListView<PluginListItemMetadata> l) -> new BuildCell());
+        description.setContextMenuEnabled(false);
         webEngine = description.getEngine();
         JSObject jsobj = (JSObject) webEngine.executeScript("window");
         jsobj.setMember("Bridge", new Bridge());
@@ -96,7 +101,61 @@ public class PluginManagerFxPanel extends JFXPanel {
     public class Bridge {
 
         public void installPlugin() {
-            logger.info("it works! {}", selectedIndex);
+            logger.info("installPlugin clicked");
+        }
+
+        public void handleUnInstallClick() {
+            logger.info("handleUnInstall clicked");
+        }
+
+        public void handleUpdateClick() {
+            logger.info("handleUpdate clicked");
+        }
+
+        public void openWebpage(String uriString) {
+            Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+            if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+                if (StringUtils.isNotBlank(uriString)) {
+                    SwingUtilities.invokeLater(() -> {
+                        try {
+                            URI uri = new URI(uriString);
+                            desktop.browse(uri);
+                        } catch (IOException | URISyntaxException ex) {
+                            logger.error(ex.getMessage(), ex);
+                        }
+                    });
+                }
+            }
+        }
+
+    }
+
+    public class JSPluginWrapper {
+
+        final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
+
+        public String getPluginName() {
+            return plugin.getPluginName();
+        }
+
+        public String getRepository() {
+            return plugin.getRepository();
+        }
+
+        public String getVersion() {
+            return plugin.getVersion();
+        }
+
+        public String getDescription() {
+            return plugin.getDescription();
+        }
+
+        public Boolean isUpdatable() {
+            return plugin.isUpdatable();
+        }
+
+        public Boolean isInstalled() {
+            return plugin.isInstalled();
         }
     }
 
@@ -108,11 +167,14 @@ public class PluginManagerFxPanel extends JFXPanel {
             listView.setOnMouseClicked((MouseEvent event) -> {
                 final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
                 selectedIndex = listView.getSelectionModel().getSelectedIndex();
-                //TODO
-                webEngine.executeScript("updatePluginInfo(" + plugin.toString() + ")");
+                JSObject jsobj = (JSObject) webEngine.executeScript("window");
+                jsobj.setMember("pluginInfo", new JSPluginWrapper());
+                webEngine.executeScript("updatePluginInfo()");
+
             });
         });
     }
+
     private int selectedIndex;
 
     @Reference
@@ -197,7 +259,7 @@ public class PluginManagerFxPanel extends JFXPanel {
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
                 CheckBox cb = new CheckBox();
-                cb.setSelected(plugin.isChecked());
+                cb.setSelected(plugin.isInstalled());
                 cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     public void changed(ObservableValue ov,
                             Boolean old_val, Boolean new_val) {

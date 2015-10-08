@@ -37,7 +37,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -164,18 +163,16 @@ public class PluginManagerFxPanel extends JFXPanel {
             listData = list;
             ObservableList<PluginListItemMetadata> data = FXCollections.observableArrayList(list);
             listView.setItems(data);
-            listView.setOnMouseClicked((MouseEvent event) -> {
-                final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-                selectedIndex = listView.getSelectionModel().getSelectedIndex();
-                JSObject jsobj = (JSObject) webEngine.executeScript("window");
-                jsobj.setMember("pluginInfo", new JSPluginWrapper());
-                webEngine.executeScript("updatePluginInfo()");
-
-            });
+            listView.getSelectionModel().selectedItemProperty()
+                    .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
+                                    PluginListItemMetadata previousSelection,
+                                    PluginListItemMetadata selectedPlugin) -> {
+                        JSObject jsobj = (JSObject) webEngine.executeScript("window");
+                        jsobj.setMember("pluginInfo", new JSPluginWrapper());
+                        webEngine.executeScript("updatePluginInfo()");
+                    });
         });
     }
-
-    private int selectedIndex;
 
     @Reference
     public void setEventBus(PluginRepositoryEventPublisher eventManager) {

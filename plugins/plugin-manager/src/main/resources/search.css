@@ -1,0 +1,16 @@
+.searchTextField {	
+    /*-fx-background-radius: 12, 12, 12;*/    
+    /*-fx-background-insets: -1, -1, 0;*/
+    -fx-prompt-text-fill: derive(-fx-control-inner-background,-20%);
+    -fx-text-fill: -fx-text-inner-color;
+    -fx-cursor: text;
+    -fx-background-image: url('search.png') no-repeat;
+    -fx-background-size: 16px 16px;
+    -fx-background-repeat: no-repeat;
+    -fx-padding: 0 0 0 25;
+    -fx-background-position: 5px 5px;
+}
+.searchTextField:focused {
+    -fx-background-color: -fx-focus-color, -fx-control-inner-background;
+    -fx-background-insets: -1.4, 0;
+}

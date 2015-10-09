@@ -934,6 +934,11 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>com.lorainelab</groupId>
+                    <artifactId>bundle-markdown-encoder</artifactId>
+                    <version>0.0.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>

@@ -12,7 +12,7 @@
     <packaging>bundle</packaging>
 
     <name>WebLinks</name>
-
+    
     <dependencies>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
@@ -124,9 +124,24 @@
                         <Import-Package>*</Import-Package>
                         <Export-Package/>
                         <Service-Component>*</Service-Component>
+                        <Bundle-Description>${bundleDescription}</Bundle-Description>
                     </instructions>
                 </configuration>
-            </plugin>         
+            </plugin>  
+            <plugin>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>bundle-markdown-encoder</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>encodeMarkdown</goal>
+                        </goals>
+                    </execution> 
+                </executions>
+                <configuration>
+                    <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                </configuration>
+            </plugin>       
         </plugins>
     </build>
 </project>

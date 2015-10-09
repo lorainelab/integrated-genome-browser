@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.scene.web.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
@@ -18,7 +19,7 @@
                   <Insets bottom="10.0" left="10.0" right="5.0" top="10.0" />
                </HBox.margin>
             </TextField>
-            <ComboBox fx:id="filterOptions" prefWidth="150.0" promptText="All Plugins">
+            <ComboBox fx:id="filterOptions" prefWidth="150.0" promptText="All Apps">
                <HBox.margin>
                   <Insets bottom="10.0" left="10.0" top="10.0" />
                </HBox.margin>
@@ -36,16 +37,16 @@
             </Button>
          </children>
       </HBox>
-      <SplitPane dividerPositions="0.29797979797979796" prefHeight="305.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+      <SplitPane dividerPositions="0.29797979797979796" prefHeight="305.0" prefWidth="640.0" stylesheets="@PluginConfigurationPanel-splitpane.css" VBox.vgrow="ALWAYS">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <ListView fx:id="listView" fixedCellSize="43.0" layoutY="1.0" prefHeight="303.0" prefWidth="186.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ListView fx:id="listView" fixedCellSize="43.0" layoutY="1.0" prefHeight="303.0" prefWidth="186.0" stylesheets="@PluginConfigurationPanel-scroll.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="338.0" prefWidth="467.0">
                <children>
-                  <WebView fx:id="description" layoutX="175.0" layoutY="97.0" prefHeight="493.0" prefWidth="616.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <WebView fx:id="description" layoutX="175.0" layoutY="97.0" prefHeight="493.0" prefWidth="616.0" stylesheets="@PluginConfigurationPanel-scroll.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
         </items>

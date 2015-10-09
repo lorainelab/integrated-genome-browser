@@ -1,0 +1,5 @@
+/* The increment and decrement button CSS class of scrollbar */
+.increment-button , .decrement-button {
+    -fx-padding: 2px;
+
+}

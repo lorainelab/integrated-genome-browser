@@ -7,6 +7,7 @@ package com.lorainelab.igb.plugins;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.io.CharStreams;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
@@ -26,6 +27,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,7 +36,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -86,14 +87,52 @@ public class PluginManagerFxPanel extends JFXPanel {
     private WebEngine webEngine;
     private String htmlTemplate;
     private List<PluginListItemMetadata> listData;
+    FilteredList<PluginListItemMetadata> filteredData;
     private EventBus eventBus;
     private List<Color> materialDesignColors;
     private Map<String, Color> repoToColor;
     private int colorIndex = 0;
 
+    private enum FilterOptions {
+
+        ALL_APPS("All Apps"), INSTALLED("Installed"), UNINSTALLED("Uninstalled");
+
+        private final String label;
+
+        private FilterOptions(String label) {
+            this.label = label;
+        }
+
+        @Override
+        public String toString() {
+            return this.label;
+        }
+
+    }
+
     @FXML
     private void initialize() {
 
+        filterOptions.getItems().addAll(FilterOptions.ALL_APPS, FilterOptions.INSTALLED, FilterOptions.UNINSTALLED);
+        filterOptions.valueProperty().addListener(new ChangeListener<FilterOptions>() {
+            @Override
+            public void changed(ObservableValue ov, FilterOptions t, FilterOptions newValue) {
+                Platform.runLater(() -> {
+                    switch (newValue) {
+                        case ALL_APPS:
+                            filteredData.setPredicate(s -> true);
+                            break;
+                        case INSTALLED:
+                            filteredData.setPredicate(s -> s.isInstalled());
+                            break;
+                        case UNINSTALLED:
+                            filteredData.setPredicate(s -> !s.isInstalled());
+                            break;
+                        default:
+                    }
+                });
+            }
+        });
         listView.setCellFactory((ListView<PluginListItemMetadata> l) -> new BuildCell());
         description.setContextMenuEnabled(false);
         webEngine = description.getEngine();
@@ -107,7 +146,7 @@ public class PluginManagerFxPanel extends JFXPanel {
         return materialDesignColors;
     }
 
-    public void setMaterialDesignColors(List<Color> materialDesignColors) {
+    private void setMaterialDesignColors(List<Color> materialDesignColors) {
         this.materialDesignColors = materialDesignColors;
     }
 
@@ -184,15 +223,20 @@ public class PluginManagerFxPanel extends JFXPanel {
     public void updateListContent(List<PluginListItemMetadata> list) {
         Platform.runLater(() -> {
             listData = list;
+
             ObservableList<PluginListItemMetadata> data = FXCollections.observableArrayList(list);
-            listView.setItems(data);
+            filteredData = new FilteredList<PluginListItemMetadata>(data, s -> true);
+
+            listView.setItems(filteredData);
             listView.getSelectionModel().selectedItemProperty()
                     .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
                                     PluginListItemMetadata previousSelection,
                                     PluginListItemMetadata selectedPlugin) -> {
-                        JSObject jsobj = (JSObject) webEngine.executeScript("window");
-                        jsobj.setMember("pluginInfo", new JSPluginWrapper());
-                        webEngine.executeScript("updatePluginInfo()");
+                if (selectedPlugin != null) {
+                    JSObject jsobj = (JSObject) webEngine.executeScript("window");
+                    jsobj.setMember("pluginInfo", new JSPluginWrapper());
+                    webEngine.executeScript("updatePluginInfo()");
+                }
                     });
         });
     }
@@ -223,6 +267,7 @@ public class PluginManagerFxPanel extends JFXPanel {
     }
 
     private void init() {
+        setMaterialDesignColors(getColors());
         repoToColor = new HashMap<>();
         final URL resource = PluginManagerFxPanel.class.getClassLoader().getResource("PluginConfigurationPanel.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
@@ -264,17 +309,22 @@ public class PluginManagerFxPanel extends JFXPanel {
             if (!empty) {
                 Image updateImage;
                 ImageView updateImageView = new ImageView();
+                updateImageView.setFitWidth(16);
+                updateImageView.setPreserveRatio(true);
+                updateImageView.setSmooth(true);
+                updateImageView.setCache(true);
 
                 if (plugin.isUpdatable()) {
                     updateImage = new Image("fa-arrow-circle-up.png");
-
-                    updateImageView.setFitWidth(16);
-                    updateImageView.setPreserveRatio(true);
-                    updateImageView.setSmooth(true);
-                    updateImageView.setCache(true);
                     updateImageView.setImage(updateImage);
                     Tooltip updateTooltip = new Tooltip("Update available");
                     Tooltip.install(updateImageView, updateTooltip);
+                } else if (plugin.isInstalled()) {
+                    updateImage = new Image("installed.png");
+                    updateImageView.setImage(updateImage);
+                } else {
+                    updateImage = new Image("uninstalled.png");
+                    updateImageView.setImage(updateImage);
                 }
                 Pane pane = new Pane();
                 pane.setPrefHeight(35);
@@ -310,22 +360,41 @@ public class PluginManagerFxPanel extends JFXPanel {
                 HBox spacer = new HBox();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                CheckBox cb = new CheckBox();
-                cb.setSelected(plugin.isInstalled());
-                cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    public void changed(ObservableValue ov,
-                            Boolean old_val, Boolean new_val) {
-                        //TODO
-                    }
-                });
                 if (updateImageView.getImage() != null) {
-                    row.getChildren().addAll(pane, text, spacer, updateImageView, cb);
+                    row.getChildren().addAll(pane, text, spacer, updateImageView);
                 } else {
-                    row.getChildren().addAll(pane, text, spacer, cb);
+                    row.getChildren().addAll(pane, text, spacer);
                 }
                 setGraphic(row);
+            } else {
+                setText(null);
+                setGraphic(null);
             }
         }
+    }
+
+    private List<Color> getColors() {
+        return ImmutableList.of(
+                Color.rgb(156, 39, 176),
+                Color.rgb(233, 30, 99),
+                Color.rgb(244, 67, 54),
+                Color.rgb(33, 150, 243),
+                Color.rgb(63, 81, 181),
+                Color.rgb(96, 125, 139),
+                Color.rgb(255, 87, 34),
+                Color.rgb(121, 85, 72),
+                Color.rgb(158, 158, 158),
+                Color.rgb(255, 235, 59),
+                Color.rgb(255, 193, 7),
+                Color.rgb(255, 152, 0),
+                Color.rgb(76, 175, 80),
+                Color.rgb(139, 195, 74),
+                Color.rgb(205, 220, 57),
+                Color.rgb(3, 169, 244),
+                Color.rgb(0, 188, 212),
+                Color.rgb(0, 150, 136),
+                Color.rgb(103, 58, 183)
+        );
     }
 
 }

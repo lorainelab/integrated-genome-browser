@@ -115,7 +115,7 @@
            if(!this.state.pluginName){
                return <div></div>;
            }
-           var nameLine = 'Plugin Name: ' + this.state.pluginName;
+           var nameLine = this.state.pluginName;
            var versionLine = 'Verson: ' + this.state.version;
            var repositoryLine = 'Repository: ' + this.state.repository;
            
@@ -140,7 +140,7 @@
            return   <div className="container-fluid" style={containerStyle}>
                         <div className="row">
                             <div className="col-xs-6">
-                                {nameLine}
+                                <h1>{nameLine}</h1>
                             </div>
                             <div className="col-xs-6">
                                 <a className={installBtnClassArg} onClick={this._handleInstallClick}><i className=

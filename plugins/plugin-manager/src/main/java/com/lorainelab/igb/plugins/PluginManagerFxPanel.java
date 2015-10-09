@@ -18,7 +18,9 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -37,6 +39,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -85,10 +88,12 @@ public class PluginManagerFxPanel extends JFXPanel {
     private List<PluginListItemMetadata> listData;
     private EventBus eventBus;
     private List<Color> materialDesignColors;
+    private Map<String, Color> repoToColor;
     private int colorIndex = 0;
 
     @FXML
     private void initialize() {
+
         listView.setCellFactory((ListView<PluginListItemMetadata> l) -> new BuildCell());
         description.setContextMenuEnabled(false);
         webEngine = description.getEngine();
@@ -218,6 +223,7 @@ public class PluginManagerFxPanel extends JFXPanel {
     }
 
     private void init() {
+        repoToColor = new HashMap<>();
         final URL resource = PluginManagerFxPanel.class.getClassLoader().getResource("PluginConfigurationPanel.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setController(this);
@@ -258,26 +264,39 @@ public class PluginManagerFxPanel extends JFXPanel {
             if (!empty) {
                 Image updateImage;
                 ImageView updateImageView = new ImageView();
+
                 if (plugin.isUpdatable()) {
                     updateImage = new Image("fa-arrow-circle-up.png");
-                    
+
                     updateImageView.setFitWidth(16);
                     updateImageView.setPreserveRatio(true);
                     updateImageView.setSmooth(true);
                     updateImageView.setCache(true);
                     updateImageView.setImage(updateImage);
+                    Tooltip updateTooltip = new Tooltip("Update available");
+                    Tooltip.install(updateImageView, updateTooltip);
                 }
                 Pane pane = new Pane();
                 pane.setPrefHeight(35);
                 pane.setPrefWidth(35);
-                if ((colorIndex + 1) > materialDesignColors.size()) {
-                    colorIndex = 0;
+                Color paneColor;
+                if (repoToColor.containsKey(plugin.getRepository())) {
+                    paneColor = repoToColor.get(plugin.getRepository());
+                } else {
+                    if ((colorIndex + 1) > materialDesignColors.size()) {
+                        colorIndex = 0;
+                    }
+                    paneColor = materialDesignColors.get(colorIndex);
+                    colorIndex++;
+                    repoToColor.put(plugin.getRepository(), paneColor);
                 }
-                Color paneColor = materialDesignColors.get(colorIndex);
-                colorIndex++;
+
+                Tooltip avatarTooltip = new Tooltip("Located in the " + plugin.getRepository() + " repository");
+                Tooltip.install(pane, avatarTooltip);
                 pane.setBackground(new Background(new BackgroundFill(paneColor, CornerRadii.EMPTY, Insets.EMPTY)));
                 Text avatar = new Text();
-                avatar.setText(plugin.getPluginName().substring(0, 1).toUpperCase());
+
+                avatar.setText(plugin.getRepository().substring(0, 1).toUpperCase());
                 avatar.setFill(Color.rgb(255, 255, 255));
                 pane.getChildren().add(avatar);
                 avatar.setX(8);

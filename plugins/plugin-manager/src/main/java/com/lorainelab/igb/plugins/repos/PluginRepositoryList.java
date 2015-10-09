@@ -9,7 +9,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import com.lorainelab.igb.plugins.PluginsView;
+import com.lorainelab.igb.plugins.AppController;
 import com.lorainelab.igb.plugins.repos.view.BundleRepositoryTableModel;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
@@ -34,7 +34,7 @@ public class PluginRepositoryList {
     private static final Logger logger = LoggerFactory.getLogger(PluginRepositoryList.class);
     private IgbPreferencesService igbPreferencesService;
     private final Set<PluginRepository> pluginRepositories;
-    private PluginsView pluginsView;
+    private AppController pluginsView;
     private BundleRepositoryTableModel bundleRepositoryTableModel;
 
     public PluginRepositoryList() {
@@ -91,7 +91,7 @@ public class PluginRepositoryList {
     }
 
     @Reference(optional = false)
-    public void setPluginsView(PluginsView pluginsView) {
+    public void setPluginsView(AppController pluginsView) {
         this.pluginsView = pluginsView;
     }
 

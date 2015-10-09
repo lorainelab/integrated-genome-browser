@@ -5,17 +5,17 @@
  */
 package com.lorainelab.igb.plugins;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
-import com.google.common.io.CharStreams;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
 import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
 import java.awt.Desktop;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -61,11 +61,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author dcnorris
- */
-@Component(immediate = true)
+@Component(immediate = true, provide = PluginManagerFxPanel.class)
 public class PluginManagerFxPanel extends JFXPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(PluginManagerFxPanel.class);
@@ -107,7 +103,17 @@ public class PluginManagerFxPanel extends JFXPanel {
         public String toString() {
             return this.label;
         }
+    }
 
+    public PluginManagerFxPanel() {
+        Platform.runLater(() -> {
+            init();
+        });
+    }
+
+    @Activate
+    private void activate() {
+        updateListContent(Lists.newArrayList());
     }
 
     @FXML
@@ -137,7 +143,7 @@ public class PluginManagerFxPanel extends JFXPanel {
         description.setContextMenuEnabled(false);
         webEngine = description.getEngine();
         JSObject jsobj = (JSObject) webEngine.executeScript("window");
-        jsobj.setMember("Bridge", new Bridge());
+        jsobj.setMember("Bridge", new JSBridge());
         jsobj.setMember("logger", new JSLogger());
         webEngine.load(PluginManagerFxPanel.class.getClassLoader().getResource("pluginInfoTemplate.html").toExternalForm());
     }
@@ -150,76 +156,6 @@ public class PluginManagerFxPanel extends JFXPanel {
         this.materialDesignColors = materialDesignColors;
     }
 
-    public class JSLogger {
-
-        public void log(String message) {
-            Platform.runLater(() -> {
-                logger.info(message);
-            });
-        }
-    }
-
-    public class Bridge {
-
-        public void installPlugin() {
-            logger.info("installPlugin clicked");
-        }
-
-        public void handleUnInstallClick() {
-            logger.info("handleUnInstall clicked");
-        }
-
-        public void handleUpdateClick() {
-            logger.info("handleUpdate clicked");
-        }
-
-        public void openWebpage(String uriString) {
-            Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-            if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-                if (StringUtils.isNotBlank(uriString)) {
-                    SwingUtilities.invokeLater(() -> {
-                        try {
-                            URI uri = new URI(uriString);
-                            desktop.browse(uri);
-                        } catch (IOException | URISyntaxException ex) {
-                            logger.error(ex.getMessage(), ex);
-                        }
-                    });
-                }
-            }
-        }
-
-    }
-
-    public class JSPluginWrapper {
-
-        final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-
-        public String getPluginName() {
-            return plugin.getPluginName();
-        }
-
-        public String getRepository() {
-            return plugin.getRepository();
-        }
-
-        public String getVersion() {
-            return plugin.getVersion();
-        }
-
-        public String getDescription() {
-            return plugin.getDescription();
-        }
-
-        public Boolean isUpdatable() {
-            return plugin.isUpdatable();
-        }
-
-        public Boolean isInstalled() {
-            return plugin.isInstalled();
-        }
-    }
-
     public void updateListContent(List<PluginListItemMetadata> list) {
         Platform.runLater(() -> {
             listData = list;
@@ -230,13 +166,13 @@ public class PluginManagerFxPanel extends JFXPanel {
             listView.setItems(filteredData);
             listView.getSelectionModel().selectedItemProperty()
                     .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
-                                    PluginListItemMetadata previousSelection,
-                                    PluginListItemMetadata selectedPlugin) -> {
-                if (selectedPlugin != null) {
-                    JSObject jsobj = (JSObject) webEngine.executeScript("window");
-                    jsobj.setMember("pluginInfo", new JSPluginWrapper());
-                    webEngine.executeScript("updatePluginInfo()");
-                }
+                            PluginListItemMetadata previousSelection,
+                            PluginListItemMetadata selectedPlugin) -> {
+                        if (selectedPlugin != null) {
+                            JSObject jsobj = (JSObject) webEngine.executeScript("window");
+                            jsobj.setMember("pluginInfo", new JSPluginWrapper());
+                            webEngine.executeScript("updatePluginInfo()");
+                        }
                     });
         });
     }
@@ -257,12 +193,6 @@ public class PluginManagerFxPanel extends JFXPanel {
     private void updateWebContent() {
         Platform.runLater(() -> {
 
-        });
-    }
-
-    public PluginManagerFxPanel() {
-        Platform.runLater(() -> {
-            init();
         });
     }
 
@@ -289,16 +219,6 @@ public class PluginManagerFxPanel extends JFXPanel {
     @FXML
     protected void updateAllBtnAction(ActionEvent event) {
         logger.info("updateAllBtnClicked");
-    }
-
-    private static String getClassPathResourceAsString(String resourcePath) {
-        try {
-            String htmlString = CharStreams.toString(new InputStreamReader(PluginManagerFxPanel.class.getClassLoader().getResourceAsStream(resourcePath)));
-            return htmlString;
-        } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-        return "";
     }
 
     private class BuildCell extends ListCell<PluginListItemMetadata> {
@@ -397,4 +317,73 @@ public class PluginManagerFxPanel extends JFXPanel {
         );
     }
 
+    public class JSLogger {
+
+        public void log(String message) {
+            Platform.runLater(() -> {
+                logger.info(message);
+            });
+        }
+    }
+
+    public class JSBridge {
+
+        public void installPlugin() {
+            logger.info("installPlugin clicked");
+        }
+
+        public void handleUnInstallClick() {
+            logger.info("handleUnInstall clicked");
+        }
+
+        public void handleUpdateClick() {
+            logger.info("handleUpdate clicked");
+        }
+
+        public void openWebpage(String uriString) {
+            Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+            if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+                if (StringUtils.isNotBlank(uriString)) {
+                    SwingUtilities.invokeLater(() -> {
+                        try {
+                            URI uri = new URI(uriString);
+                            desktop.browse(uri);
+                        } catch (IOException | URISyntaxException ex) {
+                            logger.error(ex.getMessage(), ex);
+                        }
+                    });
+                }
+            }
+        }
+
+    }
+
+    public class JSPluginWrapper {
+
+        final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
+
+        public String getPluginName() {
+            return plugin.getPluginName();
+        }
+
+        public String getRepository() {
+            return plugin.getRepository();
+        }
+
+        public String getVersion() {
+            return plugin.getVersion();
+        }
+
+        public String getDescription() {
+            return plugin.getDescription();
+        }
+
+        public Boolean isUpdatable() {
+            return plugin.isUpdatable();
+        }
+
+        public Boolean isInstalled() {
+            return plugin.isInstalled();
+        }
+    }
 }

@@ -248,9 +248,13 @@ public class PluginManagerFxPanel extends JFXPanel {
                 } else if (plugin.isInstalled()) {
                     updateImage = new Image("installed.png");
                     updateImageView.setImage(updateImage);
+                    Tooltip updateTooltip = new Tooltip("Installed");
+                    Tooltip.install(updateImageView, updateTooltip);
                 } else {
                     updateImage = new Image("uninstalled.png");
                     updateImageView.setImage(updateImage);
+                    Tooltip updateTooltip = new Tooltip("Uninstalled");
+                    Tooltip.install(updateImageView, updateTooltip);
                 }
                 Pane pane = new Pane();
                 pane.setPrefHeight(35);

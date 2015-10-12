@@ -455,7 +455,8 @@ public class ProtAnnotService {
         emailPanel.add(email, "width :300:");
         configParentPanel.add(emailPanel, "wrap");
         errorLabel = new JLabel("");
-        configParentPanel.add(errorLabel, "wrap");
+        configParentPanel.add(errorLabel, "align center, wrap");
+        configParentPanel.add(new JLabel(""), "wrap");
         errorLabel.setForeground(Color.red);
         configParentPanel.add(new JLabel("The InterProScan Web service requires an email address."), "wrap");
         initSelectAll();
@@ -518,7 +519,7 @@ public class ProtAnnotService {
         matcher = pattern.matcher(email.getText());
         boolean validEmail = matcher.matches();
         if (!validEmail) {
-            setErrorMessage("Invalid email Address.");
+            setErrorMessage(BUNDLE.getString("invalidEmail") + "\n");
         }
         return matcher.matches();
     }

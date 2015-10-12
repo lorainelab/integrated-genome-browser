@@ -9,7 +9,6 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
@@ -85,7 +84,27 @@ public class PluginManagerFxPanel extends JFXPanel {
     private List<PluginListItemMetadata> listData;
     FilteredList<PluginListItemMetadata> filteredData;
     private EventBus eventBus;
-    private List<Color> materialDesignColors;
+    private static final List<Color> materialDesignColors = ImmutableList.of(
+            Color.rgb(156, 39, 176),
+            Color.rgb(233, 30, 99),
+            Color.rgb(244, 67, 54),
+            Color.rgb(33, 150, 243),
+            Color.rgb(63, 81, 181),
+            Color.rgb(96, 125, 139),
+            Color.rgb(255, 87, 34),
+            Color.rgb(121, 85, 72),
+            Color.rgb(158, 158, 158),
+            Color.rgb(255, 235, 59),
+            Color.rgb(255, 193, 7),
+            Color.rgb(255, 152, 0),
+            Color.rgb(76, 175, 80),
+            Color.rgb(139, 195, 74),
+            Color.rgb(205, 220, 57),
+            Color.rgb(3, 169, 244),
+            Color.rgb(0, 188, 212),
+            Color.rgb(0, 150, 136),
+            Color.rgb(103, 58, 183)
+    );
     private Map<String, Color> repoToColor;
     private int colorIndex = 0;
 
@@ -113,12 +132,10 @@ public class PluginManagerFxPanel extends JFXPanel {
 
     @Activate
     private void activate() {
-        updateListContent(Lists.newArrayList());
     }
 
     @FXML
     private void initialize() {
-
         filterOptions.getItems().addAll(FilterOptions.ALL_APPS, FilterOptions.INSTALLED, FilterOptions.UNINSTALLED);
         filterOptions.valueProperty().addListener(new ChangeListener<FilterOptions>() {
             @Override
@@ -148,21 +165,11 @@ public class PluginManagerFxPanel extends JFXPanel {
         webEngine.load(PluginManagerFxPanel.class.getClassLoader().getResource("pluginInfoTemplate.html").toExternalForm());
     }
 
-    public List<Color> getMaterialDesignColors() {
-        return materialDesignColors;
-    }
-
-    private void setMaterialDesignColors(List<Color> materialDesignColors) {
-        this.materialDesignColors = materialDesignColors;
-    }
-
     public void updateListContent(List<PluginListItemMetadata> list) {
         Platform.runLater(() -> {
             listData = list;
-
             ObservableList<PluginListItemMetadata> data = FXCollections.observableArrayList(list);
-            filteredData = new FilteredList<PluginListItemMetadata>(data, s -> true);
-
+            filteredData = new FilteredList<>(data, s -> true);
             listView.setItems(filteredData);
             listView.getSelectionModel().selectedItemProperty()
                     .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
@@ -197,7 +204,6 @@ public class PluginManagerFxPanel extends JFXPanel {
     }
 
     private void init() {
-        setMaterialDesignColors(getColors());
         repoToColor = new HashMap<>();
         final URL resource = PluginManagerFxPanel.class.getClassLoader().getResource("PluginConfigurationPanel.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
@@ -291,30 +297,6 @@ public class PluginManagerFxPanel extends JFXPanel {
                 setGraphic(null);
             }
         }
-    }
-
-    private List<Color> getColors() {
-        return ImmutableList.of(
-                Color.rgb(156, 39, 176),
-                Color.rgb(233, 30, 99),
-                Color.rgb(244, 67, 54),
-                Color.rgb(33, 150, 243),
-                Color.rgb(63, 81, 181),
-                Color.rgb(96, 125, 139),
-                Color.rgb(255, 87, 34),
-                Color.rgb(121, 85, 72),
-                Color.rgb(158, 158, 158),
-                Color.rgb(255, 235, 59),
-                Color.rgb(255, 193, 7),
-                Color.rgb(255, 152, 0),
-                Color.rgb(76, 175, 80),
-                Color.rgb(139, 195, 74),
-                Color.rgb(205, 220, 57),
-                Color.rgb(3, 169, 244),
-                Color.rgb(0, 188, 212),
-                Color.rgb(0, 150, 136),
-                Color.rgb(103, 58, 183)
-        );
     }
 
     public class JSLogger {

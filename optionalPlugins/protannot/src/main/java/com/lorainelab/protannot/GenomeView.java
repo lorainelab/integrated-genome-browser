@@ -33,6 +33,7 @@ import com.affymetrix.genoviz.widget.VisibleRange;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
 import com.affymetrix.igb.swing.JRPTabbedPane;
+import com.affymetrix.igb.swing.JRPToggleButton;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -52,8 +53,10 @@ import com.lorainelab.protannot.view.TabPanelComponent;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentEvent;
@@ -70,6 +73,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -91,7 +95,7 @@ import org.slf4j.LoggerFactory;
 public class GenomeView extends JPanel implements MouseListener, ComponentListener, MouseMotionListener {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenomeView.class);
-
+    private MapMode mapMode;
     JPopupMenu popup;
 
     private static final boolean DEBUG_GENOMIC_ANNOTS = false;
@@ -115,6 +119,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private Shadow hairline, axishairline;
     private JSplitPane split_pane;
     private AxisGlyphWithSelection axisGlyph;
+    private JRPToggleButton selectModeButton;
+    private JRPToggleButton scrollModeButton;
 
     private final Color col_sequence = Color.black;
     private final Color col_axis_bg = Color.lightGray;
@@ -148,6 +154,33 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private ProtAnnotEventService eventService;
 
     private ProtAnnotPreferencesService protAnnotPreferencesService;
+
+    static final Cursor defaultCursor, openHandCursor, closedHandCursor;
+    public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("protannot");
+
+    static {
+        defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+        openHandCursor = new Cursor(Cursor.HAND_CURSOR);
+        closedHandCursor = new Cursor(Cursor.HAND_CURSOR);
+    }
+
+    public static enum MapMode {
+
+        MapSelectMode(true, false, defaultCursor, defaultCursor),
+        MapScrollMode(false, true, openHandCursor, closedHandCursor),
+        MapZoomMode(false, false, defaultCursor, defaultCursor);
+        public boolean rubber_band;
+        public boolean drag_scroll;
+        public Cursor defCursor;
+        public Cursor pressedCursor;
+
+        private MapMode(boolean rubber_band, boolean drag_scroll, Cursor defaultCursor, Cursor pressedCursor) {
+            this.rubber_band = rubber_band;
+            this.drag_scroll = drag_scroll;
+            this.defCursor = defaultCursor;
+            this.pressedCursor = pressedCursor;
+        }
+    }
 
     @Reference
     public void setProtAnnotPreferencesService(ProtAnnotPreferencesService protAnnotPreferencesService) {
@@ -296,6 +329,17 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         });
 
+        selectModeButton = new JRPToggleButton("Protannot select mode button", new ProtannotViewSelectAction(this));
+        selectModeButton.setText("");
+        selectModeButton.setToolTipText(BUNDLE.getString("selectModeToolTip"));
+        selectModeButton.setMargin(new Insets(2, 4, 2, 4));
+
+        scrollModeButton = new JRPToggleButton("Protannot scroll mode button", new ProtannotViewScrollAction(this));
+        scrollModeButton.setText("");
+        scrollModeButton.setToolTipText(BUNDLE.getString("scrollModeToolTip"));
+        scrollModeButton.setMargin(new Insets(2, 4, 2, 4));
+
+        selectModeButton.doClick();
         this.setLayout(new BorderLayout());
 
         JPanel p = initPanel();
@@ -305,6 +349,24 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
 
         EventBus eventBus = eventService.getEventBus();
         eventBus.register(this);
+
+    }
+
+    public void setMapMode(MapMode mapMode) {
+        this.mapMode = mapMode;
+
+        if (mapMode.equals(MapMode.MapScrollMode)) {
+            scrollModeButton.setSelected(true);
+            selectModeButton.setSelected(false);
+        } else {
+            scrollModeButton.setSelected(false);
+            selectModeButton.setSelected(true);
+        }
+
+        seqmap.setRubberBandBehavior(mapMode.rubber_band);
+        seqmap.enableCanvasDragging(mapMode.drag_scroll);
+        seqmap.enableDragScrolling(!mapMode.drag_scroll);
+        seqmap.setCursor(mapMode.defCursor);
     }
 
     @Subscribe
@@ -378,6 +440,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         JPanel xZoomPanel = new JPanel(new MigLayout("fillx, ins 2"));
         JButton xZoomOutBtn = new JButton(new ZoomOutEvent(xzoomer));
         JButton xZoomInBtn = new JButton(new ZoomInEvent(xzoomer));
+        xZoomPanel.add(selectModeButton, "width 28!, height 28!");
+        xZoomPanel.add(scrollModeButton, "width 28!, height 28!");
         xZoomPanel.add(xZoomOutBtn, "width 20!, height 20!");
         xZoomPanel.add(xzoomer, "width 96%, height 20!");
         xZoomPanel.add(xZoomInBtn, "width 20!, height 20!");

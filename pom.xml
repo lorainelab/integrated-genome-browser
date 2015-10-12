@@ -28,14 +28,13 @@
         <commonsIoVersion>2.4</commonsIoVersion>
         <commons-fileupload-version>1.3.1</commons-fileupload-version>
         <genovizVersion>1.1.5</genovizVersion>
-        <felixMainVersion>4.6.0</felixMainVersion>
+        <felixMainVersion>5.2.0</felixMainVersion>
         <felix-scr-version>1.8.2</felix-scr-version>
         <felix-http-version>2.3.2</felix-http-version>
         <felix-configadmin-version>1.8.0</felix-configadmin-version>
         <felix-metatype-version>1.0.10</felix-metatype-version>
         <felix-webconsole-version>4.2.4</felix-webconsole-version>
-        <felix-dependencymanager-version>3.2.0</felix-dependencymanager-version>
-        <felix-bundlerepository-version>2.0.2</felix-bundlerepository-version>
+        <felix-bundlerepository-version>2.0.6</felix-bundlerepository-version>
         <org.osgi.compendium-version>4.3.1</org.osgi.compendium-version>
         <bindlib-version>2.4.0</bindlib-version>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
@@ -50,7 +49,7 @@
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
         <slf4j-version>1.7.7</slf4j-version>
-        <felix-file-install-version>3.4.2</felix-file-install-version>
+        <felix-file-install-version>3.5.0</felix-file-install-version>
         <miglayout-version>4.2</miglayout-version>
         <!-- End of external bundle version declarations -->
         
@@ -656,7 +655,7 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.main</artifactId>
-                <version>4.6.0</version>
+                <version>5.2.0</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
@@ -887,7 +886,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>2.5.4</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>

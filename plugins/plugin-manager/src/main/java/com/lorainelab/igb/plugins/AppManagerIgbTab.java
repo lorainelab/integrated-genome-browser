@@ -17,16 +17,15 @@ import org.slf4j.LoggerFactory;
 /**
  * Tab Panel for managing plugins / bundles.
  */
-@Component(name = PluginsView.COMPONENT_NAME, provide = {IgbTabPanelI.class}, immediate = true)
-public class PluginsView extends IgbTabPanel {
+@Component(provide = {IgbTabPanelI.class}, immediate = true)
+public class AppManagerIgbTab extends IgbTabPanel {
 
-    public static final String COMPONENT_NAME = "PluginsView";
-    private static final Logger logger = LoggerFactory.getLogger(PluginsView.class);
+    private static final Logger logger = LoggerFactory.getLogger(AppManagerIgbTab.class);
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
     private static final int TAB_POSITION = 7;
     private AppManagerFrame frame;
 
-    public PluginsView() {
+    public AppManagerIgbTab() {
         super(BUNDLE.getString("viewTab"), BUNDLE.getString("viewTab"), BUNDLE.getString("pluginsTooltip"), false, TAB_POSITION);
         setLayout(new MigLayout("fill"));
         message = new JButton("Launch App Manager");

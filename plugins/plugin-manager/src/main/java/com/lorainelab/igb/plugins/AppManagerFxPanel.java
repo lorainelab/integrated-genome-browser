@@ -25,7 +25,6 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
@@ -57,15 +56,15 @@ import javafx.scene.web.WebView;
 import javax.swing.SwingUtilities;
 import netscape.javascript.JSObject;
 import org.apache.commons.lang3.StringUtils;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(immediate = true, provide = PluginManagerFxPanel.class)
-public class PluginManagerFxPanel extends JFXPanel {
+@Component(immediate = true, provide = AppManagerFxPanel.class)
+public class AppManagerFxPanel extends JFXPanel {
 
-    private static final Logger logger = LoggerFactory.getLogger(PluginManagerFxPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(AppManagerFxPanel.class);
+    private final String PLUGIN_INFO_TEMPLATE = "pluginInfoTemplate.html";
 
     @FXML
     private WebView description;
@@ -83,8 +82,7 @@ public class PluginManagerFxPanel extends JFXPanel {
     private VBox pane;
     private WebEngine webEngine;
     private String htmlTemplate;
-    private List<PluginListItemMetadata> listData;
-    FilteredList<PluginListItemMetadata> filteredData;
+    private FilteredList<PluginListItemMetadata> filteredData;
     private EventBus eventBus;
     private static final List<Color> materialDesignColors = ImmutableList.of(
             Color.rgb(156, 39, 176),
@@ -109,6 +107,8 @@ public class PluginManagerFxPanel extends JFXPanel {
     );
     private Map<String, Color> repoToColor;
     private int colorIndex = 0;
+    private BundleContext bundleContext;
+    private AppController appController;
 
     private enum FilterOptions {
 
@@ -126,14 +126,22 @@ public class PluginManagerFxPanel extends JFXPanel {
         }
     }
 
-    public PluginManagerFxPanel() {
+    public AppManagerFxPanel() {
+        filteredData = new FilteredList<>(FXCollections.emptyObservableList());
         Platform.runLater(() -> {
             init();
         });
     }
 
     @Activate
-    private void activate() {
+    private void activate(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+        filteredData = appController.getListData();
+    }
+
+    @Reference
+    public void setController(AppController appController) {
+        this.appController = appController;
     }
 
     @FXML
@@ -158,39 +166,29 @@ public class PluginManagerFxPanel extends JFXPanel {
                 });
             }
         });
+        listView.setItems(filteredData);
+        listView.getSelectionModel().selectedItemProperty()
+                .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
+                                PluginListItemMetadata previousSelection,
+                                PluginListItemMetadata selectedPlugin) -> {
+                    if (selectedPlugin != null) {
+                        updateWebContent();
+                    }
+                });
         listView.setCellFactory((ListView<PluginListItemMetadata> l) -> new BuildCell());
         description.setContextMenuEnabled(false);
         webEngine = description.getEngine();
         JSObject jsobj = (JSObject) webEngine.executeScript("window");
         jsobj.setMember("Bridge", new JSBridge());
         jsobj.setMember("logger", new JSLogger());
-        String url;
-        Bundle bundle = FrameworkUtil.getBundle(PluginManagerFxPanel.class);
-        if (bundle == null) {
-            url = PluginManagerFxPanel.class.getClassLoader().getResource("pluginInfoTemplate.html").toExternalForm();
-        } else {
-            url = bundle.getEntry("pluginInfoTemplate.html").toExternalForm();
-        }
-        webEngine.load(url);
-    }
 
-    public void updateListContent(List<PluginListItemMetadata> list) {
-        Platform.runLater(() -> {
-            listData = list;
-            ObservableList<PluginListItemMetadata> data = FXCollections.observableArrayList(list);
-            filteredData = new FilteredList<>(data, s -> true);
-            listView.setItems(filteredData);
-            listView.getSelectionModel().selectedItemProperty()
-                    .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
-                            PluginListItemMetadata previousSelection,
-                            PluginListItemMetadata selectedPlugin) -> {
-                        if (selectedPlugin != null) {
-                            JSObject jsobj = (JSObject) webEngine.executeScript("window");
-                            jsobj.setMember("pluginInfo", new JSPluginWrapper());
-                            webEngine.executeScript("updatePluginInfo()");
-                        }
-                    });
-        });
+        String htmlUrl;
+        if (bundleContext != null) {
+            htmlUrl = bundleContext.getBundle().getEntry(PLUGIN_INFO_TEMPLATE).toExternalForm();
+        } else {
+            htmlUrl = AppManagerFxPanel.class.getClassLoader().getResource(PLUGIN_INFO_TEMPLATE).toExternalForm();
+        }
+        webEngine.load(htmlUrl);
     }
 
     @Reference
@@ -208,13 +206,15 @@ public class PluginManagerFxPanel extends JFXPanel {
 
     private void updateWebContent() {
         Platform.runLater(() -> {
-
+            JSObject jsobj = (JSObject) webEngine.executeScript("window");
+            jsobj.setMember("pluginInfo", new JSPluginWrapper());
+            webEngine.executeScript("updatePluginInfo()");
         });
     }
 
     private void init() {
         repoToColor = new HashMap<>();
-        final URL resource = PluginManagerFxPanel.class.getClassLoader().getResource("PluginConfigurationPanel.fxml");
+        final URL resource = AppManagerFxPanel.class.getClassLoader().getResource("PluginConfigurationPanel.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         loader.setController(this);
         try {
@@ -240,80 +240,83 @@ public class PluginManagerFxPanel extends JFXPanel {
 
         @Override
         public void updateItem(PluginListItemMetadata plugin, boolean empty) {
-            super.updateItem(plugin, empty);
-            if (!empty) {
-                Image updateImage;
-                ImageView updateImageView = new ImageView();
-                updateImageView.setFitWidth(16);
-                updateImageView.setPreserveRatio(true);
-                updateImageView.setSmooth(true);
-                updateImageView.setCache(true);
 
-                if (plugin.isUpdatable()) {
-                    updateImage = new Image("fa-arrow-circle-up.png");
-                    updateImageView.setImage(updateImage);
-                    Tooltip updateTooltip = new Tooltip("Update available");
-                    Tooltip.install(updateImageView, updateTooltip);
-                } else if (plugin.isInstalled()) {
-                    updateImage = new Image("installed.png");
-                    updateImageView.setImage(updateImage);
-                    Tooltip updateTooltip = new Tooltip("Installed");
-                    Tooltip.install(updateImageView, updateTooltip);
-                } else {
-                    updateImage = new Image("uninstalled.png");
-                    updateImageView.setImage(updateImage);
-                    Tooltip updateTooltip = new Tooltip("Uninstalled");
-                    Tooltip.install(updateImageView, updateTooltip);
-                }
-                Pane pane = new Pane();
-                pane.setPrefHeight(35);
-                pane.setPrefWidth(35);
-                Color paneColor;
-                if (repoToColor.containsKey(plugin.getRepository())) {
-                    paneColor = repoToColor.get(plugin.getRepository());
-                } else {
-                    if ((colorIndex + 1) > materialDesignColors.size()) {
-                        colorIndex = 0;
+            Platform.runLater(() -> {
+                super.updateItem(plugin, empty);
+                if (!empty) {
+                    Image updateImage;
+                    ImageView updateImageView = new ImageView();
+                    updateImageView.setFitWidth(16);
+                    updateImageView.setPreserveRatio(true);
+                    updateImageView.setSmooth(true);
+                    updateImageView.setCache(true);
+
+                    if (plugin.isUpdatable()) {
+                        updateImage = new Image("fa-arrow-circle-up.png");
+                        updateImageView.setImage(updateImage);
+                        Tooltip updateTooltip = new Tooltip("Update available");
+                        Tooltip.install(updateImageView, updateTooltip);
+                    } else if (plugin.isInstalled()) {
+                        updateImage = new Image("installed.png");
+                        updateImageView.setImage(updateImage);
+                        Tooltip updateTooltip = new Tooltip("Installed");
+                        Tooltip.install(updateImageView, updateTooltip);
+                    } else {
+                        updateImage = new Image("uninstalled.png");
+                        updateImageView.setImage(updateImage);
+                        Tooltip updateTooltip = new Tooltip("Uninstalled");
+                        Tooltip.install(updateImageView, updateTooltip);
                     }
-                    paneColor = materialDesignColors.get(colorIndex);
-                    colorIndex++;
-                    repoToColor.put(plugin.getRepository(), paneColor);
-                }
+                    Pane pane = new Pane();
+                    pane.setPrefHeight(35);
+                    pane.setPrefWidth(35);
+                    Color paneColor;
+                    if (repoToColor.containsKey(plugin.getRepository())) {
+                        paneColor = repoToColor.get(plugin.getRepository());
+                    } else {
+                        if ((colorIndex + 1) > materialDesignColors.size()) {
+                            colorIndex = 0;
+                        }
+                        paneColor = materialDesignColors.get(colorIndex);
+                        colorIndex++;
+                        repoToColor.put(plugin.getRepository(), paneColor);
+                    }
 
-                Tooltip avatarTooltip = new Tooltip("Located in the " + plugin.getRepository() + " repository");
-                Tooltip.install(pane, avatarTooltip);
-                pane.setBackground(new Background(new BackgroundFill(paneColor, CornerRadii.EMPTY, Insets.EMPTY)));
-                Text avatar = new Text();
+                    Tooltip avatarTooltip = new Tooltip("Located in the " + plugin.getRepository() + " repository");
+                    Tooltip.install(pane, avatarTooltip);
+                    pane.setBackground(new Background(new BackgroundFill(paneColor, CornerRadii.EMPTY, Insets.EMPTY)));
+                    Text avatar = new Text();
 
-                avatar.setText(plugin.getRepository().substring(0, 1).toUpperCase());
-                avatar.setFill(Color.rgb(255, 255, 255));
-                pane.getChildren().add(avatar);
-                avatar.setX(8);
-                avatar.setY(27);
-                avatar.setFont(Font.font(27));
+                    avatar.setText(plugin.getRepository().substring(0, 1).toUpperCase());
+                    avatar.setFill(Color.rgb(255, 255, 255));
+                    pane.getChildren().add(avatar);
+                    avatar.setX(8);
+                    avatar.setY(27);
+                    avatar.setFont(Font.font(27));
 
-                HBox row = new HBox(5);
-                row.setAlignment(Pos.CENTER_LEFT);
+                    HBox row = new HBox(5);
+                    row.setAlignment(Pos.CENTER_LEFT);
 
-                String label = plugin.getPluginName();
-                if (label.length() > 25) {
-                    label = label.substring(0, 25) + "...";
-                }
-                Text text = new Text(label);
-                text.setWrappingWidth(200);
-                HBox spacer = new HBox();
-                HBox.setHgrow(spacer, Priority.ALWAYS);
+                    String label = plugin.getPluginName();
+                    if (label.length() > 25) {
+                        label = label.substring(0, 25) + "...";
+                    }
+                    Text text = new Text(label);
+                    text.setWrappingWidth(200);
+                    HBox spacer = new HBox();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                if (updateImageView.getImage() != null) {
-                    row.getChildren().addAll(pane, text, spacer, updateImageView);
+                    if (updateImageView.getImage() != null) {
+                        row.getChildren().addAll(pane, text, spacer, updateImageView);
+                    } else {
+                        row.getChildren().addAll(pane, text, spacer);
+                    }
+                    setGraphic(row);
                 } else {
-                    row.getChildren().addAll(pane, text, spacer);
+                    setText(null);
+                    setGraphic(null);
                 }
-                setGraphic(row);
-            } else {
-                setText(null);
-                setGraphic(null);
-            }
+            });
         }
     }
 

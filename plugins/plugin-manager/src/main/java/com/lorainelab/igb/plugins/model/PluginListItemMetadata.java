@@ -1,5 +1,9 @@
 package com.lorainelab.igb.plugins.model;
 
+import com.lorainelab.igb.plugins.AppController;
+import java.util.Base64;
+import org.osgi.framework.Bundle;
+
 /**
  *
  * @author jeckstei
@@ -13,6 +17,16 @@ public class PluginListItemMetadata {
     private final Boolean isUpdatable;
     private final Boolean isInstalled;
 
+    public PluginListItemMetadata(Bundle bundle, String repository, Boolean isUpdatable) {
+        this.pluginName = bundle.getSymbolicName();
+        this.version = bundle.getVersion().toString();
+        this.repository = repository;
+        this.isUpdatable = isUpdatable;
+        this.isInstalled = AppController.isInstalled(bundle);
+        this.description = getBundleDescription(bundle);
+    }
+
+    //for unit testing...
     public PluginListItemMetadata(String pluginName, String repository, String version, String description, Boolean isUpdatable, Boolean isInstalled) {
         this.pluginName = pluginName;
         this.repository = repository;
@@ -44,6 +58,17 @@ public class PluginListItemMetadata {
 
     public Boolean isInstalled() {
         return isInstalled;
+    }
+
+    public static String getBundleDescription(Bundle bundle) {
+        String bundleDescription = bundle.getSymbolicName();
+        try {
+            bundleDescription = bundle.getHeaders().get("Bundle-Description");
+            byte[] decode = Base64.getDecoder().decode(bundleDescription);
+            bundleDescription = new String(decode);
+        } catch (Exception ex) {
+        }
+        return bundleDescription;
     }
 
 }

@@ -7,13 +7,17 @@
         <title>
             example
         </title>
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <link href="pluginInfoTemplateResources/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="pluginInfoTemplateResources/font-awesome.min.css">
+        <link rel="stylesheet" href="pluginInfoTemplateResources/highlightjs.default.min.css">
+
+        
     </head>
 
     <body>
         <div id="reactTest">
         </div>
+        <script src="pluginInfoTemplateResources/highlight.min.js"></script>
         <script src="pluginInfoTemplateResources/marked.min.js"></script>
         <script src="pluginInfoTemplateResources/react.min.js"></script>
         <script src="pluginInfoTemplateResources/react-dom.js"></script>
@@ -26,6 +30,14 @@
             console.log = function(message){
                 logger.log(message);
             }
+            
+            //set up highlighting for markdown code blocks
+            // Synchronous highlighting with highlight.js
+            marked.setOptions({
+              highlight: function (code) {
+                return hljs.highlightAuto(code).value;
+              }
+            });
             
             window.onclick = function (e) {
                 if (e.target.localName == 'a') {

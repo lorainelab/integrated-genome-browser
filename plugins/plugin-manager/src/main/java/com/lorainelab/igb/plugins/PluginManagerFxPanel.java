@@ -57,6 +57,8 @@ import javafx.scene.web.WebView;
 import javax.swing.SwingUtilities;
 import netscape.javascript.JSObject;
 import org.apache.commons.lang3.StringUtils;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,7 +164,14 @@ public class PluginManagerFxPanel extends JFXPanel {
         JSObject jsobj = (JSObject) webEngine.executeScript("window");
         jsobj.setMember("Bridge", new JSBridge());
         jsobj.setMember("logger", new JSLogger());
-        webEngine.load(PluginManagerFxPanel.class.getClassLoader().getResource("pluginInfoTemplate.html").toExternalForm());
+        String url;
+        Bundle bundle = FrameworkUtil.getBundle(PluginManagerFxPanel.class);
+        if (bundle == null) {
+            url = PluginManagerFxPanel.class.getClassLoader().getResource("pluginInfoTemplate.html").toExternalForm();
+        } else {
+            url = bundle.getEntry("pluginInfoTemplate.html").toExternalForm();
+        }
+        webEngine.load(url);
     }
 
     public void updateListContent(List<PluginListItemMetadata> list) {
@@ -285,8 +294,13 @@ public class PluginManagerFxPanel extends JFXPanel {
 
                 HBox row = new HBox(5);
                 row.setAlignment(Pos.CENTER_LEFT);
-                Text text = new Text(plugin.getPluginName());
 
+                String label = plugin.getPluginName();
+                if (label.length() > 25) {
+                    label = label.substring(0, 25) + "...";
+                }
+                Text text = new Text(label);
+                text.setWrappingWidth(200);
                 HBox spacer = new HBox();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 

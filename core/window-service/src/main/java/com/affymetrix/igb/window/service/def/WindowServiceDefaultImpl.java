@@ -1,10 +1,9 @@
 package com.affymetrix.igb.window.service.def;
 
-import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.common.PreferenceUtils;
+import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuBar;
 import com.affymetrix.igb.swing.JRPMenuItem;
@@ -12,11 +11,11 @@ import com.affymetrix.igb.swing.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
+import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import com.lorainelab.igb.services.window.tabs.TabHolder;
-import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Rectangle;
@@ -59,8 +58,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     private JPanel innerPanel;
     private boolean tabSeparatorSet = false;
 
-    @Activate
-    public void init() {
+    public WindowServiceDefaultImpl() {
         move_tab_to_window_items = new EnumMap<>(TabState.class);
         move_tabbed_panel_to_window_items = new EnumMap<>(TabState.class);
         tabHolders = new EnumMap<>(TabState.class);
@@ -178,8 +176,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     }
 
     /**
-     * Saves information about which plugins are in separate windows and what
-     * their preferred sizes are.
+     * Saves information about which plugins are in separate windows and what their preferred sizes are.
      */
     private void saveWindowLocations() {
         // Save the main window location
@@ -196,7 +193,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
      *
      * @param tabPanel the tab pane
      */
-    @Reference(multiple = true, unbind = "removeTab", optional = true, dynamic = true)
     public void addTab(final IgbTabPanelI tabPanel) {
         IgbTabPanel igbTabPanel = tabPanel.getIgbTabPanel();
         TabState tabState = igbTabPanel.getDefaultTabState();

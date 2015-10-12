@@ -1,20 +1,25 @@
 package com.affymetrix.igb.window.service;
 
+import com.affymetrix.igb.swing.JRPMenuBar;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
-import com.affymetrix.igb.swing.JRPMenuBar;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 public interface IWindowService {
 
+    public void addTab(final IgbTabPanelI tabPanel);
+
+    public void removeTab(final IgbTabPanelI tabPanel);
+
     /**
      * run when the Window Service starts
      */
+
     public void startup();
 
     /**
@@ -54,32 +59,28 @@ public interface IWindowService {
     public void setTabsMenu(JRPMenuBar mbar);
 
     /**
-     * pass in the status bar of the application, this is where
-     * message and some icons are displayed
+     * pass in the status bar of the application, this is where message and some icons are displayed
      *
      * @param status_bar the status bar
      */
     public void setStatusBar(JComponent status_bar);
 
     /**
-     * pass in the tool bar of the application, this is where
-     * action icons are displayed
+     * pass in the tool bar of the application, this is where action icons are displayed
      *
      * @param tool_bar the tool bar
      */
     public void setToolBar(JToolBar tool_bar);
 
     /**
-     * pass in the top component1 (above topComponent2)
-     * a generic component at the top of IGB
+     * pass in the top component1 (above topComponent2) a generic component at the top of IGB
      *
      * @param topComponent1 the top component
      */
     public void setTopComponent1(JComponent topComponent1);
 
     /**
-     * pass in the top component2 (below topComponent1)
-     * a generic component at the top of IGB
+     * pass in the top component2 (below topComponent1) a generic component at the top of IGB
      *
      * @param topComponent2 the top component
      */
@@ -93,8 +94,7 @@ public interface IWindowService {
     public Set<IgbTabPanel> getPlugins();
 
     /**
-     * set the state of the given tab to the given state and update
-     * the view menu to the new value
+     * set the state of the given tab to the given state and update the view menu to the new value
      *
      * @param panel the tab to change
      * @param tabState the new state

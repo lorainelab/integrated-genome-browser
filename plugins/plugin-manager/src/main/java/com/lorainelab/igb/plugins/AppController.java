@@ -7,7 +7,6 @@ import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
@@ -20,13 +19,16 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
@@ -64,12 +66,15 @@ public class AppController implements Constants {
     private final List<Bundle> defaultBundles;
     private IgbService igbService;
     private EventBus eventBus;
-    private PluginManagerFxPanel fxPanel;
+    private ObservableList<PluginListItemMetadata> listData;
+    private FilteredList<PluginListItemMetadata> filteredList;
 
     public AppController() {
         latest = new HashMap<>();
         defaultBundles = new ArrayList<>();
         externalRepositories = new ArrayList<>();
+        listData = FXCollections.observableArrayList();
+        filteredList = new FilteredList<>(listData, s -> true);
     }
 
     @Activate
@@ -83,11 +88,6 @@ public class AppController implements Constants {
     public void setEventBus(PluginRepositoryEventPublisher eventManager) {
         this.eventBus = eventManager.getPluginRepositoryEventBus();
         eventBus.register(this);
-    }
-
-    @Reference
-    public void setFxPanel(PluginManagerFxPanel fxPanel) {
-        this.fxPanel = fxPanel;
     }
 
     private void initializeDefaultBundleFilter() {
@@ -108,7 +108,7 @@ public class AppController implements Constants {
         bundleContext.addBundleListener(bundleListener);
     }
 
-    private void installBundleIfNecessary(Bundle bundle) {
+    protected void installBundleIfNecessary(Bundle bundle) {
         if (isInstalled(bundle)) {
             Bundle latestBundle = latest.get(bundle.getSymbolicName());
             if (!bundle.equals(latestBundle) && !isInstalled(latestBundle)) {
@@ -122,11 +122,11 @@ public class AppController implements Constants {
         }
     }
 
-    private static boolean isInstalled(Bundle bundle) {
+    public static boolean isInstalled(Bundle bundle) {
         return bundle.getState() != Bundle.UNINSTALLED;
     }
 
-    private synchronized void updateAllBundles() {
+    protected synchronized void updateAllBundles() {
         if (filteredBundles != null) {
             filteredBundles.forEach(this::installBundleIfNecessary);
         }
@@ -201,20 +201,8 @@ public class AppController implements Constants {
      */
     private void reloadBundleList() {
         filterBundles();
-        List<PluginListItemMetadata> pluginMetaData = Lists.newArrayList();
-        for (Bundle bundle : filteredBundles) {
-            String description = bundle.getSymbolicName();
-            try {
-                description = bundle.getHeaders().get("Bundle-Description");
-                byte[] decode = Base64.getDecoder().decode(description);
-                description = new String(decode);
-            } catch (Exception ex) {
-
-            }
-            PluginListItemMetadata itemMetadata = new PluginListItemMetadata(bundle.getSymbolicName(), getRepository(bundle), bundle.getVersion().toString(), description, isUpdatable(bundle), isInstalled(bundle));
-            pluginMetaData.add(itemMetadata);
-        }
-        fxPanel.updateListContent(pluginMetaData);
+        listData.clear();
+        listData.addAll(filteredBundles.stream().map(bundle -> new PluginListItemMetadata(bundle, getRepository(bundle), isUpdatable(bundle))).collect(Collectors.toList()));
     }
 
     /**
@@ -376,15 +364,15 @@ public class AppController implements Constants {
         Collections.sort(
                 filteredBundles,
                 new Comparator< Bundle>() {
-            @Override
-            public int compare(Bundle o1, Bundle o2) {
-                int result = o1.getSymbolicName().compareTo(o2.getSymbolicName());
-                if (result == 0) {
-                    result = o1.getVersion().compareTo(o2.getVersion());
-                }
-                return result;
-            }
-        });
+                    @Override
+                    public int compare(Bundle o1, Bundle o2) {
+                        int result = o1.getSymbolicName().compareTo(o2.getSymbolicName());
+                        if (result == 0) {
+                            result = o1.getVersion().compareTo(o2.getVersion());
+                        }
+                        return result;
+                    }
+                });
 //        updateAllBundlesButton.setEnabled(isUpdateBundlesExist());
     }
 
@@ -477,4 +465,7 @@ public class AppController implements Constants {
         return repository;
     }
 
+    public FilteredList<PluginListItemMetadata> getListData() {
+        return filteredList;
+    }
 }

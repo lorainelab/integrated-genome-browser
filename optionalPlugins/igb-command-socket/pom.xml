@@ -99,11 +99,22 @@
                         <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
                         <Export-Package/>
                         <Bundle-Activator>com.lorainelab.igbr.Activator</Bundle-Activator>
-			<Bundle-Description>Install this to enable controlling IGB from other programs, like R.</Bundle-Description>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+                        <Bundle-Description>${bundleDescription}</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>bundle-markdown-encoder</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>encodeMarkdown</goal>
+                        </goals>
+                    </execution> 
+                </executions>
+            </plugin>   
         </plugins>
     </build>
 

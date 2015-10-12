@@ -8,6 +8,7 @@ package com.lorainelab.igb.plugins;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.lorainelab.igb.services.IgbService;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
@@ -19,7 +20,8 @@ import net.miginfocom.swing.MigLayout;
 @Component(immediate = true, provide = AppManagerFrame.class)
 public class AppManagerFrame extends JFrame {
 
-    private PluginManagerFxPanel fxPanel;
+    private AppManagerFxPanel fxPanel;
+    private IgbService igbService;
 
     public AppManagerFrame() {
         init();
@@ -34,11 +36,17 @@ public class AppManagerFrame extends JFrame {
 
     @Activate
     private void activate() {
+        setLocationRelativeTo(igbService.getApplicationFrame());
         add(fxPanel, "grow");
     }
 
     @Reference
-    public void setFxPanel(PluginManagerFxPanel fxPanel) {
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
+
+    @Reference
+    public void setFxPanel(AppManagerFxPanel fxPanel) {
         this.fxPanel = fxPanel;
     }
 

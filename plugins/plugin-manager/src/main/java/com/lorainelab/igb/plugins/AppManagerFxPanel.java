@@ -249,71 +249,85 @@ public class AppManagerFxPanel extends JFXPanel {
 
         @Override
         public void updateItem(PluginListItemMetadata plugin, boolean empty) {
-            super.updateItem(plugin, empty);
-            if (!empty) {
-                Image updateImage;
-                ImageView updateImageView = new ImageView();
-                updateImageView.setFitWidth(16);
-                updateImageView.setPreserveRatio(true);
-                updateImageView.setSmooth(true);
-                updateImageView.setCache(true);
+            Platform.runLater(() -> {
+                super.updateItem(plugin, empty);
+                if (!empty) {
+                    Image updateImage;
+                    ImageView updateImageView = new ImageView();
+                    updateImageView.setFitWidth(16);
+                    updateImageView.setPreserveRatio(true);
+                    updateImageView.setSmooth(true);
+                    updateImageView.setCache(true);
 
-                if (plugin.isUpdatable()) {
-                    updateImage = new Image("fa-arrow-circle-up.png");
-                    updateImageView.setImage(updateImage);
-                    Tooltip updateTooltip = new Tooltip("Update available");
-                    Tooltip.install(updateImageView, updateTooltip);
-                } else if (plugin.isInstalled()) {
-                    updateImage = new Image("installed.png");
-                    updateImageView.setImage(updateImage);
-                } else {
-                    updateImage = new Image("uninstalled.png");
-                    updateImageView.setImage(updateImage);
-                }
-                Pane pane = new Pane();
-                pane.setPrefHeight(35);
-                pane.setPrefWidth(35);
-                Color paneColor;
-                if (repoToColor.containsKey(plugin.getRepository())) {
-                    paneColor = repoToColor.get(plugin.getRepository());
-                } else {
-                    if ((colorIndex + 1) > materialDesignColors.size()) {
-                        colorIndex = 0;
+                    if (plugin.isUpdatable()) {
+                        if (bundleContext != null) {
+                            updateImage = new Image(bundleContext.getBundle().getEntry("fa-arrow-circle-up.png").toExternalForm());
+                        } else {
+                            updateImage = new Image("fa-arrow-circle-up.png");
+                        }
+                        updateImageView.setImage(updateImage);
+                        Tooltip updateTooltip = new Tooltip("Update available");
+                        Tooltip.install(updateImageView, updateTooltip);
+                    } else if (plugin.isInstalled()) {
+                        if (bundleContext != null) {
+                            updateImage = new Image(bundleContext.getBundle().getEntry("installed.png").toExternalForm());
+                        } else {
+                            updateImage = new Image("installed.png");
+                        }
+                        updateImageView.setImage(updateImage);
+                    } else {
+                        if (bundleContext != null) {
+                            updateImage = new Image(bundleContext.getBundle().getEntry("uninstalled.png").toExternalForm());
+                        } else {
+                            updateImage = new Image("uninstalled.png");
+                        }
+                        updateImageView.setImage(updateImage);
                     }
-                    paneColor = materialDesignColors.get(colorIndex);
-                    colorIndex++;
-                    repoToColor.put(plugin.getRepository(), paneColor);
-                }
+                    Pane pane = new Pane();
+                    pane.setPrefHeight(35);
+                    pane.setPrefWidth(35);
+                    Color paneColor;
+                    if (repoToColor.containsKey(plugin.getRepository())) {
+                        paneColor = repoToColor.get(plugin.getRepository());
+                    } else {
+                        if ((colorIndex + 1) > materialDesignColors.size()) {
+                            colorIndex = 0;
+                        }
+                        paneColor = materialDesignColors.get(colorIndex);
+                        colorIndex++;
+                        repoToColor.put(plugin.getRepository(), paneColor);
+                    }
 
-                Tooltip avatarTooltip = new Tooltip("Located in the " + plugin.getRepository() + " repository");
-                Tooltip.install(pane, avatarTooltip);
-                pane.setBackground(new Background(new BackgroundFill(paneColor, CornerRadii.EMPTY, Insets.EMPTY)));
-                Text avatar = new Text();
+                    Tooltip avatarTooltip = new Tooltip("Located in the " + plugin.getRepository() + " repository");
+                    Tooltip.install(pane, avatarTooltip);
+                    pane.setBackground(new Background(new BackgroundFill(paneColor, CornerRadii.EMPTY, Insets.EMPTY)));
+                    Text avatar = new Text();
 
-                avatar.setText(plugin.getRepository().substring(0, 1).toUpperCase());
-                avatar.setFill(Color.rgb(255, 255, 255));
-                pane.getChildren().add(avatar);
-                avatar.setX(8);
-                avatar.setY(27);
-                avatar.setFont(Font.font(27));
+                    avatar.setText(plugin.getRepository().substring(0, 1).toUpperCase());
+                    avatar.setFill(Color.rgb(255, 255, 255));
+                    pane.getChildren().add(avatar);
+                    avatar.setX(8);
+                    avatar.setY(27);
+                    avatar.setFont(Font.font(27));
 
-                HBox row = new HBox(5);
-                row.setAlignment(Pos.CENTER_LEFT);
-                Text text = new Text(plugin.getPluginName());
+                    HBox row = new HBox(5);
+                    row.setAlignment(Pos.CENTER_LEFT);
+                    Text text = new Text(plugin.getPluginName());
 
-                HBox spacer = new HBox();
-                HBox.setHgrow(spacer, Priority.ALWAYS);
+                    HBox spacer = new HBox();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                if (updateImageView.getImage() != null) {
-                    row.getChildren().addAll(pane, text, spacer, updateImageView);
+                    if (updateImageView.getImage() != null) {
+                        row.getChildren().addAll(pane, text, spacer, updateImageView);
+                    } else {
+                        row.getChildren().addAll(pane, text, spacer);
+                    }
+                    setGraphic(row);
                 } else {
-                    row.getChildren().addAll(pane, text, spacer);
+                    setText(null);
+                    setGraphic(null);
                 }
-                setGraphic(row);
-            } else {
-                setText(null);
-                setGraphic(null);
-            }
+            });
         }
     }
 
@@ -331,12 +345,14 @@ public class AppManagerFxPanel extends JFXPanel {
         public void installPlugin() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
             appController.installBundle(plugin);
+            plugin.setIsInstalled(Boolean.TRUE);
             refreshListViewContent();
         }
 
         public void handleUnInstallClick() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
             appController.uninstallBundle(plugin);
+            plugin.setIsInstalled(Boolean.FALSE);
             refreshListViewContent();
         }
 

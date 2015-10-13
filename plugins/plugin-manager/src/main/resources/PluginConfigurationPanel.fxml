@@ -14,7 +14,7 @@
    <children>
       <HBox minHeight="-Infinity" prefHeight="46.0" prefWidth="640.0" VBox.vgrow="NEVER">
          <children>
-            <TextField fx:id="search" prefHeight="26.0" prefWidth="200.0" promptText="Search">
+            <TextField fx:id="search" prefHeight="26.0" prefWidth="200.0" promptText="Search" styleClass="searchTextField" stylesheets="@search.css">
                <HBox.margin>
                   <Insets bottom="10.0" left="10.0" right="5.0" top="10.0" />
                </HBox.margin>

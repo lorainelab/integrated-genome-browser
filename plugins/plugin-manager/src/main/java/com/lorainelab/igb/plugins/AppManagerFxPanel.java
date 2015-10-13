@@ -178,7 +178,7 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
                 changeStaticFilter(newValue);
             }
         });
-        listView.setItems(listData);
+        listView.setItems(sortedList);
         refreshUpdateAllBtn();
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
@@ -444,7 +444,8 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
                     break;
             };
             sortedList = filteredList.sorted((PluginListItemMetadata o1, PluginListItemMetadata o2) -> o2.compareTo(o1));
+
+            refreshListViewContent();
         });
-        refreshListViewContent();
     }
 }

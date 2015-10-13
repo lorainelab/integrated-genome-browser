@@ -299,7 +299,6 @@ public class AppController implements Constants {
 
             @Override
             protected void finished() {
-                plugin.setIsInstalled(Boolean.TRUE);
             }
         };
         CThreadHolder.getInstance().execute(bundle, woker);
@@ -326,7 +325,6 @@ public class AppController implements Constants {
 
             @Override
             protected void finished() {
-                plugin.setIsInstalled(Boolean.FALSE);
             }
         };
         CThreadHolder.getInstance().execute(bundle, woker);

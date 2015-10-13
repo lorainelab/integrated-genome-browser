@@ -9,7 +9,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import com.lorainelab.igb.plugins.AppController;
+import com.lorainelab.igb.plugins.RepositoryInfoManager;
 import com.lorainelab.igb.plugins.repos.view.BundleRepositoryTableModel;
 import com.lorainelab.igb.preferences.IgbPreferencesService;
 import com.lorainelab.igb.preferences.model.IgbPreferences;
@@ -34,7 +34,7 @@ public class PluginRepositoryList {
     private static final Logger logger = LoggerFactory.getLogger(PluginRepositoryList.class);
     private IgbPreferencesService igbPreferencesService;
     private final Set<PluginRepository> pluginRepositories;
-    private AppController pluginsView;
+    private RepositoryInfoManager repositoryInfoManager;
     private BundleRepositoryTableModel bundleRepositoryTableModel;
 
     public PluginRepositoryList() {
@@ -56,7 +56,7 @@ public class PluginRepositoryList {
         loadPersistedRepos();
         pluginRepositories.stream().forEach(repo -> {
             if (repo.isEnabled()) {
-                pluginsView.addPluginRepository(repo);
+                repositoryInfoManager.addPluginRepository(repo);
             }
         });
         bundleRepositoryTableModel = new BundleRepositoryTableModel(this);
@@ -91,8 +91,8 @@ public class PluginRepositoryList {
     }
 
     @Reference(optional = false)
-    public void setPluginsView(AppController pluginsView) {
-        this.pluginsView = pluginsView;
+    public void setPluginsView(RepositoryInfoManager repositoryInfoManager) {
+        this.repositoryInfoManager = repositoryInfoManager;
     }
 
     public Set<PluginRepository> getPluginRepositories() {
@@ -102,7 +102,7 @@ public class PluginRepositoryList {
     public void addPluginRepository(PluginRepository pluginRepository) {
         pluginRepositories.add(pluginRepository);
         if (pluginRepository.isEnabled()) {
-            if (pluginsView.addPluginRepository(pluginRepository)) {
+            if (repositoryInfoManager.addPluginRepository(pluginRepository)) {
                 addRepositoryToPrefs(pluginRepository);
             } else {
                 pluginRepositories.remove(pluginRepository);
@@ -114,7 +114,7 @@ public class PluginRepositoryList {
     public void removePluginRepository(PluginRepository pluginRepository) {
         pluginRepositories.remove(pluginRepository);
         removeRepositoryToPrefs(pluginRepository);
-        pluginsView.removePluginRepository(pluginRepository);
+        repositoryInfoManager.removePluginRepository(pluginRepository);
         bundleRepositoryTableModel.updateRepositories(pluginRepositories);
     }
 
@@ -183,9 +183,9 @@ public class PluginRepositoryList {
 
     public void pluginRepoAvailabilityChanged(PluginRepository pluginRepository) {
         if (pluginRepository.isEnabled()) {
-            pluginsView.addPluginRepository(pluginRepository);
+            repositoryInfoManager.addPluginRepository(pluginRepository);
         } else {
-            pluginsView.removePluginRepository(pluginRepository);
+            repositoryInfoManager.removePluginRepository(pluginRepository);
         }
     }
 

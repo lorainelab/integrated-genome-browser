@@ -1,6 +1,6 @@
 package com.lorainelab.igb.plugins.model;
 
-import com.lorainelab.igb.plugins.AppController;
+import com.lorainelab.igb.plugins.BundleInfoManager;
 import java.util.Base64;
 import java.util.Objects;
 import org.osgi.framework.Bundle;
@@ -26,7 +26,7 @@ public class PluginListItemMetadata implements Comparable<PluginListItemMetadata
         this.version = bundle.getVersion().toString();
         this.repository = repository;
         this.isUpdatable = isUpdatable;
-        this.isInstalled = AppController.isInstalled(bundle);
+        this.isInstalled = BundleInfoManager.isInstalled(bundle);
         this.description = getBundleDescription(bundle);
         this.weight = 0;
     }

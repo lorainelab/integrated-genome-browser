@@ -8,8 +8,9 @@ package com.lorainelab.igb.plugins;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import static com.lorainelab.igb.plugins.Constants.MATERIAL_DESIGN_COLORS;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
 import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
@@ -19,14 +20,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -62,7 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component(immediate = true, provide = AppManagerFxPanel.class)
-public class AppManagerFxPanel extends JFXPanel {
+public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsumer {
 
     private static final Logger logger = LoggerFactory.getLogger(AppManagerFxPanel.class);
     private final String PLUGIN_INFO_TEMPLATE = "pluginInfoTemplate.html";
@@ -81,39 +84,41 @@ public class AppManagerFxPanel extends JFXPanel {
     private Button manageReposBtn;
     private VBox pane;
     private WebEngine webEngine;
-    private String htmlTemplate;
-    private ObservableList<PluginListItemMetadata> fiteredAndSortedList;
-    private FilteredList<PluginListItemMetadata> filteredData;
+
     private EventBus eventBus;
-    private static final List<Color> materialDesignColors = ImmutableList.of(
-            Color.rgb(156, 39, 176),
-            Color.rgb(233, 30, 99),
-            Color.rgb(244, 67, 54),
-            Color.rgb(33, 150, 243),
-            Color.rgb(63, 81, 181),
-            Color.rgb(96, 125, 139),
-            Color.rgb(255, 87, 34),
-            Color.rgb(121, 85, 72),
-            Color.rgb(158, 158, 158),
-            Color.rgb(255, 235, 59),
-            Color.rgb(255, 193, 7),
-            Color.rgb(255, 152, 0),
-            Color.rgb(76, 175, 80),
-            Color.rgb(139, 195, 74),
-            Color.rgb(205, 220, 57),
-            Color.rgb(3, 169, 244),
-            Color.rgb(0, 188, 212),
-            Color.rgb(0, 150, 136),
-            Color.rgb(103, 58, 183)
-    );
     private Map<String, Color> repoToColor;
     private int colorIndex = 0;
     private BundleContext bundleContext;
-    private AppController appController;
+
     private ObservableList<PluginListItemMetadata> listData;
+    private FilteredList<PluginListItemMetadata> filteredList;
+    private SortedList<PluginListItemMetadata> sortedList;
+
+    private Predicate<PluginListItemMetadata> currentStaticPredicate;
+    private Predicate<PluginListItemMetadata> currentSearchPredicate;
+
+    private BundleInfoManager bundleInfoManager;
+    private BundleActionManager bundleActionManager;
+    private RepositoryInfoManager repositoryInfoManager;
 
     private void refreshUpdateAllBtn() {
-        updateAllBtn.setDisable(!filteredData.stream().anyMatch(plugin -> plugin.isUpdatable()));
+        updateAllBtn.setDisable(!filteredList.stream().anyMatch(plugin -> plugin.isUpdatable()));
+    }
+
+    private void updateAllBundles() {
+
+    }
+
+    @Subscribe
+    public void udpateDataEventNotification(UpdateDataEvent event) {
+        logger.info("UpdateDataEvent received");
+        Platform.runLater(() -> {
+            listData.clear();
+            bundleInfoManager.getRepositoryManagedBundles().stream().forEach(bundle -> {
+                listData.add(new PluginListItemMetadata(bundle, repositoryInfoManager.getBundlesRepositoryName(bundle), bundleInfoManager.isUpdateable(bundle)));
+            });
+            refreshListViewContent();
+        });
     }
 
     public enum FilterOption {
@@ -133,7 +138,11 @@ public class AppManagerFxPanel extends JFXPanel {
     }
 
     public AppManagerFxPanel() {
-        fiteredAndSortedList = new FilteredList<>(FXCollections.emptyObservableList());
+        listData = FXCollections.observableArrayList();
+        currentSearchPredicate = (PluginListItemMetadata s) -> true;
+        currentStaticPredicate = (PluginListItemMetadata s) -> true;
+        filteredList = new FilteredList<>(listData, s -> true);
+        sortedList = filteredList.sorted();
         Platform.runLater(() -> {
             init();
         });
@@ -142,19 +151,22 @@ public class AppManagerFxPanel extends JFXPanel {
     @Activate
     private void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        this.listData = appController.getListData();
-        filteredData = new FilteredList<>(listData, s -> true);
-        fiteredAndSortedList = appController.getListData();
+        udpateDataEventNotification(new UpdateDataEvent());
     }
 
     @Reference
-    public void setController(AppController appController) {
-        this.appController = appController;
+    public void setBundleInfoManager(BundleInfoManager bundleInfoManager) {
+        this.bundleInfoManager = bundleInfoManager;
     }
 
-    private void changeStaticFilter(FilterOption filter) {
-        appController.changeStaticFilter(filter);
-        refreshListViewContent();
+    @Reference
+    public void setBundleActionManager(BundleActionManager bundleActionManager) {
+        this.bundleActionManager = bundleActionManager;
+    }
+
+    @Reference
+    public void setRepositoryInfoManager(RepositoryInfoManager repositoryInfoManager) {
+        this.repositoryInfoManager = repositoryInfoManager;
     }
 
     @FXML
@@ -166,7 +178,7 @@ public class AppManagerFxPanel extends JFXPanel {
                 changeStaticFilter(newValue);
             }
         });
-        listView.setItems(fiteredAndSortedList);
+        listView.setItems(listData);
         refreshUpdateAllBtn();
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
@@ -192,8 +204,7 @@ public class AppManagerFxPanel extends JFXPanel {
         webEngine.load(htmlUrl);
 
         search.textProperty().addListener((observable, oldValue, newValue) -> {
-            appController.changeSearchFilter(newValue);
-            refreshListViewContent();
+            changeSearchFilter(newValue);
         });
     }
 
@@ -213,7 +224,7 @@ public class AppManagerFxPanel extends JFXPanel {
     private void updateWebContent() {
         Platform.runLater(() -> {
             JSObject jsobj = (JSObject) webEngine.executeScript("window");
-            jsobj.setMember("pluginInfo", new JSPluginWrapper());
+            jsobj.setMember("pluginInfo", new JSPluginWrapper(listView));
             webEngine.executeScript("updatePluginInfo()");
         });
     }
@@ -233,14 +244,14 @@ public class AppManagerFxPanel extends JFXPanel {
     }
 
     private void createScene() {
-        Scene scene = new Scene(pane, 885, 541);
+        Scene scene = new Scene(pane);
         setScene(scene);
     }
 
     @FXML
     protected void updateAllBtnAction(ActionEvent event) {
         logger.info("updateAllBtnClicked");
-        appController.updateAllBundles();
+        updateAllBundles();
         refreshListViewContent();
 
     }
@@ -294,10 +305,10 @@ public class AppManagerFxPanel extends JFXPanel {
                     if (repoToColor.containsKey(plugin.getRepository())) {
                         paneColor = repoToColor.get(plugin.getRepository());
                     } else {
-                        if ((colorIndex + 1) > materialDesignColors.size()) {
+                        if ((colorIndex + 1) > MATERIAL_DESIGN_COLORS.size()) {
                             colorIndex = 0;
                         }
-                        paneColor = materialDesignColors.get(colorIndex);
+                        paneColor = MATERIAL_DESIGN_COLORS.get(colorIndex);
                         colorIndex++;
                         repoToColor.put(plugin.getRepository(), paneColor);
                     }
@@ -340,34 +351,25 @@ public class AppManagerFxPanel extends JFXPanel {
         }
     }
 
-    public class JSLogger {
-
-        public void log(String message) {
-            Platform.runLater(() -> {
-                logger.info(message);
-            });
-        }
-    }
-
     public class JSBridge {
 
         public void installPlugin() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            appController.installBundle(plugin);
+            bundleActionManager.installBundle(plugin);
             plugin.setIsInstalled(Boolean.TRUE);
             refreshListViewContent();
         }
 
         public void handleUnInstallClick() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            appController.uninstallBundle(plugin);
+            bundleActionManager.uninstallBundle(plugin);
             plugin.setIsInstalled(Boolean.FALSE);
             refreshListViewContent();
         }
 
         public void handleUpdateClick() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            appController.updateBundle(plugin);
+            bundleActionManager.updateBundle(plugin);
             refreshListViewContent();
         }
 
@@ -396,32 +398,53 @@ public class AppManagerFxPanel extends JFXPanel {
         refreshUpdateAllBtn();
     }
 
-    public class JSPluginWrapper {
+    public void changeSearchFilter(String filter) {
+        Platform.runLater(() -> {
+            currentSearchPredicate = (s -> {
+                String escapedFilter = Pattern.quote(filter);
+                Pattern nameStartWith = Pattern.compile("^" + escapedFilter, Pattern.CASE_INSENSITIVE);
+                Pattern nameContains = Pattern.compile(escapedFilter, Pattern.CASE_INSENSITIVE);
+                Pattern descContains = Pattern.compile(escapedFilter, Pattern.CASE_INSENSITIVE);
+                if (nameStartWith.matcher(s.getPluginName()).find()) {
+                    s.setWeight(10);
+                    return true;
+                } else if (nameContains.matcher(s.getPluginName()).find()) {
+                    s.setWeight(5);
+                    return true;
+                } else if (descContains.matcher(s.getDescription()).find()) {
+                    s.setWeight(1);
+                    return true;
+                }
+                s.setWeight(0);
+                return false;
+            });
+            filteredList.setPredicate(currentSearchPredicate.and(currentStaticPredicate));
+            sortedList = filteredList.sorted((PluginListItemMetadata o1, PluginListItemMetadata o2) -> o2.compareTo(o1));
+        });
+    }
 
-        final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-
-        public String getPluginName() {
-            return plugin.getPluginName();
-        }
-
-        public String getRepository() {
-            return plugin.getRepository();
-        }
-
-        public String getVersion() {
-            return plugin.getVersion();
-        }
-
-        public String getDescription() {
-            return plugin.getDescription();
-        }
-
-        public Boolean isUpdatable() {
-            return plugin.isUpdatable();
-        }
-
-        public Boolean isInstalled() {
-            return plugin.isInstalled();
-        }
+    void changeStaticFilter(FilterOption filter) {
+        Platform.runLater(() -> {
+            switch (filter) {
+                case ALL_APPS:
+                    currentStaticPredicate = (PluginListItemMetadata s) -> true;
+                    filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
+                    break;
+                case INSTALLED:
+                    currentStaticPredicate = (PluginListItemMetadata s) -> s.isInstalled();
+                    filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
+                    break;
+                case UNINSTALLED:
+                    currentStaticPredicate = (PluginListItemMetadata s) -> !s.isInstalled();
+                    filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
+                    break;
+                default:
+                    currentStaticPredicate = (PluginListItemMetadata s) -> true;
+                    filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
+                    break;
+            };
+            sortedList = filteredList.sorted((PluginListItemMetadata o1, PluginListItemMetadata o2) -> o2.compareTo(o1));
+        });
+        refreshListViewContent();
     }
 }

@@ -100,7 +100,7 @@
                     PluginStore.register(this._change);
                 },
          getInitialState: function() {
-          return {pluginName: '',version:'',repository:'',description:'## helloWorld'};
+          return {pluginName: '',version:'',repository:'',description:''};
          },
          _change: function() {
            this.setState({
@@ -142,11 +142,11 @@
            if(this.state.isInstalled){
                installBtnClassArg += ' btn-danger';
                installBtnIcon += ' fa-trash';
-               installBtnText= 'Uninstall Plugin';
+               installBtnText= 'Uninstall';
            }else{
                installBtnClassArg += ' btn-success';
                installBtnIcon += ' fa-download';
-               installBtnText= 'Install Plugin';
+               installBtnText= 'Install';
            }
            var updateBtnClassArg = 'btn btn-warning pull-right';
            if(!this.state.isUpDateable){
@@ -156,25 +156,17 @@
            return   <div className="container-fluid" style={containerStyle}>
                         <div className="row">
                             <div className="col-xs-8">
-                                <h2>{nameLine}</h2>
-                            </div>
-                            <div className="col-xs-4">
-                                <a className={installBtnClassArg} onClick={this._handleInstallClick}><i className={installBtnIcon}
-                                 style={{marginRight:5}}></i>{installBtnText}</a>
-                             <a className={updateBtnClassArg} style={{marginRight:5}} onClick={this._handleUpdateClick  }><i className=
-                                "fa fa-arrow-circle-up" style={{marginRight:5}}></i>Update</a>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-12">
-                                {versionLine}
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-12">
+                                <h3 style={{marginTop: 0}}>{nameLine}</h3>
+                                {versionLine}<br />
                                 {repositoryLine}
                             </div>
+                            <div className="col-xs-4">
+                                <a className={installBtnClassArg} style={{width: 100}} onClick={this._handleInstallClick}><i className={installBtnIcon} style={{marginRight: 5}}></i>{installBtnText}</a>
+                             <a className={updateBtnClassArg} style={{clear:"right", marginTop:10, width: 100}} onClick={this._handleUpdateClick  }><i className=
+                                "fa fa-arrow-circle-up" style={{marginRight: 5}}></i>Update</a>
+                            </div>
                         </div>
+                       
                         <div className="row" style={{marginTop: '15'}}>
                             <div className="col-md-12" dangerouslySetInnerHTML={{__html:descriptionHtml}}>
                             </div>

@@ -24,6 +24,7 @@ public class AppManagerFrame extends JFrame {
     private IgbService igbService;
 
     public AppManagerFrame() {
+        setTitle("IGB App Manager");
         init();
     }
 
@@ -31,7 +32,7 @@ public class AppManagerFrame extends JFrame {
         MigLayout migLayout = new MigLayout("fill");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(migLayout);
-        setSize(new Dimension(885, 541));
+        setSize(new Dimension(1000, 618));
     }
 
     @Activate

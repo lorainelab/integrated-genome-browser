@@ -2,6 +2,7 @@ package com.lorainelab.igb.plugins.model;
 
 import com.lorainelab.igb.plugins.AppController;
 import java.util.Base64;
+import java.util.Objects;
 import org.osgi.framework.Bundle;
 
 /**
@@ -12,12 +13,14 @@ public class PluginListItemMetadata {
 
     private final String pluginName;
     private final String repository;
-    private final String version;
+    private String version;
     private final String description;
-    private final Boolean isUpdatable;
-    private final Boolean isInstalled;
+    private Boolean isUpdatable;
+    private Boolean isInstalled;
+    private Bundle bundle;
 
     public PluginListItemMetadata(Bundle bundle, String repository, Boolean isUpdatable) {
+        this.bundle = bundle;
         this.pluginName = bundle.getSymbolicName();
         this.version = bundle.getVersion().toString();
         this.repository = repository;
@@ -60,6 +63,18 @@ public class PluginListItemMetadata {
         return isInstalled;
     }
 
+    public Bundle getBundle() {
+        return bundle;
+    }
+
+    public void setBundle(Bundle bundle) {
+        this.bundle = bundle;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     public static String getBundleDescription(Bundle bundle) {
         String bundleDescription = bundle.getSymbolicName();
         try {
@@ -70,5 +85,44 @@ public class PluginListItemMetadata {
         }
         return bundleDescription;
     }
+
+    public void setIsUpdatable(Boolean isUpdatable) {
+        this.isUpdatable = isUpdatable;
+    }
+
+    public void setIsInstalled(Boolean isInstalled) {
+        this.isInstalled = isInstalled;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.pluginName);
+        hash = 67 * hash + Objects.hashCode(this.repository);
+        hash = 67 * hash + Objects.hashCode(this.version);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PluginListItemMetadata other = (PluginListItemMetadata) obj;
+        if (!Objects.equals(this.pluginName, other.pluginName)) {
+            return false;
+        }
+        if (!Objects.equals(this.repository, other.repository)) {
+            return false;
+        }
+        if (!Objects.equals(this.version, other.version)) {
+            return false;
+        }
+        return true;
+    }
+
 
 }

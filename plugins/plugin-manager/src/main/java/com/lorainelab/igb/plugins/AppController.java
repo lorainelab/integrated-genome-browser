@@ -7,6 +7,7 @@ import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ErrorHandler;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
@@ -26,9 +27,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
@@ -67,14 +68,13 @@ public class AppController implements Constants {
     private IgbService igbService;
     private EventBus eventBus;
     private ObservableList<PluginListItemMetadata> listData;
-    private FilteredList<PluginListItemMetadata> filteredList;
 
     public AppController() {
+        installedBundles = Lists.newArrayList();
         latest = new HashMap<>();
         defaultBundles = new ArrayList<>();
         externalRepositories = new ArrayList<>();
         listData = FXCollections.observableArrayList();
-        filteredList = new FilteredList<>(listData, s -> true);
     }
 
     @Activate
@@ -98,17 +98,65 @@ public class AppController implements Constants {
     private void init() {
         latest = new HashMap<>();
         bundleListener = (BundleEvent bundleEvent) -> {
-            if (bundleContext != null) {
-                setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
-                reloadBundleList();
+            Bundle bundle = bundleEvent.getBundle();
+            switch (bundleEvent.getType()) {
+                case BundleEvent.INSTALLED:
+                    logger.debug("INSTALLED");
+                    break;
+                case BundleEvent.LAZY_ACTIVATION:
+                    logger.debug("LAZY_ACTIVATION");
+                    break;
+                case BundleEvent.RESOLVED:
+                    logger.debug("RESOLVED");
+                    break;
+                case BundleEvent.STARTED:
+                    logger.debug("STARTED");
+                    handleBundleStartedEvent(bundle);
+                    break;
+                case BundleEvent.STARTING:
+                    logger.debug("STARTING");
+                    break;
+                case BundleEvent.STOPPED:
+                    logger.debug("STOPPED");
+                    break;
+                case BundleEvent.STOPPING:
+                    logger.debug("STOPPING");
+                    break;
+                case BundleEvent.UNINSTALLED:
+                    logger.debug("UNINSTALLED");
+                    handleBundleUninstalledEvent(bundle);
+                    break;
+                case BundleEvent.UNRESOLVED:
+                    logger.debug("UNRESOLVED");
+                    break;
+                case BundleEvent.UPDATED:
+                    logger.debug("UPDATED");
+                    break;
             }
         };
-        setInstalledBundles(Arrays.asList(bundleContext.getBundles()));
+        installedBundles.addAll(Arrays.asList(bundleContext.getBundles()));
+        updateUnfilteredBundles();
         setRepositoryBundles();
         bundleContext.addBundleListener(bundleListener);
     }
 
-    protected void installBundleIfNecessary(Bundle bundle) {
+    private void handleBundleStartedEvent(Bundle bundle) {
+        logger.info(bundle.getSymbolicName());
+        if (!installedBundles.contains(bundle)) {
+            installedBundles.add(bundle);
+            updateUnfilteredBundles();
+        }
+    }
+
+    private void handleBundleUninstalledEvent(Bundle bundle) {
+        if (installedBundles.contains(bundle)) {
+            installedBundles.remove(bundle);
+        }
+        updateUnfilteredBundles();
+    }
+
+    protected void updateBundle(PluginListItemMetadata plugin) {
+        Bundle bundle = plugin.getBundle();
         if (isInstalled(bundle)) {
             Bundle latestBundle = latest.get(bundle.getSymbolicName());
             if (!bundle.equals(latestBundle) && !isInstalled(latestBundle)) {
@@ -117,7 +165,9 @@ public class AppController implements Constants {
                 } catch (BundleException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
-                installBundle(latestBundle);
+                plugin.setBundle(latestBundle);
+                plugin.setVersion(latestBundle.getVersion().toString());
+                installBundle(plugin);
             }
         }
     }
@@ -127,9 +177,7 @@ public class AppController implements Constants {
     }
 
     protected synchronized void updateAllBundles() {
-        if (filteredBundles != null) {
-            filteredBundles.forEach(this::installBundleIfNecessary);
-        }
+        listData.forEach(this::updateBundle);
     }
 
     private synchronized boolean isUpdateBundlesExist() {
@@ -201,8 +249,10 @@ public class AppController implements Constants {
      */
     private void reloadBundleList() {
         filterBundles();
-        listData.clear();
-        listData.addAll(filteredBundles.stream().map(bundle -> new PluginListItemMetadata(bundle, getRepository(bundle), isUpdatable(bundle))).collect(Collectors.toList()));
+        Platform.runLater(() -> {
+            listData.clear();
+            listData.addAll(filteredBundles.stream().map(bundle -> new PluginListItemMetadata(bundle, getRepository(bundle), isUpdatable(bundle))).collect(Collectors.toList()));
+        });
     }
 
     /**
@@ -218,7 +268,8 @@ public class AppController implements Constants {
         logger.error(error);
     }
 
-    public void installBundle(final Bundle bundle) {
+    public void installBundle(final PluginListItemMetadata plugin) {
+        Bundle bundle = plugin.getBundle();
         CThreadWorker woker = new CThreadWorker("Installing " + bundle.getSymbolicName()) {
             @Override
             protected Object runInBackground() {
@@ -248,17 +299,23 @@ public class AppController implements Constants {
 
             @Override
             protected void finished() {
+                plugin.setIsInstalled(Boolean.TRUE);
             }
         };
         CThreadHolder.getInstance().execute(bundle, woker);
     }
 
-    public void uninstallBundle(final Bundle bundle) {
+    public void uninstallBundle(final PluginListItemMetadata plugin) {
+        Bundle bundle = plugin.getBundle();
         CThreadWorker woker = new CThreadWorker("Uninstalling " + bundle.getSymbolicName()) {
             @Override
             protected Object runInBackground() {
                 try {
-                    bundle.uninstall();
+                    for (Bundle b : Arrays.asList(bundleContext.getBundles())) {
+                        if (b.getSymbolicName().equals(bundle.getSymbolicName()) && b.getVersion().toString().equals(bundle.getVersion().toString())) {
+                            b.uninstall();
+                        }
+                    }
                     igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleUninstalled"), bundle.getSymbolicName(), bundle.getVersion()));
                 } catch (BundleException bex) {
                     String msg = AppController.BUNDLE.getString("bundleUninstallError");
@@ -269,19 +326,10 @@ public class AppController implements Constants {
 
             @Override
             protected void finished() {
+                plugin.setIsInstalled(Boolean.FALSE);
             }
         };
         CThreadHolder.getInstance().execute(bundle, woker);
-    }
-
-    /**
-     * saves the currently installed bundles
-     *
-     * @param installedBundles the currently installed bundles
-     */
-    private void setInstalledBundles(List< Bundle> installedBundles) {
-        this.installedBundles = installedBundles;
-        setUnfilteredBundles();
     }
 
     /**
@@ -291,7 +339,7 @@ public class AppController implements Constants {
      */
     private void setRepositoryBundles(List< Bundle> repositoryBundles) {
         this.repositoryBundles = repositoryBundles;
-        setUnfilteredBundles();
+        updateUnfilteredBundles();
     }
 
     /**
@@ -319,7 +367,7 @@ public class AppController implements Constants {
     /**
      * update the set of all bundles (unfiltered) due to a change
      */
-    private synchronized void setUnfilteredBundles() {
+    private synchronized void updateUnfilteredBundles() {
         unfilteredBundles = new ArrayList<>();
         latest.clear();
         if (installedBundles != null) {
@@ -422,11 +470,6 @@ public class AppController implements Constants {
         reloadBundleList();
     }
 
-    public void updateBundleTable() {
-        setRepositoryBundles();
-        reloadBundleList();
-    }
-
     public boolean isEmbedded() {
         return true;
     }
@@ -465,7 +508,8 @@ public class AppController implements Constants {
         return repository;
     }
 
-    public FilteredList<PluginListItemMetadata> getListData() {
-        return filteredList;
+    public ObservableList<PluginListItemMetadata> getListData() {
+        return listData;
     }
+
 }

@@ -10,6 +10,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
 import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
@@ -25,6 +26,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
@@ -82,7 +84,7 @@ public class AppManagerFxPanel extends JFXPanel {
     private VBox pane;
     private WebEngine webEngine;
     private String htmlTemplate;
-    private FilteredList<PluginListItemMetadata> filteredData;
+    private ObservableList<PluginListItemMetadata> fiteredAndSortedList;
     private EventBus eventBus;
     private static final List<Color> materialDesignColors = ImmutableList.of(
             Color.rgb(156, 39, 176),
@@ -110,13 +112,13 @@ public class AppManagerFxPanel extends JFXPanel {
     private BundleContext bundleContext;
     private AppController appController;
 
-    private enum FilterOptions {
+    public enum FilterOption {
 
         ALL_APPS("All Apps"), INSTALLED("Installed"), UNINSTALLED("Uninstalled");
 
         private final String label;
 
-        private FilterOptions(String label) {
+        private FilterOption(String label) {
             this.label = label;
         }
 
@@ -127,7 +129,7 @@ public class AppManagerFxPanel extends JFXPanel {
     }
 
     public AppManagerFxPanel() {
-        filteredData = new FilteredList<>(FXCollections.emptyObservableList());
+        fiteredAndSortedList = new FilteredList<>(FXCollections.emptyObservableList());
         Platform.runLater(() -> {
             init();
         });
@@ -136,7 +138,7 @@ public class AppManagerFxPanel extends JFXPanel {
     @Activate
     private void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
-        filteredData = appController.getListData();
+        fiteredAndSortedList = appController.getListData();
     }
 
     @Reference
@@ -144,29 +146,20 @@ public class AppManagerFxPanel extends JFXPanel {
         this.appController = appController;
     }
 
+    private void changeStaticFilter(FilterOption filter) {
+        appController.changeStaticFilter(filter);
+    }
+
     @FXML
     private void initialize() {
-        filterOptions.getItems().addAll(FilterOptions.ALL_APPS, FilterOptions.INSTALLED, FilterOptions.UNINSTALLED);
-        filterOptions.valueProperty().addListener(new ChangeListener<FilterOptions>() {
+        filterOptions.getItems().addAll(FilterOption.ALL_APPS, FilterOption.INSTALLED, FilterOption.UNINSTALLED);
+        filterOptions.valueProperty().addListener(new ChangeListener<FilterOption>() {
             @Override
-            public void changed(ObservableValue ov, FilterOptions t, FilterOptions newValue) {
-                Platform.runLater(() -> {
-                    switch (newValue) {
-                        case ALL_APPS:
-                            filteredData.setPredicate(s -> true);
-                            break;
-                        case INSTALLED:
-                            filteredData.setPredicate(s -> s.isInstalled());
-                            break;
-                        case UNINSTALLED:
-                            filteredData.setPredicate(s -> !s.isInstalled());
-                            break;
-                        default:
-                    }
-                });
+            public void changed(ObservableValue ov, FilterOption t, FilterOption newValue) {
+                changeStaticFilter(newValue);
             }
         });
-        listView.setItems(filteredData);
+        listView.setItems(fiteredAndSortedList);
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
                                 PluginListItemMetadata previousSelection,
@@ -189,6 +182,16 @@ public class AppManagerFxPanel extends JFXPanel {
             htmlUrl = AppManagerFxPanel.class.getClassLoader().getResource(PLUGIN_INFO_TEMPLATE).toExternalForm();
         }
         webEngine.load(htmlUrl);
+
+        search.textProperty().addListener((observable, oldValue, newValue) -> {
+            appController.changeSearchFilter(newValue);
+        });
+    }
+
+    @Subscribe
+    public void updateListEvent(UpdateDataEvent updateDataEvent) {
+        fiteredAndSortedList = appController.getListData();
+        listView.setItems(appController.getListData());
     }
 
     @Reference

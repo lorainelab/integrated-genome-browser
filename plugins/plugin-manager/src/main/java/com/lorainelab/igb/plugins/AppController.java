@@ -9,6 +9,9 @@ import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
+import com.lorainelab.igb.plugins.AppManagerFxPanel.FilterOption;
+import static com.lorainelab.igb.plugins.AppManagerFxPanel.FilterOption.ALL_APPS;
+import static com.lorainelab.igb.plugins.AppManagerFxPanel.FilterOption.UNINSTALLED;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
 import com.lorainelab.igb.preferences.model.PluginRepository;
@@ -25,11 +28,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
@@ -68,13 +75,21 @@ public class AppController implements Constants {
     private IgbService igbService;
     private EventBus eventBus;
     private ObservableList<PluginListItemMetadata> listData;
+    private FilteredList<PluginListItemMetadata> filteredList;
+    private SortedList<PluginListItemMetadata> sortedList;
+    private Predicate<PluginListItemMetadata> currentStaticPredicate;
+    private Predicate<PluginListItemMetadata> currentSearchPredicate;
 
     public AppController() {
         installedBundles = Lists.newArrayList();
+        currentSearchPredicate = (PluginListItemMetadata s) -> true;
+        currentStaticPredicate = (PluginListItemMetadata s) -> true;
         latest = new HashMap<>();
         defaultBundles = new ArrayList<>();
         externalRepositories = new ArrayList<>();
         listData = FXCollections.observableArrayList();
+        filteredList = new FilteredList<>(listData, s -> true);
+        sortedList = filteredList.sorted();
     }
 
     @Activate
@@ -507,7 +522,56 @@ public class AppController implements Constants {
     }
 
     public ObservableList<PluginListItemMetadata> getListData() {
-        return listData;
+        return sortedList;
+    }
+
+    public void changeSearchFilter(String filter) {
+        Platform.runLater(() -> {
+            currentSearchPredicate = (s -> {
+                String escapedFilter = Pattern.quote(filter);
+                Pattern nameStartWith = Pattern.compile("^" + escapedFilter, Pattern.CASE_INSENSITIVE);
+                Pattern nameContains = Pattern.compile(escapedFilter, Pattern.CASE_INSENSITIVE);
+                Pattern descContains = Pattern.compile(escapedFilter, Pattern.CASE_INSENSITIVE);
+                if (nameStartWith.matcher(s.getPluginName()).find()) {
+                    s.setWeight(10);
+                    return true;
+                } else if (nameContains.matcher(s.getPluginName()).find()) {
+                    s.setWeight(5);
+                    return true;
+                } else if (descContains.matcher(s.getDescription()).find()) {
+                    s.setWeight(1);
+                    return true;
+                }
+                s.setWeight(0);
+                return false;
+            });
+            filteredList.setPredicate(currentSearchPredicate.and(currentStaticPredicate));
+            sortedList = filteredList.sorted((PluginListItemMetadata o1, PluginListItemMetadata o2) -> o2.compareTo(o1));
+        });
+    }
+
+    void changeStaticFilter(FilterOption filter) {
+        Platform.runLater(() -> {
+            switch (filter) {
+                case ALL_APPS:
+                    currentStaticPredicate = (PluginListItemMetadata s) -> true;
+                    filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
+                    break;
+                case INSTALLED:
+                    currentStaticPredicate = (PluginListItemMetadata s) -> s.isInstalled();
+                    filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
+                    break;
+                case UNINSTALLED:
+                    currentStaticPredicate = (PluginListItemMetadata s) -> !s.isInstalled();
+                    filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
+                    break;
+                default:
+                    currentStaticPredicate = (PluginListItemMetadata s) -> true;
+                    filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
+                    break;
+            };
+            sortedList = filteredList.sorted((PluginListItemMetadata o1, PluginListItemMetadata o2) -> o2.compareTo(o1));
+        });
     }
 
 }

@@ -40,7 +40,7 @@ public class PluginManagerFxPanelTest {
     private List<PluginListItemMetadata> getListItems() throws IOException {
         String readmeMarkdown = CharStreams.toString(new InputStreamReader(PluginManagerFxPanelTest.class.getClassLoader().getResourceAsStream("README.md")));
         return ImmutableList.of(
-                new PluginListItemMetadata("ProtAnnot", "bioviz", "1.0.1", readmeMarkdown, Boolean.FALSE, Boolean.TRUE),
+                new PluginListItemMetadata("ProtAnnot some really long name that is strange afdsasdfasdfsadfsadfsadfasdfasdfasdfasdfasfdasdfasdfasdfasfasdfasdfadsfadsfadsf", "bioviz", "1.0.1", readmeMarkdown, Boolean.FALSE, Boolean.TRUE),
                 new PluginListItemMetadata("Crisper Cas", "bioviz", "1.0.1", "## test", Boolean.FALSE, Boolean.FALSE),
                 new PluginListItemMetadata("Command Socket", "test", "1.0.1", "### test", Boolean.TRUE, Boolean.TRUE),
                 new PluginListItemMetadata("ProtAnnot", "bioviz2", "1.0.1", readmeMarkdown, Boolean.FALSE, Boolean.TRUE),

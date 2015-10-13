@@ -82,6 +82,7 @@ public class AppManagerFxPanel extends JFXPanel {
     private VBox pane;
     private WebEngine webEngine;
     private String htmlTemplate;
+    private ObservableList<PluginListItemMetadata> fiteredAndSortedList;
     private FilteredList<PluginListItemMetadata> filteredData;
     private EventBus eventBus;
     private static final List<Color> materialDesignColors = ImmutableList.of(
@@ -115,13 +116,13 @@ public class AppManagerFxPanel extends JFXPanel {
         updateAllBtn.setDisable(!filteredData.stream().anyMatch(plugin -> plugin.isUpdatable()));
     }
 
-    private enum FilterOptions {
+    public enum FilterOption {
 
         ALL_APPS("All Apps"), INSTALLED("Installed"), UNINSTALLED("Uninstalled");
 
         private final String label;
 
-        private FilterOptions(String label) {
+        private FilterOption(String label) {
             this.label = label;
         }
 
@@ -132,7 +133,7 @@ public class AppManagerFxPanel extends JFXPanel {
     }
 
     public AppManagerFxPanel() {
-        filteredData = new FilteredList<>(FXCollections.emptyObservableList());
+        fiteredAndSortedList = new FilteredList<>(FXCollections.emptyObservableList());
         Platform.runLater(() -> {
             init();
         });
@@ -143,6 +144,7 @@ public class AppManagerFxPanel extends JFXPanel {
         this.bundleContext = bundleContext;
         this.listData = appController.getListData();
         filteredData = new FilteredList<>(listData, s -> true);
+        fiteredAndSortedList = appController.getListData();
     }
 
     @Reference
@@ -150,29 +152,21 @@ public class AppManagerFxPanel extends JFXPanel {
         this.appController = appController;
     }
 
+    private void changeStaticFilter(FilterOption filter) {
+        appController.changeStaticFilter(filter);
+        refreshListViewContent();
+    }
+
     @FXML
     private void initialize() {
-        filterOptions.getItems().addAll(FilterOptions.ALL_APPS, FilterOptions.INSTALLED, FilterOptions.UNINSTALLED);
-        filterOptions.valueProperty().addListener(new ChangeListener<FilterOptions>() {
+        filterOptions.getItems().addAll(FilterOption.ALL_APPS, FilterOption.INSTALLED, FilterOption.UNINSTALLED);
+        filterOptions.valueProperty().addListener(new ChangeListener<FilterOption>() {
             @Override
-            public void changed(ObservableValue ov, FilterOptions t, FilterOptions newValue) {
-                Platform.runLater(() -> {
-                    switch (newValue) {
-                        case ALL_APPS:
-                            filteredData.setPredicate(s -> true);
-                            break;
-                        case INSTALLED:
-                            filteredData.setPredicate(s -> s.isInstalled());
-                            break;
-                        case UNINSTALLED:
-                            filteredData.setPredicate(s -> !s.isInstalled());
-                            break;
-                        default:
-                    }
-                });
+            public void changed(ObservableValue ov, FilterOption t, FilterOption newValue) {
+                changeStaticFilter(newValue);
             }
         });
-        listView.setItems(filteredData);
+        listView.setItems(fiteredAndSortedList);
         refreshUpdateAllBtn();
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
@@ -188,6 +182,7 @@ public class AppManagerFxPanel extends JFXPanel {
         JSObject jsobj = (JSObject) webEngine.executeScript("window");
         jsobj.setMember("Bridge", new JSBridge());
         jsobj.setMember("logger", new JSLogger());
+
         String htmlUrl;
         if (bundleContext != null) {
             htmlUrl = bundleContext.getBundle().getEntry(PLUGIN_INFO_TEMPLATE).toExternalForm();
@@ -195,6 +190,11 @@ public class AppManagerFxPanel extends JFXPanel {
             htmlUrl = AppManagerFxPanel.class.getClassLoader().getResource(PLUGIN_INFO_TEMPLATE).toExternalForm();
         }
         webEngine.load(htmlUrl);
+
+        search.textProperty().addListener((observable, oldValue, newValue) -> {
+            appController.changeSearchFilter(newValue);
+            refreshListViewContent();
+        });
     }
 
     @Reference
@@ -275,6 +275,8 @@ public class AppManagerFxPanel extends JFXPanel {
                             updateImage = new Image("installed.png");
                         }
                         updateImageView.setImage(updateImage);
+                        Tooltip updateTooltip = new Tooltip("Installed");
+                        Tooltip.install(updateImageView, updateTooltip);
                     } else {
                         if (bundleContext != null) {
                             updateImage = new Image(bundleContext.getBundle().getEntry("uninstalled.png").toExternalForm());
@@ -282,6 +284,8 @@ public class AppManagerFxPanel extends JFXPanel {
                             updateImage = new Image("uninstalled.png");
                         }
                         updateImageView.setImage(updateImage);
+                        Tooltip updateTooltip = new Tooltip("Uninstalled");
+                        Tooltip.install(updateImageView, updateTooltip);
                     }
                     Pane pane = new Pane();
                     pane.setPrefHeight(35);
@@ -312,8 +316,13 @@ public class AppManagerFxPanel extends JFXPanel {
 
                     HBox row = new HBox(5);
                     row.setAlignment(Pos.CENTER_LEFT);
-                    Text text = new Text(plugin.getPluginName());
 
+                    String label = plugin.getPluginName();
+                    if (label.length() > 25) {
+                        label = label.substring(0, 25) + "...";
+                    }
+                    Text text = new Text(label);
+                    text.setWrappingWidth(200);
                     HBox spacer = new HBox();
                     HBox.setHgrow(spacer, Priority.ALWAYS);
 

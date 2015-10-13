@@ -9,7 +9,7 @@ import org.osgi.framework.Bundle;
  *
  * @author jeckstei
  */
-public class PluginListItemMetadata {
+public class PluginListItemMetadata implements Comparable<PluginListItemMetadata> {
 
     private final String pluginName;
     private final String repository;
@@ -18,6 +18,7 @@ public class PluginListItemMetadata {
     private Boolean isUpdatable;
     private Boolean isInstalled;
     private Bundle bundle;
+    private int weight;
 
     public PluginListItemMetadata(Bundle bundle, String repository, Boolean isUpdatable) {
         this.bundle = bundle;
@@ -27,6 +28,7 @@ public class PluginListItemMetadata {
         this.isUpdatable = isUpdatable;
         this.isInstalled = AppController.isInstalled(bundle);
         this.description = getBundleDescription(bundle);
+        this.weight = 0;
     }
 
     //for unit testing...
@@ -75,6 +77,18 @@ public class PluginListItemMetadata {
         this.version = version;
     }
 
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public void setIsUpdatable(Boolean isUpdatable) {
+        this.isUpdatable = isUpdatable;
+    }
+
     public static String getBundleDescription(Bundle bundle) {
         String bundleDescription = bundle.getSymbolicName();
         try {
@@ -84,10 +98,6 @@ public class PluginListItemMetadata {
         } catch (Exception ex) {
         }
         return bundleDescription;
-    }
-
-    public void setIsUpdatable(Boolean isUpdatable) {
-        this.isUpdatable = isUpdatable;
     }
 
     public void setIsInstalled(Boolean isInstalled) {
@@ -124,5 +134,9 @@ public class PluginListItemMetadata {
         return true;
     }
 
+    @Override
+    public int compareTo(PluginListItemMetadata o) {
+        return this.weight - o.getWeight();
+    }
 
 }

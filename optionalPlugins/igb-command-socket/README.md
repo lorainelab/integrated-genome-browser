@@ -1,6 +1,8 @@
-#IGB Command Socket
+# IGB Command Socket
 
-##Example Bash Script for looping through a list of genomic coordinates and exporting an image from the Integrated Genome Browser using the 'Command Socket' plugin
+The IGB Command Socket App opens up a socket on port 7084 for receiving scripting commands. This feature can be useful for orchestrating IGB scripting commands for bash scripts or for interfacing with languages like R.
+
+Example Bash Script for looping through a list of genomic coordinates and exporting an image from the Integrated Genome Browser using the 'Command Socket' plugin
 
 ```bash
 #!/bin/sh

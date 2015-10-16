@@ -1,12 +1,11 @@
 package com.lorainelab.igbr;
 
 import com.affymetrix.genometry.util.GeneralUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -43,7 +42,7 @@ public class SocketCommandListener implements Runnable {
                 logger.info("IGB socket connection started");
             }
         } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
+            //do nothing
         } finally {
             GeneralUtils.closeQuietly(socket);
         }

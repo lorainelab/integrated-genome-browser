@@ -3,7 +3,10 @@ package com.affymetrix.sequenceviewer.actions;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.sequenceviewer.AbstractSequenceViewer;
 import com.lorainelab.image.exporter.service.ImageExportService;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ExportSequenceViewerAction extends GenericAction {
 
@@ -20,7 +23,9 @@ public class ExportSequenceViewerAction extends GenericAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        imageExportService.exportComponent(comp);
+        Map<String, Component> components = new HashMap<>();
+        components.put("Whole View", comp);
+        imageExportService.exportComponents(components);
     }
 
 }

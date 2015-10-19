@@ -1606,4 +1606,12 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         return ipsTableModel;
     }
 
+    public TieredNeoMap getSeqmap() {
+        return seqmap;
+    }
+
+    public void setSeqmap(TieredNeoMap seqmap) {
+        this.seqmap = seqmap;
+    }
+
 }

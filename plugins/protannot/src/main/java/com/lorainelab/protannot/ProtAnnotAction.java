@@ -562,10 +562,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     void saveImage() {
-//        protAnnotService.exportAsImage(gview, frm);
         Map<String, java.awt.Component> components = new LinkedHashMap<>();
-        components.put("Protannot screenshot", frm);
         components.put("Protannot Whole View", gview);
+        components.put("Protannot Main View", gview.getSeqmap().getNeoCanvas());
         imageExportService.exportComponents(components);
     }
 

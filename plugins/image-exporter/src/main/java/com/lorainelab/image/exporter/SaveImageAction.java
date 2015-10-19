@@ -48,9 +48,15 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
 //            exportDialog.display();
             Map<String, Component> compoToExport = new LinkedHashMap<>();
             compoToExport.put("Whole Frame", igbService.getApplicationFrame());
-            compoToExport.put("Main View", igbService.getMainViewComponent());
-            compoToExport.put("Main View (with Labels)", igbService.getMainViewComponentWithLabels());
-            compoToExport.put("Sliced View (with Labels)", igbService.getSpliceViewComponentWithLabels());
+            if (!igbService.getAllTierGlyphs().isEmpty()) {
+                compoToExport.put("Main View", igbService.getMainViewComponent());
+            }
+            if (!igbService.getAllTierGlyphs().isEmpty()) {
+                compoToExport.put("Main View (with Labels)", igbService.getMainViewComponentWithLabels());
+            }
+            if (!igbService.getSeqMapView().getSelectedSyms().isEmpty()) {
+                compoToExport.put("Sliced View (with Labels)", igbService.getSpliceViewComponentWithLabels());
+            }
             imageExportService.exportComponents(compoToExport);
         } catch (Exception ex) {
             ErrorHandler.errorPanel("Problem during output.", ex, Level.SEVERE);

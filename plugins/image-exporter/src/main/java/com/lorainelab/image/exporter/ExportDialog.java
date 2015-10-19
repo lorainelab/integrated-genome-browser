@@ -1,5 +1,6 @@
 package com.lorainelab.image.exporter;
 
+import aQute.bnd.annotation.component.Reference;
 import static com.affymetrix.common.CommonUtils.IS_UBUNTU;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
@@ -88,12 +89,17 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     @Override
     public void exportComponents(Map<String, Component> components) {
         this.components = components;
-        exportDialogGui = new ExportDialogGui(this, components);
+        exportDialogGui.setUpGui(this, components);
         setDefaultComponent();
         initImageInfo();
         initFrame();
         initImageInfo();
         display();
+    }
+
+    @Reference
+    public void setExportDialogGui(ExportDialogGui exportDialogGui) {
+        this.exportDialogGui = exportDialogGui;
     }
 
     /**

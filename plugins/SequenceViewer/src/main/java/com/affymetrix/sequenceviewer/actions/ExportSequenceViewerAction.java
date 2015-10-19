@@ -20,7 +20,7 @@ public class ExportSequenceViewerAction extends GenericAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        imageExportService.exportComponent(comp);
+//        imageExportService.exportComponent(comp);
     }
 
 }

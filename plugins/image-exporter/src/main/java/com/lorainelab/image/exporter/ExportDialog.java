@@ -1,14 +1,11 @@
 package com.lorainelab.image.exporter;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Reference;
 import static com.affymetrix.common.CommonUtils.IS_UBUNTU;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.collect.ImmutableMap;
-import com.lorainelab.igb.services.IgbService;
 import static com.lorainelab.image.exporter.ExportDialogGui.UNIT;
 import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.Color;
@@ -60,22 +57,18 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     private static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
     private static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
     private static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
-    private IgbService igbService;
 
     private String currentUnit;
     private final File defaultDir;
-    private Component wholeFrame;
-    private Component mainView;
-    private Component mainViewWithLabels;
-    private Component slicedViewWithLabels;
     private Component exportComponent;
+    private Map<String, Component> components;
     private boolean isWidthSpinner; // Prevent multiple triggering each other
     private boolean isHeightSpinner;
     private File exportFile;
     private String selectedExt;
     private final Map<ExportFileType, ExportFileFilter> FILTER_LIST;
 
-    private final ExportDialogGui exportDialogGui;
+    private ExportDialogGui exportDialogGui;
 
     public ExportDialog() {
         this.FILTER_LIST = ImmutableMap.<ExportFileType, ExportFileFilter>of(
@@ -83,7 +76,6 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
                 SVG, new ExportFileFilter(SVG),
                 JPEG, new ExportFileFilter(JPEG)
         );
-        exportDialogGui = new ExportDialogGui(this);
         defaultDir = new File(exportNode.get(PREF_DIR, FileTracker.EXPORT_DIR_TRACKER.getFile().getAbsolutePath()));
         currentUnit = exportNode.get(PREF_UNIT, (String) UNIT[0]);
         isWidthSpinner = false;
@@ -93,24 +85,36 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         selectedExt = exportNode.get(PREF_EXT, EXTENSION[1]);
     }
 
-    @Activate
-    public void activate() {
-        wholeFrame = igbService.getApplicationFrame();
-        mainView = igbService.getMainViewComponent();
-        mainViewWithLabels = igbService.getMainViewComponentWithLabels();
-        slicedViewWithLabels = igbService.getSpliceViewComponentWithLabels();
+    @Override
+    public void exportComponents(Map<String, Component> components) {
+        this.components = components;
+        exportDialogGui = new ExportDialogGui(this, components);
         setDefaultComponent();
         initImageInfo();
         initFrame();
+        initImageInfo();
+        display();
+    }
+
+    /**
+     * Saved image information basis on exportComponent.
+     */
+    private void initImageInfo() {
+        for (String key : components.keySet()) {
+            initImageInfo(components.get(key));
+            break;
+        }
+    }
+
+    private void initImageInfo(Component component) {
+        imageInfo = new ExportImageInfo(component.getWidth(), component.getHeight());
     }
 
     private void setDefaultComponent() {
-        exportComponent = mainViewWithLabels;
-    }
-
-    @Reference
-    public void setIgbService(IgbService igbService) {
-        this.igbService = igbService;
+        for (String key : components.keySet()) {
+            exportComponent = components.get(key);
+            break;
+        }
     }
 
     /**
@@ -118,18 +122,15 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
      *
      * @param isSequenceViewer
      */
-    public void display(boolean isSequenceViewer) {
-        initRadioButton(isSequenceViewer);
+    public void display() {
+        initRadioButton();
         initSpinner((String) exportDialogGui.getUnitComboBox().getSelectedItem());
         bringDialogFrameToFront();
         previewImage();
     }
 
     private void bringDialogFrameToFront() {
-        JFrame topFrame = igbService.getApplicationFrame();
-        Point location = topFrame.getLocation();
-        exportDialogGui.getExportDialogFrame().setLocation(location.x + topFrame.getWidth() / 2 - exportDialogGui.getExportDialogFrame().getWidth() / 2,
-                location.y + exportDialogGui.getExportDialogFrame().getHeight() / 2 - exportDialogGui.getExportDialogFrame().getHeight() / 2);
+        exportDialogGui.setVisible(true);
         DisplayUtils.bringFrameToFront(exportDialogGui.getExportDialogFrame());
     }
 
@@ -139,24 +140,13 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
      *
      * @param isCustomComponent
      */
-    private void initRadioButton(boolean isCustomComponent) {
-        if (!isCustomComponent) {
-            if (exportDialogGui.getSvRadioButton().isSelected()) {
-                exportComponent = slicedViewWithLabels;
-            } else if (exportDialogGui.getMvRadioButton().isSelected()) {
-                exportComponent = mainView;
-            } else if (exportDialogGui.getMvlRadioButton().isSelected()) {
-                exportComponent = mainViewWithLabels;
-            } else {
-                exportComponent = wholeFrame;
-                exportDialogGui.getWfRadioButton().setSelected(true);
-            }
-        }
-        initImageInfo();
-        exportDialogGui.getMvRadioButton().setEnabled(!igbService.getAllTierGlyphs().isEmpty());
-        exportDialogGui.getMvlRadioButton().setEnabled(!igbService.getAllTierGlyphs().isEmpty());
-        exportDialogGui.getSvRadioButton().setEnabled(!igbService.getSeqMapView().getSelectedSyms().isEmpty());
-        hideRadioBtns(isCustomComponent);
+    private void initRadioButton() {
+        exportComponent = getSelectedComponent();
+        initImageInfo(exportComponent);
+    }
+
+    private Component getSelectedComponent() {
+        return components.get(exportDialogGui.getSelectedRadioButton().getId());
     }
 
     /**
@@ -247,14 +237,6 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
      */
     public void setComponent(Component c) {
         exportComponent = c;
-    }
-
-    /**
-     * Saved image information basis on exportComponent.
-     */
-    public void initImageInfo() {
-        imageInfo.setWidth(exportComponent.getWidth());
-        imageInfo.setHeight(exportComponent.getHeight());
     }
 
     /**
@@ -618,7 +600,6 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     private void updateExportDialogComponents() {
-        exportDialogGui.getWfRadioButton().setEnabled(true);
         exportDialogGui.getResolutionComboBox().setEnabled(true);
     }
 
@@ -688,24 +669,8 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         updatePreview();
     }
 
-    public void mvRadioButtonActionPerformed() {
-        //TODO: This is will not work when external plugins are using this service
-        exportComponent = mainView;
-        refreshPreview();
-    }
-
-    public void mvlRadioButtonActionPerformed() {
-        exportComponent = mainViewWithLabels;
-        refreshPreview();
-    }
-
-    public void wfRadioButtonActionPerformed() {
-        exportComponent = wholeFrame;
-        refreshPreview();
-    }
-
-    public void svRadioButtonActionPerformed() {
-        exportComponent = slicedViewWithLabels;
+    public void radioButtonActionPerformed() {
+        exportComponent = getSelectedComponent();
         refreshPreview();
     }
 
@@ -722,21 +687,6 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     public String getCurrentUnit() {
         return currentUnit;
     }
-
-    @Override
-    public void exportComponent(Component component) {
-        exportComponent = component;
-        initImageInfo();
-        display(true);
-    }
-
-    private void hideRadioBtns(boolean isCustomComponent) {
-        exportDialogGui.getSvRadioButton().setVisible(!isCustomComponent);
-        exportDialogGui.getMvRadioButton().setVisible(!isCustomComponent);
-        exportDialogGui.getMvlRadioButton().setVisible(!isCustomComponent);
-        exportDialogGui.getWfRadioButton().setVisible(!isCustomComponent);
-    }
-
 }
 
 class ExportFileType {

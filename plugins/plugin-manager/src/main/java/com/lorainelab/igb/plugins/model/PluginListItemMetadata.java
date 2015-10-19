@@ -19,6 +19,7 @@ public class PluginListItemMetadata implements Comparable<PluginListItemMetadata
     private Boolean isInstalled;
     private Bundle bundle;
     private int weight;
+    private Boolean isBusy;
 
     public PluginListItemMetadata(Bundle bundle, String repository, Boolean isUpdatable) {
         this.bundle = bundle;
@@ -29,6 +30,7 @@ public class PluginListItemMetadata implements Comparable<PluginListItemMetadata
         this.isInstalled = BundleInfoManager.isInstalled(bundle);
         this.description = getBundleDescription(bundle);
         this.weight = 0;
+        this.isBusy = Boolean.FALSE;
     }
 
     //for unit testing...
@@ -89,6 +91,15 @@ public class PluginListItemMetadata implements Comparable<PluginListItemMetadata
         this.isUpdatable = isUpdatable;
     }
 
+    public Boolean isBusy() {
+        return isBusy;
+    }
+
+    public void setIsBusy(Boolean isBusy) {
+        this.isBusy = isBusy;
+    }
+
+
     public static String getBundleDescription(Bundle bundle) {
         String bundleDescription = bundle.getSymbolicName();
         try {
@@ -136,7 +147,7 @@ public class PluginListItemMetadata implements Comparable<PluginListItemMetadata
 
     @Override
     public int compareTo(PluginListItemMetadata o) {
-        return this.weight - o.getWeight();
+        return o.getWeight() - this.weight;
     }
 
 }

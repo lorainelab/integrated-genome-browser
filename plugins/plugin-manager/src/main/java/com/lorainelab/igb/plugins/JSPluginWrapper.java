@@ -44,4 +44,8 @@ public class JSPluginWrapper {
         return plugin.isInstalled();
     }
 
+    public Boolean isBusy() {
+        return plugin.isBusy();
+    }
+
 }

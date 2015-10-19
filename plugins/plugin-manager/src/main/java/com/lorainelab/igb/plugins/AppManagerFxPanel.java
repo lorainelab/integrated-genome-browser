@@ -21,6 +21,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
@@ -355,22 +357,77 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
 
         public void installPlugin() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            bundleActionManager.installBundle(plugin);
-            plugin.setIsInstalled(Boolean.TRUE);
-            refreshListViewContent();
+            final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
+                if (t) {
+                    plugin.setIsInstalled(Boolean.TRUE);
+                    plugin.setIsBusy(Boolean.FALSE);
+                    updateWebContent();
+                    refreshListViewContent();
+                }
+                return Void.TYPE;
+            };
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    plugin.setIsBusy(Boolean.TRUE);
+                    Thread.sleep(2000L);
+                    bundleActionManager.installBundle(plugin);
+
+                } catch (InterruptedException ex) {
+
+                }
+                return true;
+            }).thenApply(functionCallback);
+
         }
 
         public void handleUnInstallClick() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            bundleActionManager.uninstallBundle(plugin);
-            plugin.setIsInstalled(Boolean.FALSE);
-            refreshListViewContent();
+            final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
+                if (t) {
+                    plugin.setIsBusy(Boolean.FALSE);
+                    plugin.setIsInstalled(Boolean.FALSE);
+                    updateWebContent();
+                    refreshListViewContent();
+                }
+                return Void.TYPE;
+            };
+            CompletableFuture.supplyAsync(() -> {
+                try {
+
+                    plugin.setIsBusy(Boolean.TRUE);
+                    Thread.sleep(2000L);
+                    bundleActionManager.uninstallBundle(plugin);
+
+                } catch (InterruptedException ex) {
+
+                }
+                return true;
+            }).thenApply(functionCallback);
         }
 
         public void handleUpdateClick() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            bundleActionManager.updateBundle(plugin);
-            refreshListViewContent();
+            final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
+                if (t) {
+                    plugin.setIsBusy(Boolean.FALSE);
+                    updateWebContent();
+                    refreshListViewContent();
+                }
+                return Void.TYPE;
+            };
+            CompletableFuture.supplyAsync(() -> {
+                try {
+                    
+                    plugin.setIsBusy(Boolean.TRUE);
+                    Thread.sleep(2000L);
+
+                    bundleActionManager.updateBundle(plugin);
+
+                } catch (InterruptedException ex) {
+
+                }
+                return true;
+            }).thenApply(functionCallback);
         }
 
         public void openWebpage(String uriString) {

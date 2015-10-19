@@ -45,7 +45,6 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         try {
-//            exportDialog.display();
             Map<String, Component> compoToExport = new LinkedHashMap<>();
             compoToExport.put("Whole Frame", igbService.getApplicationFrame());
             if (!igbService.getAllTierGlyphs().isEmpty()) {

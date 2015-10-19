@@ -34,10 +34,6 @@ public class ExportDialogGui extends JPanel {
     private JButton cancelButton;
     private JComboBox extComboBox;
     private JSpinner heightSpinner;
-//    private JRadioButton mvRadioButton;
-//    private JRadioButton mvlRadioButton;
-//    private JRadioButton svRadioButton;
-//    private JRadioButton wfRadioButton;
     private PreviewLabel previewLabel;
     private JButton refreshButton;
     private JComboBox resolutionComboBox;

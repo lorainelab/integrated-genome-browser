@@ -10,8 +10,6 @@ import java.util.Map;
  */
 public interface ImageExportService {
 
-//    void exportComponent(Component component);
-    
     void exportComponents(Map<String, Component> components);
 
     void headlessComponentExport(Component component, File f, String ext, boolean isScript);

@@ -67,6 +67,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -166,9 +167,16 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     private ProtAnnotEventService eventService;
 
+    private ImageExportService imageExportService;
+
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
         this.eventService = eventService;
+    }
+
+    @Reference
+    public void setImageExportService(ImageExportService imageExportService) {
+        this.imageExportService = imageExportService;
     }
 
     AbstractAction server_load_action = getLoadFromServerAction();
@@ -554,7 +562,10 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     void saveImage() {
-        protAnnotService.exportAsImage(gview, frm);
+        Map<String, java.awt.Component> components = new LinkedHashMap<>();
+        components.put("Protannot Whole View", gview);
+        components.put("Protannot Main View", gview.getSeqmap().getNeoCanvas());
+        imageExportService.exportComponents(components);
     }
 
     void print() {

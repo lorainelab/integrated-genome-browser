@@ -1,9 +1,14 @@
 package com.lorainelab.image.exporter;
 
 import com.affymetrix.common.PreferenceUtils;
+import com.affymetrix.igb.swing.JRPRadioButton;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -11,7 +16,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
@@ -21,23 +25,21 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author dcnorris
  */
+@aQute.bnd.annotation.component.Component(name = ExportDialogGui.COMPONENT_NAME, immediate = true, provide = ExportDialogGui.class)
 public class ExportDialogGui extends JPanel {
 
+    public static final String COMPONENT_NAME = "ExportDialogGui";
     private static final String TITLE = "Save Image";
     private ButtonGroup buttonGroup;
     private JButton cancelButton;
     private JComboBox extComboBox;
     private JSpinner heightSpinner;
-    private JRadioButton mvRadioButton;
-    private JRadioButton mvlRadioButton;
     private PreviewLabel previewLabel;
     private JButton refreshButton;
     private JComboBox resolutionComboBox;
     private JLabel resolutionLabel;
     private JLabel sizeLabel;
-    private JRadioButton svRadioButton;
     private JComboBox unitComboBox;
-    private JRadioButton wfRadioButton;
     private JSpinner widthSpinner;
     private JButton saveAsButton;
     private JButton saveButton;
@@ -46,18 +48,29 @@ public class ExportDialogGui extends JPanel {
     public static final Object[] RESOLUTION = {72, 200, 300, 400, 500, 600, 800, 1000};
     public static final Object[] UNIT = {"pixels", "inches"};
 
-    private final JFrame exportDialogFrame;
-    private final ExportDialog controller;
+    private JFrame exportDialogFrame;
+    private ExportDialog controller;
+    private Map<String, Component> components;
 
-    public ExportDialogGui(ExportDialog exportDialog) {
-        this.controller = exportDialog;
+    public ExportDialogGui() {
         setLayout(new MigLayout("", "[grow]", "[][][grow]"));
         exportDialogFrame = PreferenceUtils.createFrame(TITLE, new Dimension(600, 520));
         exportDialogFrame.add(this);
+        radioButtons = new ArrayList<>();
         addMainPanel();
         addImageOptionsPanel();
         addPreviewPanel();
         setupAutoSizePreviewLabel();
+    }
+
+    public void setController(ExportDialog controller) {
+        this.controller = controller;
+    }
+
+    public void setUpGui(ExportDialog exportDialog, Map<String, Component> components) {
+        this.components = components;
+        this.controller = exportDialog;
+        addRadioButtons();
     }
 
     private void addMainPanel() {
@@ -116,28 +129,44 @@ public class ExportDialogGui extends JPanel {
         add(panel, "growx, wrap");
     }
 
+    private List<JRPRadioButton> radioButtons;
+
+    private void addRadioButtons() {
+        radioButtons.clear();
+        for (String key : components.keySet()) {
+            JRPRadioButton rb = new JRPRadioButton(key);
+            rb.setText(key);
+            rb.addActionListener(evt -> {
+                controller.radioButtonActionPerformed();
+            });
+            radioButtons.add(rb);
+        }
+        updatePreviewPanel();
+    }
+
+    public JRPRadioButton getRadioButton(String key) {
+        for (JRPRadioButton rb : radioButtons) {
+            if (rb.getId().equals(key)) {
+                return rb;
+            }
+        }
+        return null;
+    }
+
+    public JRPRadioButton getSelectedRadioButton() {
+        for (JRPRadioButton rb : radioButtons) {
+            if (rb.isSelected()) {
+                return rb;
+            }
+        }
+        return radioButtons.get(0);
+    }
+
+    JPanel btnPanel;
+
     private void addPreviewPanel() {
-        buttonGroup = new ButtonGroup();
-        svRadioButton = new JRadioButton("Sliced View (with Labels)");
-        svRadioButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-            controller.svRadioButtonActionPerformed();
-        });
-        mvRadioButton = new JRadioButton("Main View");
-        mvRadioButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-            controller.mvRadioButtonActionPerformed();
-        });
-        wfRadioButton = new JRadioButton("Whole Frame");
-        wfRadioButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-            controller.wfRadioButtonActionPerformed();
-        });
-        mvlRadioButton = new JRadioButton("Main View (with Labels)");
-        mvlRadioButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-            controller.mvlRadioButtonActionPerformed();
-        });
-        buttonGroup.add(svRadioButton);
-        buttonGroup.add(mvRadioButton);
-        buttonGroup.add(wfRadioButton);
-        buttonGroup.add(mvlRadioButton);
+
+        btnPanel = new JPanel(new MigLayout("", "[]", "[][][][][]"));
 
         previewLabel = new PreviewLabel();
         refreshButton = new javax.swing.JButton("Update Preview Image");
@@ -149,17 +178,23 @@ public class ExportDialogGui extends JPanel {
 
         JPanel previewPanel = new JPanel(new MigLayout("fill", "[][grow]", "[]"));
         previewPanel.setBorder(BorderFactory.createTitledBorder("Preview"));
-        JPanel btnPanel = new JPanel(new MigLayout("", "[]", "[][][][][]"));
-        btnPanel.add(wfRadioButton, "wrap");
-        btnPanel.add(mvRadioButton, "wrap");
-        btnPanel.add(mvlRadioButton, "wrap");
-        btnPanel.add(svRadioButton, "wrap");
-        btnPanel.add(refreshButton, "");
+
         JPanel imagePanel = new JPanel(new MigLayout("fill", "[]", "[]"));
         imagePanel.add(previewLabel, "grow");
         previewPanel.add(btnPanel, "top");
         previewPanel.add(imagePanel, "grow");
         add(previewPanel, "grow");
+    }
+
+    private void updatePreviewPanel() {
+        buttonGroup = new ButtonGroup();
+        btnPanel.removeAll();
+        for (JRPRadioButton rb : radioButtons) {
+            buttonGroup.add(rb);
+            btnPanel.add(rb, "wrap");
+        }
+        btnPanel.add(refreshButton, "");
+        buttonGroup.setSelected(radioButtons.get(0).getModel(), true);
     }
 
     private void setupAutoSizePreviewLabel() {
@@ -203,14 +238,6 @@ public class ExportDialogGui extends JPanel {
         return heightSpinner;
     }
 
-    public JRadioButton getMvRadioButton() {
-        return mvRadioButton;
-    }
-
-    public JRadioButton getMvlRadioButton() {
-        return mvlRadioButton;
-    }
-
     public PreviewLabel getPreviewLabel() {
         return previewLabel;
     }
@@ -231,16 +258,8 @@ public class ExportDialogGui extends JPanel {
         return sizeLabel;
     }
 
-    public JRadioButton getSvRadioButton() {
-        return svRadioButton;
-    }
-
     public JComboBox getUnitComboBox() {
         return unitComboBox;
-    }
-
-    public JRadioButton getWfRadioButton() {
-        return wfRadioButton;
     }
 
     public JSpinner getWidthSpinner() {

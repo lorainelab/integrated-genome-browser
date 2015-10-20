@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -366,18 +365,8 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
                 }
                 return Void.TYPE;
             };
-            CompletableFuture.supplyAsync(() -> {
-                try {
-                    plugin.setIsBusy(Boolean.TRUE);
-                    Thread.sleep(2000L);
-                    bundleActionManager.installBundle(plugin);
-
-                } catch (InterruptedException ex) {
-
-                }
-                return true;
-            }).thenApply(functionCallback);
-
+            plugin.setIsBusy(Boolean.TRUE);
+            bundleActionManager.installBundle(plugin, functionCallback);
         }
 
         public void handleUnInstallClick() {
@@ -391,18 +380,8 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
                 }
                 return Void.TYPE;
             };
-            CompletableFuture.supplyAsync(() -> {
-                try {
-
-                    plugin.setIsBusy(Boolean.TRUE);
-                    Thread.sleep(2000L);
-                    bundleActionManager.uninstallBundle(plugin);
-
-                } catch (InterruptedException ex) {
-
-                }
-                return true;
-            }).thenApply(functionCallback);
+            plugin.setIsBusy(Boolean.TRUE);
+            bundleActionManager.uninstallBundle(plugin, functionCallback);
         }
 
         public void handleUpdateClick() {
@@ -415,19 +394,8 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
                 }
                 return Void.TYPE;
             };
-            CompletableFuture.supplyAsync(() -> {
-                try {
-                    
-                    plugin.setIsBusy(Boolean.TRUE);
-                    Thread.sleep(2000L);
-
-                    bundleActionManager.updateBundle(plugin);
-
-                } catch (InterruptedException ex) {
-
-                }
-                return true;
-            }).thenApply(functionCallback);
+            plugin.setIsBusy(Boolean.TRUE);
+            bundleActionManager.updateBundle(plugin, functionCallback);
         }
 
         public void openWebpage(String uriString) {

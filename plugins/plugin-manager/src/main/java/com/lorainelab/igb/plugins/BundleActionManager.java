@@ -8,14 +8,14 @@ package com.lorainelab.igb.plugins;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.thread.CThreadHolder;
-import com.affymetrix.genometry.thread.CThreadWorker;
 import static com.lorainelab.igb.plugins.BundleInfoManager.isInstalled;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import com.lorainelab.igb.services.IgbService;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
 import org.apache.felix.bundlerepository.Resolver;
@@ -60,82 +60,71 @@ public class BundleActionManager {
         repoAdmin = repositoryAdmin;
     }
 
-    protected void updateBundle(PluginListItemMetadata plugin) {
-        Bundle bundle = plugin.getBundle();
-        if (isInstalled(bundle)) {
-            Bundle latestBundle = bundleInfoManager.getLatestBundle(bundle);
-            if (!bundle.equals(latestBundle) && !isInstalled(latestBundle)) {
-                try {
-                    bundle.uninstall();
-                } catch (BundleException ex) {
-                    logger.error(ex.getMessage(), ex);
+    protected void updateBundle(PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {
+        CompletableFuture.supplyAsync(() -> {
+            Bundle bundle = plugin.getBundle();
+            if (isInstalled(bundle)) {
+                Bundle latestBundle = bundleInfoManager.getLatestBundle(bundle);
+                if (!bundle.equals(latestBundle) && !isInstalled(latestBundle)) {
+                    try {
+                        bundle.uninstall();
+                    } catch (BundleException ex) {
+                        logger.error(ex.getMessage(), ex);
+                    }
+                    plugin.setBundle(latestBundle);
+                    plugin.setVersion(latestBundle.getVersion().toString());
+                    installBundle(plugin, f -> {
+                        return Void.TYPE;
+                    });
                 }
-                plugin.setBundle(latestBundle);
-                plugin.setVersion(latestBundle.getVersion().toString());
-                installBundle(plugin);
             }
-        }
+            return true;
+        }).thenApply(callback);
     }
 
-    public void installBundle(final PluginListItemMetadata plugin) {
-        Bundle bundle = plugin.getBundle();
-        CThreadWorker woker = new CThreadWorker("Installing " + bundle.getSymbolicName()) {
-            @Override
-            protected Object runInBackground() {
-                Resource resource = ((ResourceWrapper) bundle).getResource();
-                Resolver resolver = repoAdmin.resolver();
-                resolver.add(resource);
-                if (resolver.resolve()) {
-                    resolver.deploy(Resolver.START);
-                    igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleInstalled"), bundle.getSymbolicName(), bundle.getVersion()));
-                } else {
-                    String msg = MessageFormat.format(BUNDLE.getString("bundleInstallError"), bundle.getSymbolicName(), bundle.getVersion());
-                    StringBuilder sb = new StringBuilder(msg);
-                    sb.append(" -> ");
-                    boolean started = false;
-                    for (Reason reason : resolver.getUnsatisfiedRequirements()) {
-                        if (started) {
-                            sb.append(", ");
-                        }
-                        started = true;
-                        sb.append(reason.getRequirement().getComment());
+    public void installBundle(final PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {
+        CompletableFuture.supplyAsync(() -> {
+            Bundle bundle = plugin.getBundle();
+            Resource resource = ((ResourceWrapper) bundle).getResource();
+            Resolver resolver = repoAdmin.resolver();
+            resolver.add(resource);
+            if (resolver.resolve()) {
+                resolver.deploy(Resolver.START);
+                igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleInstalled"), bundle.getSymbolicName(), bundle.getVersion()));
+            } else {
+                String msg = MessageFormat.format(BUNDLE.getString("bundleInstallError"), bundle.getSymbolicName(), bundle.getVersion());
+                StringBuilder sb = new StringBuilder(msg);
+                sb.append(" -> ");
+                boolean started = false;
+                for (Reason reason : resolver.getUnsatisfiedRequirements()) {
+                    if (started) {
+                        sb.append(", ");
                     }
-                    igbService.setStatus(msg);
-                    logger.error(sb.toString());
+                    started = true;
+                    sb.append(reason.getRequirement().getComment());
                 }
-                return null;
+                logger.error(sb.toString());
             }
+            return true;
+        }).thenApply(callback);
 
-            @Override
-            protected void finished() {
-            }
-        };
-        CThreadHolder.getInstance().execute(bundle, woker);
     }
 
-    public void uninstallBundle(final PluginListItemMetadata plugin) {
-        Bundle bundle = plugin.getBundle();
-        CThreadWorker woker = new CThreadWorker("Uninstalling " + bundle.getSymbolicName()) {
-            @Override
-            protected Object runInBackground() {
-                try {
-                    for (Bundle b : Arrays.asList(bundleContext.getBundles())) {
-                        if (b.getSymbolicName().equals(bundle.getSymbolicName()) && b.getVersion().toString().equals(bundle.getVersion().toString())) {
-                            b.uninstall();
-                        }
+    public void uninstallBundle(final PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {
+        CompletableFuture.supplyAsync(() -> {
+            Bundle bundle = plugin.getBundle();
+            try {
+                for (Bundle b : Arrays.asList(bundleContext.getBundles())) {
+                    if (b.getSymbolicName().equals(bundle.getSymbolicName()) && b.getVersion().toString().equals(bundle.getVersion().toString())) {
+                        b.uninstall();
                     }
-                    igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleUninstalled"), bundle.getSymbolicName(), bundle.getVersion()));
-                } catch (BundleException bex) {
-                    String msg = BUNDLE.getString("bundleUninstallError");
-                    logger.error(msg);
                 }
-                return null;
-            }
 
-            @Override
-            protected void finished() {
+            } catch (BundleException bex) {
+                String msg = BUNDLE.getString("bundleUninstallError");
+                logger.error(msg);
             }
-        };
-        CThreadHolder.getInstance().execute(bundle, woker);
+            return true;
+        }).thenApply(callback);
     }
 }

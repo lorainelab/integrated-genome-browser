@@ -18,7 +18,7 @@ sleep 0.5
 for i in "${locationsOfInterest[@]}"
 do
         igbCommand 'goto '$i''
-        igbCommand 'snapshotmainView /tmp/igbImage-'$i'.png'   
+        igbCommand 'snapshotmainView /tmp/igbImage-'$i'.png'
         sleep 2
 done
 ```

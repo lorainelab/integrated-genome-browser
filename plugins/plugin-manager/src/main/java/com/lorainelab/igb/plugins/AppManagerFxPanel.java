@@ -384,6 +384,7 @@ public class AppManagerFxPanel extends JFXPanel {
                 return Void.TYPE;
             };
             plugin.setIsBusy(Boolean.TRUE);
+            updateWebContent();
             bundleActionManager.installBundle(plugin, functionCallback);
         }
 
@@ -399,13 +400,14 @@ public class AppManagerFxPanel extends JFXPanel {
                 return Void.TYPE;
             };
             plugin.setIsBusy(Boolean.TRUE);
+            updateWebContent();
             bundleActionManager.uninstallBundle(plugin, functionCallback);
         }
 
         public void handleUpdateClick() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
-                if (t) {
+            final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean b) -> {
+                if (b) {
                     plugin.setIsBusy(Boolean.FALSE);
                     updateWebContent();
                     pluginPropertyChanged(plugin);
@@ -413,6 +415,7 @@ public class AppManagerFxPanel extends JFXPanel {
                 return Void.TYPE;
             };
             plugin.setIsBusy(Boolean.TRUE);
+            updateWebContent();
             bundleActionManager.updateBundle(plugin, functionCallback);
         }
 

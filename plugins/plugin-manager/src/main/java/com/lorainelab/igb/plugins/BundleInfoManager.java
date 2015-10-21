@@ -55,7 +55,9 @@ public class BundleInfoManager {
     @Activate
     public void activate(BundleContext context) {
         this.bundleContext = context;
-        initializeDefaultBundleFilter();
+        final List<Bundle> runtimeBundles = Arrays.asList(bundleContext.getBundles());
+        runtimeBundles.stream().filter(IS_PLUGIN).forEach(defaultBundles::add);
+        refreshBundleInfo();
         initalizeBundleListener();
     }
 
@@ -65,11 +67,9 @@ public class BundleInfoManager {
         eventBus.register(this);
     }
 
-    private void initializeDefaultBundleFilter() {
-        final List<Bundle> runtimeBundles = Arrays.asList(bundleContext.getBundles());
-        runtimeBundles.stream().filter(IS_PLUGIN).forEach(defaultBundles::add);
+    private void refreshBundleInfo() {
         repositoryManagedBundles = getFilteredRepositoryBundles();
-        runtimeBundles.stream().filter(IS_PLUGIN.negate()).forEach(repositoryManagedBundles::add);
+        defaultBundles.stream().filter(IS_PLUGIN.negate()).forEach(repositoryManagedBundles::add);
     }
 
     private void initalizeBundleListener() {
@@ -80,7 +80,11 @@ public class BundleInfoManager {
                     //refresh
                     break;
                 case BundleEvent.UNINSTALLED:
-                    //refresh
+                    if (IS_PLUGIN.test(bundle)) {
+                        if (defaultBundles.contains(bundle)) {
+                            defaultBundles.remove(bundle);
+                        }
+                    }
                     break;
             }
         };
@@ -93,7 +97,7 @@ public class BundleInfoManager {
     }
 
     void reloadRepositoryBundles() {
-        initializeDefaultBundleFilter();
+        refreshBundleInfo();
         eventBus.post(new UpdateDataEvent());
     }
 
@@ -109,9 +113,9 @@ public class BundleInfoManager {
                     repoBundles.add(bundle);
                 } else {
                     logger.info("Bundle from remote source is not compatible with this version of IGB: {}", bundle.getSymbolicName());
-                    if (logger.isDebugEnabled()) {
+                    if (true) {
                         for (Reason reason : resolver.getUnsatisfiedRequirements()) {
-                            logger.debug(reason.getRequirement().getComment());
+                            logger.info(reason.getRequirement().getComment());
                         }
                     }
                 }

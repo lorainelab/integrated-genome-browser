@@ -27,10 +27,10 @@ public class PluginListItemMetadata implements Comparable<PluginListItemMetadata
     private IntegerProperty weight;
     private BooleanProperty isBusy;
 
-    public PluginListItemMetadata(Bundle bundle, String repository, Boolean isUpdatable) {
+    public PluginListItemMetadata(Bundle bundle, String version, String repository, Boolean isUpdatable) {
         this.bundle = bundle;
         this.pluginName = new SimpleStringProperty(bundle.getSymbolicName());
-        this.version = new SimpleStringProperty(bundle.getVersion().toString());
+        this.version = new SimpleStringProperty(version);
         this.repository = new SimpleStringProperty(repository);
         this.isUpdatable = new SimpleBooleanProperty(isUpdatable);
         this.isInstalled = new SimpleBooleanProperty(BundleInfoManager.isInstalled(bundle) || isUpdatable);

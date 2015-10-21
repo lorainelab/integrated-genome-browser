@@ -134,7 +134,7 @@ public class AppManagerFxPanel extends JFXPanel {
             }
 
             toAdd.stream().forEach(bundle -> {
-                listData.add(new PluginListItemMetadata(bundle, repositoryInfoManager.getBundlesRepositoryName(bundle), bundleInfoManager.isUpdateable(bundle)));
+                listData.add(new PluginListItemMetadata(bundle, bundleInfoManager.getBundleVersion(bundle), repositoryInfoManager.getBundlesRepositoryName(bundle), bundleInfoManager.isUpdateable(bundle)));
             });
             refreshListViewContent();
         });

@@ -113,9 +113,9 @@ public class BundleInfoManager {
                     repoBundles.add(bundle);
                 } else {
                     logger.info("Bundle from remote source is not compatible with this version of IGB: {}", bundle.getSymbolicName());
-                    if (true) {
+                    if (logger.isDebugEnabled()) {
                         for (Reason reason : resolver.getUnsatisfiedRequirements()) {
-                            logger.info(reason.getRequirement().getComment());
+                            logger.debug(reason.getRequirement().getComment());
                         }
                     }
                 }

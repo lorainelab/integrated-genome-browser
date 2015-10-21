@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.felix.bundlerepository.Reason;
@@ -165,7 +166,7 @@ public class BundleInfoManager {
                     .map(b -> b.getVersion()).collect(Collectors.toList());
             Collections.sort(updateableVersions);
             if (!updateableVersions.isEmpty()) {
-                return updateableVersions.get(0);
+                return updateableVersions.get(updateableVersions.size() - 1);
             }
         }
         return bundle.getVersion();
@@ -175,15 +176,22 @@ public class BundleInfoManager {
         if (isUpdateable(bundle)) {
             List<Bundle> updateableVersions = repositoryManagedBundles.stream()
                     .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName()))
-                    .filter(b -> bundle.getVersion().compareTo(b.getVersion()) == 1)
                     .collect(Collectors.toList());
             Collections.sort(updateableVersions, (Bundle o1, Bundle o2) -> {
                 return o1.getVersion().compareTo(o2.getVersion());
             });
             if (!updateableVersions.isEmpty()) {
-                return updateableVersions.get(0);
+                return updateableVersions.get(updateableVersions.size() - 1);
             }
         }
         return bundle;
+    }
+
+    String getBundleVersion(Bundle bundle) {
+        Optional<Bundle> installedBundleMatch = Arrays.asList(bundleContext.getBundles()).stream().filter(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName())).findFirst();
+        if (installedBundleMatch.isPresent()) {
+            return installedBundleMatch.get().getVersion().toString();
+        }
+        return bundle.getVersion().toString();
     }
 }

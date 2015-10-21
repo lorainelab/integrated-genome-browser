@@ -105,8 +105,8 @@ public class BundleInfoManager {
         List<Bundle> repoBundles = new ArrayList<>();
         try {
             Resource[] allResourceArray = repoAdmin.discoverResources("(symbolicname=*)");
-            Resolver resolver = repoAdmin.resolver();
             for (Resource resource : allResourceArray) {
+                Resolver resolver = repoAdmin.resolver();
                 final ResourceWrapper bundle = new ResourceWrapper(resource);
                 resolver.add(resource);
                 if (resolver.resolve()) {
@@ -147,9 +147,14 @@ public class BundleInfoManager {
     }
 
     public boolean isUpdateable(Bundle bundle) {
-        return repositoryManagedBundles.stream()
-                .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName()))
-                .anyMatch(b -> bundle.getVersion().compareTo(b.getVersion()) == 1);
+        if (Arrays.asList(bundleContext.getBundles()).stream()
+                .anyMatch(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName()))) {
+            return repositoryManagedBundles.stream()
+                    .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName()))
+                    .anyMatch(b -> bundle.getVersion().compareTo(b.getVersion()) == 1);
+        } else {
+            return false;
+        }
     }
 
     private Version getLatestVersion(Bundle bundle) {

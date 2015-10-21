@@ -8,11 +8,11 @@ package com.lorainelab.igb.plugins;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import static com.lorainelab.igb.plugins.BundleInfoManager.isInstalled;
 import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
 import com.lorainelab.igb.services.IgbService;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -63,20 +63,19 @@ public class BundleActionManager {
     protected void updateBundle(PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {
         CompletableFuture.supplyAsync(() -> {
             Bundle bundle = plugin.getBundle();
-            if (isInstalled(bundle)) {
-                Bundle latestBundle = bundleInfoManager.getLatestBundle(bundle);
-                if (!bundle.equals(latestBundle) && !isInstalled(latestBundle)) {
-                    try {
-                        bundle.uninstall();
-                    } catch (BundleException ex) {
-                        logger.error(ex.getMessage(), ex);
-                    }
-                    plugin.setBundle(latestBundle);
-                    plugin.setVersion(latestBundle.getVersion().toString());
-                    installBundle(plugin, f -> {
-                        return Void.TYPE;
-                    });
+            Optional<Bundle> installedBundled = Arrays.asList(bundleContext.getBundles()).stream()
+                    .filter(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName())).findFirst();
+            if (installedBundled.isPresent()) {
+                try {
+                    installedBundled.get().uninstall();
+                } catch (BundleException ex) {
+                    logger.error(ex.getMessage(), ex);
                 }
+                plugin.setVersion(bundle.getVersion().toString());
+                plugin.setIsUpdatable(Boolean.FALSE);
+                installBundle(plugin, f -> {
+                    return Void.TYPE;
+                });
             }
             return true;
         }).thenApply(callback);

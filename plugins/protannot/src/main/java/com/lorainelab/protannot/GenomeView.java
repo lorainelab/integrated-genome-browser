@@ -66,6 +66,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -406,7 +407,7 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     public void initInterProScanTab() {
-        final Properties ipsProps = new Properties();
+        final Hashtable<String, Object> ipsProps = new Hashtable<>();
         ipsProps.put("id", properties.get("id"));
         ipsProps.put("protannotService", properties.get("protannotService"));
         TabPanelComponent ipsTab = (TabPanelComponent) interProScanTabPanelFactory.newInstance(ipsProps).getInstance();
@@ -418,9 +419,9 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     }
 
     public void initPropertiesTab() {
-        final Properties props = new Properties();
-        props.setProperty("seqmap.width", seqmap.getWidth() + "");
-        props.setProperty("table.height", table_height + "");
+        final Hashtable<String, Object> props = new Hashtable<>();
+        props.put("seqmap.width", seqmap.getWidth() + "");
+        props.put("table.height", table_height + "");
         ComponentInstance instance = propertiesTabPanelFactory.newInstance(props);
         TabPanelComponent tb = (TabPanelComponent) instance.getInstance();
         table_view = (ModPropertySheet) tb.getComponent();

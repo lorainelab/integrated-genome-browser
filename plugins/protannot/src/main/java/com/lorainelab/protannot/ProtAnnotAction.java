@@ -67,6 +67,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -189,7 +190,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     public void activate(Map<String, Object> properties) {
         this.properties = properties;
 
-        final Properties serviceProps = new Properties();
+        final Hashtable<String, Object> serviceProps = new Hashtable<>();
         serviceProps.put("id", id);
         protAnnotService = (ProtAnnotService) protannotServiceFactory.newInstance(serviceProps).getInstance();
 

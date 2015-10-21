@@ -15,9 +15,11 @@ import javafx.scene.control.ListView;
 public class JSPluginWrapper {
 
     final PluginListItemMetadata plugin;
+    BundleInfoManager bundleInfoManager;
 
-    public JSPluginWrapper(ListView<PluginListItemMetadata> listView) {
+    public JSPluginWrapper(ListView<PluginListItemMetadata> listView, BundleInfoManager bundleInfoManager) {
         plugin = listView.getSelectionModel().getSelectedItem();
+        this.bundleInfoManager = bundleInfoManager;
     }
 
     public String getPluginName() {
@@ -30,6 +32,10 @@ public class JSPluginWrapper {
 
     public String getVersion() {
         return plugin.getVersion();
+    }
+
+    public String getLatestVersion() {
+        return bundleInfoManager.getLatestBundle(plugin.getBundle()).getVersion().toString();
     }
 
     public String getDescription() {

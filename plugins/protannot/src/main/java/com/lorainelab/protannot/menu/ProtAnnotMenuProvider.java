@@ -11,8 +11,8 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
-import java.util.Properties;
 import com.lorainelab.protannot.ProtAnnotAction;
+import java.util.Hashtable;
 import org.osgi.service.component.ComponentFactory;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class ProtAnnotMenuProvider extends GenericAction implements IgbMenuItemP
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final Properties props = new Properties();
+        final Hashtable<String, ?> props = new Hashtable<>();
         ProtAnnotAction instance = (ProtAnnotAction) protannotFactory.newInstance(props).getInstance();
         instance.actionPerformed(null);
     }

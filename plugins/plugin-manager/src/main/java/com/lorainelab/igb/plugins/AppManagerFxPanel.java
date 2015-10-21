@@ -243,7 +243,7 @@ public class AppManagerFxPanel extends JFXPanel {
     private void updateWebContent() {
         Platform.runLater(() -> {
             JSObject jsobj = (JSObject) webEngine.executeScript("window");
-            jsobj.setMember("pluginInfo", new JSPluginWrapper(listView));
+            jsobj.setMember("pluginInfo", new JSPluginWrapper(listView, bundleInfoManager));
             webEngine.executeScript("updatePluginInfo()");
         });
     }

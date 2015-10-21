@@ -8,6 +8,7 @@ package com.lorainelab.igb.plugins;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import static com.lorainelab.igb.plugins.Constants.MATERIAL_DESIGN_COLORS;
@@ -20,7 +21,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -61,12 +64,13 @@ import javafx.scene.web.WebView;
 import javax.swing.SwingUtilities;
 import netscape.javascript.JSObject;
 import org.apache.commons.lang3.StringUtils;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component(immediate = true, provide = AppManagerFxPanel.class)
-public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsumer {
+public class AppManagerFxPanel extends JFXPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(AppManagerFxPanel.class);
     private final String PLUGIN_INFO_TEMPLATE = "pluginInfoTemplate.html";
@@ -112,10 +116,24 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
 
     @Subscribe
     public void udpateDataEventNotification(UpdateDataEvent event) {
-        logger.info("UpdateDataEvent received");
         Platform.runLater(() -> {
             listData.clear();
-            bundleInfoManager.getRepositoryManagedBundles().stream().forEach(bundle -> {
+            List<Bundle> toAdd = Lists.newArrayList();
+            for (Bundle bundle : bundleInfoManager.getRepositoryManagedBundles()) {
+                Optional<Bundle> match = toAdd.stream()
+                        .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName()))
+                        .findFirst();
+                if (match.isPresent()) {
+                    if (bundle.getVersion().compareTo(match.get().getVersion()) == 1) {
+                        toAdd.remove(match.get());
+                        toAdd.add(bundle);
+                    }
+                } else {
+                    toAdd.add(bundle);
+                }
+            }
+
+            toAdd.stream().forEach(bundle -> {
                 listData.add(new PluginListItemMetadata(bundle, repositoryInfoManager.getBundlesRepositoryName(bundle), bundleInfoManager.isUpdateable(bundle)));
             });
             refreshListViewContent();
@@ -361,7 +379,7 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
                     plugin.setIsInstalled(Boolean.TRUE);
                     plugin.setIsBusy(Boolean.FALSE);
                     updateWebContent();
-                    refreshListViewContent();
+                    pluginPropertyChanged(plugin);
                 }
                 return Void.TYPE;
             };
@@ -376,7 +394,7 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
                     plugin.setIsBusy(Boolean.FALSE);
                     plugin.setIsInstalled(Boolean.FALSE);
                     updateWebContent();
-                    refreshListViewContent();
+                    pluginPropertyChanged(plugin);
                 }
                 return Void.TYPE;
             };
@@ -390,7 +408,7 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
                 if (t) {
                     plugin.setIsBusy(Boolean.FALSE);
                     updateWebContent();
-                    refreshListViewContent();
+                    pluginPropertyChanged(plugin);
                 }
                 return Void.TYPE;
             };
@@ -414,6 +432,10 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
             }
         }
 
+    }
+
+    private void pluginPropertyChanged(PluginListItemMetadata plugin) {
+        listData.set(listView.getSelectionModel().getSelectedIndex(), plugin);
     }
 
     private void refreshListViewContent() {
@@ -470,7 +492,7 @@ public class AppManagerFxPanel extends JFXPanel implements UpdateDataEventConsum
             };
             sortedList = filteredList.sorted((PluginListItemMetadata o1, PluginListItemMetadata o2) -> o2.compareTo(o1));
 
-            refreshListViewContent();
+//            refreshListViewContent();
         });
     }
 }

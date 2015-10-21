@@ -46,12 +46,10 @@ public class BundleInfoManager {
     private List<Bundle> repositoryManagedBundles;
     private BundleContext bundleContext;
     private EventBus eventBus;
-    private List<UpdateDataEventConsumer> updateDataEventConsumers;
 
     public BundleInfoManager() {
         defaultBundles = Lists.newArrayList();
         repositoryManagedBundles = Lists.newArrayList();
-        updateDataEventConsumers = Lists.newArrayList();
     }
 
     @Activate
@@ -59,10 +57,6 @@ public class BundleInfoManager {
         this.bundleContext = context;
         initializeDefaultBundleFilter();
         initalizeBundleListener();
-    }
-
-    public void addUpdateDataEventConsumer(UpdateDataEventConsumer consumer) {
-        updateDataEventConsumers.add(consumer);
     }
 
     @Reference
@@ -74,7 +68,8 @@ public class BundleInfoManager {
     private void initializeDefaultBundleFilter() {
         final List<Bundle> runtimeBundles = Arrays.asList(bundleContext.getBundles());
         runtimeBundles.stream().filter(IS_PLUGIN).forEach(defaultBundles::add);
-        reloadRepositoryBundles();
+        repositoryManagedBundles = getFilteredRepositoryBundles();
+        runtimeBundles.stream().filter(IS_PLUGIN.negate()).forEach(repositoryManagedBundles::add);
     }
 
     private void initalizeBundleListener() {
@@ -98,11 +93,8 @@ public class BundleInfoManager {
     }
 
     void reloadRepositoryBundles() {
-        repositoryManagedBundles = getFilteredRepositoryBundles();
+        initializeDefaultBundleFilter();
         eventBus.post(new UpdateDataEvent());
-//        for (UpdateDataEventConsumer consumer : updateDataEventConsumers) {
-//            consumer.udpateDataEventNotification(new UpdateDataEvent());
-//        }
     }
 
     private List<Bundle> getFilteredRepositoryBundles() {

@@ -15,7 +15,7 @@ import org.osgi.framework.Bundle;
  *
  * @author jeckstei
  */
-public class PluginListItemMetadata implements Comparable<PluginListItemMetadata> {
+public class PluginListItemMetadata extends AbstractObservableModel<PluginListItemMetadata> {
 
     private final StringProperty pluginName;
     private final StringProperty repository;
@@ -26,6 +26,7 @@ public class PluginListItemMetadata implements Comparable<PluginListItemMetadata
     private Bundle bundle;
     private IntegerProperty weight;
     private BooleanProperty isBusy;
+
 
     public PluginListItemMetadata(Bundle bundle, String repository, Boolean isUpdatable) {
         this.bundle = bundle;
@@ -104,7 +105,6 @@ public class PluginListItemMetadata implements Comparable<PluginListItemMetadata
     public void setIsBusy(Boolean isBusy) {
         this.isBusy.setValue(isBusy);
     }
-
 
     public static String getBundleDescription(Bundle bundle) {
         String bundleDescription = bundle.getSymbolicName();

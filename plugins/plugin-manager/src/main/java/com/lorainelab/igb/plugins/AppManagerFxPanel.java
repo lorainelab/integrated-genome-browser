@@ -28,6 +28,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -157,7 +158,7 @@ public class AppManagerFxPanel extends JFXPanel {
     }
 
     public AppManagerFxPanel() {
-        listData = FXCollections.observableArrayList();
+        listData = FXCollections.observableArrayList((PluginListItemMetadata p) -> new Observable[]{p});
         currentSearchPredicate = (PluginListItemMetadata s) -> true;
         currentStaticPredicate = (PluginListItemMetadata s) -> true;
         filteredList = new FilteredList<>(listData, s -> true);
@@ -375,12 +376,13 @@ public class AppManagerFxPanel extends JFXPanel {
         public void installPlugin() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
             final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
-                if (t) {
-                    plugin.setIsInstalled(Boolean.TRUE);
-                    plugin.setIsBusy(Boolean.FALSE);
-                    updateWebContent();
-                    pluginPropertyChanged(plugin);
-                }
+                Platform.runLater(() -> {
+                    if (t) {
+                        plugin.setIsInstalled(Boolean.TRUE);
+                        plugin.setIsBusy(Boolean.FALSE);
+                        updateWebContent();
+                    }
+                });
                 return Void.TYPE;
             };
             plugin.setIsBusy(Boolean.TRUE);
@@ -391,12 +393,13 @@ public class AppManagerFxPanel extends JFXPanel {
         public void handleUnInstallClick() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
             final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
-                if (t) {
-                    plugin.setIsBusy(Boolean.FALSE);
-                    plugin.setIsInstalled(Boolean.FALSE);
-                    updateWebContent();
-                    pluginPropertyChanged(plugin);
-                }
+                Platform.runLater(() -> {
+                    if (t) {
+                        plugin.setIsBusy(Boolean.FALSE);
+                        plugin.setIsInstalled(Boolean.FALSE);
+                        updateWebContent();
+                    }
+                });
                 return Void.TYPE;
             };
             plugin.setIsBusy(Boolean.TRUE);
@@ -407,11 +410,12 @@ public class AppManagerFxPanel extends JFXPanel {
         public void handleUpdateClick() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
             final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean b) -> {
-                if (b) {
-                    plugin.setIsBusy(Boolean.FALSE);
-                    updateWebContent();
-                    pluginPropertyChanged(plugin);
-                }
+                Platform.runLater(() -> {
+                    if (b) {
+                        plugin.setIsBusy(Boolean.FALSE);
+                        updateWebContent();
+                    }
+                });
                 return Void.TYPE;
             };
             plugin.setIsBusy(Boolean.TRUE);
@@ -437,13 +441,9 @@ public class AppManagerFxPanel extends JFXPanel {
 
     }
 
-    private void pluginPropertyChanged(PluginListItemMetadata plugin) {
-        listData.set(listView.getSelectionModel().getSelectedIndex(), plugin);
-    }
-
     private void refreshListViewContent() {
-        ObservableList<PluginListItemMetadata> t = listView.getItems();
-        listView.setItems(t);
+        sortedList = filteredList.sorted();
+        listView.setItems(sortedList);
         listView.setCellFactory((ListView<PluginListItemMetadata> l) -> new BuildCell());
         refreshUpdateAllBtn();
     }

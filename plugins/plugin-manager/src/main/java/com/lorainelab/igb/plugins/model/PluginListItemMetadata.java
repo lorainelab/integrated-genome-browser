@@ -16,7 +16,7 @@ import org.osgi.framework.Bundle;
  *
  * @author jeckstei
  */
-public class PluginListItemMetadata implements Comparable<PluginListItemMetadata> {
+public class PluginListItemMetadata extends AbstractObservableModel<PluginListItemMetadata> {
 
     private final StringProperty pluginName;
     private final StringProperty repository;

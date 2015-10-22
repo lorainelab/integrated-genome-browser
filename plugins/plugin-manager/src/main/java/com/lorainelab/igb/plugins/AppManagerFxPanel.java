@@ -163,8 +163,7 @@ public class AppManagerFxPanel extends JFXPanel {
     }
 
     public AppManagerFxPanel() {
-        listData = FXCollections.observableArrayList((PluginListItemMetadata p) -> new Observable[]{p.getIsInstalled(), p.getIsUpdatable(), p.getRepository(), p.getDescription()});
-        currentSearchPredicate = (PluginListItemMetadata s) -> true;
+        listData = FXCollections.observableArrayList((PluginListItemMetadata p) -> new Observable[]{p});
         currentStaticPredicate = (PluginListItemMetadata s) -> true;
         filteredList = new FilteredList<>(listData, s -> true);
         Platform.runLater(() -> {
@@ -486,6 +485,7 @@ public class AppManagerFxPanel extends JFXPanel {
     }
 
     private void refreshListViewContent() {
+        listView.setItems(filteredList.sorted());
         refreshUpdateAllBtn();
     }
 

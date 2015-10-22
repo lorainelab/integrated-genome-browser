@@ -77,6 +77,10 @@ public class PluginListItemMetadata extends AbstractObservableModel<PluginListIt
         return bundle;
     }
 
+    public void setBundle(Bundle bundle) {
+        this.bundle = bundle;
+    }
+
     public IntegerProperty getWeight() {
         return weight;
     }

@@ -27,7 +27,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class BundleInfoManager {
 
     private static final Logger logger = LoggerFactory.getLogger(BundleInfoManager.class);
-    private static final Predicate<? super Bundle> IS_PLUGIN = bundle -> !bundle.getLocation().startsWith("obr:");
+    private static final Predicate<? super Bundle> IS_PLUGIN = bundle -> bundle.getLocation().startsWith("obr:");
 
     private RepositoryAdmin repoAdmin;
     private BundleListener bundleListener;
@@ -57,7 +56,7 @@ public class BundleInfoManager {
     public void activate(BundleContext context) {
         this.bundleContext = context;
         final List<Bundle> runtimeBundles = Arrays.asList(bundleContext.getBundles());
-        runtimeBundles.stream().filter(IS_PLUGIN).forEach(defaultBundles::add);
+        runtimeBundles.stream().filter(IS_PLUGIN.negate()).forEach(defaultBundles::add);
         refreshBundleInfo();
         initalizeBundleListener();
     }
@@ -70,7 +69,7 @@ public class BundleInfoManager {
 
     private void refreshBundleInfo() {
         repositoryManagedBundles = getFilteredRepositoryBundles();
-        defaultBundles.stream().filter(IS_PLUGIN.negate()).forEach(repositoryManagedBundles::add);
+        defaultBundles.stream().filter(IS_PLUGIN).forEach(repositoryManagedBundles::add);
     }
 
     private void initalizeBundleListener() {
@@ -86,7 +85,9 @@ public class BundleInfoManager {
                     if (defaultBundles.contains(bundle)) {
                         defaultBundles.remove(bundle);
                         refreshBundleInfo();
-                        if (!repositoryManagedBundles.stream().anyMatch(plugin -> plugin.getSymbolicName().equals(bundle.getSymbolicName()))) {
+                        if (!repositoryManagedBundles.stream()
+                                .filter(plugin -> plugin.getSymbolicName().equals(bundle.getSymbolicName()))
+                                .anyMatch(plugin -> plugin.getVersion().equals(bundle.getVersion()))) {
                             eventBus.post(new UpdateDataEvent());
                         }
                     }
@@ -143,38 +144,22 @@ public class BundleInfoManager {
         return repositoryManagedBundles;
     }
 
-    public boolean isInstalled(Bundle bundle) {
+    public boolean isVersionOfBundleInstalled(Bundle bundle) {
         return Arrays.asList(bundleContext.getBundles()).stream()
                 .anyMatch(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName()));
-    }
-
-    private boolean isLatest(Bundle bundle) {
-        return bundle.getVersion().equals(getLatestVersion(bundle));
     }
 
     public boolean isUpdateable(Bundle bundle) {
         if (Arrays.asList(bundleContext.getBundles()).stream()
                 .anyMatch(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName()))) {
+            Bundle installedBundle = Arrays.asList(bundleContext.getBundles()).stream()
+                    .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName())).findFirst().get();
             return repositoryManagedBundles.stream()
-                    .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName()))
-                    .anyMatch(b -> bundle.getVersion().compareTo(b.getVersion()) == 1);
+                    .filter(repoBundle -> repoBundle.getSymbolicName().equals(bundle.getSymbolicName()))
+                    .anyMatch(repoBundle -> repoBundle.getVersion().compareTo(installedBundle.getVersion()) == 1);
         } else {
             return false;
         }
-    }
-
-    private Version getLatestVersion(Bundle bundle) {
-        if (isUpdateable(bundle)) {
-            List<Version> updateableVersions = repositoryManagedBundles.stream()
-                    .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName()))
-                    .filter(b -> bundle.getVersion().compareTo(b.getVersion()) == 1)
-                    .map(b -> b.getVersion()).collect(Collectors.toList());
-            Collections.sort(updateableVersions);
-            if (!updateableVersions.isEmpty()) {
-                return updateableVersions.get(updateableVersions.size() - 1);
-            }
-        }
-        return bundle.getVersion();
     }
 
     Bundle getLatestBundle(Bundle bundle) {

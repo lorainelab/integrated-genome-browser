@@ -140,8 +140,8 @@ public class AppManagerFxPanel extends JFXPanel {
             }
 
             toAdd.stream().forEach(bundle -> {
+                final boolean isInstalled = bundleInfoManager.isVersionOfBundleInstalled(bundle);
                 final boolean isUpdateable = bundleInfoManager.isUpdateable(bundle);
-                final boolean isInstalled = bundleInfoManager.isInstalled(bundle) || isUpdateable;
                 listData.add(new PluginListItemMetadata(bundle, bundleInfoManager.getBundleVersion(bundle), repositoryInfoManager.getBundlesRepositoryName(bundle), isInstalled, isUpdateable));
             });
             refreshListViewContent();

@@ -73,6 +73,7 @@ public class BundleActionManager {
                     logger.error(ex.getMessage(), ex);
                 }
                 Platform.runLater(() -> {
+                    plugin.setBundle(bundle);
                     plugin.setVersion(bundle.getVersion().toString());
                     plugin.setIsUpdatable(Boolean.FALSE);
                 });

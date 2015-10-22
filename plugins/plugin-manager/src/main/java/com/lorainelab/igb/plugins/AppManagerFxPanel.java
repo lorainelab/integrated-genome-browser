@@ -167,6 +167,7 @@ public class AppManagerFxPanel extends JFXPanel {
     public AppManagerFxPanel() {
         listData = FXCollections.observableArrayList((PluginListItemMetadata p) -> new Observable[]{p});
         currentStaticPredicate = (PluginListItemMetadata s) -> true;
+        currentSearchPredicate = (PluginListItemMetadata s) -> true;
         filteredList = new FilteredList<>(listData, s -> true);
         Platform.runLater(() -> {
             init();

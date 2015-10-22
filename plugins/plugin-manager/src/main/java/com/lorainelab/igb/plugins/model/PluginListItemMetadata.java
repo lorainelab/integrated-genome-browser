@@ -1,6 +1,5 @@
 package com.lorainelab.igb.plugins.model;
 
-import com.lorainelab.igb.plugins.BundleInfoManager;
 import java.util.Base64;
 import java.util.Objects;
 import javafx.application.Platform;
@@ -28,13 +27,13 @@ public class PluginListItemMetadata extends AbstractObservableModel<PluginListIt
     private IntegerProperty weight;
     private BooleanProperty isBusy;
 
-    public PluginListItemMetadata(Bundle bundle, String version, String repository, Boolean isUpdatable) {
+    public PluginListItemMetadata(Bundle bundle, String version, String repository, Boolean isInstalled, Boolean isUpdatable) {
         this.bundle = bundle;
         this.pluginName = new SimpleStringProperty(bundle.getSymbolicName());
         this.version = new SimpleStringProperty(version);
         this.repository = new SimpleStringProperty(repository);
         this.isUpdatable = new SimpleBooleanProperty(isUpdatable);
-        this.isInstalled = new SimpleBooleanProperty(BundleInfoManager.isInstalled(bundle) || isUpdatable);
+        this.isInstalled = new SimpleBooleanProperty(isInstalled);
         this.description = new SimpleStringProperty(getBundleDescription(bundle));
         this.weight = new SimpleIntegerProperty(0);
         this.isBusy = new SimpleBooleanProperty(Boolean.FALSE);

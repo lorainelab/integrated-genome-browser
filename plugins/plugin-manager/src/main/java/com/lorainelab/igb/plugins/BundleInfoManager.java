@@ -143,8 +143,9 @@ public class BundleInfoManager {
         return repositoryManagedBundles;
     }
 
-    public static boolean isInstalled(Bundle bundle) {
-        return bundle.getState() != Bundle.UNINSTALLED;
+    public boolean isInstalled(Bundle bundle) {
+        return Arrays.asList(bundleContext.getBundles()).stream()
+                .anyMatch(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName()));
     }
 
     private boolean isLatest(Bundle bundle) {

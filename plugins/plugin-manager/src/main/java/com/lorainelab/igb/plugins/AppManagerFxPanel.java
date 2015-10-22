@@ -140,7 +140,9 @@ public class AppManagerFxPanel extends JFXPanel {
             }
 
             toAdd.stream().forEach(bundle -> {
-                listData.add(new PluginListItemMetadata(bundle, bundleInfoManager.getBundleVersion(bundle), repositoryInfoManager.getBundlesRepositoryName(bundle), bundleInfoManager.isUpdateable(bundle)));
+                final boolean isUpdateable = bundleInfoManager.isUpdateable(bundle);
+                final boolean isInstalled = bundleInfoManager.isInstalled(bundle) || isUpdateable;
+                listData.add(new PluginListItemMetadata(bundle, bundleInfoManager.getBundleVersion(bundle), repositoryInfoManager.getBundlesRepositoryName(bundle), isInstalled, isUpdateable));
             });
             refreshListViewContent();
         });
@@ -205,8 +207,8 @@ public class AppManagerFxPanel extends JFXPanel {
         refreshUpdateAllBtn();
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
-                                PluginListItemMetadata previousSelection,
-                                PluginListItemMetadata selectedPlugin) -> {
+                        PluginListItemMetadata previousSelection,
+                        PluginListItemMetadata selectedPlugin) -> {
                     if (selectedPlugin != null) {
                         updateWebContent();
                     }
@@ -287,9 +289,6 @@ public class AppManagerFxPanel extends JFXPanel {
 
         @Override
         public void updateItem(PluginListItemMetadata plugin, boolean empty) {
-            if (plugin == null) {
-                return;
-            }
             updateItemAction(plugin, empty);
         }
 

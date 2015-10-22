@@ -23,35 +23,59 @@ public class JSPluginWrapper {
     }
 
     public String getPluginName() {
-        return plugin.getPluginName();
+        if (plugin != null) {
+            return plugin.getPluginName().get();
+        }
+        return "";
     }
 
     public String getRepository() {
-        return plugin.getRepository();
+        if (plugin != null) {
+            return plugin.getRepository().get();
+        }
+        return "";
     }
 
     public String getVersion() {
-        return plugin.getVersion();
+        if (plugin != null) {
+            return plugin.getVersion().get();
+        }
+        return "";
     }
 
     public String getLatestVersion() {
-        return bundleInfoManager.getLatestBundle(plugin.getBundle()).getVersion().toString();
+        if (plugin != null) {
+            return bundleInfoManager.getLatestBundle(plugin.getBundle()).getVersion().toString();
+        }
+        return "";
     }
 
     public String getDescription() {
-        return plugin.getDescription();
+        if (plugin != null) {
+            return plugin.getDescription().get();
+        }
+        return "";
     }
 
     public Boolean isUpdatable() {
-        return plugin.isUpdatable();
+        if (plugin != null) {
+            return plugin.getIsUpdatable().get();
+        }
+        return false;
     }
 
     public Boolean isInstalled() {
-        return plugin.isInstalled();
+        if (plugin != null) {
+            return plugin.getIsInstalled().get();
+        }
+        return false;
     }
 
     public Boolean isBusy() {
-        return plugin.isBusy();
+        if (plugin != null) {
+            return plugin.getIsBusy().get();
+        }
+        return false;
     }
 
 }

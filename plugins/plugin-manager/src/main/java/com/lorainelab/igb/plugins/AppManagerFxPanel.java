@@ -28,12 +28,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -62,6 +62,7 @@ import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.swing.SwingUtilities;
+import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.Bundle;
@@ -95,9 +96,8 @@ public class AppManagerFxPanel extends JFXPanel {
     private int colorIndex = 0;
     private BundleContext bundleContext;
 
-    private ObservableList<PluginListItemMetadata> listData;
-    private FilteredList<PluginListItemMetadata> filteredList;
-    private SortedList<PluginListItemMetadata> sortedList;
+    private final ObservableList<PluginListItemMetadata> listData;
+    private final FilteredList<PluginListItemMetadata> filteredList;
 
     private Predicate<PluginListItemMetadata> currentStaticPredicate;
     private Predicate<PluginListItemMetadata> currentSearchPredicate;
@@ -107,17 +107,23 @@ public class AppManagerFxPanel extends JFXPanel {
     private RepositoryInfoManager repositoryInfoManager;
 
     private void refreshUpdateAllBtn() {
-        updateAllBtn.setDisable(!filteredList.stream().anyMatch(plugin -> plugin.isUpdatable()));
+        Platform.runLater(() -> {
+            updateAllBtn.setDisable(!filteredList.stream().anyMatch(plugin -> plugin.getIsUpdatable().getValue()));
+        });
     }
 
     private void updateAllBundles() {
-
+        listData.stream().filter(plugin -> plugin.getIsUpdatable().getValue()).forEach(plugin -> updatePlugin(plugin));
     }
 
     @Subscribe
     public void udpateDataEventNotification(UpdateDataEvent event) {
         Platform.runLater(() -> {
             listData.clear();
+            if (bundleInfoManager.getRepositoryManagedBundles().isEmpty()) {
+                updateWebContent();
+                return;
+            }
             List<Bundle> toAdd = Lists.newArrayList();
             for (Bundle bundle : bundleInfoManager.getRepositoryManagedBundles()) {
                 Optional<Bundle> match = toAdd.stream()
@@ -157,11 +163,10 @@ public class AppManagerFxPanel extends JFXPanel {
     }
 
     public AppManagerFxPanel() {
-        listData = FXCollections.observableArrayList();
+        listData = FXCollections.observableArrayList((PluginListItemMetadata p) -> new Observable[]{p.getIsInstalled(), p.getIsUpdatable(), p.getRepository(), p.getDescription()});
         currentSearchPredicate = (PluginListItemMetadata s) -> true;
         currentStaticPredicate = (PluginListItemMetadata s) -> true;
         filteredList = new FilteredList<>(listData, s -> true);
-        sortedList = filteredList.sorted();
         Platform.runLater(() -> {
             init();
         });
@@ -197,7 +202,7 @@ public class AppManagerFxPanel extends JFXPanel {
                 changeStaticFilter(newValue);
             }
         });
-        listView.setItems(sortedList);
+        listView.setItems(filteredList.sorted());
         refreshUpdateAllBtn();
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
@@ -244,7 +249,11 @@ public class AppManagerFxPanel extends JFXPanel {
         Platform.runLater(() -> {
             JSObject jsobj = (JSObject) webEngine.executeScript("window");
             jsobj.setMember("pluginInfo", new JSPluginWrapper(listView, bundleInfoManager));
-            webEngine.executeScript("updatePluginInfo()");
+            try {
+                webEngine.executeScript("updatePluginInfo()");
+            } catch (JSException ex) {
+                logger.debug(ex.getMessage());
+            }
         });
     }
 
@@ -279,6 +288,13 @@ public class AppManagerFxPanel extends JFXPanel {
 
         @Override
         public void updateItem(PluginListItemMetadata plugin, boolean empty) {
+            if (plugin == null) {
+                return;
+            }
+            updateItemAction(plugin, empty);
+        }
+
+        public void updateItemAction(PluginListItemMetadata plugin, boolean empty) {
             Platform.runLater(() -> {
                 super.updateItem(plugin, empty);
                 if (!empty) {
@@ -289,7 +305,7 @@ public class AppManagerFxPanel extends JFXPanel {
                     updateImageView.setSmooth(true);
                     updateImageView.setCache(true);
 
-                    if (plugin.isUpdatable()) {
+                    if (plugin.getIsUpdatable().getValue()) {
                         if (bundleContext != null) {
                             updateImage = new Image(bundleContext.getBundle().getEntry("fa-arrow-circle-up.png").toExternalForm());
                         } else {
@@ -298,7 +314,7 @@ public class AppManagerFxPanel extends JFXPanel {
                         updateImageView.setImage(updateImage);
                         Tooltip updateTooltip = new Tooltip("Update available");
                         Tooltip.install(updateImageView, updateTooltip);
-                    } else if (plugin.isInstalled()) {
+                    } else if (plugin.getIsInstalled().getValue()) {
                         if (bundleContext != null) {
                             updateImage = new Image(bundleContext.getBundle().getEntry("installed.png").toExternalForm());
                         } else {
@@ -321,15 +337,15 @@ public class AppManagerFxPanel extends JFXPanel {
                     pane.setPrefHeight(35);
                     pane.setPrefWidth(35);
                     Color paneColor;
-                    if (repoToColor.containsKey(plugin.getRepository())) {
-                        paneColor = repoToColor.get(plugin.getRepository());
+                    if (repoToColor.containsKey(plugin.getRepository().getValue())) {
+                        paneColor = repoToColor.get(plugin.getRepository().getValue());
                     } else {
                         if ((colorIndex + 1) > MATERIAL_DESIGN_COLORS.size()) {
                             colorIndex = 0;
                         }
                         paneColor = MATERIAL_DESIGN_COLORS.get(colorIndex);
                         colorIndex++;
-                        repoToColor.put(plugin.getRepository(), paneColor);
+                        repoToColor.put(plugin.getRepository().getValue(), paneColor);
                     }
 
                     Tooltip avatarTooltip = new Tooltip("Located in the " + plugin.getRepository() + " repository");
@@ -337,7 +353,7 @@ public class AppManagerFxPanel extends JFXPanel {
                     pane.setBackground(new Background(new BackgroundFill(paneColor, CornerRadii.EMPTY, Insets.EMPTY)));
                     Text avatar = new Text();
 
-                    avatar.setText(plugin.getRepository().substring(0, 1).toUpperCase());
+                    avatar.setText(plugin.getRepository().getValue().substring(0, 1).toUpperCase());
                     avatar.setFill(Color.rgb(255, 255, 255));
                     pane.getChildren().add(avatar);
                     avatar.setX(8);
@@ -347,7 +363,7 @@ public class AppManagerFxPanel extends JFXPanel {
                     HBox row = new HBox(5);
                     row.setAlignment(Pos.CENTER_LEFT);
 
-                    String label = plugin.getPluginName();
+                    String label = plugin.getPluginName().getValue();
                     if (label.length() > 25) {
                         label = label.substring(0, 25) + "...";
                     }
@@ -374,12 +390,20 @@ public class AppManagerFxPanel extends JFXPanel {
 
         public void installPlugin() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
+            if (plugin == null) {
+                Platform.runLater(() -> {
+                    updateWebContent();
+                });
+                return;
+            }
             final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
                 if (t) {
-                    plugin.setIsInstalled(Boolean.TRUE);
-                    plugin.setIsBusy(Boolean.FALSE);
-                    updateWebContent();
-                    pluginPropertyChanged(plugin);
+                    Platform.runLater(() -> {
+                        plugin.setIsInstalled(Boolean.TRUE);
+                        plugin.setIsBusy(Boolean.FALSE);
+                        updateWebContent();
+                        listView.getSelectionModel().select(plugin);
+                    });
                 }
                 return Void.TYPE;
             };
@@ -390,33 +414,40 @@ public class AppManagerFxPanel extends JFXPanel {
 
         public void handleUnInstallClick() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
+            final int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+            if (plugin == null) {
+                Platform.runLater(() -> {
+                    updateWebContent();
+                });
+                return;
+            }
             final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
                 if (t) {
-                    plugin.setIsBusy(Boolean.FALSE);
-                    plugin.setIsInstalled(Boolean.FALSE);
-                    updateWebContent();
-                    pluginPropertyChanged(plugin);
+                    Platform.runLater(() -> {
+                        plugin.setIsBusy(Boolean.FALSE);
+                        plugin.setIsInstalled(Boolean.FALSE);
+                        updateWebContent();
+                        listView.getSelectionModel().select(selectedIndex);
+                    });
                 }
                 return Void.TYPE;
             };
-            plugin.setIsBusy(Boolean.TRUE);
-            updateWebContent();
+            Platform.runLater(() -> {
+                plugin.setIsBusy(Boolean.TRUE);
+                updateWebContent();
+            });
             bundleActionManager.uninstallBundle(plugin, functionCallback);
         }
 
         public void handleUpdateClick() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean b) -> {
-                if (b) {
-                    plugin.setIsBusy(Boolean.FALSE);
+            if (plugin == null) {
+                Platform.runLater(() -> {
                     updateWebContent();
-                    pluginPropertyChanged(plugin);
-                }
-                return Void.TYPE;
-            };
-            plugin.setIsBusy(Boolean.TRUE);
-            updateWebContent();
-            bundleActionManager.updateBundle(plugin, functionCallback);
+                });
+                return;
+            }
+            updatePlugin(plugin);
         }
 
         public void openWebpage(String uriString) {
@@ -434,17 +465,27 @@ public class AppManagerFxPanel extends JFXPanel {
                 }
             }
         }
-
     }
 
-    private void pluginPropertyChanged(PluginListItemMetadata plugin) {
-        listData.set(listView.getSelectionModel().getSelectedIndex(), plugin);
+    private void updatePlugin(final PluginListItemMetadata plugin) {
+        final Function<Boolean, ? extends Class<Void>> handleUpdateCallback = (Boolean b) -> {
+            if (b) {
+                Platform.runLater(() -> {
+                    plugin.setIsBusy(Boolean.FALSE);
+                    updateWebContent();
+                    listView.getSelectionModel().select(plugin);
+                });
+            }
+            return Void.TYPE;
+        };
+        Platform.runLater(() -> {
+            plugin.setIsBusy(Boolean.TRUE);
+            updateWebContent();
+        });
+        bundleActionManager.updateBundle(plugin, handleUpdateCallback);
     }
 
     private void refreshListViewContent() {
-        ObservableList<PluginListItemMetadata> t = listView.getItems();
-        listView.setItems(t);
-        listView.setCellFactory((ListView<PluginListItemMetadata> l) -> new BuildCell());
         refreshUpdateAllBtn();
     }
 
@@ -455,13 +496,13 @@ public class AppManagerFxPanel extends JFXPanel {
                 Pattern nameStartWith = Pattern.compile("^" + escapedFilter, Pattern.CASE_INSENSITIVE);
                 Pattern nameContains = Pattern.compile(escapedFilter, Pattern.CASE_INSENSITIVE);
                 Pattern descContains = Pattern.compile(escapedFilter, Pattern.CASE_INSENSITIVE);
-                if (nameStartWith.matcher(s.getPluginName()).find()) {
+                if (nameStartWith.matcher(s.getPluginName().getValue()).find()) {
                     s.setWeight(10);
                     return true;
-                } else if (nameContains.matcher(s.getPluginName()).find()) {
+                } else if (nameContains.matcher(s.getPluginName().getValue()).find()) {
                     s.setWeight(5);
                     return true;
-                } else if (descContains.matcher(s.getDescription()).find()) {
+                } else if (descContains.matcher(s.getDescription().getValue()).find()) {
                     s.setWeight(1);
                     return true;
                 }
@@ -469,7 +510,6 @@ public class AppManagerFxPanel extends JFXPanel {
                 return false;
             });
             filteredList.setPredicate(currentSearchPredicate.and(currentStaticPredicate));
-            sortedList = filteredList.sorted((PluginListItemMetadata o1, PluginListItemMetadata o2) -> o2.compareTo(o1));
         });
     }
 
@@ -481,11 +521,11 @@ public class AppManagerFxPanel extends JFXPanel {
                     filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
                     break;
                 case INSTALLED:
-                    currentStaticPredicate = (PluginListItemMetadata s) -> s.isInstalled();
+                    currentStaticPredicate = (PluginListItemMetadata s) -> s.getIsInstalled().getValue();
                     filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
                     break;
                 case UNINSTALLED:
-                    currentStaticPredicate = (PluginListItemMetadata s) -> !s.isInstalled();
+                    currentStaticPredicate = (PluginListItemMetadata s) -> !s.getIsInstalled().getValue();
                     filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
                     break;
                 default:
@@ -493,9 +533,6 @@ public class AppManagerFxPanel extends JFXPanel {
                     filteredList.setPredicate(currentStaticPredicate.and(currentSearchPredicate));
                     break;
             };
-            sortedList = filteredList.sorted((PluginListItemMetadata o1, PluginListItemMetadata o2) -> o2.compareTo(o1));
-
-//            refreshListViewContent();
         });
     }
 }

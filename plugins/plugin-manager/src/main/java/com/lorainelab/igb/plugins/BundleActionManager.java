@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import javafx.application.Platform;
 import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
 import org.apache.felix.bundlerepository.Resolver;
@@ -71,8 +72,10 @@ public class BundleActionManager {
                 } catch (BundleException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
-                plugin.setVersion(bundle.getVersion().toString());
-                plugin.setIsUpdatable(Boolean.FALSE);
+                Platform.runLater(() -> {
+                    plugin.setVersion(bundle.getVersion().toString());
+                    plugin.setIsUpdatable(Boolean.FALSE);
+                });
                 installBundle(plugin, f -> {
                     return Void.TYPE;
                 });

@@ -78,12 +78,16 @@ public class BundleInfoManager {
             Bundle bundle = bundleEvent.getBundle();
             switch (bundleEvent.getType()) {
                 case BundleEvent.STARTED:
-                    //refresh
+                    if (!defaultBundles.contains(bundle)) {
+                        defaultBundles.add(bundle);
+                    }
                     break;
                 case BundleEvent.UNINSTALLED:
-                    if (IS_PLUGIN.test(bundle)) {
-                        if (defaultBundles.contains(bundle)) {
-                            defaultBundles.remove(bundle);
+                    if (defaultBundles.contains(bundle)) {
+                        defaultBundles.remove(bundle);
+                        refreshBundleInfo();
+                        if (!repositoryManagedBundles.stream().anyMatch(plugin -> plugin.getSymbolicName().equals(bundle.getSymbolicName()))) {
+                            eventBus.post(new UpdateDataEvent());
                         }
                     }
                     break;

@@ -3,6 +3,7 @@ package com.lorainelab.igb.plugins.model;
 import com.lorainelab.igb.plugins.BundleInfoManager;
 import java.util.Base64;
 import java.util.Objects;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -49,62 +50,65 @@ public class PluginListItemMetadata implements Comparable<PluginListItemMetadata
         this.isInstalled = new SimpleBooleanProperty(isInstalled || isUpdatable);
     }
 
-    public String getPluginName() {
-        return pluginName.getValue();
+    public StringProperty getPluginName() {
+        return pluginName;
     }
 
-    public String getRepository() {
-        return repository.getValue();
+    public StringProperty getRepository() {
+        return repository;
     }
 
-    public String getVersion() {
-        return version.getValue();
+    public StringProperty getVersion() {
+        return version;
     }
 
-    public String getDescription() {
-        return description.getValue();
+    public StringProperty getDescription() {
+        return description;
     }
 
-    public Boolean isUpdatable() {
-        return isUpdatable.getValue();
+    public BooleanProperty getIsUpdatable() {
+        return isUpdatable;
     }
 
-    public Boolean isInstalled() {
-        return isInstalled.getValue();
+    public BooleanProperty getIsInstalled() {
+        return isInstalled;
     }
 
     public Bundle getBundle() {
         return bundle;
     }
 
-    public void setBundle(Bundle bundle) {
-        this.bundle = bundle;
+    public IntegerProperty getWeight() {
+        return weight;
     }
 
-    public void setVersion(String version) {
-        this.version.set(version);
-    }
-
-    public int getWeight() {
-        return weight.getValue();
+    public BooleanProperty getIsBusy() {
+        return isBusy;
     }
 
     public void setWeight(int weight) {
-        this.weight.setValue(weight);
+        Platform.runLater(() -> {
+            this.weight.setValue(weight);
+        });
     }
 
     public void setIsUpdatable(Boolean isUpdatable) {
-        this.isUpdatable.setValue(isUpdatable);
-    }
-
-    public Boolean isBusy() {
-        return isBusy.getValue();
+        Platform.runLater(() -> {
+            this.isUpdatable.setValue(isUpdatable);
+        });
     }
 
     public void setIsBusy(Boolean isBusy) {
-        this.isBusy.setValue(isBusy);
+        Platform.runLater(() -> {
+            this.isBusy.setValue(isBusy);
+        });
     }
 
+    public void setVersion(String version) {
+        Platform.runLater(() -> {
+            this.version.setValue(version);
+        });
+    }
 
     public static String getBundleDescription(Bundle bundle) {
         String bundleDescription = bundle.getSymbolicName();
@@ -118,7 +122,9 @@ public class PluginListItemMetadata implements Comparable<PluginListItemMetadata
     }
 
     public void setIsInstalled(Boolean isInstalled) {
-        this.isInstalled.setValue(isInstalled);
+        Platform.runLater(() -> {
+            this.isInstalled.setValue(isInstalled);
+        });
     }
 
     @Override
@@ -153,7 +159,7 @@ public class PluginListItemMetadata implements Comparable<PluginListItemMetadata
 
     @Override
     public int compareTo(PluginListItemMetadata o) {
-        return o.getWeight() - this.getWeight();
+        return o.getWeight().get() - this.getWeight().get();
     }
 
 }

@@ -110,6 +110,7 @@ www/release_notes/images/Thumbs.db
 /optionalPlugins/igb-command-socket/target/
 /optionalPlugins/tutorial-helper/target/
 /optionalPlugins/merge-annotation-operator/target/
+/optionalPlugins/protannot/target/
 /plugins/track-operations-panel/target/
 /plugins/selection-tracker/target/
 /core/igb-preferences/target/

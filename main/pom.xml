@@ -305,11 +305,6 @@
             <artifactId>cache</artifactId>
             <scope>runtime</scope>  
         </dependency>
-        <dependency>
-            <groupId>com.lorainelab</groupId>
-            <artifactId>protannot</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         <!--End of plugin module dependencies--> 
         <dependency> 
             <groupId>com.jidesoft</groupId>

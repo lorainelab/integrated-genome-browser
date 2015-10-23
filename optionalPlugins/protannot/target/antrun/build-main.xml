@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project name="maven-antrun-" default="main"  >
-<target name="main">
-  <copy file="/home/tarun/igb_workspace/integrated-genome-browser/optionalPlugins/protannot/target/protannot-8.5.0.jar" todir="/home/tarun/igb_workspace/integrated-genome-browser/optionalPlugins/protannot/../../extbundles/optional"/>
-</target>
-</project>

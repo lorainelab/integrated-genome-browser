@@ -120,7 +120,6 @@
         <module>plugins/Keybinding-registry</module>
         <module>plugins/cache</module>
         <module>plugins/cache-api</module>
-        <module>plugins/protannot</module>
         <module>plugins/feedback</module>
     </modules>
 
@@ -145,6 +144,7 @@
                 <module>optionalPlugins/geometric-mean</module>
                 <module>optionalPlugins/igb-command-socket</module> 
                 <module>optionalPlugins/23andMe-snp-converter</module>
+		<module>optionalPlugins/protannot</module>
                 <module>developmentPlugins/FindAnnotations</module>
                 <module>developmentPlugins/OverlapAnnotationOperator</module>                
                 <module>developmentPlugins/SampleSelection</module>
@@ -169,6 +169,7 @@
                 <module>optionalPlugins/geometric-mean</module>
                 <module>optionalPlugins/igb-command-socket</module>
                 <module>optionalPlugins/23andMe-snp-converter</module>
+                <module>optionalPlugins/protannot</module>
                 <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
             </modules>            
         </profile>
@@ -458,6 +459,7 @@
                 <groupId>com.lorainelab</groupId>
                 <artifactId>protannot</artifactId>
                 <version>${project.version}</version>
+		<scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>

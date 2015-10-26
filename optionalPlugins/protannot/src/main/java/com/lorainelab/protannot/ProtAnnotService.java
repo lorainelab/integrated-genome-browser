@@ -569,7 +569,7 @@ public class ProtAnnotService {
                     }
                 }
             }
-            protAnnotPreferencesNode.put(PreferenceUtils.PROTANNOT_IPS_EMAIL, email.getText());
+            protAnnotPreferencesNode.put(PROTANNOT_IPS_EMAIL, email.getText());
             return true;
         }
         return false;

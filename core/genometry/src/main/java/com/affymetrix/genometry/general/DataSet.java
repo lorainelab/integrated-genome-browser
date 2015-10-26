@@ -197,7 +197,9 @@ public final class DataSet {
     public Optional<URI> getIndex() {
         if (getProperties().containsKey("index")) {
             try {
-                URI indexUri = new URI(getProperties().get("index"));
+                String fileIndex = getProperties().get("index");
+                fileIndex = fileIndex.replace(" ", "%20");
+                URI indexUri = new URI(fileIndex);
                 return Optional.ofNullable(indexUri);
             } catch (URISyntaxException ex) {
                 logger.error(ex.getMessage(), ex);

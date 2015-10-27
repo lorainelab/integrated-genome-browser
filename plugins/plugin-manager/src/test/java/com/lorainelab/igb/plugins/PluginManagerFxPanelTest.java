@@ -31,7 +31,7 @@ public class PluginManagerFxPanelTest {
         testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         testFrame.setLayout(migLayout);
         testFrame.setSize(new Dimension(885, 541));
-        AppManagerFxPanel fxPanel = new AppManagerFxPanel();
+        AppManagerFrame fxPanel = new AppManagerFrame();
         testFrame.add(fxPanel, "grow");
         testFrame.setVisible(true);
         Thread.sleep(150000);

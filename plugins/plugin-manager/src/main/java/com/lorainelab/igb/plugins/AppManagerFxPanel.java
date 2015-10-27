@@ -43,8 +43,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -88,6 +90,8 @@ public class AppManagerFxPanel extends JFXPanel {
     private Button updateAllBtn;
     @FXML
     private Button manageReposBtn;
+    @FXML
+    private SplitPane splitPane;
     private VBox pane;
     private WebEngine webEngine;
 
@@ -113,7 +117,9 @@ public class AppManagerFxPanel extends JFXPanel {
     }
 
     private void updateAllBundles() {
-        listData.stream().filter(plugin -> plugin.getIsUpdatable().getValue()).forEach(plugin -> updatePlugin(plugin));
+        listData.stream().filter(plugin -> plugin.getIsUpdatable().getValue()).forEach(plugin -> {
+            updatePlugin(plugin);
+        });
     }
 
     @Subscribe
@@ -208,8 +214,8 @@ public class AppManagerFxPanel extends JFXPanel {
         refreshUpdateAllBtn();
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
-                        PluginListItemMetadata previousSelection,
-                        PluginListItemMetadata selectedPlugin) -> {
+                                PluginListItemMetadata previousSelection,
+                                PluginListItemMetadata selectedPlugin) -> {
                     if (selectedPlugin != null) {
                         updateWebContent();
                     }
@@ -358,24 +364,29 @@ public class AppManagerFxPanel extends JFXPanel {
                     avatar.setX(8);
                     avatar.setY(27);
                     avatar.setFont(Font.font(27));
+                    pane.setMinWidth(35);
+                    pane.setMaxWidth(35);
 
                     HBox row = new HBox(5);
                     row.setAlignment(Pos.CENTER_LEFT);
+                    row.setPrefWidth(250);
 
                     String label = plugin.getPluginName().getValue();
-                    if (label.length() > 25) {
-                        label = label.substring(0, 25) + "...";
-                    }
-                    Text text = new Text(label);
-                    text.setWrappingWidth(200);
+
+                    Label ltext = new Label();
+                    ltext.setText(label);
+                    ltext.setWrapText(false);
+                    ltext.setMinWidth(0);
+
                     HBox spacer = new HBox();
                     HBox.setHgrow(spacer, Priority.ALWAYS);
 
                     if (updateImageView.getImage() != null) {
-                        row.getChildren().addAll(pane, text, spacer, updateImageView);
+                        row.getChildren().addAll(pane, ltext, spacer, updateImageView);
                     } else {
-                        row.getChildren().addAll(pane, text, spacer);
+                        row.getChildren().addAll(pane, ltext, spacer);
                     }
+
                     setGraphic(row);
                 } else {
                     setText(null);
@@ -472,7 +483,6 @@ public class AppManagerFxPanel extends JFXPanel {
                 Platform.runLater(() -> {
                     plugin.setIsBusy(Boolean.FALSE);
                     updateWebContent();
-                    listView.getSelectionModel().select(plugin);
                 });
             }
             return Void.TYPE;

@@ -35,6 +35,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.FileDialog;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -49,6 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -60,6 +62,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -129,6 +132,7 @@ public class ProtAnnotService {
     private volatile String id;
     private ImageExportService imageExportService;
     private boolean emailReset;
+    public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("protannot");
 
     @Reference
     public void setEventService(ProtAnnotEventService eventService) {
@@ -451,7 +455,8 @@ public class ProtAnnotService {
         emailPanel.add(email, "width :300:");
         configParentPanel.add(emailPanel, "wrap");
         errorLabel = new JLabel("");
-        configParentPanel.add(errorLabel, "wrap");
+        configParentPanel.add(errorLabel, "align center, wrap");
+        configParentPanel.add(new JLabel(""), "wrap");
         errorLabel.setForeground(Color.red);
         configParentPanel.add(new JLabel("The InterProScan Web service requires an email address."), "wrap");
         initSelectAll();
@@ -514,7 +519,7 @@ public class ProtAnnotService {
         matcher = pattern.matcher(email.getText());
         boolean validEmail = matcher.matches();
         if (!validEmail) {
-            setErrorMessage("Invalid email Address.");
+            setErrorMessage(BUNDLE.getString("invalidEmail") + "\n");
         }
         return matcher.matches();
     }
@@ -761,14 +766,31 @@ public class ProtAnnotService {
         return invalidJobs;
     }
 
-    public void exportAsXml(Component component) {
-        JFileChooser chooser = new UniFileChooser("PAXML File", "paxml");
-        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.rescanCurrentDirectory();
-        int option = chooser.showSaveDialog(component);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File exportFile = chooser.getSelectedFile();
+    public void exportAsXml(Component component, JFrame frm) {
+        int option = 0;
+        File[] files = null;
+        if (!CommonUtils.IS_UBUNTU) {
+            FileDialog nativeFileChooser = new FileDialog(frm);
+            nativeFileChooser.setDirectory(FileTracker.DATA_DIR_TRACKER.getFile().toString());
+            nativeFileChooser.setTitle(BUNDLE.getString("paxmlFileChooserTitle"));
+            nativeFileChooser.setMode(FileDialog.SAVE);
+            nativeFileChooser.setVisible(true);
+            nativeFileChooser.toFront();
+            files = nativeFileChooser.getFiles();
+
+        } else {
+
+            JFileChooser chooser = new UniFileChooser(BUNDLE.getString("paxmlFileChooserTitle"), "paxml");
+            chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            chooser.rescanCurrentDirectory();
+            option = chooser.showSaveDialog(component);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                files = chooser.getSelectedFiles();
+            }
+        }
+        if (files != null && files.length > 0) {
+            File exportFile = files[0];
             FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());
             Dnaseq dnaseq = getDnaseq();
             JAXBContext jaxbContext;
@@ -784,21 +806,35 @@ public class ProtAnnotService {
         }
     }
 
-    public void exportAsImage(Component component) {
-        JFileChooser fileChooser = new UniFileChooser("Save As", "png");
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    public void exportAsImage(Component component, JFrame frm) {
+        File[] files = null;
+        int option = 0;
+        if (!CommonUtils.IS_UBUNTU) {
+            FileDialog nativeFileChooser = new FileDialog(frm);
+            nativeFileChooser.setDirectory(FileTracker.DATA_DIR_TRACKER.getFile().toString());
+            nativeFileChooser.setTitle("Save As");
+            nativeFileChooser.setMode(FileDialog.SAVE);
+            nativeFileChooser.setVisible(true);
+            nativeFileChooser.toFront();
+            files = nativeFileChooser.getFiles();
+        } else {
+            JFileChooser fileChooser = new UniFileChooser("Save As", "png");
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fileChooser.rescanCurrentDirectory();
+            try {
+                fileChooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+                fileChooser.setSelectedFile(new File(currentSaveImageFile));
+                option = fileChooser.showSaveDialog(component);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    files = fileChooser.getSelectedFiles();
+                }
 
-        fileChooser.rescanCurrentDirectory();
-        try {
-            fileChooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-            fileChooser.setSelectedFile(new File(currentSaveImageFile));
-
-        } catch (Exception ex) {
-            LOG.error(ex.getMessage(), ex);
+            } catch (Exception ex) {
+                LOG.error(ex.getMessage(), ex);
+            }
         }
-        int option = fileChooser.showSaveDialog(component);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File exportFile = fileChooser.getSelectedFile();
+        if (files != null && files.length > 0) {
+            File exportFile = files[0];
             FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());
             currentSaveImageFile = exportFile.getName();
             imageExportService.headlessComponentExport(component, exportFile, ".png", true);

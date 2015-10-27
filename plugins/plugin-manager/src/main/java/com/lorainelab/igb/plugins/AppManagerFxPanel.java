@@ -360,7 +360,7 @@ public class AppManagerFxPanel extends JFXPanel {
                     pane.getChildren().add(avatar);
                     avatar.setX(8);
                     avatar.setY(27);
-                    avatar.setFont(Font.font(27));
+                    avatar.setFont(Font.font("Monospaced", 27));
                     pane.setMinWidth(35);
                     pane.setMaxWidth(35);
 

@@ -114,12 +114,13 @@ public class PluginListItemMetadata extends AbstractObservableModel<PluginListIt
     }
 
     public static String getBundleDescription(Bundle bundle) {
-        String bundleDescription = bundle.getSymbolicName();
+        String bundleDescription;
         try {
             bundleDescription = bundle.getHeaders().get("Bundle-Description");
             byte[] decode = Base64.getDecoder().decode(bundleDescription);
             bundleDescription = new String(decode);
         } catch (Exception ex) {
+            bundleDescription = bundle.getSymbolicName();
         }
         return bundleDescription;
     }

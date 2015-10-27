@@ -126,10 +126,7 @@ public class AppManagerFxPanel extends JFXPanel {
     public void udpateDataEventNotification(UpdateDataEvent event) {
         Platform.runLater(() -> {
             listData.clear();
-            if (bundleInfoManager.getRepositoryManagedBundles().isEmpty()) {
-                updateWebContent();
-                return;
-            }
+            updateWebContent();
             List<Bundle> toAdd = Lists.newArrayList();
             for (Bundle bundle : bundleInfoManager.getRepositoryManagedBundles()) {
                 Optional<Bundle> match = toAdd.stream()
@@ -214,8 +211,8 @@ public class AppManagerFxPanel extends JFXPanel {
         refreshUpdateAllBtn();
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
-                                PluginListItemMetadata previousSelection,
-                                PluginListItemMetadata selectedPlugin) -> {
+                        PluginListItemMetadata previousSelection,
+                        PluginListItemMetadata selectedPlugin) -> {
                     if (selectedPlugin != null) {
                         updateWebContent();
                     }
@@ -412,7 +409,6 @@ public class AppManagerFxPanel extends JFXPanel {
                         plugin.setIsInstalled(Boolean.TRUE);
                         plugin.setIsBusy(Boolean.FALSE);
                         updateWebContent();
-                        listView.getSelectionModel().select(plugin);
                     });
                 }
                 return Void.TYPE;
@@ -437,7 +433,6 @@ public class AppManagerFxPanel extends JFXPanel {
                         plugin.setIsBusy(Boolean.FALSE);
                         plugin.setIsInstalled(Boolean.FALSE);
                         updateWebContent();
-                        listView.getSelectionModel().select(selectedIndex);
                     });
                 }
                 return Void.TYPE;
@@ -483,6 +478,7 @@ public class AppManagerFxPanel extends JFXPanel {
                 Platform.runLater(() -> {
                     plugin.setIsBusy(Boolean.FALSE);
                     updateWebContent();
+                    refreshUpdateAllBtn();
                 });
             }
             return Void.TYPE;

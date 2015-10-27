@@ -81,12 +81,13 @@ public class BundleActionManager {
                             plugin.setVersion(bundle.getVersion().toString());
                             plugin.setIsUpdatable(Boolean.FALSE);
                         });
+                        callback.apply(installSucceeded);
                     }
                     return Void.TYPE;
                 });
             }
             return true;
-        }).thenApply(callback);
+        });
     }
 
     public void installBundle(final PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {

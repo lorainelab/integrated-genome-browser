@@ -145,8 +145,8 @@
            }
            var nameLine = this.state.pluginName;
            var versionLine = 'Version: ' + this.state.version;
-           if(this.state.latestVersion){
-               versionLine+=' ('+this.state.latestVersion+')';
+           if(this.state.latestVersion!=this.state.version){
+               versionLine+=' ('+this.state.latestVersion+' update available)';
            }
            var repositoryLine = 'Repository: ' + this.state.repository;
            

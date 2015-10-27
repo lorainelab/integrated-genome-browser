@@ -420,7 +420,6 @@ public class AppManagerFxPanel extends JFXPanel {
 
         public void handleUnInstallClick() {
             final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            final int selectedIndex = listView.getSelectionModel().getSelectedIndex();
             if (plugin == null) {
                 Platform.runLater(() -> {
                     updateWebContent();

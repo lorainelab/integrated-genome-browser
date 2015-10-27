@@ -16,7 +16,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import javafx.application.Platform;
+import org.apache.felix.bundlerepository.InterruptedResolutionException;
 import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
 import org.apache.felix.bundlerepository.Resolver;
@@ -72,12 +74,14 @@ public class BundleActionManager {
                 } catch (BundleException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
-                Platform.runLater(() -> {
-                    plugin.setBundle(bundle);
-                    plugin.setVersion(bundle.getVersion().toString());
-                    plugin.setIsUpdatable(Boolean.FALSE);
-                });
-                installBundle(plugin, f -> {
+                installBundle(plugin, installSucceeded -> {
+                    if (installSucceeded) {
+                        Platform.runLater(() -> {
+                            plugin.setBundle(bundle);
+                            plugin.setVersion(bundle.getVersion().toString());
+                            plugin.setIsUpdatable(Boolean.FALSE);
+                        });
+                    }
                     return Void.TYPE;
                 });
             }
@@ -86,31 +90,50 @@ public class BundleActionManager {
     }
 
     public void installBundle(final PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {
-        CompletableFuture.supplyAsync(() -> {
-            Bundle bundle = plugin.getBundle();
-            Resource resource = ((ResourceWrapper) bundle).getResource();
-            Resolver resolver = repoAdmin.resolver();
-            resolver.add(resource);
-            if (resolver.resolve()) {
-                resolver.deploy(Resolver.START);
-                igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleInstalled"), bundle.getSymbolicName(), bundle.getVersion()));
-            } else {
-                String msg = MessageFormat.format(BUNDLE.getString("bundleInstallError"), bundle.getSymbolicName(), bundle.getVersion());
-                StringBuilder sb = new StringBuilder(msg);
-                sb.append(" -> ");
-                boolean started = false;
-                for (Reason reason : resolver.getUnsatisfiedRequirements()) {
-                    if (started) {
-                        sb.append(", ");
+        Bundle bundle = plugin.getBundle();
+        Resource resource = ((ResourceWrapper) bundle).getResource();
+        CompletableFuture.supplyAsync(new Supplier<Boolean>() {
+            boolean tryToRecover = true;
+            @Override
+            public Boolean get() {
+                try {
+                    installBundle(resource, bundle);
+                } catch (IllegalStateException ex) {
+                    if (tryToRecover && ex.getMessage().equals(KNOWN_FELIX_EXCEPTION)) {
+                        tryToRecover = false; //only try this once
+                        installBundle(plugin, callback);
                     }
-                    started = true;
-                    sb.append(reason.getRequirement().getComment());
+                } catch (Throwable ex) {
+                    logger.error(ex.getMessage(), ex);
+                    return false;
                 }
-                logger.error(sb.toString());
+                return true;
             }
-            return true;
         }).thenApply(callback);
 
+    }
+    private final String KNOWN_FELIX_EXCEPTION = "Framework state has changed, must resolve again."; //See
+
+    private synchronized void installBundle(Resource resource, Bundle bundle) throws InterruptedResolutionException {
+        Resolver resolver = repoAdmin.resolver();
+        resolver.add(resource);
+        if (resolver.resolve()) {
+            resolver.deploy(Resolver.START);
+            igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleInstalled"), bundle.getSymbolicName(), bundle.getVersion()));
+        } else {
+            String msg = MessageFormat.format(BUNDLE.getString("bundleInstallError"), bundle.getSymbolicName(), bundle.getVersion());
+            StringBuilder sb = new StringBuilder(msg);
+            sb.append(" -> ");
+            boolean started = false;
+            for (Reason reason : resolver.getUnsatisfiedRequirements()) {
+                if (started) {
+                    sb.append(", ");
+                }
+                started = true;
+                sb.append(reason.getRequirement().getComment());
+            }
+            logger.error(sb.toString());
+        }
     }
 
     public void uninstallBundle(final PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {

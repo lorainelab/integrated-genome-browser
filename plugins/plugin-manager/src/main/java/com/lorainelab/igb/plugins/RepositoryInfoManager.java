@@ -31,6 +31,7 @@ public class RepositoryInfoManager {
 
     private static final Logger logger = LoggerFactory.getLogger(RepositoryInfoManager.class);
     private static final String REPOSITORY_XML_FILE_PATH = "/repository.xml";
+    private static final String DEFAULT_REPO_INFO = "Development Mode";
 
     private BundleInfoManager bundleInfoManager;
     private RepositoryAdmin repoAdmin;
@@ -111,7 +112,7 @@ public class RepositoryInfoManager {
                     }
                 }
                 if (repository.isEmpty() && isDevelopmentMode()) {
-                    repository = "Development Mode";
+                    repository = DEFAULT_REPO_INFO;
                 }
             }
         }

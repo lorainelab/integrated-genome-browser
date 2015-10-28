@@ -51,7 +51,6 @@ public class FrameVisibilityManager {
     @Activate
     public void activate() {
         SwingUtilities.invokeLater(() -> {
-            igbService.getApplicationFrame().pack();
             igbService.getApplicationFrame().setVisible(true);
         });
     }

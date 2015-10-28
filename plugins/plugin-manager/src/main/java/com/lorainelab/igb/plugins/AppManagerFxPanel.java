@@ -361,8 +361,8 @@ public class AppManagerFxPanel extends JFXPanel {
                     avatar.setX(8);
                     avatar.setY(27);
                     avatar.setFont(Font.font("Monospaced", 27));
-                    pane.setMinWidth(35);
-                    pane.setMaxWidth(35);
+                    pane.setMinWidth(33);
+                    pane.setMaxWidth(33);
 
                     HBox row = new HBox(5);
                     row.setAlignment(Pos.CENTER_LEFT);

@@ -10,6 +10,8 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -22,6 +24,7 @@ public class PreferencesAction extends GenericAction {
     private static final long serialVersionUID = 1L;
     private static final PreferencesAction ACTION = new PreferencesAction();
     private final int TOOLBAR_INDEX = 6;
+    private static final Logger logger = LoggerFactory.getLogger(PreferencesAction.class);
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);

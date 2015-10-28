@@ -30,8 +30,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -40,6 +38,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -56,6 +56,8 @@ public class IGBToolBar extends JToolBar {
     private final JTextField selectionInfoTextField;
     private final Font selectionFont;
     private final Font noSelectionFont;
+    private static final Logger logger = LoggerFactory.getLogger(IGBToolBar.class);
+    private boolean dragDropInProgress = false;
 
     public IGBToolBar() {
         super();
@@ -66,6 +68,7 @@ public class IGBToolBar extends JToolBar {
         ((DragAndDropJPanel) toolbarItemPanel).addDragSourceListener(new DragSourceAdapter() {
             @Override
             public void dragDropEnd(DragSourceDropEvent dsde) {
+                dragDropInProgress = false;
                 triggerMouseReleasedEvent();
             }
 
@@ -73,12 +76,13 @@ public class IGBToolBar extends JToolBar {
         ((DragAndDropJPanel) toolbarItemPanel).addDropTargetListener(new DropTargetAdapter() {
             @Override
             public void drop(DropTargetDropEvent dtde) {
+                dragDropInProgress = false;
                 reIndex();
             }
 
             @Override
             public void dragEnter(DropTargetDragEvent dtde) {
-                triggerMouseReleasedEvent();
+                dragDropInProgress = true;
             }
         });
 
@@ -174,7 +178,7 @@ public class IGBToolBar extends JToolBar {
         }
         SELECTION_RULE_ACTION.setSelectionText(selectionInfoTextField.getText());
     }
-    
+
     public void addToolbarAction(GenericAction genericAction, int index) {
         if (!checkIfAlreadyAdded(genericAction)) {
             JRPButtonTLP button = new JRPButtonTLP(genericAction, index);
@@ -217,7 +221,7 @@ public class IGBToolBar extends JToolBar {
         if (removed) {
             reIndex();
         } else {
-            Logger.getLogger(this.getClass().getName()).log(Level.WARNING, ".removeToolbarAction: Could not find {0}", action);
+            logger.warn(".removeToolbarAction: Could not find {}", action);
         }
     }
 
@@ -283,7 +287,7 @@ public class IGBToolBar extends JToolBar {
         }
     };
 
-    private class JRPButtonTLP extends JRPButton implements WeightedJRPWidget{
+    private class JRPButtonTLP extends JRPButton implements WeightedJRPWidget {
 
         private static final long serialVersionUID = 1L;
         private int weight;
@@ -300,6 +304,9 @@ public class IGBToolBar extends JToolBar {
 
         @Override
         public void fireActionPerformed(ActionEvent evt) {
+            if (dragDropInProgress) {
+                return;
+            }
             if (((GenericAction) getAction()).isToggle() && this.getAction().getValue(AbstractAction.SELECTED_KEY) != null) {
                 this.getAction().putValue(AbstractAction.SELECTED_KEY,
                         !Boolean.valueOf(getAction().getValue(AbstractAction.SELECTED_KEY).toString()));

@@ -3,15 +3,15 @@ package com.affymetrix.igb.external;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.igb.swing.JRPComboBox;
+import com.lorainelab.igb.services.IgbService;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.EXTERNAL_VIEWER_TAB;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.CardLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ResourceBundle;
-
-import com.affymetrix.igb.swing.JRPComboBox;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 
 /**
  * Container panel for the external views Shows up as tab in IGB Allows
@@ -21,10 +21,9 @@ import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
  *
  * @author Ido M. Tamir
  */
-@Component(name = ExternalViewer.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = EXTERNAL_VIEWER_TAB, provide = IgbTabPanelI.class, immediate = true)
 public class ExternalViewer extends IgbTabPanel implements ItemListener {
 
-    public static final String COMPONENT_NAME = "ExternalViewer";
     private static final long serialVersionUID = 1L;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("external");
     private static final int TAB_POSITION = 6;

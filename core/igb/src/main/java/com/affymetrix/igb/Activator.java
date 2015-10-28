@@ -70,14 +70,21 @@ import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.swing.script.ScriptProcessor;
 import com.affymetrix.igb.swing.script.ScriptProcessorHolder;
 import com.affymetrix.igb.util.IGBAuthenticator;
+import com.affymetrix.igb.view.AltSpliceView;
+import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.lorainelab.igb.services.IgbService;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.ALT_SPLICE_VIEW_TAB;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.COMPONENT_NAME;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.DATA_MANAGEMENT_TAB;
 import com.lorainelab.igb.services.search.ISearchHints;
 import com.lorainelab.igb.services.search.ISearchModeSym;
 import com.lorainelab.igb.services.search.SearchListener;
 import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.net.Authenticator;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
@@ -135,13 +142,16 @@ public class Activator implements BundleActivator {
 
             private void initializeWindowService(IgbServiceDependencyManager dependencyManager) {
                 IWindowService windowService = dependencyManager.getWindowService();
-                final IgbTabPanelI[] tabs = igb.setWindowService(windowService);
+                igb.setWindowService(windowService);
                 // set IgbService
                 bundleContext.registerService(IgbService.class, IgbServiceImpl.getInstance(), null);
                 // register tabs created in IGB itself - IGBTabPanel is an extension point
-                for (IgbTabPanelI tab : tabs) {
-                    bundleContext.registerService(IgbTabPanelI.class.getName(), tab, null);
-                }
+                Dictionary<String, String> dataManagementTabMetadata = new Hashtable<>();
+                dataManagementTabMetadata.put(COMPONENT_NAME, DATA_MANAGEMENT_TAB);
+                Dictionary<String, String> altSpliceViewMetadata = new Hashtable<>();
+                altSpliceViewMetadata.put(COMPONENT_NAME, ALT_SPLICE_VIEW_TAB);
+                bundleContext.registerService(IgbTabPanelI.class.getName(), GeneralLoadViewGUI.getLoadView(), dataManagementTabMetadata);
+                bundleContext.registerService(IgbTabPanelI.class.getName(), AltSpliceView.getSingleton(), altSpliceViewMetadata);
             }
         };
         dependencyTracker.open();
@@ -309,8 +319,8 @@ public class Activator implements BundleActivator {
                                 genericAction.putValue(Action.ACCELERATOR_KEY, ks);
                             }
 
-                            IGB.getInstance().addAction(genericAction);
-                            String NO_VALUE = "no value";
+                    IGB.getInstance().addAction(genericAction);
+                    String NO_VALUE = "no value";
 
                             String actionToolbarStatus = PreferenceUtils.getToolbarNode().get(genericAction.getId(), NO_VALUE);
                             boolean isToolbar;
@@ -329,10 +339,10 @@ public class Activator implements BundleActivator {
                         }
                     }
 
-                    @Override
-                    public void notifyGenericAction(GenericAction genericAction) {
-                    }
-                }
+            @Override
+            public void notifyGenericAction(GenericAction genericAction) {
+            }
+        }
         );
     }
 
@@ -345,9 +355,10 @@ public class Activator implements BundleActivator {
                         IGB.getInstance().saveToolBar();
                     }
 
-                    @Override
-                    public void start() { /* Do Nothing */ }
-                },
+            @Override
+            public void start() {
+                /* Do Nothing */ }
+        },
                 null
         );
     }
@@ -361,11 +372,11 @@ public class Activator implements BundleActivator {
                         IGB.getInstance().getMapView().addPopupListener(listener);
                     }
 
-                    @Override
-                    public void removeService(ContextualPopupListener listener) {
-                        IGB.getInstance().getMapView().removePopupListener(listener);
-                    }
-                }
+            @Override
+            public void removeService(ContextualPopupListener listener) {
+                IGB.getInstance().getMapView().removePopupListener(listener);
+            }
+        }
         );
     }
 
@@ -378,11 +389,11 @@ public class Activator implements BundleActivator {
                         IGB.getInstance().getMapView().addAxisPopupListener(listener);
                     }
 
-                    @Override
-                    public void removeService(AxisPopupListener listener) {
-                        IGB.getInstance().getMapView().removeAxisPopupListener(listener);
-                    }
-                }
+            @Override
+            public void removeService(AxisPopupListener listener) {
+                IGB.getInstance().getMapView().removeAxisPopupListener(listener);
+            }
+        }
         );
     }
 
@@ -395,11 +406,11 @@ public class Activator implements BundleActivator {
                         ScriptProcessorHolder.getInstance().addScriptProcessor(scriptProcessor);
                     }
 
-                    @Override
-                    public void removeService(ScriptProcessor scriptProcessor) {
-                        ScriptProcessorHolder.getInstance().removeScriptProcessor(scriptProcessor);
-                    }
-                }
+            @Override
+            public void removeService(ScriptProcessor scriptProcessor) {
+                ScriptProcessorHolder.getInstance().removeScriptProcessor(scriptProcessor);
+            }
+        }
         );
     }
 
@@ -412,11 +423,11 @@ public class Activator implements BundleActivator {
                         IGB.getInstance().addStatusAlert(alert);
                     }
 
-                    @Override
-                    public void removeService(StatusAlert alert) {
-                        IGB.getInstance().removeStatusAlert(alert);
-                    }
-                }
+            @Override
+            public void removeService(StatusAlert alert) {
+                IGB.getInstance().removeStatusAlert(alert);
+            }
+        }
         );
     }
 
@@ -429,11 +440,11 @@ public class Activator implements BundleActivator {
                         IGB.getInstance().getMapView().getMapRangeBox().addSearchListener(searchListener);
                     }
 
-                    @Override
-                    public void removeService(SearchListener searchListener) {
-                        IGB.getInstance().getMapView().getMapRangeBox().removeSearchListener(searchListener);
-                    }
-                }
+            @Override
+            public void removeService(SearchListener searchListener) {
+                IGB.getInstance().getMapView().getMapRangeBox().removeSearchListener(searchListener);
+            }
+        }
         );
     }
 

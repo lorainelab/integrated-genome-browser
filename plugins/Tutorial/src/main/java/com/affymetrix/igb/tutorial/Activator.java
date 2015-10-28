@@ -7,6 +7,7 @@ import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.lorainelab.igb.services.IgbService;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.SEQ_GROUP_TAB;
 import com.lorainelab.igb.services.SimpleServiceRegistrar;
 import com.lorainelab.igb.services.XServiceRegistrar;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
@@ -71,7 +72,7 @@ public class Activator extends SimpleServiceRegistrar implements BundleActivator
             final IgbService igbService, final IWindowService windowService) throws Exception {
 
         //Filter for making sure SeqGroupView is available.... a hack for now...
-        Filter filter = bundleContext.createFilter(String.format("(&(%s=%s))", "component.name", "SeqGroupViewGUI"));
+        Filter filter = bundleContext.createFilter(String.format("(&(%s=%s))", "component.name", SEQ_GROUP_TAB));
         ServiceTracker<IgbTabPanelI, Object> serviceTracker;
         serviceTracker = new ServiceTracker<IgbTabPanelI, Object>(bundleContext, filter, null) {
             @Override

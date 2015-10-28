@@ -146,7 +146,8 @@ public class QuickloadUtils {
         String genomeTxtUrl = genomeVersionBaseUrl + QuickloadConstants.GENOME_TXT;
         Map<String, Integer> assemblyInfo = Maps.newLinkedHashMap();
         URI uri = new URI(genomeTxtUrl);
-        try (Reader reader = new InputStreamReader(getInputStream(uri))) {
+        try (InputStream stream = getInputStream(uri);
+                Reader reader = new InputStreamReader(stream);) {
             getCSVRecordStreamFromTabDelimitedResource(reader).filter(record -> record.size() == 2).forEach(record -> {
                 assemblyInfo.put(record.get(0), Integer.parseInt(record.get(1)));
             });

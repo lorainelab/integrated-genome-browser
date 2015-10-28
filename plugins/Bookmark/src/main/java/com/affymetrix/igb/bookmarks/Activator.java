@@ -10,6 +10,7 @@ import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.lorainelab.igb.services.IgbService;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.BOOKMARK_TAB;
 import com.lorainelab.igb.services.XServiceRegistrar;
 import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
@@ -26,6 +27,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.COMPONENT_NAME;
 
 public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {
 
@@ -43,8 +45,9 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
 //        JRPMenu file_menu = igbService.getMenu("file");
 //        final int index = file_menu.getItemCount() - 1;
 //        file_menu.insertSeparator(index);
-        Dictionary props = new Hashtable();
+        Dictionary<String, String> props = new Hashtable<>();
         props.put("service.pid", "BookmarkManagerViewGUI");
+        props.put(COMPONENT_NAME, BOOKMARK_TAB);
         return new ServiceRegistration[]{
             bundleContext.registerService(IgbTabPanelI.class, getPage(bundleContext, igbService), props)
         };

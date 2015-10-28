@@ -39,7 +39,6 @@ public class UriUtils {
         }
     }
 
-    //TODO could easily be modified to use cache, but this is not required for now since cacheing needs to be updated before it will be useful
     public static InputStream getInputStream(URI uri) throws IOException {
         try {
             checkIsValidRequest(uri);

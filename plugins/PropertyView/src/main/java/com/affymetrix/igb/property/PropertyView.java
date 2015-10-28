@@ -4,6 +4,19 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.event.*;
+import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.PropertyViewHelper;
+import static com.affymetrix.genometry.util.SelectionInfoUtils.*;
+import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
+import com.affymetrix.igb.swing.jide.JRPStyledTable;
+import com.lorainelab.igb.services.IgbService;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.SELECTION_INFO_TAB;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.*;
@@ -15,23 +28,10 @@ import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import static com.affymetrix.genometry.util.SelectionInfoUtils.*;
-import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.event.*;
-import com.affymetrix.genometry.symmetry.SymWithProps;
-import com.affymetrix.genometry.symmetry.impl.GraphSym;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.PropertyViewHelper;
-import com.affymetrix.genoviz.swing.JTextButtonCellRendererImpl;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import com.affymetrix.igb.swing.jide.JRPStyledTable;
 
-@Component(name = PropertyView.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = SELECTION_INFO_TAB, provide = IgbTabPanelI.class, immediate = true)
 public final class PropertyView extends IgbTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {
 
-    public static final String COMPONENT_NAME = "PropertyView";
     private static final long serialVersionUID = 1L;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("property");
     private static final int TAB_POSITION = 4;

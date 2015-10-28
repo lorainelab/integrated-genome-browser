@@ -4,13 +4,14 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.annotSyms;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
+import com.lorainelab.igb.services.IgbService;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.ANNOTATION_TRACK_PANEL_TAB;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import com.lorainelab.igb.track.operations.api.OperationsPanel;
 import com.lorainelab.igb.track.operations.api.OperationsPanelService;
 import org.slf4j.Logger;
@@ -20,11 +21,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author hiralv
  */
-@Component(name = AnnotationTrackPanel.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = ANNOTATION_TRACK_PANEL_TAB, provide = IgbTabPanelI.class, immediate = true)
 public class AnnotationTrackPanel extends TrackViewPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnotationTrackPanel.class);
-    public static final String COMPONENT_NAME = "AnnotationTrackPanel";
     private static final long serialVersionUID = 1L;
     public static final java.util.ResourceBundle BUNDLE = java.util.ResourceBundle.getBundle("annotation");
     private static FileTypeCategory[] categories = new FileTypeCategory[]{FileTypeCategory.Annotation, FileTypeCategory.Alignment, FileTypeCategory.ProbeSet};

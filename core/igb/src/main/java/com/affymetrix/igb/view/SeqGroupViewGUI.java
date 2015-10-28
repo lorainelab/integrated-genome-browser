@@ -8,6 +8,7 @@ import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.lorainelab.igb.services.IgbService;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.SEQ_GROUP_TAB;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
@@ -17,10 +18,9 @@ import java.awt.Rectangle;
 import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
 
-@Component(name = SeqGroupViewGUI.COMPONENT_NAME, immediate = true, provide = IgbTabPanelI.class, properties = "name=" + SeqGroupViewGUI.COMPONENT_NAME)
+@Component(name = SEQ_GROUP_TAB, immediate = true, provide = IgbTabPanelI.class)
 public class SeqGroupViewGUI extends IgbTabPanel {
 
-    public static final String COMPONENT_NAME = "SeqGroupViewGUI";
     private static final long serialVersionUID = 1L;
     private static final int TAB_POSITION = 7;
     private JRPStyledTable seqtable;

@@ -44,7 +44,6 @@ import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.util.IGBTrustManager;
-import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.IGBToolBar;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
@@ -413,16 +412,13 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         windowService.shutdown();
     }
 
-    public IgbTabPanelI[] setWindowService(final IWindowService windowService) {
+    public void setWindowService(final IWindowService windowService) {
         this.windowService = windowService;
         windowService.setMainFrame(igbMainFrame);
-
         windowService.setSeqMapView(MainWorkspaceManager.getWorkspaceManager());
-
         windowService.setStatusBar(statusBar);
         windowService.setToolBar(toolbar);
         windowService.setTabsMenu(mbar);
-        return new IgbTabPanelI[]{GeneralLoadViewGUI.getLoadView(), AltSpliceView.getSingleton()};
     }
 
     public JRPMenu addTopMenu(String id, String text, int index) {

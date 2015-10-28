@@ -11,13 +11,6 @@ package com.affymetrix.igb.restrictions;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import java.awt.event.*;
-import java.io.*;
-import java.text.MessageFormat;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.*;
-
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.GenericAction;
@@ -25,23 +18,28 @@ import com.affymetrix.genometry.util.DNAUtils;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.swing.JRPButton;
 import com.lorainelab.igb.services.IgbService;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.RESTRICTIONS_TAB;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.*;
+import java.io.*;
+import java.text.MessageFormat;
+import java.util.*;
 import java.util.regex.Pattern;
+import javax.swing.*;
+import javax.swing.event.*;
 
-@Component(name = RestrictionControlView.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = RESTRICTIONS_TAB, provide = IgbTabPanelI.class, immediate = true)
 public final class RestrictionControlView extends IgbTabPanel
         implements ListSelectionListener, ActionListener {
 
-    public static final String COMPONENT_NAME = "RestrictionControlView";
     private static final long serialVersionUID = 0;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("restrictions");
     private static final int TAB_POSITION = 9;

@@ -140,11 +140,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
                         new GenericAction(MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.name())), null, null) {
                             private static final long serialVersionUID = 1L;
 
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                setTabState(((JTabbedTrayPane) tabHolders.get(tabState)).getSelectedIGBTabPanel(), TabState.COMPONENT_STATE_WINDOW);
-                            }
-                        },
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        setTabState(((JTabbedTrayPane) tabHolders.get(tabState)).getSelectedIGBTabPanel(), TabState.COMPONENT_STATE_WINDOW);
+                    }
+                },
                         menuItemCounter++
                 );
                 change_tab_state_item.setEnabled(false);
@@ -159,11 +159,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
                         new GenericAction(MessageFormat.format(BUNDLE.getString("openTabbedPanesInNewWindow"), BUNDLE.getString(tabState.name())), null, null) {
                             private static final long serialVersionUID = 1L;
 
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                ((JTabbedTrayPane) tabHolders.get(tabState)).invokeTrayState(TrayState.WINDOW);
-                            }
-                        },
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ((JTabbedTrayPane) tabHolders.get(tabState)).invokeTrayState(TrayState.WINDOW);
+                    }
+                },
                         menuItemCounter++
                 );
                 move_tabbed_panel_to_window_item.setEnabled(false);
@@ -235,9 +235,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     private void updateMainFrame() {
         //don't show anything until a few tabs have been added to prevent flashing at startup
         //TODO add explicit dependency on required tabs
-        if (tabMenus.keySet().size() > 8) {
-            showTabs();
-        }
+        showTabs();
     }
 
     private int findMenuItemPosition(final IgbTabPanel tabPanel) {
@@ -273,8 +271,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         // all the embedded tabs have been added, we initialize the tab panes
         // this is to prevent the flashing of new tabs added
         SwingUtilities.invokeLater(() -> {
-            frame.setVisible(true);
-
             // Resize all tab holder after frame is set to visible.
             tabHolders.values().forEach(com.lorainelab.igb.services.window.tabs.TabHolder::resize);
         });
@@ -443,11 +439,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
                     new ActionListener() {
                         TabState state = tabState;
 
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            setTabState(igbTabPanel, state);
-                        }
-                    }
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setTabState(igbTabPanel, state);
+                }
+            }
             );
         }
 

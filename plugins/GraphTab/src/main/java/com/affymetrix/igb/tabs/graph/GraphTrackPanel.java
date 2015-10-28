@@ -5,13 +5,14 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.graphSyms;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
+import com.lorainelab.igb.services.IgbService;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.GRAPH_TRACK_PANEL_TAB;
+import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import com.lorainelab.igb.track.operations.api.OperationsPanel;
 import com.lorainelab.igb.track.operations.api.OperationsPanelService;
 
@@ -19,10 +20,9 @@ import com.lorainelab.igb.track.operations.api.OperationsPanelService;
  *
  * @author hiralv
  */
-@Component(name = GraphTrackPanel.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = GRAPH_TRACK_PANEL_TAB, provide = IgbTabPanelI.class, immediate = true)
 public class GraphTrackPanel extends TrackViewPanel {
 
-    public static final String COMPONENT_NAME = "GraphTrackPanel";
     private static final long serialVersionUID = 1L;
     public static final java.util.ResourceBundle BUNDLE = java.util.ResourceBundle.getBundle("graph");
     private static final int TAB_POSITION = 2;

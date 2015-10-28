@@ -10,10 +10,8 @@ import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
 import com.affymetrix.genometry.util.ModalUtils;
 import static com.affymetrix.genometry.util.UriUtils.isValidRequest;
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
@@ -116,13 +114,13 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     private void populateSupportedGenomeVersionInfo() {
         try {
             loadSupportedGenomeVersionInfo(getUrl(), supportedGenomeVersionInfo);
-            Thread validationThread = new Thread() {
-                @Override
-                public void run() {
-                    validateAssemblyInformationIsAvailable(); //expensive, but according to quickload specification, this is required
-                }
-            };
-            validationThread.start();
+//            Thread validationThread = new Thread() {
+//                @Override
+//                public void run() {
+//                    validateAssemblyInformationIsAvailable(); //expensive, but according to quickload specification, this is required
+//                }
+//            };
+//            validationThread.start();
         } catch (IOException | URISyntaxException ex) {
             if (!useMirror && getMirrorUrl().isPresent()) {
                 useMirror = true;
@@ -259,26 +257,26 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     }
     private static final String QUICKLOAD_FACTORY_NAME = "Quickload";
 
-    private synchronized void validateAssemblyInformationIsAvailable() {
-        List<String> genomesMissingGenomeTxt = Lists.newArrayList();
-        supportedGenomeVersionInfo.keySet().forEach(genomeVersionName -> {
-            try {
-                final Optional<Map<String, Integer>> assemblyInfo = QuickloadUtils.getAssemblyInfo(getUrl(), genomeVersionName);
-                if (!assemblyInfo.isPresent()) {
-                    genomesMissingGenomeTxt.add(genomeVersionName);
-                }
-            } catch (URISyntaxException ex) {
-                logger.error("Missing required {} file for genome version {}, skipping this genome version for quickload site {}", GENOME_TXT, genomeVersionName, getUrl());
-                genomesMissingGenomeTxt.add(genomeVersionName);
-            } catch (IOException ex) {
-                logger.error("Coulld not read required {} file for genome version {}, skipping this genome version for quickload site {}", GENOME_TXT, genomeVersionName, getUrl());
-                genomesMissingGenomeTxt.add(genomeVersionName);
-            }
-        });
-        genomesMissingGenomeTxt.forEach(supportedGenomeVersionInfo::remove);
-        if (!genomesMissingGenomeTxt.isEmpty()) {
-            ModalUtils.errorPanel("The following genome versions for quickload site (" + getUrl() + ") are missing a " + GENOME_TXT + " file: " + System.lineSeparator() + Joiner.on(System.lineSeparator()).join(genomesMissingGenomeTxt));
-        }
-    }
+//    private synchronized void validateAssemblyInformationIsAvailable() {
+//        List<String> genomesMissingGenomeTxt = Lists.newArrayList();
+//        supportedGenomeVersionInfo.keySet().forEach(genomeVersionName -> {
+//            try {
+//                final Optional<Map<String, Integer>> assemblyInfo = QuickloadUtils.getAssemblyInfo(getUrl(), genomeVersionName);
+//                if (!assemblyInfo.isPresent()) {
+//                    genomesMissingGenomeTxt.add(genomeVersionName);
+//                }
+//            } catch (URISyntaxException ex) {
+//                logger.error("Missing required {} file for genome version {}, skipping this genome version for quickload site {}", GENOME_TXT, genomeVersionName, getUrl());
+//                genomesMissingGenomeTxt.add(genomeVersionName);
+//            } catch (IOException ex) {
+//                logger.error("Coulld not read required {} file for genome version {}, skipping this genome version for quickload site {}", GENOME_TXT, genomeVersionName, getUrl());
+//                genomesMissingGenomeTxt.add(genomeVersionName);
+//            }
+//        });
+//        genomesMissingGenomeTxt.forEach(supportedGenomeVersionInfo::remove);
+//        if (!genomesMissingGenomeTxt.isEmpty()) {
+//            ModalUtils.errorPanel("The following genome versions for quickload site (" + getUrl() + ") are missing a " + GENOME_TXT + " file: " + System.lineSeparator() + Joiner.on(System.lineSeparator()).join(genomesMissingGenomeTxt));
+//        }
+//    }
 
 }

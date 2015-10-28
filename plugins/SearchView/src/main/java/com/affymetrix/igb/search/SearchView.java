@@ -29,6 +29,7 @@ import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.jidesoft.hints.ListDataIntelliHints;
 import com.lorainelab.igb.services.IgbService;
+import static com.lorainelab.igb.services.ServiceComponentNameReference.SEARCH_VIEW_TAB;
 import com.lorainelab.igb.services.search.ISearchHints;
 import com.lorainelab.igb.services.search.ISearchMode;
 import com.lorainelab.igb.services.search.ISearchModeExtended;
@@ -79,11 +80,10 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
-@aQute.bnd.annotation.component.Component(name = SearchView.COMPONENT_NAME, provide = {IgbTabPanelI.class, SearchListener.class})
+@aQute.bnd.annotation.component.Component(name = SEARCH_VIEW_TAB, provide = {IgbTabPanelI.class, SearchListener.class})
 public final class SearchView extends IgbTabPanel implements
         GroupSelectionListener, SeqSelectionListener, SearchListener, IStatus {
 
-    public static final String COMPONENT_NAME = "SearchView";
     private static final long serialVersionUID = 0;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
     private static final String DEFAULT_SEARCH_MODE_CLASS = "SearchModeID";

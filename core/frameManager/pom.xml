@@ -31,6 +31,11 @@
             <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>igb-services</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

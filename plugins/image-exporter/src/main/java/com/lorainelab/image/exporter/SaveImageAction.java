@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import org.slf4j.Logger;
@@ -45,22 +46,22 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         try {
-            Map<String, Component> compoToExport = new LinkedHashMap<>();
-            compoToExport.put("Whole Frame", igbService.getApplicationFrame());
+            Map<String, Optional<Component>> compoToExport = new LinkedHashMap<>();
+            compoToExport.put("Whole Frame", Optional.of(igbService.getApplicationFrame()));
             if (!igbService.getAllTierGlyphs().isEmpty()) {
-                compoToExport.put("Main View", igbService.getMainViewComponent());
+                compoToExport.put("Main View", Optional.of(igbService.getMainViewComponent()));
             } else {
-                compoToExport.put("Main View", null);
+                compoToExport.put("Main View", Optional.empty());
             }
             if (!igbService.getAllTierGlyphs().isEmpty()) {
-                compoToExport.put("Main View (with Labels)", igbService.getMainViewComponentWithLabels());
+                compoToExport.put("Main View (with Labels)", Optional.of(igbService.getMainViewComponentWithLabels()));
             } else {
-                compoToExport.put("Main View (with Labels)", null);
+                compoToExport.put("Main View (with Labels)", Optional.empty());
             }
             if (!igbService.getSeqMapView().getSelectedSyms().isEmpty()) {
-                compoToExport.put("Sliced View (with Labels)", igbService.getSpliceViewComponentWithLabels());
+                compoToExport.put("Sliced View (with Labels)", Optional.of(igbService.getSpliceViewComponentWithLabels()));
             } else {
-                compoToExport.put("Sliced View (with Labels)", null);
+                compoToExport.put("Sliced View (with Labels)", Optional.empty());
             }
             imageExportService.exportComponents(compoToExport);
         } catch (Exception ex) {

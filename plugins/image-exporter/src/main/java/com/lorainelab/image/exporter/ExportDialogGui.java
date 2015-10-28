@@ -9,6 +9,7 @@ import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -50,7 +51,7 @@ public class ExportDialogGui extends JPanel {
 
     private JFrame exportDialogFrame;
     private ExportDialog controller;
-    private Map<String, Component> components;
+    private Map<String, Optional<Component>> components;
 
     public ExportDialogGui() {
         setLayout(new MigLayout("", "[grow]", "[][][grow]"));
@@ -67,7 +68,7 @@ public class ExportDialogGui extends JPanel {
         this.controller = controller;
     }
 
-    public void setUpGui(ExportDialog exportDialog, Map<String, Component> components) {
+    public void setUpGui(ExportDialog exportDialog, Map<String, Optional<Component>> components) {
         this.components = components;
         this.controller = exportDialog;
         addRadioButtons();
@@ -139,10 +140,10 @@ public class ExportDialogGui extends JPanel {
             rb.addActionListener(evt -> {
                 controller.radioButtonActionPerformed();
             });
-            if(components.get(key) == null) {
-                rb.setEnabled(false);
-            } else {
+            if(components.get(key).isPresent()) {
                 rb.setEnabled(true);
+            } else {
+                rb.setEnabled(false);
             }
             radioButtons.add(rb);
         }

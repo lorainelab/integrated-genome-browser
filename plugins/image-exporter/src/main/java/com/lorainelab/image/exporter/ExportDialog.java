@@ -62,7 +62,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     private String currentUnit;
     private final File defaultDir;
     private Component exportComponent;
-    private Map<String, Component> components;
+    private Map<String, Optional<Component>> components;
     private boolean isWidthSpinner; // Prevent multiple triggering each other
     private boolean isHeightSpinner;
     private File exportFile;
@@ -87,7 +87,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     @Override
-    public void exportComponents(Map<String, Component> components) {
+    public void exportComponents(Map<String, Optional<Component>> components) {
         this.components = components;
         exportDialogGui.setUpGui(this, components);
         setDefaultComponent();
@@ -107,8 +107,10 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
      */
     private void initImageInfo() {
         for (String key : components.keySet()) {
-            initImageInfo(components.get(key));
-            break;
+            if (components.get(key).isPresent()) {
+                initImageInfo(components.get(key).get());
+                break;
+            }
         }
     }
 
@@ -118,8 +120,10 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
 
     private void setDefaultComponent() {
         for (String key : components.keySet()) {
-            exportComponent = components.get(key);
-            break;
+            if (components.get(key).isPresent()) {
+                exportComponent = components.get(key).get();
+                break;
+            }
         }
     }
 
@@ -152,7 +156,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     private Component getSelectedComponent() {
-        return components.get(exportDialogGui.getSelectedRadioButton().getId());
+        return components.get(exportDialogGui.getSelectedRadioButton().getId()).orElse(null);
     }
 
     /**

@@ -3,6 +3,7 @@ package com.lorainelab.image.exporter.service;
 import java.awt.Component;
 import java.io.File;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  *
@@ -10,7 +11,7 @@ import java.util.Map;
  */
 public interface ImageExportService {
 
-    void exportComponents(Map<String, Component> components);
+    void exportComponents(Map<String, Optional<Component>> components);
 
     void headlessComponentExport(Component component, File f, String ext, boolean isScript);
 

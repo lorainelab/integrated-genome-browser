@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ExportSequenceViewerAction extends GenericAction {
 
@@ -23,8 +24,8 @@ public class ExportSequenceViewerAction extends GenericAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Map<String, Component> components = new HashMap<>();
-        components.put("Whole View", comp);
+        Map<String, Optional<Component>> components = new HashMap<>();
+        components.put("Whole View", Optional.of(comp));
         imageExportService.exportComponents(components);
     }
 

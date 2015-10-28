@@ -7,7 +7,6 @@ package com.lorainelab.igb.plugins;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.google.common.collect.Lists;
@@ -111,7 +110,7 @@ public class RepositoryInfoManager {
                         }
                     }
                 }
-                if (repository.isEmpty() && isDevelopmentMode()) {
+                if (repository.isEmpty()) {
                     repository = DEFAULT_REPO_INFO;
                 }
             }

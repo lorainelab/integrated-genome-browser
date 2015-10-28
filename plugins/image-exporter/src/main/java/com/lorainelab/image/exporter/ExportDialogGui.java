@@ -139,6 +139,11 @@ public class ExportDialogGui extends JPanel {
             rb.addActionListener(evt -> {
                 controller.radioButtonActionPerformed();
             });
+            if(components.get(key) == null) {
+                rb.setEnabled(false);
+            } else {
+                rb.setEnabled(true);
+            }
             radioButtons.add(rb);
         }
         updatePreviewPanel();

@@ -49,12 +49,18 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
             compoToExport.put("Whole Frame", igbService.getApplicationFrame());
             if (!igbService.getAllTierGlyphs().isEmpty()) {
                 compoToExport.put("Main View", igbService.getMainViewComponent());
+            } else {
+                compoToExport.put("Main View", null);
             }
             if (!igbService.getAllTierGlyphs().isEmpty()) {
                 compoToExport.put("Main View (with Labels)", igbService.getMainViewComponentWithLabels());
+            } else {
+                compoToExport.put("Main View (with Labels)", null);
             }
             if (!igbService.getSeqMapView().getSelectedSyms().isEmpty()) {
                 compoToExport.put("Sliced View (with Labels)", igbService.getSpliceViewComponentWithLabels());
+            } else {
+                compoToExport.put("Sliced View (with Labels)", null);
             }
             imageExportService.exportComponents(compoToExport);
         } catch (Exception ex) {

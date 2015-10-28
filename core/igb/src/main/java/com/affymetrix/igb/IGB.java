@@ -54,6 +54,7 @@ import com.boxysystems.jgoogleanalytics.FocusPoint;
 import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
 import com.boxysystems.jgoogleanalytics.LoggingAdapter;
 import com.jidesoft.plaf.LookAndFeelFactory;
+import com.lorainelab.igb.frame.api.FrameManagerService;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.Image;
@@ -88,6 +89,8 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,10 +136,13 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     Timer timer = new Timer(delay * 1000, update_status_bar);
 
     private IGB() {
+        final BundleContext bundleContext = FrameworkUtil.getBundle(IGB.class).getBundleContext();
+        ServiceReference<FrameManagerService> serviceReference = bundleContext.getServiceReference(FrameManagerService.class);
+        FrameManagerService frameManagerService = bundleContext.getService(serviceReference);
+        this.igbMainFrame = frameManagerService.getIgbMainFrame();
         statusAlertList = new LinkedList<>();
         statusBar = new StatusBar(status_alert_listener);
         setLaf();
-        igbMainFrame = new JFrame(APP_NAME + " " + APP_VERSION);
         mapView = new SeqMapView(true, "SeqMapView", igbMainFrame);
         mbar = new JRPMenuBar();
         toolbar = new IGBToolBar();
@@ -304,11 +310,11 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
                         return null;
                     }
 
-                    @Override
-                    public KeyStroke get(Object action_command) {
-                        return PreferenceUtils.getAccelerator((String) action_command);
-                    }
-                }
+            @Override
+            public KeyStroke get(Object action_command) {
+                return PreferenceUtils.getAccelerator((String) action_command);
+            }
+        }
         );
 
         gmodel.addSeqSelectionListener(mapView);
@@ -414,7 +420,6 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
 
     public void setWindowService(final IWindowService windowService) {
         this.windowService = windowService;
-        windowService.setMainFrame(igbMainFrame);
         windowService.setSeqMapView(MainWorkspaceManager.getWorkspaceManager());
         windowService.setStatusBar(statusBar);
         windowService.setToolBar(toolbar);

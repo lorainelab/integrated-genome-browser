@@ -6,7 +6,6 @@ import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.util.Set;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
@@ -36,13 +35,6 @@ public interface IWindowService {
      * restore the state of the window
      */
     public void restoreState();
-
-    /**
-     * pass in the main frame of the application (JFrame for Swing)
-     *
-     * @param jFrame the main frame of the application
-     */
-    public void setMainFrame(JFrame jFrame);
 
     /**
      * pass in the SeqMapView, this is the main IGB view

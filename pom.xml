@@ -90,6 +90,7 @@
         <module>core/quickload</module>
         <module>core/das</module>
         <module>core/das2</module>
+        <module>core/frameManager</module>
         <module>core/synonym-lookup</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
@@ -255,6 +256,12 @@
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>das2</artifactId>
+                 <version>${project.parent.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>frameManager</artifactId>
                  <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>

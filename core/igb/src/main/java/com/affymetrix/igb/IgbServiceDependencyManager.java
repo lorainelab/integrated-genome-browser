@@ -5,6 +5,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.igb.window.service.IWindowService;
+import com.lorainelab.igb.frame.api.FrameManagerService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
 import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
@@ -73,6 +74,11 @@ public class IgbServiceDependencyManager {
     @Reference
     public void trackGenomeVersionSynonymLookupService(GenomeVersionSynonymLookup genomeVersionSynLookup) {
         logger.info("GenomeVersionSynonymLookupService now available.");
+    }
+
+    @Reference
+    public void trackFrameManagerService(FrameManagerService frameManagerService) {
+        logger.info("FrameManagerService now available.");
     }
 
     public IWindowService getWindowService() {

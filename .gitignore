@@ -145,3 +145,4 @@ extbundles/
 /core/synonym-lookup/target/
 /plugins/feedback/target/
 main/nb-configuration.xml
+/core/frameManager/target/

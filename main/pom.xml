@@ -90,7 +90,7 @@
             <artifactId>weblinks</artifactId>
             <scope>runtime</scope>
         </dependency>
-	<dependency>
+        <dependency>
             <groupId>com.lorainelab</groupId>
             <artifactId>synonym-lookup</artifactId>
             <scope>runtime</scope>
@@ -108,6 +108,11 @@
         <dependency>
             <groupId>com.lorainelab</groupId>
             <artifactId>das2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>frameManager</artifactId>
             <scope>runtime</scope>
         </dependency>
         <!--End of core module dependencies-->

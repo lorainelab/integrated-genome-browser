@@ -1,5 +1,6 @@
 package com.affymetrix.igb.window.service.def;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
@@ -11,6 +12,7 @@ import com.affymetrix.igb.swing.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
+import com.lorainelab.igb.frame.api.FrameManagerService;
 import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
@@ -57,6 +59,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     private Container cpane;
     private JPanel innerPanel;
     private boolean tabSeparatorSet = false;
+    private FrameManagerService frameManagerService;
 
     public WindowServiceDefaultImpl() {
         move_tab_to_window_items = new EnumMap<>(TabState.class);
@@ -68,14 +71,19 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         tabMenuPositions = new HashMap<>();
     }
 
-    @Override
-    public void setMainFrame(JFrame jFrame) {
-        frame = jFrame;
+    @Activate
+    public void activate() {
+        frame = frameManagerService.getIgbMainFrame();
         cpane = frame.getContentPane();
         cpane.setLayout(new BorderLayout());
         innerPanel = new JPanel();
         innerPanel.setLayout(new BorderLayout());
         cpane.add(innerPanel, BorderLayout.CENTER);
+    }
+
+    @Reference
+    public void setFrameManagerService(FrameManagerService frameManagerService) {
+        this.frameManagerService = frameManagerService;
     }
 
     @Override
@@ -233,8 +241,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     }
 
     private void updateMainFrame() {
-        //don't show anything until a few tabs have been added to prevent flashing at startup
-        //TODO add explicit dependency on required tabs
         showTabs();
     }
 

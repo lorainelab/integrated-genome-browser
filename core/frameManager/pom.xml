@@ -7,26 +7,21 @@
         <version>8.5.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>com.affymetrix</groupId>
-    <artifactId>window-service</artifactId>
+    <groupId>com.lorainelab</groupId>
+    <artifactId>frameManager</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Window Service</name>
-
+    <name>frameManager</name>
+    
     <dependencies>
         <dependency>
             <groupId>com.affymetrix</groupId>
-            <artifactId>igb-services</artifactId>
+            <artifactId>affymetrix-common</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igbSwingExt</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>genometry</artifactId>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
             <scope>provided</scope>
         </dependency>
         <!--Start of logging dependencies-->
@@ -36,21 +31,6 @@
             <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
-        <dependency>
-            <groupId>biz.aQute.bnd</groupId>
-            <artifactId>bndlib</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>affymetrix-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.lorainelab</groupId>
-            <artifactId>frameManager</artifactId> 
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -60,7 +40,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>            
+            </plugin>          
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -69,13 +49,11 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
-                        <Export-Package>
-                            com.affymetrix.igb.window.service
-                        </Export-Package>
+                        <Export-Package>com.lorainelab.igb.frame.api</Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
-            </plugin>         
+            </plugin>  
         </plugins>
     </build>
 </project>

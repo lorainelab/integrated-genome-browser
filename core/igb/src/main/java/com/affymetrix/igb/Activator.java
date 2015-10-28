@@ -109,16 +109,13 @@ public class Activator implements BundleActivator {
     public void start(final BundleContext bundleContext) throws Exception {
         verifyJidesoftLicense();
         initializeIgbAuthenticator();
-        igb = IGB.getInstance();
+
         args = CommonUtils.getInstance().getArgs(bundleContext);
         if (args != null) {
             commandLineBatchFileStr = CommonUtils.getInstance().getArg("-" + IgbService.SCRIPTFILETAG, args);
         }
         //wait for consoleLogger service
         setupServiceDependencyTracker(bundleContext);
-        addGenericActionListener();
-        initColorProvider(bundleContext);
-        initFilter(bundleContext);
     }
 
     public void initializeIgbAuthenticator() {
@@ -174,6 +171,10 @@ public class Activator implements BundleActivator {
     private void run(final BundleContext bundleContext) {
         logger.info("Starting IGB");
         IGB.commandLineBatchFileStr = commandLineBatchFileStr;
+        igb = IGB.getInstance();
+        addGenericActionListener();
+        initColorProvider(bundleContext);
+        initFilter(bundleContext);
 
         igb.init(args, bundleContext);
 

@@ -414,6 +414,7 @@ public class AppManagerFxPanel extends JFXPanel {
                         plugin.setIsInstalled(Boolean.TRUE);
                         plugin.setIsBusy(Boolean.FALSE);
                         updateWebContent();
+                        listView.setItems(listView.getItems());
                     });
                 }
                 return Void.TYPE;

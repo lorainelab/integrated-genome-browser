@@ -40,6 +40,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -55,12 +56,12 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.swing.SwingUtilities;
@@ -200,6 +201,8 @@ public class AppManagerFxPanel extends JFXPanel {
 
     @FXML
     private void initialize() {
+        Font.loadFont(bundleContext.getBundle().getEntry("Roboto-Regular.ttf").toExternalForm(), 35);
+
         filterOptions.getItems().addAll(FilterOption.ALL_APPS, FilterOption.INSTALLED, FilterOption.UNINSTALLED);
         filterOptions.valueProperty().addListener(new ChangeListener<FilterOption>() {
             @Override
@@ -211,8 +214,8 @@ public class AppManagerFxPanel extends JFXPanel {
         refreshUpdateAllBtn();
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
-                        PluginListItemMetadata previousSelection,
-                        PluginListItemMetadata selectedPlugin) -> {
+                                PluginListItemMetadata previousSelection,
+                                PluginListItemMetadata selectedPlugin) -> {
                     if (selectedPlugin != null) {
                         updateWebContent();
                     }
@@ -335,9 +338,12 @@ public class AppManagerFxPanel extends JFXPanel {
                         Tooltip updateTooltip = new Tooltip("Uninstalled");
                         Tooltip.install(updateImageView, updateTooltip);
                     }
-                    Pane pane = new Pane();
-                    pane.setPrefHeight(35);
-                    pane.setPrefWidth(35);
+
+                    HBox textPane = new HBox();
+                    textPane.setAlignment(Pos.CENTER);
+                    HBox.setHgrow(textPane, Priority.ALWAYS);
+                    textPane.setPrefHeight(35);
+                    textPane.setPrefWidth(35);
                     Color paneColor;
                     if (repoToColor.containsKey(plugin.getRepository().getValue())) {
                         paneColor = repoToColor.get(plugin.getRepository().getValue());
@@ -351,18 +357,17 @@ public class AppManagerFxPanel extends JFXPanel {
                     }
 
                     Tooltip avatarTooltip = new Tooltip("Located in the " + plugin.getRepository() + " repository");
-                    Tooltip.install(pane, avatarTooltip);
-                    pane.setBackground(new Background(new BackgroundFill(paneColor, CornerRadii.EMPTY, Insets.EMPTY)));
+                    Tooltip.install(textPane, avatarTooltip);
+                    textPane.setBackground(new Background(new BackgroundFill(paneColor, CornerRadii.EMPTY, Insets.EMPTY)));
                     Text avatar = new Text();
-
+                    avatar.setTextAlignment(TextAlignment.CENTER);
                     avatar.setText(plugin.getRepository().getValue().substring(0, 1).toUpperCase());
                     avatar.setFill(Color.rgb(255, 255, 255));
-                    pane.getChildren().add(avatar);
-                    avatar.setX(8);
-                    avatar.setY(27);
-                    avatar.setFont(Font.font("Monospaced", 27));
-                    pane.setMinWidth(33);
-                    pane.setMaxWidth(33);
+                    textPane.getChildren().add(avatar);
+                    avatar.getStyleClass().add("avatar");
+                    avatar.setTextOrigin(VPos.CENTER);
+                    textPane.setMinWidth(35);
+                    textPane.setMaxWidth(35);
 
                     HBox row = new HBox(5);
                     row.setAlignment(Pos.CENTER_LEFT);
@@ -379,9 +384,9 @@ public class AppManagerFxPanel extends JFXPanel {
                     HBox.setHgrow(spacer, Priority.ALWAYS);
 
                     if (updateImageView.getImage() != null) {
-                        row.getChildren().addAll(pane, ltext, spacer, updateImageView);
+                        row.getChildren().addAll(textPane, ltext, spacer, updateImageView);
                     } else {
-                        row.getChildren().addAll(pane, ltext, spacer);
+                        row.getChildren().addAll(textPane, ltext, spacer);
                     }
 
                     setGraphic(row);

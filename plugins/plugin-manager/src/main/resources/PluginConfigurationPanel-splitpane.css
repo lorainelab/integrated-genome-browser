@@ -1,3 +1,8 @@
 .split-pane > .split-pane-divider {  
     -fx-padding: 0 0.1em 0 0.1em;  
 }
+
+.avatar {
+    -fx-font-family: "Roboto";
+    -fx-font-size: 2.2em;
+}

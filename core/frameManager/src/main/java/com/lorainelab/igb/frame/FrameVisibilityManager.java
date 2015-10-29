@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.igb;
+package com.lorainelab.igb.frame;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -51,7 +51,6 @@ public class FrameVisibilityManager {
     @Activate
     public void activate() {
         SwingUtilities.invokeLater(() -> {
-            igbService.getApplicationFrame().pack();
             igbService.getApplicationFrame().setVisible(true);
         });
     }

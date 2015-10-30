@@ -521,6 +521,7 @@ public class AppManagerFxPanel extends JFXPanel {
                 return false;
             });
             filteredList.setPredicate(currentSearchPredicate.and(currentStaticPredicate));
+            updateWebContent();
         });
     }
 

@@ -28,28 +28,29 @@
     <entries>
       <dirEntry mountPoint="26" file="${compiler:projectHomeDirectory}" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="integrated-genome-browser" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
-          <entry location=".git" fileType="regular" />
-          <entry location="extbundles" fileType="regular" />
-          <entry location="pom.xml" fileType="regular" />
-          <entry location="developmentPlugins" fileType="regular" />
           <entry location="plugins" fileType="regular" />
-          <entry location="doc" fileType="regular" />
-          <entry location="core" fileType="regular" />
-          <entry location="run_igb.bat" fileType="regular" />
-          <entry location="main" fileType="regular" />
-          <entry location="run_igb.sh" fileType="regular" />
-          <entry location="nbactions.xml" fileType="regular" />
-          <entry location=".gitignore" fileType="regular" />
-          <entry location="galaxy" fileType="regular" />
-          <entry location="ext" fileType="regular" />
-          <entry location="optionalPlugins" fileType="regular" />
-          <entry location="distribution" fileType="regular" />
-          <entry location="tools" fileType="regular" />
-          <entry location="settings.gradle" fileType="regular" />
           <entry location="build.gradle" fileType="regular" />
-          <entry location="bundles" fileType="regular" />
+          <entry location="run_igb.bat" fileType="regular" />
+          <entry location=".git" fileType="regular" />
+          <entry location="run_igb.sh" fileType="regular" />
+          <entry location="galaxy" fileType="regular" />
+          <entry location="doc" fileType="regular" />
+          <entry location="nbactions-development.xml" fileType="regular" />
           <entry location="README.md" fileType="regular" />
+          <entry location="bundles" fileType="regular" />
+          <entry location="extbundles" fileType="regular" />
+          <entry location="optionalPlugins" fileType="regular" />
+          <entry location="nbactions.xml" fileType="regular" />
+          <entry location="settings.gradle" fileType="regular" />
+          <entry location="core" fileType="regular" />
+          <entry location="main" fileType="regular" />
+          <entry location=".gitignore" fileType="regular" />
+          <entry location="pom.xml" fileType="regular" />
+          <entry location="tools" fileType="regular" />
+          <entry location="developmentPlugins" fileType="regular" />
+          <entry location="distribution" fileType="regular" />
           <entry location="run_igb.command" fileType="regular" />
+          <entry location="nb-configuration.xml" fileType="regular" />
         </exclude>
       </dirEntry>
     </entries>
@@ -1505,7 +1506,7 @@
     </applications>
   </installerGui>
   <mediaSets>
-    <windows name="Windows_x86_64" id="23" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-amd64-1.8.0_45" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
+    <windows name="Windows_x86_64" id="23" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-amd64-1.8.0_66" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
       <excludedComponents />
       <includedDownloadableComponents />
       <excludedLaunchers>
@@ -1538,7 +1539,7 @@
         <content />
       </installerScript>
     </unixInstaller>
-    <windows name="Windows_x86" id="179" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-x86-1.8.0_45" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
+    <windows name="Windows_x86" id="179" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-x86-1.8.0_66" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
       <excludedComponents />
       <includedDownloadableComponents />
       <excludedLaunchers>
@@ -1555,7 +1556,7 @@
         <customAttributes />
       </autoUpdate>
     </windows>
-    <macosFolder name="Mac OS X Folder" id="552" customizedId="" mediaFileName="" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="macosx-amd64-1.8.0_45" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" installerName="${i18n:InstallerName(${compiler:sys.fullName})}" volumeName="${compiler:sys.shortName}" compressDmg="false" signLaunchers="true">
+    <macosFolder name="Mac OS X Folder" id="552" customizedId="" mediaFileName="" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="macosx-amd64-1.8.0_66" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" installerName="${i18n:InstallerName(${compiler:sys.fullName})}" volumeName="${compiler:sys.shortName}" compressDmg="false" signLaunchers="true">
       <excludedComponents />
       <includedDownloadableComponents />
       <excludedLaunchers>

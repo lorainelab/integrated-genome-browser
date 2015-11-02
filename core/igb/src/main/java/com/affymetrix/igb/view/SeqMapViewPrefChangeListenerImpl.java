@@ -97,24 +97,14 @@ public class SeqMapViewPrefChangeListenerImpl implements PreferenceChangeListene
                 }
                 break;
             case PREF_X_ZOOMER_ABOVE: {
-                boolean b = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, SeqMapView.defaultXZoomerAbove);
                 seqMapView.remove(xzoombox);
-                if (b) {
-                    seqMapView.add(BorderLayout.NORTH, xzoombox);
-                } else {
-                    seqMapView.add(BorderLayout.SOUTH, xzoombox);
-                }
+                seqMapView.add(BorderLayout.NORTH, xzoombox);
                 seqMapView.invalidate();
                 break;
             }
             case PREF_Y_ZOOMER_LEFT: {
-                boolean b = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, SeqMapView.defaultYZoomerLeft);
                 seqMapView.remove(yzoombox);
-                if (b) {
-                    seqMapView.add(BorderLayout.WEST, yzoombox);
-                } else {
-                    seqMapView.add(BorderLayout.EAST, yzoombox);
-                }
+                seqMapView.add(BorderLayout.WEST, yzoombox);
                 seqMapView.invalidate();
                 break;
             }

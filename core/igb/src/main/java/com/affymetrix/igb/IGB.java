@@ -147,6 +147,8 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         mbar = new JRPMenuBar();
         toolbar = new IGBToolBar();
         igbMainFrame.setJMenuBar(mbar);
+        igbMainFrame.add(toolbar, "north");
+        igbMainFrame.add(statusBar, "south");
         initializeApplicationIconImage();
     }
 
@@ -421,8 +423,6 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     public void setWindowService(final IWindowService windowService) {
         this.windowService = windowService;
         windowService.setSeqMapView(MainWorkspaceManager.getWorkspaceManager());
-        windowService.setStatusBar(statusBar);
-        windowService.setToolBar(toolbar);
         windowService.setTabsMenu(mbar);
     }
 

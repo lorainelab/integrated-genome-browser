@@ -18,7 +18,6 @@ import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import com.lorainelab.igb.services.window.tabs.TabHolder;
-import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,7 +38,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 
@@ -56,7 +54,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     private Map<IgbTabPanel, JMenu> tabMenus;
     private Map<JMenu, Integer> tabMenuPositions;
     private volatile HashSet<WindowServiceLifecycleHook> stopRoutines = new HashSet<>();
-    private Container cpane;
     private JPanel innerPanel;
     private boolean tabSeparatorSet = false;
     private FrameManagerService frameManagerService;
@@ -74,25 +71,13 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     @Activate
     public void activate() {
         frame = frameManagerService.getIgbMainFrame();
-        cpane = frame.getContentPane();
-        cpane.setLayout(new MigLayout("fill"));
-        innerPanel = new JPanel(new MigLayout("fill"));
-        cpane.add(innerPanel, "grow");
+        innerPanel = new JPanel(new MigLayout("fill, hidemode 1"));
+        frame.add(innerPanel, "grow");
     }
 
     @Reference
     public void setFrameManagerService(FrameManagerService frameManagerService) {
         this.frameManagerService = frameManagerService;
-    }
-
-    @Override
-    public void setStatusBar(JComponent status_bar) {
-        innerPanel.add(status_bar, "south");
-    }
-
-    @Override
-    public void setToolBar(JToolBar toolbar) {
-        cpane.add(toolbar, "north");
     }
 
     @Override

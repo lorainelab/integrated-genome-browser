@@ -7,7 +7,6 @@ import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
 
 public interface IWindowService {
 
@@ -49,20 +48,6 @@ public interface IWindowService {
      * @param view_menu the view menu
      */
     public void setTabsMenu(JRPMenuBar mbar);
-
-    /**
-     * pass in the status bar of the application, this is where message and some icons are displayed
-     *
-     * @param status_bar the status bar
-     */
-    public void setStatusBar(JComponent status_bar);
-
-    /**
-     * pass in the tool bar of the application, this is where action icons are displayed
-     *
-     * @param tool_bar the tool bar
-     */
-    public void setToolBar(JToolBar tool_bar);
 
     /**
      * pass in the top component1 (above topComponent2) a generic component at the top of IGB

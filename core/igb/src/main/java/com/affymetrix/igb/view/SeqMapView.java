@@ -106,8 +106,6 @@ import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_EDGE_MATCH_COLOR;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_EDGE_MATCH_FUZZY_COLOR;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_SHOW_TOOLTIP;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_TRACK_RESIZING_BEHAVIOR;
-import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_X_ZOOMER_ABOVE;
-import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_Y_ZOOMER_LEFT;
 import static com.affymetrix.igb.view.SeqMapViewConstants.SEQ_MODE;
 import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.factories.MapTierGlyphFactoryI;
@@ -187,8 +185,6 @@ public class SeqMapView extends JPanel
     private static final int max_for_matching = 500; //maximum number of query glyphs for edge matcher.
     public static final Color default_edge_match_color = new Color(204, 0, 255);
     public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
-    public static final boolean defaultXZoomerAbove = true;
-    public static final boolean defaultYZoomerLeft = true;
     private static final Font max_zoom_font = NeoConstants.default_bold_font.deriveFont(30.0f);
     private static final JMenuItem empty_menu_item = new JMenuItem("");
     public static final Font axisFont = NeoConstants.default_bold_font;
@@ -360,7 +356,7 @@ public class SeqMapView extends JPanel
                     .filter(isGraphTierGlyph)
                     .filter(hasChildren)
                     .forEach(agg -> {
-                        agg.getChildren().stream()
+                agg.getChildren().stream()
                         .filter(isGraphGlyph)
                         .forEach(graphGlyph -> graphs.add((GraphGlyph) graphGlyph));
                     });
@@ -568,14 +564,9 @@ public class SeqMapView extends JPanel
         addRefreshButton(this.id);
         addLoadResidueButton(this.id);
 
-        boolean x_above = PreferenceUtils.getBooleanParam(PREF_X_ZOOMER_ABOVE, defaultXZoomerAbove);
         JPanel pan = new JPanel(new BorderLayout(0, 0));
         pan.add("Center", xzoombox);
-        if (x_above) {
-            this.add(BorderLayout.NORTH, pan);
-        } else {
-            this.add(BorderLayout.SOUTH, pan);
-        }
+        this.add(BorderLayout.NORTH, pan);
 
         yzoombox = Box.createVerticalBox();
         yzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
@@ -585,12 +576,7 @@ public class SeqMapView extends JPanel
 
         yzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 
-        boolean y_left = PreferenceUtils.getBooleanParam(PREF_Y_ZOOMER_LEFT, defaultYZoomerLeft);
-        if (y_left) {
-            this.add(BorderLayout.WEST, yzoombox);
-        } else {
-            this.add(BorderLayout.EAST, yzoombox);
-        }
+        this.add(BorderLayout.WEST, yzoombox);
 
         this.add(BorderLayout.CENTER, seqmap);
 
@@ -666,12 +652,12 @@ public class SeqMapView extends JPanel
 
                     private static final long serialVersionUID = 1L;
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        super.actionPerformed(e);
-                        map_range_box.actionPerformed(e);
-                    }
-                }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                super.actionPerformed(e);
+                map_range_box.actionPerformed(e);
+            }
+        }
         );
         searchButton.setMargin(new Insets(2, 4, 2, 4));
         xzoombox.add(searchButton);
@@ -807,8 +793,8 @@ public class SeqMapView extends JPanel
         if (old_tier_selections != null) {
             getTierManager().getAllTierLabels().stream().filter(tierLabelGlyph -> tierLabelGlyph.getReferenceTier().isVisible()
                     && old_tier_selections.contains(tierLabelGlyph.getReferenceTier())).forEach(tierLabelGlyph -> {
-                        ((AffyLabelledTierMap) getSeqMap()).getLabelMap().select(tierLabelGlyph);
-                    });
+                ((AffyLabelledTierMap) getSeqMap()).getLabelMap().select(tierLabelGlyph);
+            });
         }
 
         if (showEdgeMatches) {
@@ -1361,10 +1347,8 @@ public class SeqMapView extends JPanel
         if (clamp) {
             Rectangle2D.Double vbox = seqmap.getViewBounds();
             horizontalClamp((int) (vbox.x), (int) (vbox.x + vbox.width));
-        } else {
-            if (viewseq != null) {
-                horizontalClamp(viewseq.getMin(), viewseq.getMax());
-            }
+        } else if (viewseq != null) {
+            horizontalClamp(viewseq.getMin(), viewseq.getMax());
         }
         ClampViewAction.getAction().putValue(Action.SELECTED_KEY, horizontalClampedRegion != null);
     }
@@ -1583,73 +1567,71 @@ public class SeqMapView extends JPanel
                     }
                 }
             }
-        } else {
-            if (selected_glyphs.size() == 1) {
-                GlyphI topgl = selected_glyphs.get(0);
-                Object info = topgl.getInfo();
-                SeqSymmetry sym = null;
-                // IGBF-323 Really bad logic. Need to come up with something better.
-                if (info instanceof SeqSymmetry) {
-                    sym = (SeqSymmetry) info;
-                }
-                if (sym instanceof MutableSingletonSeqSymmetry) {
-                    id = sym.getID();
-                    sym_used_for_title = sym;
-                }
-                if (Strings.isNullOrEmpty(id) && sym instanceof GraphSym) {
-                    id = ((GraphSym) sym).getGraphName();
-                    sym_used_for_title = sym;
-                }
-                if (sym instanceof SymWithProps) {
-                    id = getSymWithPropsIdField((SymWithProps) sym);
-                }
-
-                if (Strings.isNullOrEmpty(id) && sym instanceof DerivedSeqSymmetry) {
-                    SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
-                    if (original instanceof MutableSingletonSeqSymmetry) {
-                        id = original.getID();
-                        sym_used_for_title = original;
-                    } else if (original instanceof SymWithProps) {
-                        id = (String) ((SymWithProps) original).getProperty(ID);
-                        sym_used_for_title = original;
-                    }
-                }
-                if (Strings.isNullOrEmpty(id) && sym instanceof CdsSeqSymmetry) {
-                    SeqSymmetry property_sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
-                    if (property_sym instanceof SymWithProps) {
-                        id = getSymWithPropsIdField((SymWithProps) property_sym);
-                    }
-                }
-                if (Strings.isNullOrEmpty(id) && topgl instanceof CharSeqGlyph && seq_selected_sym != null) {
-                    SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
-                    id = SeqUtils.spanToString(seq_region);
-                    sym_used_for_title = seq_selected_sym;
-                }
-                if (Strings.isNullOrEmpty(id) && topgl instanceof GraphGlyph) {
-                    GraphGlyph gg = (GraphGlyph) topgl;
-                    if (gg.getLabel() != null) {
-                        id = "Graph: " + gg.getLabel();
-                    } else {
-                        id = "Graph Selected";
-                    }
-                    sym_used_for_title = null;
-                }
-                if (Strings.isNullOrEmpty(id) && sym instanceof SymWithProps) {
-                    id = (String) ((SymWithProps) sym).getProperty(MATCH);
-                    sym_used_for_title = sym;
-                }
-                if (Strings.isNullOrEmpty(id) && sym instanceof SymWithProps) {
-                    id = (String) ((SymWithProps) sym).getProperty(FEATURE_TYPE);
-                    sym_used_for_title = sym;
-                }
-                if (Strings.isNullOrEmpty(id)) {
-                    id = "Unknown Selection";
-                    sym_used_for_title = sym;
-                }
-            } else {
-                sym_used_for_title = null;
-                id = "" + selected_glyphs.size() + " Selections";
+        } else if (selected_glyphs.size() == 1) {
+            GlyphI topgl = selected_glyphs.get(0);
+            Object info = topgl.getInfo();
+            SeqSymmetry sym = null;
+            // IGBF-323 Really bad logic. Need to come up with something better.
+            if (info instanceof SeqSymmetry) {
+                sym = (SeqSymmetry) info;
             }
+            if (sym instanceof MutableSingletonSeqSymmetry) {
+                id = sym.getID();
+                sym_used_for_title = sym;
+            }
+            if (Strings.isNullOrEmpty(id) && sym instanceof GraphSym) {
+                id = ((GraphSym) sym).getGraphName();
+                sym_used_for_title = sym;
+            }
+            if (sym instanceof SymWithProps) {
+                id = getSymWithPropsIdField((SymWithProps) sym);
+            }
+
+            if (Strings.isNullOrEmpty(id) && sym instanceof DerivedSeqSymmetry) {
+                SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
+                if (original instanceof MutableSingletonSeqSymmetry) {
+                    id = original.getID();
+                    sym_used_for_title = original;
+                } else if (original instanceof SymWithProps) {
+                    id = (String) ((SymWithProps) original).getProperty(ID);
+                    sym_used_for_title = original;
+                }
+            }
+            if (Strings.isNullOrEmpty(id) && sym instanceof CdsSeqSymmetry) {
+                SeqSymmetry property_sym = ((CdsSeqSymmetry) sym).getPropertySymmetry();
+                if (property_sym instanceof SymWithProps) {
+                    id = getSymWithPropsIdField((SymWithProps) property_sym);
+                }
+            }
+            if (Strings.isNullOrEmpty(id) && topgl instanceof CharSeqGlyph && seq_selected_sym != null) {
+                SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
+                id = SeqUtils.spanToString(seq_region);
+                sym_used_for_title = seq_selected_sym;
+            }
+            if (Strings.isNullOrEmpty(id) && topgl instanceof GraphGlyph) {
+                GraphGlyph gg = (GraphGlyph) topgl;
+                if (gg.getLabel() != null) {
+                    id = "Graph: " + gg.getLabel();
+                } else {
+                    id = "Graph Selected";
+                }
+                sym_used_for_title = null;
+            }
+            if (Strings.isNullOrEmpty(id) && sym instanceof SymWithProps) {
+                id = (String) ((SymWithProps) sym).getProperty(MATCH);
+                sym_used_for_title = sym;
+            }
+            if (Strings.isNullOrEmpty(id) && sym instanceof SymWithProps) {
+                id = (String) ((SymWithProps) sym).getProperty(FEATURE_TYPE);
+                sym_used_for_title = sym;
+            }
+            if (Strings.isNullOrEmpty(id)) {
+                id = "Unknown Selection";
+                sym_used_for_title = sym;
+            }
+        } else {
+            sym_used_for_title = null;
+            id = "" + selected_glyphs.size() + " Selections";
         }
         return id;
     }

@@ -409,7 +409,7 @@ public final class BookmarkUnibrowControlServlet {
     }
 
     private void loadFeature(IgbService igbService, DataSet dataSet, int start, int end) {
-        if (dataSet != null) {
+        if (dataSet == null) {
             logger.error("Unable to load null dataSet");
             return;
         }

@@ -29,12 +29,12 @@ public class JTabbedTrayLeftPane extends JTabbedTrayHorizontalPane {
     }
 
     private int getTabKnobWidth(Component tabComponent) {
-        return tab_pane.getWidth() - tabComponent.getWidth();
+        return tabPane.getWidth() - tabComponent.getWidth();
     }
 
     @Override
     protected int getTabWidth(Component tabComponent) {
-        return tab_pane.getWidth() - tabComponent.getWidth();
+        return tabPane.getWidth() - tabComponent.getWidth();
     }
 
     @Override
@@ -44,22 +44,22 @@ public class JTabbedTrayLeftPane extends JTabbedTrayHorizontalPane {
 
     @Override
     protected boolean isOnTab(Point p) {
-        if (tab_pane.getTabCount() < 1) {
+        if (tabPane.getTabCount() < 1) {
             return false;
         }
-        int index = tab_pane.getSelectedIndex() < 1 ? 1 : tab_pane.getSelectedIndex();
-        return p.getX() < getTabKnobWidth(tab_pane.getComponentAt(index));
+        int index = tabPane.getSelectedIndex() < 1 ? 1 : tabPane.getSelectedIndex();
+        return p.getX() < getTabKnobWidth(tabPane.getComponentAt(index));
     }
 
     @Override
     protected void setTabComponent() {
-        setLeftComponent(tab_pane);
+        setLeftComponent(tabPane);
     }
 
     @Override
     protected void setMinSize() {
-        _baseComponent.setMinimumSize(new Dimension(MINIMUM_WIDTH, (int) _baseComponent.getMinimumSize().getHeight()));
-        tab_pane.setMinimumSize(new Dimension(MINIMUM_WIDTH, (int) tab_pane.getMinimumSize().getHeight()));
+        baseComponent.setMinimumSize(new Dimension(MINIMUM_WIDTH, (int) baseComponent.getMinimumSize().getHeight()));
+        tabPane.setMinimumSize(new Dimension(MINIMUM_WIDTH, (int) tabPane.getMinimumSize().getHeight()));
     }
 
     @Override

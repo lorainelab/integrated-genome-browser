@@ -18,7 +18,6 @@ import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import com.lorainelab.igb.services.window.tabs.TabHolder;
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -42,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import net.miginfocom.swing.MigLayout;
 
 @Component(name = WindowServiceDefaultImpl.COMPONENT_NAME, provide = {IWindowService.class})
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
@@ -75,10 +75,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     public void activate() {
         frame = frameManagerService.getIgbMainFrame();
         cpane = frame.getContentPane();
-        cpane.setLayout(new BorderLayout());
-        innerPanel = new JPanel();
-        innerPanel.setLayout(new BorderLayout());
-        cpane.add(innerPanel, BorderLayout.CENTER);
+        cpane.setLayout(new MigLayout("fill"));
+        innerPanel = new JPanel(new MigLayout("fill"));
+        cpane.add(innerPanel, "grow");
     }
 
     @Reference
@@ -88,36 +87,31 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
     @Override
     public void setStatusBar(JComponent status_bar) {
-        innerPanel.add(status_bar, BorderLayout.SOUTH);
+        innerPanel.add(status_bar, "south");
     }
 
     @Override
-    public void setToolBar(JToolBar tool_bar) {
-        cpane.add(tool_bar, BorderLayout.NORTH);
+    public void setToolBar(JToolBar toolbar) {
+        cpane.add(toolbar, "north");
     }
 
     @Override
     public void setTopComponent1(JComponent topComponent1) {
-        innerPanel.add(topComponent1, BorderLayout.NORTH);
-    }
-
-    @Override
-    public void setTopComponent2(JComponent topComponent2) {
-        // not implemented
+        innerPanel.add(topComponent1, "north");
     }
 
     @Override
     public void setSeqMapView(JPanel map_view) {
-        JTabbedTrayPane bottom_pane = new JTabbedTrayBottomPane(map_view);
-        bottom_pane.setResizeWeight(1.0);
-        bottom_pane.addTrayStateChangeListener(this);
-        tabHolders.put(TabState.COMPONENT_STATE_BOTTOM_TAB, bottom_pane);
+        JTabbedTrayPane bottomPane = new JTabbedTrayBottomPane(map_view);
+        bottomPane.setResizeWeight(1.0);
+        bottomPane.addTrayStateChangeListener(this);
+        tabHolders.put(TabState.COMPONENT_STATE_BOTTOM_TAB, bottomPane);
         try {
-            bottom_pane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(bottom_pane.getTitle())));
+            bottomPane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(bottomPane.getTitle())));
         } catch (Exception x) {
-            bottom_pane.invokeTrayState(TrayState.getDefaultTrayState());
+            bottomPane.invokeTrayState(TrayState.getDefaultTrayState());
         }
-        JTabbedTrayPane left_pane = new JTabbedTrayLeftPane(bottom_pane);
+        JTabbedTrayPane left_pane = new JTabbedTrayLeftPane(bottomPane);
         left_pane.addTrayStateChangeListener(this);
         tabHolders.put(TabState.COMPONENT_STATE_LEFT_TAB, left_pane);
         try {
@@ -134,7 +128,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         } catch (Exception x) {
             right_pane.invokeTrayState(TrayState.getDefaultTrayState());
         }
-        innerPanel.add(right_pane, BorderLayout.CENTER);
+        innerPanel.add(right_pane, "grow");
     }
 
     @Override
@@ -202,45 +196,43 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
      * @param tabPanel the tab pane
      */
     public void addTab(final IgbTabPanelI tabPanel) {
-        IgbTabPanel igbTabPanel = tabPanel.getIgbTabPanel();
-        TabState tabState = igbTabPanel.getDefaultTabState();
-        try {
-            tabState = TabState.valueOf(PreferenceUtils.getComponentState(igbTabPanel.getName()));
-        } catch (Exception x) {
-        }
-        setTabState(igbTabPanel, tabState);
-        TabHolder tabHolder = tabHolders.get(tabState);
-        if (igbTabPanel.isFocus()) {
-            tabHolder.selectTab(igbTabPanel);
-        }
-        JPopupMenu popup = new JPopupMenu();
-        JRPMenu pluginMenu = new JRPMenu("WindowServiceDefaultImpl_tabPanel_" + igbTabPanel.getName().replaceAll(" ", "_"), igbTabPanel.getDisplayName());
-        tabMenus.put(igbTabPanel, pluginMenu);
-        tabMenuPositions.put(pluginMenu, igbTabPanel.getPosition());
-        ButtonGroup group = new ButtonGroup();
-
-        for (TabState tabStateLoop : igbTabPanel.getDefaultTabState().getCompatibleTabStates()) {
-            TabStateMenuItem menuItem = new TabStateMenuItem("WindowServiceDefaultImpl_tabPanel_" + igbTabPanel.getName().replaceAll(" ", "_") + "_" + tabStateLoop.name().replaceAll(" ", "_"), igbTabPanel, tabStateLoop);
-            group.add(menuItem);
-            pluginMenu.add(menuItem);
-            popup.add(new ActionWrapper(menuItem, group));
-        }
-        setTabMenu(igbTabPanel);
-        if (igbTabPanel.getPosition() == IgbTabPanel.DEFAULT_TAB_POSITION) {
-            if (!tabSeparatorSet) {
-                tabsMenu.addSeparator();
-                tabSeparatorSet = true;
+        SwingUtilities.invokeLater(() -> {
+            IgbTabPanel igbTabPanel = tabPanel.getIgbTabPanel();
+            TabState tabState = igbTabPanel.getDefaultTabState();
+            try {
+                tabState = TabState.valueOf(PreferenceUtils.getComponentState(igbTabPanel.getName()));
+            } catch (Exception x) {
             }
-            tabsMenu.add(pluginMenu);
-        } else {
-            int menuPosition = findMenuItemPosition(igbTabPanel);
-            tabsMenu.insert(pluginMenu, menuPosition);
-        }
-        igbTabPanel.setComponentPopupMenu(popup);
-        updateMainFrame();
-    }
+            setTabState(igbTabPanel, tabState);
+            TabHolder tabHolder = tabHolders.get(tabState);
+            if (igbTabPanel.isFocus()) {
+                tabHolder.selectTab(igbTabPanel);
+            }
+            JPopupMenu popup = new JPopupMenu();
+            JRPMenu pluginMenu = new JRPMenu("WindowServiceDefaultImpl_tabPanel_" + igbTabPanel.getName().replaceAll(" ", "_"), igbTabPanel.getDisplayName());
+            tabMenus.put(igbTabPanel, pluginMenu);
+            tabMenuPositions.put(pluginMenu, igbTabPanel.getPosition());
+            ButtonGroup group = new ButtonGroup();
 
-    private void updateMainFrame() {
+            for (TabState tabStateLoop : igbTabPanel.getDefaultTabState().getCompatibleTabStates()) {
+                TabStateMenuItem menuItem = new TabStateMenuItem("WindowServiceDefaultImpl_tabPanel_" + igbTabPanel.getName().replaceAll(" ", "_") + "_" + tabStateLoop.name().replaceAll(" ", "_"), igbTabPanel, tabStateLoop);
+                group.add(menuItem);
+                pluginMenu.add(menuItem);
+                popup.add(new ActionWrapper(menuItem, group));
+            }
+            setTabMenu(igbTabPanel);
+            if (igbTabPanel.getPosition() == IgbTabPanel.DEFAULT_TAB_POSITION) {
+                if (!tabSeparatorSet) {
+                    tabsMenu.addSeparator();
+                    tabSeparatorSet = true;
+                }
+                tabsMenu.add(pluginMenu);
+            } else {
+                int menuPosition = findMenuItemPosition(igbTabPanel);
+                tabsMenu.insert(pluginMenu, menuPosition);
+            }
+            igbTabPanel.setComponentPopupMenu(popup);
+        });
         showTabs();
     }
 
@@ -273,12 +265,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     }
 
     public void showTabs() {
-        // here we keep count of the embedded tabs that are added. When
-        // all the embedded tabs have been added, we initialize the tab panes
-        // this is to prevent the flashing of new tabs added
         SwingUtilities.invokeLater(() -> {
             // Resize all tab holder after frame is set to visible.
-            tabHolders.values().forEach(com.lorainelab.igb.services.window.tabs.TabHolder::resize);
+            tabHolders.values().forEach(TabHolder::resize);
         });
     }
 

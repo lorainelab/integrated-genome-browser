@@ -5,6 +5,7 @@
  */
 package com.affymetrix.igb.window.service.def;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.igb.window.service.IWindowService;
@@ -23,21 +24,27 @@ public class IgbTabPanelRegistry {
 
     private static final Set<IgbTabPanelI> igbTabPanels = Sets.newConcurrentHashSet();
 
+    @Activate
+    public void activate() {
+        if (!igbTabPanels.isEmpty()) {
+            igbTabPanels.stream().forEach(panel -> {
+                addTabToWindowService(panel);
+            });
+            igbTabPanels.clear();
+        }
+    }
+
     @Reference(multiple = true, unbind = "removeIgbTabPanel", optional = true, dynamic = true)
     public void addIgbTabPanel(final IgbTabPanelI tabPanel) {
-        synchronized (this) {
-            if (windowService != null) {
-                if (!igbTabPanels.isEmpty()) {
-                    igbTabPanels.stream().forEach(panel -> {
-                        windowService.addTab(panel);
-                    });
-                    igbTabPanels.clear();
-                }
-                windowService.addTab(tabPanel);
-            } else {
-                igbTabPanels.add(tabPanel);
-            }
+        if (windowService != null) {
+            addTabToWindowService(tabPanel);
+        } else {
+            igbTabPanels.add(tabPanel);
         }
+    }
+
+    private synchronized void addTabToWindowService(final IgbTabPanelI tabPanel) {
+        windowService.addTab(tabPanel);
     }
 
     public void removeIgbTabPanel(final IgbTabPanelI tabPanel) {

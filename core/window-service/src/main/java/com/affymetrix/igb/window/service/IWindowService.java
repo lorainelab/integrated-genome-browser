@@ -72,13 +72,6 @@ public interface IWindowService {
     public void setTopComponent1(JComponent topComponent1);
 
     /**
-     * pass in the top component2 (below topComponent1) a generic component at the top of IGB
-     *
-     * @param topComponent2 the top component
-     */
-    public void setTopComponent2(JComponent topComponent2);
-
-    /**
      * get all the tab panels that have been added
      *
      * @return the set of tab panels added

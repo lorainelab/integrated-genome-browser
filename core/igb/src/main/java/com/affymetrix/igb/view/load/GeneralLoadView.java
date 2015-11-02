@@ -35,7 +35,6 @@ import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.action.NewTrackStrechAction;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.swing.JRPButton;
@@ -620,8 +619,9 @@ public final class GeneralLoadView {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         refreshDataManagementTable(GeneralLoadUtils.getVisibleFeatures());
-                        //custom repack/stretch
-                        NewTrackStrechAction.getAction().actionPerformed(null);
+                        gviewer.getSeqMap().packTiers(false, true, true);
+                        gviewer.getSeqMap().stretchToFit(false, true);
+                        gviewer.getSeqMap().updateWidget();
                         TierPrefsView.getSingleton().refreshList();
                     }
                 };
@@ -736,7 +736,7 @@ public final class GeneralLoadView {
                     refreshTreeViewAndRestore();
                     refreshDataManagementView();
                     //gviewer.dataRemoved();
-                    NewTrackStrechAction.getAction().actionPerformed(null);
+                    gviewer.getSeqMap().repackTheTiers(true, true, true);
                 }
 
                 ((AffyLabelledTierMap) gviewer.getSeqMap()).fireTierOrderChanged();

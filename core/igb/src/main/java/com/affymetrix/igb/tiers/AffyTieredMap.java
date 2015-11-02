@@ -41,8 +41,7 @@ import javax.swing.Action;
 import javax.swing.JScrollBar;
 
 /**
- * A map divided vertically into horizontal tiers. The tiers can be used to
- * display different tracks of data.
+ * A map divided vertically into horizontal tiers. The tiers can be used to display different tracks of data.
  *
  * @version $Id: AffyTieredMap.java 11488 2012-05-09 23:25:25Z lfrohman $
  */
@@ -118,7 +117,7 @@ public class AffyTieredMap extends NeoMap {
         // currently _ONLY_ tiers and glyphs placed in tiers will be repacked --
         // anything added directly to map other than tiers will need to
         // be dealt with manually
-        packTiers(true, false, false);
+        packTiers(true, true, false);
     }
 
     /**
@@ -126,9 +125,8 @@ public class AffyTieredMap extends NeoMap {
      *
      * If a tier has no children, it won't be considered in packing.
      *
-     * @param full_repack if true, packs the contents of the tiers as well as
-     * the tiers with respect to each other. Tiers will always be packed with
-     * respect to each other no matter what.
+     * @param full_repack if true, packs the contents of the tiers as well as the tiers with respect to each other.
+     * Tiers will always be packed with respect to each other no matter what.
      * @param stretch_map reshapes the map to fit all of the tiers.
      * @param stretch_includes_nontiers ignored
      */
@@ -312,8 +310,7 @@ public class AffyTieredMap extends NeoMap {
     }
 
     /**
-     * Overridden to take into account fixed height tiers. Called within
-     * {@link NeoMap#stretchToFit()}.
+     * Overridden to take into account fixed height tiers. Called within {@link NeoMap#stretchToFit()}.
      */
     @Override
     public LinearTransform calcFittedTransform() {
@@ -456,8 +453,7 @@ public class AffyTieredMap extends NeoMap {
     }
 
     /**
-     * Repacks tiers. Should be called after hiding or showing tiers or changing
-     * their heights.
+     * Repacks tiers. Should be called after hiding or showing tiers or changing their heights.
      */
     public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
         repackTheTiers(full_repack, stretch_vertically, false);
@@ -475,8 +471,6 @@ public class AffyTieredMap extends NeoMap {
         // pack them again!  This clears-up problems with the packing of the axis
         // tier and getting the labelmap lined-up with the main tier map.
         packTiers(false, true, tierChanged);
-        JScrollBar jScrollBar = getScroller(NeoMap.Y);
-        jScrollBar.setValue(0);
     }
 
     /**
@@ -487,8 +481,8 @@ public class AffyTieredMap extends NeoMap {
     }
 
     /**
-     * Prints this component with choice of dialogue box. This is used when
-     * called from command prompt Date: 5/19/2010 Author: vikram
+     * Prints this component with choice of dialogue box. This is used when called from command prompt Date: 5/19/2010
+     * Author: vikram
      */
     public void print(int pageFormat, boolean noDialog) throws PrinterException {
         ComponentPagePrinter cpp = new ComponentPagePrinter(this);
@@ -501,9 +495,8 @@ public class AffyTieredMap extends NeoMap {
     }
 
     /**
-     * Sets the data model to the appropriate SeqSymmetry. If it is a
-     * DerivedSeqSymmetry the original SeqSymmetry is used. Otherwise, the given
-     * symmetry is used.
+     * Sets the data model to the appropriate SeqSymmetry. If it is a DerivedSeqSymmetry the original SeqSymmetry is
+     * used. Otherwise, the given symmetry is used.
      */
     public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym) {
         if (sym instanceof DerivedSeqSymmetry) {
@@ -539,16 +532,14 @@ public class AffyTieredMap extends NeoMap {
     }
 
     /**
-     * Tries to determine the glyph you really wanted to choose based on the one
-     * you clicked on. Usually this will be the glyph you clicked on, but when
-     * the zoom level is such that the glyph is very small, this assumes you
-     * probably wanted to pick the parent glyph rather than one of its children.
+     * Tries to determine the glyph you really wanted to choose based on the one you clicked on. Usually this will be
+     * the glyph you clicked on, but when the zoom level is such that the glyph is very small, this assumes you probably
+     * wanted to pick the parent glyph rather than one of its children.
      *
      * @param topgl a Glyph
-     * @param zoom_point the location where you clicked; if the returned glyph
-     * is different from the given glyph, the returned zoom_point will be at the
-     * center of that returned glyph, otherwise it will be unmodified. This
-     * parameter should not be supplied as null.
+     * @param zoom_point the location where you clicked; if the returned glyph is different from the given glyph, the
+     * returned zoom_point will be at the center of that returned glyph, otherwise it will be unmodified. This parameter
+     * should not be supplied as null.
      * @return a Glyph, and also modifies the value of zoom_point
      */
     public GlyphI zoomCorrectedGlyphChoice(GlyphI topgl, Point2D.Double zoom_point) {
@@ -615,9 +606,8 @@ public class AffyTieredMap extends NeoMap {
     }
 
     /**
-     * A subclass of JCheckBoxMenuItem that pays attention to my version of
-     * AffyTieredMap.SELECTED_KEY. In Java 1.6, this won't be necessary, because
-     * the standard JCkeckBoxMenuItem pays attention to Action.SELECTED_KEY.
+     * A subclass of JCheckBoxMenuItem that pays attention to my version of AffyTieredMap.SELECTED_KEY. In Java 1.6,
+     * this won't be necessary, because the standard JCkeckBoxMenuItem pays attention to Action.SELECTED_KEY.
      */
     public static final class ActionToggler extends JRPCheckBoxMenuItem implements PropertyChangeListener {
 
@@ -636,9 +626,5 @@ public class AffyTieredMap extends NeoMap {
                 this.setSelected(b);
             }
         }
-    }
-
-    public double[] getPixelsPerCoord() {
-        return pixels_per_coord;
     }
 }

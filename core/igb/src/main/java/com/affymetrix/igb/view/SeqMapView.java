@@ -826,7 +826,7 @@ public class SeqMapView extends JPanel
             // Probably not necessary after a fix in r9248 - HV
             //seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
         } else {
-            seqmap.stretchToFit(true, false);
+            seqmap.stretchToFit(true, true);
 
             zoomToSelections();
             postSelections();

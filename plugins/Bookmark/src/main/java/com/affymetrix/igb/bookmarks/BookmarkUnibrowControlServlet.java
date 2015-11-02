@@ -408,7 +408,11 @@ public final class BookmarkUnibrowControlServlet {
         return dataSet.get();
     }
 
-    private void loadFeature(IgbService igbService, DataSet gFeature, int start, int end) {
+    private void loadFeature(IgbService igbService, DataSet dataSet, int start, int end) {
+        if (dataSet != null) {
+            logger.error("Unable to load null dataSet");
+            return;
+        }
         final java.util.Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
         if (selectedSeq.isPresent()) {
             BioSeq seq = selectedSeq.get();
@@ -417,12 +421,12 @@ public final class BookmarkUnibrowControlServlet {
                 end = 1;
             }
             SeqSpan overlap = new SimpleSeqSpan(start, end, seq);
-            gFeature.setVisible();
-            gFeature.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
-            if (gFeature.getLoadStrategy() != LoadStrategy.VISIBLE) {
+            dataSet.setVisible();
+            dataSet.setPreferredLoadStrategy(LoadStrategy.VISIBLE);
+            if (dataSet.getLoadStrategy() != LoadStrategy.VISIBLE) {
                 overlap = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
             }
-            igbService.loadAndDisplaySpan(overlap, gFeature);
+            igbService.loadAndDisplaySpan(overlap, dataSet);
         }
     }
 
@@ -515,13 +519,11 @@ public final class BookmarkUnibrowControlServlet {
         if (book_seq == null) {
             ErrorHandler.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '" + seqid + "'");
             return null;
-        } else {
-            // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
+        } else // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
             //     gviewer is registered as a SeqSelectionListener on gmodel
             if (!gmodel.getSelectedSeq().isPresent() || book_seq != gmodel.getSelectedSeq().orElse(null)) {
                 gmodel.setSelectedSeq(book_seq);
             }
-        }
         igbService.getSeqMapView().setRegion(start, end, book_seq);
         return Optional.fromNullable(book_seq);
     }

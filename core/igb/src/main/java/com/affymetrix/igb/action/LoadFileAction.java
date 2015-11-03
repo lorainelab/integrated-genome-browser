@@ -183,6 +183,7 @@ public final class LoadFileAction extends OpenURIAction {
             }
         } else {
             FileDialog fileChooser = new FileDialog(igbService.getApplicationFrame());
+            fileChooser.setLocationRelativeTo(igbService.getApplicationFrame());
             fileChooser.setDirectory(currDir.getAbsolutePath());
             fileChooser.setMultipleMode(true);
             if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {

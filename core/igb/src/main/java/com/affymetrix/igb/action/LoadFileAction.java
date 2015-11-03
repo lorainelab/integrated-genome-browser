@@ -9,31 +9,26 @@
  */
 package com.affymetrix.igb.action;
 
-import static com.affymetrix.common.CommonUtils.IS_UBUNTU;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
-import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileDropHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.action.files.JavaFxFileChooser;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.google.common.collect.Sets;
-import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.logging.Level;
-import javax.swing.JFileChooser;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
 import org.slf4j.Logger;
@@ -154,55 +149,24 @@ public final class LoadFileAction extends OpenURIAction {
         if (currDir == null) {
             currDir = new File(System.getProperty("user.home"));
         }
-        File[] files = null;
-        if (IS_UBUNTU) {
-            final JFileChooser chooser = new JFileChooser(currDir.getAbsolutePath());
-            chooser.setMultiSelectionEnabled(true);
-            Set<String> filters = Sets.newHashSet();
-            Arrays.asList(FileTypeCategory.values()).stream().forEach(fileTypeCategory -> {
-                getSupportedFiles(fileTypeCategory).stream().forEach(filter -> {
-                    chooser.addChoosableFileFilter(filter);
-                    filters.addAll(filter.getExtensions());
-                });
-            });
-            chooser.setAcceptAllFileFilterUsed(false);
-            UniFileFilter allFilter = new UniFileFilter(filters, "All Supported Files", true);
-            allFilter.setExtensionListInDescription(false);
-            chooser.addChoosableFileFilter(allFilter);
-            chooser.setFileFilter(allFilter);
-            if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
-                int option = chooser.showOpenDialog(igbService.getApplicationFrame());
-                if (option != JFileChooser.APPROVE_OPTION) {
-                    return;
-                }
-                load_dir_tracker.setFile(chooser.getCurrentDirectory());
-                files = chooser.getSelectedFiles();
-            } else {
-                ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"),
-                        BUNDLE.getString("noGenomeSelectedMessage"), Level.INFO);
+        List<File> files = null;
+        Optional<List<File>> selectedFiles;
+        if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
+            selectedFiles = JavaFxFileChooser.retrieveFilesFromFxChooser(Optional.ofNullable(currDir));
+            if (selectedFiles.isPresent()) {
+                files = selectedFiles.get();
             }
         } else {
-            FileDialog fileChooser = new FileDialog(igbService.getApplicationFrame());
-            fileChooser.setLocationRelativeTo(igbService.getApplicationFrame());
-            fileChooser.setDirectory(currDir.getAbsolutePath());
-            fileChooser.setMultipleMode(true);
-            if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
-                fileChooser.setVisible(true);
-                files = fileChooser.getFiles();
-            } else {
-                ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"),
-                        BUNDLE.getString("noGenomeSelectedMessage"), Level.INFO);
-            }
-            if (files == null || files.length == 0) {
-                return;
-            }
-            load_dir_tracker.setFile(new File(fileChooser.getDirectory()));
+            ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"),
+                    BUNDLE.getString("noGenomeSelectedMessage"), Level.INFO);
         }
-        if (files != null) {
-            for (File file : files) {
-                URI uri = file.toURI();
-                openURI(uri, file.getName(), true, loadGroup, speciesName, false);
-            }
+        if (files == null || files.isEmpty()) {
+            return;
+        }
+        load_dir_tracker.setFile(files.get(0).getParentFile());
+        for (File file : files) {
+            URI uri = file.toURI();
+            openURI(uri, file.getName(), true, loadGroup, speciesName, false);
         }
     }
 

@@ -89,15 +89,19 @@ public final class BAM extends XAM {
             if (indexUri == null) {
                 baiUri = URI.create(getBamIndexUriStr(uri));
             }
+            CacheStatus indexCacheStatus = null;
+            boolean localFile = LocalUrlCacher.isLocalFile(baiUri);
+            if (!localFile) {
+                Optional<InputStream> indexStream = remoteFileCacheService.getFilebyUrl(baiUri.toURL(), false);
+                if (indexStream.isPresent()) {
+                    indexStream.get().close();
+                }
+                indexCacheStatus = remoteFileCacheService.getCacheStatus(baiUri.toURL());
 
-            Optional<InputStream> indexStream = remoteFileCacheService.getFilebyUrl(baiUri.toURL(), false);
-            if (indexStream.isPresent()) {
-                indexStream.get().close();
             }
-            CacheStatus indexCacheStatus = remoteFileCacheService.getCacheStatus(baiUri.toURL());
 
             SeekableBufferedStream seekableStream = new SeekableBufferedStream(new SeekableHTTPStream(new URL(reachable_url)));
-            if (indexCacheStatus.isDataExists() && !indexCacheStatus.isCorrupt()) {
+            if (!localFile && indexCacheStatus != null && indexCacheStatus.isDataExists() && !indexCacheStatus.isCorrupt()) {
                 samFileReader = new SAMFileReader(seekableStream, indexCacheStatus.getData(), false);
             } else {
                 indexFile = LocalUrlCacher.convertURIToFile(baiUri);
@@ -248,8 +252,8 @@ public final class BAM extends XAM {
     }
 
     /**
-     * Returns a list of symmetries for the entire file. Good for loading DAS/2
-     * derived data slices, skips building an index.
+     * Returns a list of symmetries for the entire file. Good for loading DAS/2 derived data slices, skips building an
+     * index.
      */
     public List<SeqSymmetry> parseAll(BioSeq seq, String method) {
         reader = new SAMFileReader(new File(uri));
@@ -362,8 +366,7 @@ public final class BAM extends XAM {
     }
 
     /**
-     * Modified to look for both xxx.bai and xxx.bam.bai files in parent
-     * directory.
+     * Modified to look for both xxx.bai and xxx.bam.bai files in parent directory.
      *
      * @param bamfile
      * @return file

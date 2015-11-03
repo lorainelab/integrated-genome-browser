@@ -16,8 +16,8 @@ import com.affymetrix.genometry.util.LoadUtils.RefreshStatus;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.ServerUtils;
 import com.google.common.collect.ImmutableList;
+import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -196,12 +196,10 @@ public final class DataSet {
 
     public Optional<URI> getIndex() {
         if (getProperties().containsKey("index")) {
-            try {
-                URI indexUri = new URI(getProperties().get("index"));
-                return Optional.ofNullable(indexUri);
-            } catch (URISyntaxException ex) {
-                logger.error(ex.getMessage(), ex);
-            }
+            String fileIndex = getProperties().get("index");
+            File file = new File(fileIndex);
+            URI indexUri = file.toURI();
+            return Optional.ofNullable(indexUri);
         }
         return Optional.empty();
     }
@@ -289,8 +287,8 @@ public final class DataSet {
     }
 
     /**
-     * Split the requested span into spans that still need to be loaded. Note we
-     * can't filter inside spans (in general) until after the data is returned.
+     * Split the requested span into spans that still need to be loaded. Note we can't filter inside spans (in general)
+     * until after the data is returned.
      */
     public synchronized SeqSymmetry optimizeRequest(SeqSpan span) {
         MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();

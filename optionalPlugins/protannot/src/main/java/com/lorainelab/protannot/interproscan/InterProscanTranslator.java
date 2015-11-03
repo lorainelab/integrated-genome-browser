@@ -14,6 +14,8 @@ import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch;
 import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch.Simhit;
 import com.lorainelab.protannot.model.Dnaseq.Descriptor;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -80,11 +82,12 @@ public class InterProscanTranslator {
             parseLibraryReleaseOnSignature(signature, simhit);
             Optional<Descriptor> name = simhit.getDescriptor().stream().filter(d -> d.getType().equals("InterPro name")).findFirst();
             Optional<Descriptor> ac = simhit.getDescriptor().stream().filter(d -> d.getType().equals("InterPro accession")).findFirst();
+            Optional<Descriptor> url = simhit.getDescriptor().stream().filter(d -> d.getType().equals("URL")).findFirst();
             Optional<Descriptor> desc = simhit.getDescriptor().stream().filter(d -> d.getType().equals("InterPro description")).findFirst();
             NamedNodeMap attributes = signature.getAttributes();
-            if (!name.isPresent() && attributes != null 
+            if (!name.isPresent() && attributes != null
                     && attributes.getNamedItem("name") != null) {
-                String signatureName = ((Attr)attributes.getNamedItem("name")).getValue();
+                String signatureName = ((Attr) attributes.getNamedItem("name")).getValue();
                 Dnaseq.Descriptor descriptor = new Dnaseq.Descriptor();
                 descriptor.setType("InterPro name");
                 descriptor.setValue(signatureName);
@@ -97,6 +100,17 @@ public class InterProscanTranslator {
                 descriptor.setType("InterPro accession");
                 descriptor.setValue(signatureAc);
                 simhit.getDescriptor().add(descriptor);
+
+                if (!url.isPresent()) {
+                    try {
+                        Dnaseq.Descriptor urlDescriptor = new Dnaseq.Descriptor();
+                        urlDescriptor.setType("URL");
+                        urlDescriptor.setValue(generateUrlFromAc(signatureAc).toString());
+                        simhit.getDescriptor().add(urlDescriptor);
+                    } catch (MalformedURLException ex) {
+                        LOG.error(ex.getMessage(), ex);
+                    }
+                }
             }
             if (!desc.isPresent() && attributes != null
                     && attributes.getNamedItem("desc") != null) {
@@ -141,6 +155,14 @@ public class InterProscanTranslator {
 
     }
 
+    private URL generateUrlFromAc(String ac) throws MalformedURLException {
+        if (ac.toLowerCase().startsWith("ipr")) {
+            return new URL("http://www.ebi.ac.uk/interpro/entry/" + ac);
+        } else {
+            return new URL("http://www.google.com/search?q=" + ac);
+        }
+    }
+
     private void addAttributesToSimhit(NamedNodeMap attributes, Simhit simhit, String prefix) {
         if (prefix == null) {
             prefix = "";
@@ -171,10 +193,14 @@ public class InterProscanTranslator {
                     ac.setValue(item.getValue());
                     simhit.getDescriptor().add(ac);
 
-                    Dnaseq.Descriptor url = new Dnaseq.Descriptor();
-                    url.setType("URL");
-                    url.setValue("http://www.ebi.ac.uk/interpro/entry/" + item.getValue());
-                    simhit.getDescriptor().add(url);
+                    try {
+                        Dnaseq.Descriptor url = new Dnaseq.Descriptor();
+                        url.setType("URL");
+                        url.setValue(generateUrlFromAc(item.getValue()).toString());
+                        simhit.getDescriptor().add(url);
+                    } catch (MalformedURLException ex) {
+                        LOG.error(ex.getMessage(), ex);
+                    }
                     continue;
                 case "desc":
                     Dnaseq.Descriptor desc = new Dnaseq.Descriptor();

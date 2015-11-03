@@ -14,9 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 /**
@@ -38,20 +36,10 @@ public class ModPropertySheet extends JPanel {
     public ModPropertySheet() {
         super();
         title = new JLabel(DEFAULT_TITLE);
-        table = new JRPStyledTable("Protannot properties table") {
-            DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        table = new JRPStyledTable("Protannot properties table");
 
-            {
-                renderer.setHorizontalAlignment(SwingConstants.LEFT);
-            }
-
-            @Override
-            public TableCellRenderer getCellRenderer(int r, int c) {
-                return renderer;
-            }
-
-        };
         helper = new PropertySheetHelper(table);
+        helper.setHorizontalAlignment(SwingConstants.LEFT);
         jvp = new JViewport();
         scroll_pane = new JScrollPane(table);
 
@@ -141,7 +129,7 @@ public class ModPropertySheet extends JPanel {
             System.arraycopy(vals, 1, rows[i], 1, vals.length - 1);
         }
 
-        String[][] temp = new String[6][num_props + 1];
+        String[][] temp = new String[12][num_props + 1];
         List<String[]> sortedImportant = new ArrayList<>();
         List<String[]> sortedUnimportant = new ArrayList<>();
         for (int i = 0; i < rows.length; i++) {
@@ -149,20 +137,38 @@ public class ModPropertySheet extends JPanel {
                 case "InterPro name":
                     insertInList(temp, 0, rows[i]);
                     break;
-                case "application":
+                case "title":
                     insertInList(temp, 1, rows[i]);
                     break;
-                case "library":
+                case "mRNA accession":
                     insertInList(temp, 2, rows[i]);
                     break;
-                case "URL":
+                case "description":
                     insertInList(temp, 3, rows[i]);
                     break;
-                case "InterPro accession":
+                case "application":
                     insertInList(temp, 4, rows[i]);
                     break;
-                case "InterPro description":
+                case "library":
                     insertInList(temp, 5, rows[i]);
+                    break;
+                case "URL":
+                    insertInList(temp, 6, rows[i]);
+                    break;
+                case "InterPro accession":
+                    insertInList(temp, 7, rows[i]);
+                    break;
+                case "InterPro description":
+                    insertInList(temp, 8, rows[i]);
+                    break;
+                case "start":
+                    insertInList(temp, 9, rows[i]);
+                    break;
+                case "end":
+                    insertInList(temp, 10, rows[i]);
+                    break;
+                case "length":
+                    insertInList(temp, 11, rows[i]);
                     break;
                 default:
                     sortedUnimportant.add(rows[i]);

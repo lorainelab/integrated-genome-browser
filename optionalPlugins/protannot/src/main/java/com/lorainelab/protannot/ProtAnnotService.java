@@ -11,7 +11,6 @@ import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.PreferenceUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.google.common.collect.Lists;
@@ -32,9 +31,11 @@ import com.lorainelab.protannot.interproscan.appl.model.ParameterType;
 import com.lorainelab.protannot.interproscan.appl.model.ValueType;
 import com.lorainelab.protannot.model.Dnaseq;
 import com.lorainelab.protannot.view.StatusBar;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.FileDialog;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -49,6 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -60,6 +62,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -70,7 +73,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -130,6 +132,7 @@ public class ProtAnnotService {
     private String PROTANNOT_IPS_EMAIL = "protannot interproscan email";
     private ImageExportService imageExportService;
     private boolean emailReset;
+    public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("protannot");
 
 
     @Reference
@@ -440,6 +443,8 @@ public class ProtAnnotService {
         });
     }
 
+    JLabel errorLabel;
+
     private boolean showSetupModal() {
 
         configParentPanel = new JPanel(new MigLayout());
@@ -452,6 +457,10 @@ public class ProtAnnotService {
         emailPanel.add(new JLabel("Email:"));
         emailPanel.add(email, "width :300:");
         configParentPanel.add(emailPanel, "wrap");
+        errorLabel = new JLabel("");
+        configParentPanel.add(errorLabel, "align center, wrap");
+        configParentPanel.add(new JLabel(""), "wrap");
+        errorLabel.setForeground(Color.red);
         configParentPanel.add(new JLabel("The InterProScan Web service requires an email address."), "wrap");
         initSelectAll();
         configParentPanel.add(selectAllLabel, "wrap");
@@ -498,11 +507,51 @@ public class ProtAnnotService {
             configParentPanel
         };
         Object[] options = {"Run", "Cancel"};
-        int optionChosen = JOptionPane.showOptionDialog(null, inputs, "InterProScan Job Configuration", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]);
+        int optionChosen = 0;
+        do {
+            optionChosen = JOptionPane.showOptionDialog(null, inputs, "InterProScan Job Configuration", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    options,
+                    options[0]);
+
+        } while (optionChosen == 0 && (!isValidEmail() || !isValidDBSelection()));
         return processSetupOption(optionChosen);
+    }
+
+    private boolean isValidEmail() {
+        matcher = pattern.matcher(email.getText());
+        boolean validEmail = matcher.matches();
+        if (!validEmail) {
+            setErrorMessage(BUNDLE.getString("invalidEmail") + "\n");
+        }
+        return matcher.matches();
+    }
+
+    private void setErrorMessage(String str) {
+        errorLabel.setText(str);
+    }
+
+    private boolean isValidDBSelection() {
+        boolean dbSelection = false;
+        for (java.awt.Component parent : applicationsPanel.getComponents()) {
+            if (parent instanceof JPanel) {
+                for (java.awt.Component child : ((JPanel) parent).getComponents()) {
+                    if (child instanceof JCheckBox) {
+                        if (((JCheckBox) child).isSelected()) {
+                            dbSelection = true;
+                            break;
+                        }
+                    }
+                }
+                if (dbSelection) {
+                    break;
+                }
+            }
+        }
+        if (!dbSelection) {
+            setErrorMessage("Invalid Database selection.");
+        }
+        return dbSelection;
     }
 
     private boolean processSetupOption(int optionChosen) {
@@ -519,12 +568,6 @@ public class ProtAnnotService {
                         }
                     }
                 }
-            }
-            matcher = pattern.matcher(email.getText());
-            if (!matcher.matches()) {
-                ModalUtils.infoPanel("To run a search, enter an email address.");
-                emailReset = true;
-                return false;
             }
             protAnnotPreferencesNode.put(PROTANNOT_IPS_EMAIL, email.getText());
             return true;
@@ -570,7 +613,7 @@ public class ProtAnnotService {
             CThreadHolder.getInstance().execute(this, loadResultsWorker);
             gview.getTabbedPane().setSelectedIndex(1);
             initStatusLabel("Initializing ...");
-        } else if(emailReset) {
+        } else if (emailReset) {
             interProScanRunning = false;
             emailReset = false;
             eventBus.post(new StartInterProScanEvent(id));
@@ -726,14 +769,31 @@ public class ProtAnnotService {
         return invalidJobs;
     }
 
-    public void exportAsXml(Component component) {
-        JFileChooser chooser = new UniFileChooser("PAXML File", "paxml");
-        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.rescanCurrentDirectory();
-        int option = chooser.showSaveDialog(component);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File exportFile = chooser.getSelectedFile();
+    public void exportAsXml(Component component, JFrame frm) {
+        int option = 0;
+        File[] files = null;
+        if (!CommonUtils.IS_UBUNTU) {
+            FileDialog nativeFileChooser = new FileDialog(frm);
+            nativeFileChooser.setDirectory(FileTracker.DATA_DIR_TRACKER.getFile().toString());
+            nativeFileChooser.setTitle(BUNDLE.getString("paxmlFileChooserTitle"));
+            nativeFileChooser.setMode(FileDialog.SAVE);
+            nativeFileChooser.setVisible(true);
+            nativeFileChooser.toFront();
+            files = nativeFileChooser.getFiles();
+
+        } else {
+
+            JFileChooser chooser = new UniFileChooser(BUNDLE.getString("paxmlFileChooserTitle"), "paxml");
+            chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            chooser.rescanCurrentDirectory();
+            option = chooser.showSaveDialog(component);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                files = chooser.getSelectedFiles();
+            }
+        }
+        if (files != null && files.length > 0) {
+            File exportFile = files[0];
             FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());
             Dnaseq dnaseq = getDnaseq();
             JAXBContext jaxbContext;
@@ -749,21 +809,34 @@ public class ProtAnnotService {
         }
     }
 
-    public void exportAsImage(Component component) {
-        JFileChooser fileChooser = new UniFileChooser("Save As", "png");
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setCurrentDirectory(FileUtils.getUserDirectory());
-        fileChooser.rescanCurrentDirectory();
-        try {
-            fileChooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-            fileChooser.setSelectedFile(new File(currentSaveImageFile));
-
-        } catch (Exception ex) {
-            LOG.error(ex.getMessage(), ex);
+    public void exportAsImage(Component component, JFrame frm) {
+        File[] files = null;
+        int option = 0;
+        if (!CommonUtils.IS_UBUNTU) {
+            FileDialog nativeFileChooser = new FileDialog(frm);
+            nativeFileChooser.setDirectory(FileTracker.DATA_DIR_TRACKER.getFile().toString());
+            nativeFileChooser.setTitle("Save As");
+            nativeFileChooser.setMode(FileDialog.SAVE);
+            nativeFileChooser.setVisible(true);
+            nativeFileChooser.toFront();
+            files = nativeFileChooser.getFiles();
+        } else {
+            JFileChooser fileChooser = new UniFileChooser("Save As", "png");
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fileChooser.rescanCurrentDirectory();
+            try {
+                fileChooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+                fileChooser.setSelectedFile(new File(currentSaveImageFile));
+                option = fileChooser.showSaveDialog(component);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    files = fileChooser.getSelectedFiles();
+                }
+            } catch (Exception ex) {
+                LOG.error(ex.getMessage(), ex);
+            }
         }
-        int option = fileChooser.showSaveDialog(component);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File exportFile = fileChooser.getSelectedFile();
+        if (files != null && files.length > 0) {
+            File exportFile = files[0];
             FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());
             currentSaveImageFile = exportFile.getName();
             imageExportService.headlessComponentExport(component, exportFile, ".png", true);

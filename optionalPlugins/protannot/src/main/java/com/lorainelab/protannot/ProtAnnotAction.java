@@ -6,6 +6,7 @@ package com.lorainelab.protannot;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.event.GenericAction;
@@ -23,7 +24,6 @@ import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
-import com.affymetrix.igb.swing.JRPMenu;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
@@ -38,7 +38,9 @@ import com.lorainelab.protannot.view.StatusBar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -141,7 +143,8 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     private ProtAnnotService protAnnotService;
 
     // used for choosing new files to load
-    private JFileChooser chooser = null;
+    private FileDialog nativeFileChooser = null;
+    private JFileChooser javaFileChooser = null;
     // for printing
     private ComponentPagePrinter print_panel = null;
     // for choosing sample path from server
@@ -382,19 +385,41 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
      * Action performed when a path is selected in the path browser. Calls up load(name) to load the path.
      */
     void doLoadFile() {
-        if (this.chooser == null) {
-            this.chooser = new JFileChooser();
-            this.chooser.setDialogTitle("Open paxml");
+        File[] files = null;
+        if (!CommonUtils.IS_UBUNTU) {
+            if (this.nativeFileChooser == null) {
+                this.nativeFileChooser = new FileDialog(frm);
+                this.nativeFileChooser.setTitle("Open paxml");
+
+                this.nativeFileChooser.setFilenameFilter((dir, name) -> {
+                    if (name != null && name.endsWith(".paxml")) {
+                        return true;
+                    }
+                    return false;
+                });
+            }
+            nativeFileChooser.setDirectory(FileTracker.DATA_DIR_TRACKER.getFile().toString());
+            nativeFileChooser.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+            nativeFileChooser.setAutoRequestFocus(true);
+            nativeFileChooser.setVisible(true);
+            nativeFileChooser.toFront();
+            files = nativeFileChooser.getFiles();
+        } else {
+            javaFileChooser = new JFileChooser();
+            javaFileChooser.setDialogTitle("Open paxml");
             FileNameExtensionFilter paxmlFilter = new FileNameExtensionFilter("paxml files", "paxml");
-            this.chooser.setFileFilter(paxmlFilter);
+            javaFileChooser.setFileFilter(paxmlFilter);
+            this.javaFileChooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+            int option = this.javaFileChooser.showOpenDialog(frm);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                files = javaFileChooser.getSelectedFiles();
+            }
         }
-        this.chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        int option = this.chooser.showOpenDialog(frm);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File cfil = this.chooser.getSelectedFile();
+        if (files != null && files.length > 0) {
+            File cfil = files[0];
             FileTracker.DATA_DIR_TRACKER.setFile(cfil.getParentFile());
             load(cfil);
-        } else if (option == JFileChooser.CANCEL_OPTION && loadFileOnStart) {
+        } else if ((files == null || files.length == 0) && loadFileOnStart) {
             getExitAction().actionPerformed(null);
         }
     }
@@ -507,25 +532,12 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getExportAction()));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getSaveImageAction()));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getPreferencesAction()));
-        AbstractAction copyAction = getCopyAction();
-        MenuUtil.addToMenu(protannotMenu, new JMenuItem(copyAction));
         MenuUtil.addToMenu(protannotMenu, new JMenuItem(getExitAction()));
-        JMenu viewMenu = new JRPMenu("View");
-        viewMenu.setText("View");
-        MenuUtil.addToMenu(protannotMenu, viewMenu);
-        MenuUtil.addToMenu(viewMenu, new JMenuItem(getAboutAction()));
-        MenuUtil.addToMenu(viewMenu, new JMenuItem(getAboutRegionAction()));
         AbstractAction browserAction = getOpenInBrowserAction();
-        MenuUtil.addToMenu(viewMenu, new JMenuItem(browserAction));
         AbstractAction zoomAction = getZoomToFeatureAction();
-        MenuUtil.addToMenu(viewMenu, new JMenuItem(zoomAction));
         AbstractAction hairLineAction = getToggleHairlineAction();
-        MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineAction));
         AbstractAction hairLineLabelAction = getToggleHairlineLabelAction();
-        MenuUtil.addToMenu(viewMenu, new JCheckBoxMenuItem(hairLineLabelAction));
-        MenuUtil.addToMenu(viewMenu, new JMenuItem(getOpenInNewWindow()));
 
-        gview.popup.add(copyAction);
         gview.popup.add(browserAction);
         gview.popup.add(new JCheckBoxMenuItem(hairLineAction));
         gview.popup.add(new JCheckBoxMenuItem(hairLineLabelAction));
@@ -542,11 +554,11 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     ImageExportService exportService;
 
     private void export() {
-        protAnnotService.exportAsXml(gview);
+        protAnnotService.exportAsXml(gview, frm);
     }
 
     void saveImage() {
-        protAnnotService.exportAsImage(gview);
+        protAnnotService.exportAsImage(gview, frm);
     }
 
     void print() {
@@ -619,7 +631,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
      *
      * @param mbar
      */
-
     /**
      * Sets up interface to select path from the server.
      */

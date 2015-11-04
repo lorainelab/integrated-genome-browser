@@ -8,7 +8,7 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.parsers.Parser;
 import com.affymetrix.genometry.parsers.graph.GraphParser;
 import com.affymetrix.genometry.parsers.useq.USeqUtilities;
@@ -174,7 +174,7 @@ public final class GraphSymUtils {
         if (ext == null || ext.isEmpty()) {
             return false;
         }
-        FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(ext);
+        FileTypeHandler fth = FileTypehandlerRegistry.getFileTypeHolder().getFileTypeHandler(ext);
         return fth != null && fth.getFileTypeCategory() == FileTypeCategory.Graph;
     }
 
@@ -196,7 +196,7 @@ public final class GraphSymUtils {
         GeneralUtils.unzipStream(istr, stream_name, stripped_name);
         String sname = stripped_name.toString().toLowerCase();
 
-        FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(sname);
+        FileTypeHandler fileTypeHandler = FileTypehandlerRegistry.getFileTypeHolder().getFileTypeHandlerForURI(sname);
         if (fileTypeHandler != null) {
             Parser parser = fileTypeHandler.getParser();
             if (parser instanceof GraphParser) {
@@ -265,7 +265,7 @@ public final class GraphSymUtils {
      * @param seq_group the GenomeVersion the graph is on, needed for ".wig", ".egr", and ".sin" formats.
      */
     public static void writeGraphFile(GraphSym gsym, GenomeVersion seq_group, String file_name) throws IOException {
-        FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(file_name);
+        FileTypeHandler fileTypeHandler = FileTypehandlerRegistry.getFileTypeHolder().getFileTypeHandlerForURI(file_name);
         if (fileTypeHandler != null) {
             Parser parser = fileTypeHandler.getParser();
             if (parser instanceof GraphParser) {

@@ -5,7 +5,7 @@ import com.affymetrix.genometry.parsers.BedDetailWriter;
 import com.affymetrix.genometry.parsers.BedParser;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.symloader.BedGraph;
 import com.affymetrix.genometry.symloader.Fasta;
 import com.affymetrix.genometry.symloader.Gr;
@@ -69,7 +69,7 @@ public class ExportFileModel {
                 String mimeType = writer.getMimeType();
                 if (mimeType.startsWith(MIME_TYPE_PREFIX)) {
                     String extension = mimeType.substring(MIME_TYPE_PREFIX.length());
-                    FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
+                    FileTypeHandler fth = FileTypehandlerRegistry.getFileTypeHolder().getFileTypeHandler(extension);
 
                     // Hack to display as bed detail
                     String name = clazz == BedDetailWriter.class ? "BED Detail" : fth.getName();

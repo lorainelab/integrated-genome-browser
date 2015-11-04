@@ -12,7 +12,7 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IgbServiceImpl;
@@ -39,7 +39,7 @@ public class OpenURIAction extends SeqMapViewActionA {
     protected static final String SELECT_SPECIES = BUNDLE.getString("speciesCap");
 
     public static UniFileFilter getAllSupportedExtensionsFilter() {
-        Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(null);
+        Map<String, List<String>> nameToExtensionMap = FileTypehandlerRegistry.getFileTypeHolder().getNameToExtensionMap(null);
         Set<String> allKnownEndings = new HashSet<>();
         nameToExtensionMap.values().forEach(allKnownEndings::addAll);
         allKnownEndings.addAll(ScriptProcessorHolder.getInstance().getScriptExtensions());
@@ -49,7 +49,7 @@ public class OpenURIAction extends SeqMapViewActionA {
     }
 
     public static List<UniFileFilter> getSupportedFiles(FileTypeCategory category) {
-        Map<String, List<String>> nameToExtensionMap = FileTypeHolder.getInstance().getNameToExtensionMap(category);
+        Map<String, List<String>> nameToExtensionMap = FileTypehandlerRegistry.getFileTypeHolder().getNameToExtensionMap(category);
         List<UniFileFilter> filters = new ArrayList<>();
         nameToExtensionMap.entrySet().stream()
                 .map(entry -> new UniFileFilter(entry.getValue(), entry.getKey() + " Files", true))

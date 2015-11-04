@@ -3,6 +3,7 @@ package com.affymetrix.genometry.util;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderInstNC;
 import com.google.common.base.Stopwatch;
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public class ServerUtils {
 
-    private static final FileTypeHolder fileTypeHolder = FileTypeHolder.getInstance();
+    private static final FileTypeHolder fileTypeHolder = FileTypehandlerRegistry.getFileTypeHolder();
     private static final Logger logger = LoggerFactory.getLogger(ServerUtils.class);
 
     /**

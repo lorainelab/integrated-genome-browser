@@ -146,3 +146,4 @@ extbundles/
 /plugins/feedback/target/
 main/nb-configuration.xml
 /core/frameManager/target/
+/plugins/narrowpeak/target/

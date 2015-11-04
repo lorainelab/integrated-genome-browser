@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.symloader;
 
 import com.affymetrix.genometry.GenomeVersion;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL;
@@ -42,7 +42,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
     @Override
     protected SymLoader getDataFileSymLoader() throws Exception {
         URI baseUri = getFileURI(uri);
-        return FileTypeHolder.getInstance().getFileTypeHandlerForURI(baseUri.toString()).createSymLoader(baseUri, Optional.ofNullable(indexUri), featureName, genomeVersion);
+        return FileTypehandlerRegistry.getFileTypeHolder().getFileTypeHandlerForURI(baseUri.toString()).createSymLoader(baseUri, Optional.ofNullable(indexUri), featureName, genomeVersion);
     }
 
     @Override

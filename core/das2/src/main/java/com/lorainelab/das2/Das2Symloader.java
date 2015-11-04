@@ -5,7 +5,7 @@ import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.symloader.BAM;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -99,7 +99,7 @@ public class Das2Symloader extends SymLoader {
 
             logger.debug("Parsing {} format for DAS2 feature response", content_subtype.toUpperCase());
 
-            FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(content_subtype.toLowerCase());
+            FileTypeHandler fileTypeHandler = FileTypehandlerRegistry.getFileTypeHolder().getFileTypeHandler(content_subtype.toLowerCase());
             if (fileTypeHandler == null) {
                 logger.warn("ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {}", content_subtype);
                 return seqSyms;

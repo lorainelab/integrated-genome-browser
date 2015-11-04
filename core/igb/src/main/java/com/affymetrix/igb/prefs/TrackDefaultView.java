@@ -1,6 +1,6 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.style.PropertyConstants;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.stylesheet.AssociationElement;
@@ -80,7 +80,7 @@ public class TrackDefaultView extends TrackPreferences implements ListSelectionL
 
     private void initializeFileTypes() {
         list.clear();
-        temp = FileTypeHolder.getInstance().getNameToExtensionMap(null).values().toArray();
+        temp = FileTypehandlerRegistry.getFileTypeHolder().getNameToExtensionMap(null).values().toArray();
         for (Object temp1 : temp) {
             StringTokenizer tokens = new StringTokenizer(temp1.toString(), ",");
             while (tokens.hasMoreElements()) {

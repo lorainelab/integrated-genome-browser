@@ -11,7 +11,7 @@ package com.affymetrix.genometry.symmetry.impl;
 
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SupportsGeneName;
 import com.affymetrix.genometry.symmetry.SymWithProps;
@@ -55,7 +55,7 @@ public final class TypeContainerAnnot extends RootSeqSymmetry implements TypedSy
     @Override
     public FileTypeCategory getCategory() {
         FileTypeCategory category = null;
-        FileTypeHandler handler = FileTypeHolder.getInstance().getFileTypeHandler(ext);
+        FileTypeHandler handler = FileTypehandlerRegistry.getFileTypeHolder().getFileTypeHandler(ext);
         if (handler != null) {
             category = handler.getFileTypeCategory();
         }

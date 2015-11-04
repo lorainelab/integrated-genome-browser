@@ -23,8 +23,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * A SeqSymmetry (as well as SeqSpan) representation of UCSC BED format
- * annotatations.
+ * A SeqSymmetry (as well as SeqSpan) representation of UCSC BED format annotatations.
  * <pre>
  *  From http://genome.ucsc.edu/goldenPath/help/customTrack.html#BED
  *  BED format provides a flexible way to define the data lines that are displayed
@@ -77,21 +76,16 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
     private SeqSymmetry children[];
 
     /**
-     * Constructs a SeqSymmetry optimized for BED-file format. This object is
-     * optimized for the case where all optional columns in the bed file are
-     * used. If you are using only the first few columns, it would be more
-     * efficient to use a different SeqSymmetry object.
+     * Constructs a SeqSymmetry optimized for BED-file format. This object is optimized for the case where all optional
+     * columns in the bed file are used. If you are using only the first few columns, it would be more efficient to use
+     * a different SeqSymmetry object.
      *
-     * @param cdsMin the start of the CDS region, "thinEnd", or
-     * Integer.MIN_VALUE. If cdsMin = Integer.MIN_VALUE or cdsMin = cdsMax, then
-     * there is no CDS.
-     * @param cdsMax the end of the CDS region, "thickEnd", or
-     * Integer.MIN_VALUE.
-     * @param score an optional score, or Float.NEGATIVE_INFINITY to indicate no
-     * score.
+     * @param cdsMin the start of the CDS region, "thinEnd", or Integer.MIN_VALUE. If cdsMin = Integer.MIN_VALUE or
+     * cdsMin = cdsMax, then there is no CDS.
+     * @param cdsMax the end of the CDS region, "thickEnd", or Integer.MIN_VALUE.
+     * @param score an optional score, or Float.NEGATIVE_INFINITY to indicate no score.
      */
-    public UcscBedSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
-            boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs) {
+    public UcscBedSym(String type, BioSeq seq, int txMin, int txMax, String name, float score, boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs) {
         super(type, seq, txMin, txMax, name, forward, blockMins, blockMaxs);
         this.score = score;
         this.cdsMin = cdsMin;
@@ -105,9 +99,8 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
     }
 
     /**
-     * Returns true if the cds was specified in the constructor with valid
-     * values. If cdsMin = cdsMax = Integer.MIN_VALUE, or if cdsMin = cdsMax,
-     * then there is no CDS.
+     * Returns true if the cds was specified in the constructor with valid values. If cdsMin = cdsMax =
+     * Integer.MIN_VALUE, or if cdsMin = cdsMax, then there is no CDS.
      *
      */
     public boolean hasCdsSpan() {
@@ -227,7 +220,7 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
         out.write(Integer.toString(txMin).getBytes());
         out.write('\t');
         out.write(Integer.toString(txMax).getBytes());
-		// only first three fields are required
+        // only first three fields are required
 
         // only keep going if has name
         if (name != null) {

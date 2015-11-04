@@ -12,7 +12,6 @@ import com.affymetrix.genometry.parsers.graph.SgrParser;
 import com.affymetrix.genometry.parsers.graph.WiggleParser;
 import com.affymetrix.genometry.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometry.symloader.BAM;
-import com.affymetrix.genometry.symloader.BED;
 import com.affymetrix.genometry.symloader.BNIB;
 import com.affymetrix.genometry.symloader.Bar;
 import com.affymetrix.genometry.symloader.Fasta;
@@ -101,41 +100,6 @@ public class FileTypeHolder {
         }
         );
         addFileTypeHandler("Graph", new String[]{"bar"}, FileTypeCategory.Graph, BarParser.class, Bar.class /* SymLoaderInstNC.class */);
-        addFileTypeHandler(new FileTypeHandler() {
-            String[] extensions = new String[]{"bed"};
-
-            @Override
-            public String getName() {
-                return "BED";
-            }
-
-            @Override
-            public String[] getExtensions() {
-                return extensions;
-            }
-
-            @Override
-            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
-                BED bed = new BED(uri, indexUri, featureName, genomeVersion);
-                return SymLoaderTabix.getSymLoader(bed);
-            }
-
-            @Override
-            public Parser getParser() {
-                return new BedParser();
-            }
-
-            @Override
-            public IndexWriter getIndexWriter(String stream_name) {
-                return (IndexWriter) getParser();
-            }
-
-            @Override
-            public FileTypeCategory getFileTypeCategory() {
-                return FileTypeCategory.Annotation;
-            }
-        }
-        );
         addFileTypeHandler(new FileTypeHandler() {
             String[] extensions = new String[]{"gff3"};
 

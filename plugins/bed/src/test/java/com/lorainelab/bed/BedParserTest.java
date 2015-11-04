@@ -1,11 +1,12 @@
-package com.affymetrix.genometry.parsers;
+package com.lorainelab.bed;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.parsers.BedParser;
+import com.affymetrix.genometry.parsers.IndexWriter;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symloader.BED;
 import com.affymetrix.genometry.symloader.BedUtils;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
@@ -57,7 +58,7 @@ public class BedParserTest {
 
         testFileResult(result);
 
-        BED bed = new BED(new File(filename).toURI(), Optional.empty(), filename, genomeVersion);
+        BedSymloader bed = new BedSymloader(new File(filename).toURI(), Optional.empty(), filename, genomeVersion);
         result = bed.getGenome();
         testFileResult(result);
     }
@@ -115,7 +116,7 @@ public class BedParserTest {
 
         File tempFile = createFileFromString(string);
 
-        BED bed = new BED(tempFile.toURI(), Optional.empty(), tempFile.getName(), genomeVersion);
+        BedSymloader bed = new BedSymloader(tempFile.toURI(), Optional.empty(), tempFile.getName(), genomeVersion);
         result = bed.getGenome();
         testStringResult(result);
     }
@@ -298,7 +299,7 @@ public class BedParserTest {
 
         File file = createFileFromString(string);
 
-        BED bed = new BED(file.toURI(), Optional.empty(), file.getName(), genomeVersion);
+        BedSymloader bed = new BedSymloader(file.toURI(), Optional.empty(), file.getName(), genomeVersion);
         syms = bed.getGenome();
 
         testWrite(syms, seq, string);
@@ -339,7 +340,7 @@ public class BedParserTest {
 
         File file = createFileFromString(string);
 
-        BED bed = new BED(file.toURI(), Optional.empty(), file.getName(), genomeVersion);
+        BedSymloader bed = new BedSymloader(file.toURI(), Optional.empty(), file.getName(), genomeVersion);
         syms = bed.getGenome();
 
         testWrite(syms, seq, string);
@@ -389,7 +390,7 @@ public class BedParserTest {
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         BioSeq seq = genomeVersion.addSeq("chr2L", 1965498);
 
-        BED bed = new BED(new File(filename).toURI(), Optional.empty(), filename, genomeVersion);
+        BedSymloader bed = new BedSymloader(new File(filename).toURI(), Optional.empty(), filename, genomeVersion);
 
         List<BioSeq> allSeq = bed.getChromosomeList();
         assertEquals(4, allSeq.size());

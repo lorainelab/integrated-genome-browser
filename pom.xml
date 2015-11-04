@@ -122,6 +122,7 @@
         <module>plugins/cache-api</module>
         <module>plugins/feedback</module>
         <module>plugins/narrowpeak</module>
+        <module>plugins/bed</module>
     </modules>
 
     <profiles>
@@ -476,6 +477,11 @@
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>narrowpeak</artifactId>
+                 <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>bed</artifactId>
                  <version>${project.parent.version}</version>
             </dependency>
             <!--End of plugin module dependencies-->

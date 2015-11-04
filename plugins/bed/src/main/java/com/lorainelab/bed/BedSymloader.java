@@ -1,4 +1,4 @@
-package com.affymetrix.genometry.symloader;
+package com.lorainelab.bed;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
@@ -7,10 +7,11 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.comparator.BioSeqComparator;
 import com.affymetrix.genometry.comparator.SeqSymMinComparator;
-import static com.affymetrix.genometry.parsers.BedParser.makeBlockMaxs;
-import static com.affymetrix.genometry.parsers.BedParser.makeBlockMins;
-import static com.affymetrix.genometry.parsers.BedParser.parseIntArray;
+import com.affymetrix.genometry.parsers.BedParser;
 import com.affymetrix.genometry.parsers.TrackLineParser;
+import com.affymetrix.genometry.symloader.BedUtils;
+import com.affymetrix.genometry.symloader.LineProcessor;
+import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscBedDetailSym;
@@ -49,9 +50,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author hiralv
  */
-public class BED extends SymLoader implements LineProcessor {
+public class BedSymloader extends SymLoader implements LineProcessor {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BED.class);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BedSymloader.class);
     private static final int BED_DETAIL_FIELD_COUNT = 14;
     private static final String BED_MIME_TYPE = "text/bed";
     private static final String BED_FILE_EXTENSION = ".bed";
@@ -71,7 +72,7 @@ public class BED extends SymLoader implements LineProcessor {
     private String bedFileType;
     private final GenometryModel gmodel;
 
-    public BED(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+    public BedSymloader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
         super(uri, indexUri, featureName, genomeVersion);
         gmodel = GenometryModel.getInstance();
         trackLineParser = new TrackLineParser();
@@ -304,18 +305,18 @@ public class BED extends SymLoader implements LineProcessor {
         }
         if (fieldCount >= 12) {
             int blockCount = Integer.parseInt(fields[findex++]); // blockCount field
-            blockSizes = parseIntArray(fields[findex++]); // blockSizes field
+            blockSizes = BedParser.parseIntArray(fields[findex++]); // blockSizes field
             if (blockCount != blockSizes.length) {
                 System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + geneName + " on " + seq_name);
                 return true;
             }
-            blockStarts = parseIntArray(fields[findex++]); // blockStarts field
+            blockStarts = BedParser.parseIntArray(fields[findex++]); // blockStarts field
             if (blockCount != blockStarts.length) {
                 System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + geneName + " on " + seq_name);
                 return true;
             }
-            blockMins = makeBlockMins(min, blockStarts);
-            blockMaxs = makeBlockMaxs(blockSizes, blockMins);
+            blockMins = BedParser.makeBlockMins(min, blockStarts);
+            blockMaxs = BedParser.makeBlockMaxs(blockSizes, blockMins);
         } else {
             /*
              * if no child blocks, make a single child block the same size as the parent

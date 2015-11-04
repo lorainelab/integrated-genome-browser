@@ -11,10 +11,8 @@ import static com.affymetrix.genometry.parsers.BedParser.makeBlockMaxs;
 import static com.affymetrix.genometry.parsers.BedParser.makeBlockMins;
 import static com.affymetrix.genometry.parsers.BedParser.parseIntArray;
 import com.affymetrix.genometry.parsers.TrackLineParser;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscBedDetailSym;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
 import com.affymetrix.genometry.util.ErrorHandler;
@@ -68,8 +66,6 @@ public class BED extends SymLoader implements LineProcessor {
         strategyList.add(LoadStrategy.GENOME);
     }
 
-    private boolean annotate_seq = true;
-    private boolean create_container_annot = false;
     private String trackName = null;
     private final TrackLineParser trackLineParser;
     private String bedFileType;
@@ -80,8 +76,6 @@ public class BED extends SymLoader implements LineProcessor {
         gmodel = GenometryModel.getInstance();
         trackLineParser = new TrackLineParser();
         trackName = uri.toString();
-        annotate_seq = false;
-        create_container_annot = false;
     }
 
     @Override
@@ -173,10 +167,8 @@ public class BED extends SymLoader implements LineProcessor {
                     processTrackLine(line);
                 } else if (isBrowserLine(line)) {
                     // currently take no action for browser lines
-                } else {
-                    if (!parseLine(line, min, max, symlist, seq2types) && isSorted) {
-                        break;
-                    }
+                } else if (!parseLine(line, min, max, symlist, seq2types) && isSorted) {
+                    break;
                 }
             }
         }
@@ -358,42 +350,11 @@ public class BED extends SymLoader implements LineProcessor {
             }
         }
         symlist.add(bedline_sym);
-        if (annotate_seq) {
-            this.annotationParsed(bedline_sym, seq2types);
-        }
         return true;
     }
 
-    private void annotationParsed(SeqSymmetry bedline_sym, Map<BioSeq, Map<String, SeqSymmetry>> seq2types) {
-        BioSeq seq = bedline_sym.getSpan(0).getBioSeq();
-        if (create_container_annot) {
-            String type = trackLineParser.getCurrentTrackHash().get(TrackLineParser.NAME);
-            if (type == null) {
-                type = trackName;
-            }
-            Map<String, SeqSymmetry> type2csym = seq2types.get(seq);
-            if (type2csym == null) {
-                type2csym = new HashMap<>();
-                seq2types.put(seq, type2csym);
-            }
-            SimpleSymWithProps parent_sym = (SimpleSymWithProps) type2csym.get(type);
-            if (parent_sym == null) {
-                parent_sym = new SimpleSymWithProps();
-                parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
-                parent_sym.setProperty("method", type);
-                parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-                seq.addAnnotation(parent_sym);
-                type2csym.put(type, parent_sym);
-            }
-            parent_sym.addChild(bedline_sym);
-        } else {
-            seq.addAnnotation(bedline_sym);
-        }
-    }
-
     /**
-     * Implementing AnnotationWriter interface to write out annotations to an
-     * output stream as "BED" format.
+     * Implementing AnnotationWriter interface to write out annotations to an output stream as "BED" format.
      *
      */
     public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) {

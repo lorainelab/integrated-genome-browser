@@ -25,7 +25,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
@@ -80,12 +79,17 @@ public class OSGiHandler {
                 logger.info("Starting Bundle: " + bundle.getSymbolicName());
                 //fyi bundle fragments cannot be started
                 if (!bundleIsFragment(bundle)) {
-                    bundle.start();
+                    try {
+                        bundle.start();
+                    } catch (Throwable t) {
+                        logger.error(t.getMessage(), t);
+                        logger.error("Error starting bundle {}:{}", bundle.getSymbolicName(), bundle.getVersion().toString());
+                    }
                 }
             }
             logger.info("OSGi is started with {} version {}",
                     new Object[]{framework.getSymbolicName(), framework.getVersion()});
-        } catch (IOException | BundleException ex) {
+        } catch (IOException ex) {
             logger.warn("Could not create framework, plugins disabled: {}", ex);
         }
     }

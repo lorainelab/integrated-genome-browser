@@ -1,5 +1,6 @@
 package com.lorainelab.externalsort.api;
 
+import com.google.common.io.Files;
 import java.io.File;
 import java.nio.charset.Charset;
 
@@ -8,26 +9,22 @@ import java.nio.charset.Charset;
  * @author jeckstei
  */
 public class ExternalSortConfiguration {
+
     private int maxTmpFiles;
-    private long maxMemory;
+    private long maxMemoryInBytes;
     private Charset charset;
     private File tmpDir;
     private boolean isDistinctValues;
     private int numHeaderRows;
     private boolean useGzipOnTmpFiles;
-    private int[] columns;
 
     public ExternalSortConfiguration() {
         charset = Charset.defaultCharset();
-        columns = new int[]{0};
-    }
-
-    public int[] getColumns() {
-        return columns;
-    }
-
-    public void setColumns(int[] columns) {
-        this.columns = columns;
+        tmpDir = Files.createTempDir();
+        isDistinctValues = false;
+        useGzipOnTmpFiles = false;
+        maxTmpFiles = 1024;
+        maxMemoryInBytes = getEstimatedAvailableMemoryInBytes();
     }
 
     public Charset getCharset() {
@@ -38,7 +35,6 @@ public class ExternalSortConfiguration {
         this.charset = charset;
     }
 
-
     public int getMaxTmpFiles() {
         return maxTmpFiles;
     }
@@ -47,14 +43,13 @@ public class ExternalSortConfiguration {
         this.maxTmpFiles = maxTmpFiles;
     }
 
-    public long getMaxMemory() {
-        return maxMemory;
+    public long getMaxMemoryInBytes() {
+        return maxMemoryInBytes;
     }
 
-    public void setMaxMemory(long maxMemory) {
-        this.maxMemory = maxMemory;
+    public void setMaxMemoryInBytes(long maxMemoryInBytes) {
+        this.maxMemoryInBytes = maxMemoryInBytes;
     }
-
 
     public File getTmpDir() {
         return tmpDir;
@@ -86,6 +81,11 @@ public class ExternalSortConfiguration {
 
     public void setUseGzipOnTmpFiles(boolean useGzipOnTmpFiles) {
         this.useGzipOnTmpFiles = useGzipOnTmpFiles;
+    }
+
+    private long getEstimatedAvailableMemoryInBytes() {
+        System.gc();
+        return Runtime.getRuntime().freeMemory();
     }
 
 }

@@ -20,6 +20,7 @@ public class ComparatorMetadata {
 
     public ComparatorMetadata() {
         preparers = new ArrayList<>();
+        comparator = getDefaultComparator();
     }
 
     public Comparator<ComparatorInstance> getComparator() {
@@ -33,6 +34,23 @@ public class ComparatorMetadata {
     public List<Function<String, ? extends Comparable>> getPreparers() {
         return preparers;
     }
+
+    private Comparator<ComparatorInstance> getDefaultComparator() {
+        return (ComparatorInstance o1, ComparatorInstance o2) -> {
+            int current = 0;
+            for (Function<String, ? extends Comparable> preparer : o1.getComparatorMetadata().getPreparers()) {
+                Comparable input1 = preparer.apply(o1.getLine());
+                Comparable input2 = preparer.apply(o2.getLine());
+                current = input1.compareTo(input2);
+                if (current != 0) {
+                    return current;
+                }
+
+            }
+            return current;
+        };
+    }
+
 
 
 }

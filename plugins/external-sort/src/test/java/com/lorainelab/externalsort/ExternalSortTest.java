@@ -6,7 +6,6 @@
 package com.lorainelab.externalsort;
 
 import com.google.code.externalsorting.ExternalSort;
-import com.lorainelab.externalsort.api.ComparatorInstance;
 import com.lorainelab.externalsort.api.ComparatorMetadata;
 import com.lorainelab.externalsort.api.ExternalSortConfiguration;
 import com.lorainelab.externalsort.api.ExternalSortService;
@@ -18,9 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,7 +29,7 @@ import org.junit.Test;
  */
 public class ExternalSortTest {
 
-    private static final String TEST_FILE1_TXT = "data1.txt";
+    private static final String TEST_FILE1_TXT = "TAIR10.bed";
 
     private File file1;
     private List<File> fileList;
@@ -89,38 +86,29 @@ public class ExternalSortTest {
 
     @Test
     public void simpleTest() throws IOException {
-        Comparator<ComparatorInstance> cmp = (ComparatorInstance o1, ComparatorInstance o2) -> {
-            List<Function<String, ? extends Comparable>> preparers = o1.getComparatorMetadata().getPreparers();
-            int current = 0;
-            for (Function<String, ? extends Comparable> preparer : preparers) {
-                Comparable input1 = preparer.apply(o1.getLine());
-                Comparable input2 = preparer.apply(o2.getLine());
-                current = input1.compareTo(input2);
-                if (current != 0) {
-                    return current;
-                }
-
-            }
-            return current;
-        };
 
         ExternalSortConfiguration conf = new ExternalSortConfiguration();
-        conf.setMaxTmpFiles(ExternalSort.DEFAULTMAXTEMPFILES);
-        conf.setIsDistinctValues(false);
         conf.setNumHeaderRows(2);
-        conf.setUseGzipOnTmpFiles(false);
-        conf.setTmpDir(new File("/tmp/john"));
+        conf.setMaxMemoryInBytes(1000);
+        conf.setMaxTmpFiles(100);
 
         ComparatorMetadata comparatorMetadata = new ComparatorMetadata();
-        comparatorMetadata.setComparator(cmp);
+
+        //Define multisort
+        //First sort
         comparatorMetadata.getPreparers().add(s -> {
             String[] sSplit = s.split("\\s+");
             return sSplit[0];
         });
-
+        //Second sort
         comparatorMetadata.getPreparers().add(s -> {
             String[] sSplit = s.split("\\s+");
-            return Integer.parseInt(sSplit[1]);
+            return Long.parseLong(sSplit[1]);
+        });
+        //Third sort
+        comparatorMetadata.getPreparers().add(s -> {
+            String[] sSplit = s.split("\\s+");
+            return Long.parseLong(sSplit[2]);
         });
 
         List<File> listOfFiles = exsort.sortInBatch(this.file1, comparatorMetadata, conf);

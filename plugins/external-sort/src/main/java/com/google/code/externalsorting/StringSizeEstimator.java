@@ -62,7 +62,7 @@ public final class StringSizeEstimator {
 	 * @return The <strong>estimated</strong> size in bytes.
 	 */
 	public static long estimatedSizeOf(String s) {
-		return (s.length() * 2) + OBJ_OVERHEAD;
+            return (s.length()) + OBJ_OVERHEAD;
 	}
 
 }

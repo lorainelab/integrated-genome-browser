@@ -1,9 +1,9 @@
-package com.affymetrix.genometry.parsers;
+package com.lorainelab.bam;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symloader.BAM;
+import com.lorainelab.bam.BAM;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;

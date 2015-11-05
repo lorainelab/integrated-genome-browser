@@ -1,9 +1,11 @@
-package com.affymetrix.genometry.symloader;
+package com.lorainelab.bam;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symloader.SamRecordFlag;
+import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.BAMSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -13,6 +15,7 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.MATE_START;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.NA;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.NH;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SHOW_MASK;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import java.net.URI;
@@ -53,7 +56,6 @@ public abstract class XAM extends SymLoader {
 
     public static final String RESIDUESPROP = "residues";
     public static final String BASEQUALITYPROP = "baseQuality";
-    public static final String SHOWMASK = "showMask";
     public static final String INSRESIDUESPROP = "insResidues";
 
     public XAM(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion seq_group) {
@@ -221,7 +223,7 @@ public abstract class XAM extends SymLoader {
             sym.setProperty(tv.tag, tv.value);
         }
         sym.setProperty(CIGAR, sr.getCigar());
-        sym.setProperty(SHOWMASK, true);
+        sym.setProperty(SHOW_MASK, true);
 
 //		Not using "SEQ" anywhere. So commenting out for now.
 //		if (sr.getCigar() == null || sym.getProperty("MD") == null) {

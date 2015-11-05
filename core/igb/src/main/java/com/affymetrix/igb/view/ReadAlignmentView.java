@@ -4,9 +4,9 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.ContextualPopupListener;
-import com.affymetrix.genometry.symloader.BAM;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SHOW_MASK;
 import com.affymetrix.igb.action.ViewReadAlignmentAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import java.util.List;
@@ -26,7 +26,7 @@ public class ReadAlignmentView implements ContextualPopupListener {
     public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_items, SeqSymmetry primary_sym) {
         if (!selected_items.isEmpty() && selected_items.get(0) instanceof SymWithProps) {
             SymWithProps swp = (SymWithProps) selected_items.get(0);
-            Object prop = swp.getProperty(BAM.SHOWMASK);
+            Object prop = swp.getProperty(SHOW_MASK);
             if (prop != null) {
                 if (selected_items.size() == 1) {
                     if (Boolean.parseBoolean(prop.toString())) {

@@ -148,3 +148,4 @@ main/nb-configuration.xml
 /core/frameManager/target/
 /plugins/narrowpeak/target/
 /plugins/bed/target/
+/plugins/bam/target/

@@ -123,6 +123,7 @@
         <module>plugins/feedback</module>
         <module>plugins/narrowpeak</module>
         <module>plugins/bed</module>
+        <module>plugins/bam</module>
     </modules>
 
     <profiles>
@@ -482,6 +483,11 @@
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>bed</artifactId>
+                 <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>bam</artifactId>
                  <version>${project.parent.version}</version>
             </dependency>
             <!--End of plugin module dependencies-->

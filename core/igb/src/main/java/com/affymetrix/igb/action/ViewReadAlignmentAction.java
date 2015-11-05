@@ -1,8 +1,8 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.genometry.symloader.BAM;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymWithProps;
+import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SHOW_MASK;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -55,8 +55,8 @@ public class ViewReadAlignmentAction extends SeqMapViewActionA {
         for (SeqSymmetry sym : syms) {
             if (sym instanceof SymWithProps) {
                 SymWithProps swp = (SymWithProps) sym;
-                if (swp.getProperty(BAM.SHOWMASK) != null) {
-                    swp.setProperty(BAM.SHOWMASK, set);
+                if (swp.getProperty(SHOW_MASK) != null) {
+                    swp.setProperty(SHOW_MASK, set);
                 }
             }
         }

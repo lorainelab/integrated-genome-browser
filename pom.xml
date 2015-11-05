@@ -121,6 +121,7 @@
         <module>plugins/cache</module>
         <module>plugins/cache-api</module>
         <module>plugins/feedback</module>
+	<module>plugins/external-sort</module>
     </modules>
 
     <profiles>

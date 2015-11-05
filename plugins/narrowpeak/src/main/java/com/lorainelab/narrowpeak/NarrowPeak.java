@@ -208,7 +208,7 @@ public class NarrowPeak extends SymLoader {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(uri.toURL().openStream()))) {
             String firstLine = bufferedReader.readLine();
             if (!IS_NOT_TRACK_LINE.test(firstLine)) {
-                TrackLineParser trackLineParser = new TrackLineParser();
+                TrackLineParser trackLineParser = new TrackLineParser(firstLine);
                 Map<String, String> trackLineContent = trackLineParser.getTrackLineContent();
                 //...this sets global state and is poor design... TODO refactor track style abstractions to resolve this mess
                 TrackLineParser.createTrackStyle(trackLineContent, trackName, "narrowPeak");

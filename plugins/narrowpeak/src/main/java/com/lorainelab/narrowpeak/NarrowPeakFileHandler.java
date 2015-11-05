@@ -23,7 +23,7 @@ import java.util.Optional;
 @Component(immediate = true)
 public class NarrowPeakFileHandler implements FileTypeHandler {
 
-    String[] extensions = new String[]{"narrowPeak", "narrowpeak"};
+    String[] extensions = new String[]{"narrowPeak", "narrowpeak", "broadPeak", "broadpeak"};
 
     @Override
     public String getName() {

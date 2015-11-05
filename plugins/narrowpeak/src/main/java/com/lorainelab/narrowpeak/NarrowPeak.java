@@ -33,13 +33,10 @@ public class NarrowPeak extends SymLoader {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(NarrowPeak.class);
 
-    private static final String NARROWPEAK_FILE_EXTENSION = ".narrowpeak";
-
     private static final List<LoadUtils.LoadStrategy> SUPPORTED_LOAD_STRATEGIES = Lists.newArrayList(
             LoadUtils.LoadStrategy.NO_LOAD,
             LoadUtils.LoadStrategy.VISIBLE,
             LoadUtils.LoadStrategy.GENOME);
-    private final TrackLineParser trackLineParser;
     private final String trackName;
     private final Map<String, BioSeq> chromosomeReference;
     private final List<BioSeq> chromosomes;
@@ -47,14 +44,14 @@ public class NarrowPeak extends SymLoader {
     private static final Predicate<String> IS_NOT_TRACK_LINE = line -> !line.startsWith("track");
     private static final Predicate<String> IS_NOT_COMMENT_LINE = line -> !line.startsWith("#");
     private static final Predicate<String> IS_NOT_BROWSER_LINE = line -> !line.startsWith("browser");
-    private static final Predicate<String> IS_PARSEABLE_LINE = IS_NOT_BROWSER_LINE.and(IS_NOT_TRACK_LINE).and(IS_NOT_BROWSER_LINE);
+    private static final Predicate<String> IS_PARSEABLE_LINE = IS_NOT_COMMENT_LINE.and(IS_NOT_TRACK_LINE).and(IS_NOT_BROWSER_LINE);
 
     NarrowPeak(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
         super(uri, indexUri, featureName, genomeVersion);
-        trackLineParser = new TrackLineParser();
         trackName = uri.toString();
         chromosomes = Lists.newArrayList();
         chromosomeReference = Maps.newHashMap();
+        parseTrackLine();
         initializeChromosomes();
     }
 
@@ -72,9 +69,7 @@ public class NarrowPeak extends SymLoader {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(uri.toURL().openStream()))) {
             bufferedReader.lines()
                     .map(line -> line.trim())
-                    .filter(IS_NOT_TRACK_LINE)
-                    .filter(IS_NOT_BROWSER_LINE)
-                    .filter(IS_NOT_COMMENT_LINE)
+                    .filter(IS_PARSEABLE_LINE)
                     .forEach(line -> {
                         Iterable<String> splitLine = Splitter.on("\t").trimResults().split(line);
                         final Iterator<String> iterator = splitLine.iterator();
@@ -207,5 +202,19 @@ public class NarrowPeak extends SymLoader {
         }
         dataModelContent.add(ucscBedSym);
         return true;
+    }
+
+    private void parseTrackLine() {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(uri.toURL().openStream()))) {
+            String firstLine = bufferedReader.readLine();
+            if (!IS_NOT_TRACK_LINE.test(firstLine)) {
+                TrackLineParser trackLineParser = new TrackLineParser();
+                Map<String, String> trackLineContent = trackLineParser.getTrackLineContent();
+                //...this sets global state and is poor design... TODO refactor track style abstractions to resolve this mess
+                TrackLineParser.createTrackStyle(trackLineContent, trackName, "narrowPeak");
+            }
+        } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
     }
 }

@@ -30,14 +30,14 @@ public class TrackLineParserTest {
         TrackLineParser tlp = new TrackLineParser();
         tlp.parseTrackLine(str);
 
-        assertEquals("bar", tlp.getCurrentTrackHash().get("foo"));
-        assertEquals("that", tlp.getCurrentTrackHash().get("this"));
-        assertEquals("1", tlp.getCurrentTrackHash().get("usescore"));
-        assertEquals(null, tlp.getCurrentTrackHash().get("useScore"));
-        assertEquals("", tlp.getCurrentTrackHash().get("nothing"));
-        assertEquals(null, tlp.getCurrentTrackHash().get("ignore"));
-        assertEquals(null, tlp.getCurrentTrackHash().get("ignore2"));
-        assertEquals("http://www.foo.bar?x=y&this=$$", tlp.getCurrentTrackHash().get("url"));
+        assertEquals("bar", tlp.getTrackLineContent().get("foo"));
+        assertEquals("that", tlp.getTrackLineContent().get("this"));
+        assertEquals("1", tlp.getTrackLineContent().get("usescore"));
+        assertEquals(null, tlp.getTrackLineContent().get("useScore"));
+        assertEquals("", tlp.getTrackLineContent().get("nothing"));
+        assertEquals(null, tlp.getTrackLineContent().get("ignore"));
+        assertEquals(null, tlp.getTrackLineContent().get("ignore2"));
+        assertEquals("http://www.foo.bar?x=y&this=$$", tlp.getTrackLineContent().get("url"));
 
     }
 

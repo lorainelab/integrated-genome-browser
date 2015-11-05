@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringUtils;
 import org.broad.tribble.readers.LineReader;
 import org.slf4j.LoggerFactory;
 
@@ -68,14 +67,12 @@ public class BedSymloader extends SymLoader implements LineProcessor {
     }
 
     private String trackName = null;
-    private final TrackLineParser trackLineParser;
     private String bedFileType;
     private final GenometryModel gmodel;
 
     public BedSymloader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
         super(uri, indexUri, featureName, genomeVersion);
         gmodel = GenometryModel.getInstance();
-        trackLineParser = new TrackLineParser();
         trackName = uri.toString();
     }
 
@@ -180,15 +177,9 @@ public class BedSymloader extends SymLoader implements LineProcessor {
         return line.startsWith("track");
     }
 
-    private void processTrackLine(String line) {
-        String defaultName;
-        trackLineParser.parseTrackLine(line);
-        String trackLineName = trackLineParser.getCurrentTrackHash().get(TrackLineParser.NAME);
-        if (StringUtils.isNotBlank(trackLineName)) {
-            defaultName = trackLineName;
-            trackLineParser.getCurrentTrackHash().put(TrackLineParser.NAME, defaultName);
-        }
-        bedFileType = trackLineParser.getCurrentTrackHash().get("type");
+    private void processTrackLine(String trackLine) {
+        TrackLineParser trackLineParser = new TrackLineParser(trackLine);
+        bedFileType = trackLineParser.getTrackLineContent().get("type");
     }
 
     @Override
@@ -196,12 +187,7 @@ public class BedSymloader extends SymLoader implements LineProcessor {
         return parse(lineReader, true, 0, Integer.MAX_VALUE);
     }
 
-    private boolean parseLine(
-            String line,
-            int minimum,
-            int maximum,
-            List<SeqSymmetry> symlist,
-            Map<BioSeq, Map<String, SeqSymmetry>> seq2types) {
+    private boolean parseLine(String line, int minimum, int maximum, List<SeqSymmetry> symlist, Map<BioSeq, Map<String, SeqSymmetry>> seq2types) {
         String[] fields = TAB_REGEX.split(line);
         if (fields.length == 1) {
             fields = LINE_REGEX.split(line);

@@ -26,25 +26,17 @@ import java.util.regex.Pattern;
 
 public final class TrackLineParser {
 
-    private static final boolean DEBUG = false;
-    private static final Pattern comma_regex = Pattern.compile(",");
+    private static final Pattern COMMA_REGEX = Pattern.compile(",");
 
     public static final String NAME = "name";
-    private static final String COLOR = "color";
-    private static final String DESCRIPTION = "description";
-    private static final String VISIBILITY = "visibility";
+    public static final String COLOR = "color";
+    public static final String DESCRIPTION = "description";
+    public static final String VISIBILITY = "visibility";
     private static final String URL = "url";
 
     /**
-     * Value will be stored in the IAnnotStyle extended properties.
-     */
-    private static final String USE_SCORE = "usescore";
-
-    /**
-     * If this property has the value "on" (case-insensitive) and the
-     * SeqSymmetry has a property {@link #ITEM_RGB}, then that color will be
-     * used for drawing that symmetry. Value is stored in the IAnnotStyle
-     * extended properties.
+     * If this property has the value "on" (case-insensitive) and the SeqSymmetry has a property {@link #ITEM_RGB}, then
+     * that color will be used for drawing that symmetry. Value is stored in the IAnnotStyle extended properties.
      */
     public static final String ITEM_RGB = "itemrgb";
 
@@ -52,7 +44,7 @@ public final class TrackLineParser {
      * A pattern that matches things like <b>aaa=bbb</b> or <b>aaa="bbb"</b>
      * or even <b>"aaa"="bbb=ccc"</b>.
      */
-    private static final Pattern track_line_parser = Pattern.compile(
+    private static final Pattern TRACK_LINE_REGEX = Pattern.compile(
             "([\\S&&[^=]]+)" // Group 1: One or more non-whitespace characters (except =)
             + "=" //  an equals sign
             + "(" // Group 2: Either ....
@@ -61,18 +53,30 @@ public final class TrackLineParser {
             + "(?:\\S+)" // Any non-whitespace characters
             + ")");               //    ... end of group 2
 
-    private final Map<String, String> track_hash = new TreeMap<>();
+    private final Map<String, String> trackLineContent;
 
-    public Map<String, String> getCurrentTrackHash() {
-        return track_hash;
+    public TrackLineParser() {
+        trackLineContent = new TreeMap<>();
+    }
+
+    public TrackLineParser(String trackLine) {
+        trackLineContent = new TreeMap<>();
+        parseTrackLine(trackLine);
+    }
+
+    public Map<String, String> getTrackLineContent() {
+        return trackLineContent;
     }
 
     /**
-     * Convert a color in string representation "RRR,GGG,BBB" into a Color. Note
-     * that this can throw an exception if the String is poorly formatted.
+     * Convert a color in string representation "RRR,GGG,BBB" into a Color. Note that this can throw an exception if the
+     * String is poorly formatted.
+     *
+     * @param color_string
+     * @return
      */
     public static Color reformatColor(String color_string) {
-        String[] rgb = comma_regex.split(color_string);
+        String[] rgb = COMMA_REGEX.split(color_string);
         if (rgb.length == 3) {
             int red = Integer.parseInt(rgb[0]);
             int green = Integer.parseInt(rgb[1]);
@@ -93,82 +97,73 @@ public final class TrackLineParser {
         return str;
     }
 
-    /**
-     * Parses a track line putting the keys and values into the current value of
-     * getCurrentTrackHash(), but does not use these properties to change any
-     * settings of AnnotStyle, etc. The Map is returned and is also available as
-     * {@link #getCurrentTrackHash()}. Any old values are cleared from the
-     * existing track line hash first.
-     */
     public Map<String, String> parseTrackLine(String track_line) {
         return parseTrackLine(track_line, null);
     }
 
     /**
-     * Parses a track line putting the keys and values into the current value of
-     * getCurrentTrackHash(), but does not use these properties to change any
-     * settings of TrackStyle, etc. The Map is returned and is also available as
-     * {@link #getCurrentTrackHash()}. Any old values are cleared from the
-     * existing track line hash first. If track_name_prefix arg is non-null, it
-     * is added as prefix to parsed in track name
+     * Parses a track line putting the keys and values into the current value of getCurrentTrackHash(), but does not use
+     * these properties to change any settings of TrackStyle, etc. The Map is returned and is also available as
+     * {@link #getTrackLineContent()}. Any old values are cleared from the existing track line hash first. If
+     * track_name_prefix arg is non-null, it is added as prefix to parsed in track name
      */
     public Map<String, String> parseTrackLine(String track_line, String track_name_prefix) {
-        track_hash.clear();
-        Matcher matcher = track_line_parser.matcher(track_line);
+        trackLineContent.clear();
+        Matcher matcher = TRACK_LINE_REGEX.matcher(track_line);
         // If performance becomes important, it is possible to save and re-use a Matcher,
         // but it isn't thread-safe
         while (matcher.find() && (!Thread.currentThread().isInterrupted())) {
             if (matcher.groupCount() == 2) {
                 String tag = unquote(matcher.group(1).toLowerCase().trim());
                 String val = unquote(matcher.group(2));
-                track_hash.put(unquote(tag), unquote(val));
+                trackLineContent.put(unquote(tag), unquote(val));
             } else {
                 // We will only get here if the definition of track_line_parser has been messed with
                 System.out.println("Couldn't parse this part of the track line: " + matcher.group(0));
             }
         }
-        String track_name = track_hash.get(NAME);
+        String track_name = trackLineContent.get(NAME);
         if (track_name != null && track_name_prefix != null) {
             String new_track_name = track_name_prefix + track_name;
-            track_hash.put(NAME, new_track_name);
-            if (DEBUG) {
-                System.out.println("  modifying track name in TrackLineParser: " + new_track_name);
-            }
+            trackLineContent.put(NAME, new_track_name);
         }
-        return track_hash;
+        return trackLineContent;
     }
 
     /**
-     * Creates an instance of TrackStyle based on the given track hash. A
-     * default track name must be provided in case none is specified by the
-     * track line itself.
+     * Creates an instance of TrackStyle based on the given track hash. A default track name must be provided in case
+     * none is specified by the track line itself.
+     * @param trackLineContent
+     * @param defaultTrackName
+     * @param fileType
+     * @return
      */
-    public static ITrackStyleExtended createTrackStyle(Map<String, String> track_hash, String default_track_name, String file_type) {
-        String human_name = appendTrackName(track_hash, default_track_name);
-        String name = track_hash.get(NAME);
+    public static ITrackStyleExtended createTrackStyle(Map<String, String> trackLineContent, String defaultTrackName, String fileType) {
+        String human_name = appendTrackName(trackLineContent, defaultTrackName);
+        String name = trackLineContent.get(NAME);
 
-        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(track_hash, name, human_name), file_type, getTrackProperties(track_hash));
-        applyTrackProperties(track_hash, style);
+        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(trackLineContent, name, human_name), fileType, getTrackProperties(trackLineContent));
+        applyTrackProperties(trackLineContent, style);
         return style;
     }
 
-    private static String appendTrackName(Map<String, String> track_hash, String default_track_name) {
-        String human_name = track_hash.get(NAME);
-        String name = track_hash.get(NAME);
+    private static String appendTrackName(Map<String, String> trackLineContent, String defaultTrackName) {
+        String human_name = trackLineContent.get(NAME);
+        String name = trackLineContent.get(NAME);
 
         //this will create the correct track name for IGB to display the track correctly
         if (name != null) {
-            if (((default_track_name.indexOf('/') > -1) || (default_track_name.contains("\\\\"))) && !name.equals(default_track_name)) {
+            if (((defaultTrackName.indexOf('/') > -1) || (defaultTrackName.contains("\\\\"))) && !name.equals(defaultTrackName)) {
                 String separator = "";
-                if (default_track_name.indexOf('/') > -1) {
+                if (defaultTrackName.indexOf('/') > -1) {
                     separator = "/";
                 } else {
                     separator = "\\\\";
                 }
-                String[] s = default_track_name.split(separator);
+                String[] s = defaultTrackName.split(separator);
                 //if the filename equals the name of the specific track
                 if (s[s.length - 1].equals(name)) {
-                    name = default_track_name;
+                    name = defaultTrackName;
                 } else {  //if the track name does not equal the filename
                     StringBuilder newTrackName = new StringBuilder();
                     //append path to name
@@ -179,26 +174,26 @@ public final class TrackLineParser {
                     newTrackName.append(name);
                     name = newTrackName.toString();
                 }
-                track_hash.put(NAME, name);
+                trackLineContent.put(NAME, name);
             }
         }
 
         if (name == null) {
-            track_hash.put(NAME, default_track_name);
-            name = default_track_name;
+            trackLineContent.put(NAME, defaultTrackName);
+            name = defaultTrackName;
             human_name = name;
         }
 
         return human_name;
     }
 
-    private static String getHumanName(Map<String, String> track_hash, String id, String default_name) {
-        String description = track_hash.get(DESCRIPTION);
+    private static String getHumanName(Map<String, String> trackLineContent, String id, String default_name) {
+        String description = trackLineContent.get(DESCRIPTION);
         if (description != null && !description.equals(id)) {
             return description;
         }
 
-        String name = track_hash.get(NAME);
+        String name = trackLineContent.get(NAME);
         if (name != null && !name.equals(id)) {
             return name;
         }
@@ -207,14 +202,13 @@ public final class TrackLineParser {
     }
 
     /**
-     * Copies the properties, such as color, into a given ITrackStyle. (For a
-     * graph, the ITrackStyle will be an instance of DefaultTrackStyle, for a
-     * non-graph, it will be an instance of TrackStyle.)
+     * Copies the properties, such as color, into a given ITrackStyle. (For a graph, the ITrackStyle will be an instance
+     * of DefaultTrackStyle, for a non-graph, it will be an instance of TrackStyle.)
      */
-    private static Map<String, String> getTrackProperties(Map<String, String> track_hash) {
+    private static Map<String, String> getTrackProperties(Map<String, String> trackLineContent) {
         Map<String, String> props = new HashMap<>();
-        String visibility = track_hash.get(VISIBILITY);
-        String color_string = track_hash.get(COLOR);
+        String visibility = trackLineContent.get(VISIBILITY);
+        String color_string = trackLineContent.get(COLOR);
         if (color_string != null) {
             props.put(PropertyConstants.PROP_FOREGROUND, color_string);
         }
@@ -235,10 +229,10 @@ public final class TrackLineParser {
         return props;
     }
 
-    private static void applyTrackProperties(Map<String, String> track_hash, ITrackStyle style) {
+    private static void applyTrackProperties(Map<String, String> trackLineContent, ITrackStyle style) {
         if (style instanceof ITrackStyleExtended) { // for non-graph tiers
             ITrackStyleExtended annot_style = (ITrackStyleExtended) style;
-            String url = track_hash.get(URL);
+            String url = trackLineContent.get(URL);
             if (url != null) {
                 annot_style.setUrl(url);
             }
@@ -251,21 +245,22 @@ public final class TrackLineParser {
 
         // Probably shouldn't copy ALL keys to the extended values
         // since some are already included in the standard values above
-        for (String key : track_hash.keySet()) {
-            Object value = track_hash.get(key);
+        for (String key : trackLineContent.keySet()) {
+            Object value = trackLineContent.get(key);
             style.getTransientPropertyMap().put(key, value);
         }
     }
 
     /**
-     * Applies the UCSC track properties that it understands to the GraphState
-     * object. Understands: "viewlimits", "graphtype" = "bar" or "points".
+     * Applies the UCSC track properties that it understands to the GraphState object. Understands: "viewlimits",
+     * "graphtype" = "bar" or "points".
+     * @param trackLineContent
      */
-    public static void createGraphStyle(Map<String, String> track_hash, String graph_id, String graph_name, String extension) {
-        GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graph_id, getHumanName(track_hash, graph_id, graph_name), extension, getTrackProperties(track_hash));
-        applyTrackProperties(track_hash, gstate.getTierStyle());
+    public static void createGraphStyle(Map<String, String> trackLineContent, String graphId, String graphName, String extension) {
+        GraphState gstate = DefaultStateProvider.getGlobalStateProvider().getGraphState(graphId, getHumanName(trackLineContent, graphId, graphName), extension, getTrackProperties(trackLineContent));
+        applyTrackProperties(trackLineContent, gstate.getTierStyle());
 
-        String view_limits = track_hash.get("viewlimits");
+        String view_limits = trackLineContent.get("viewlimits");
         if (view_limits != null) {
             String[] limits = view_limits.split(":");
             if (limits.length == 2) {
@@ -276,7 +271,7 @@ public final class TrackLineParser {
             }
         }
 
-        String graph_type = track_hash.get("graphtype");
+        String graph_type = trackLineContent.get("graphtype");
         // UCSC browser supports only the types "points" and "bar"
         if ("points".equalsIgnoreCase(graph_type)) {
             gstate.setGraphStyle(GraphType.DOT_GRAPH);

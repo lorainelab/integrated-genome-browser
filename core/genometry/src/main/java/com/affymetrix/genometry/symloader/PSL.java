@@ -458,7 +458,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
                 // if this is NOT a ".link.psl" file.
                 track_line_parser.parseTrackLine(line, track_name_prefix);
                 if (!is_link_psl) {
-                    TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), annot_type, extension);
+                    TrackLineParser.createTrackStyle(track_line_parser.getTrackLineContent(), annot_type, extension);
                 }
                 // You can later get the track properties with getCurrentTrackHash();
                 continue;
@@ -595,7 +595,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
                     }
                 } else {
                     track_line_parser.parseTrackLine(line, track_name_prefix);
-                    TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), annot_type, extension);
+                    TrackLineParser.createTrackStyle(track_line_parser.getTrackLineContent(), annot_type, extension);
                 }
                 // You can later get the track properties with getCurrentTrackHash();
                 continue;
@@ -811,7 +811,7 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         int[] blocksizes = (int[]) child_arrays.get(0);
         int[] qmins = (int[]) child_arrays.get(1);
         int[] tmins = (int[]) child_arrays.get(2);
-        String type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+        String type = track_line_parser.getTrackLineContent().get(TrackLineParser.NAME);
         if (type == null) {
             type = annot_type;
         }

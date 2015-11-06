@@ -12,7 +12,6 @@ import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.genometry.util.UniFileChooser;
 import com.affymetrix.igb.shared.JavaFxFileChooser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -36,7 +35,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
-import java.awt.FileDialog;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -62,7 +60,6 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -786,41 +783,6 @@ public class ProtAnnotService {
                 LOG.error(ex.getMessage(), ex);
             }
 
-        }
-    }
-
-    public void exportAsImage(Component component, JFrame frm) {
-        File[] files = null;
-        int option = 0;
-        if (!CommonUtils.IS_UBUNTU) {
-            FileDialog nativeFileChooser = new FileDialog(frm);
-            nativeFileChooser.setDirectory(FileTracker.DATA_DIR_TRACKER.getFile().toString());
-            nativeFileChooser.setTitle("Save As");
-            nativeFileChooser.setMode(FileDialog.SAVE);
-            nativeFileChooser.setVisible(true);
-            nativeFileChooser.toFront();
-            files = nativeFileChooser.getFiles();
-        } else {
-            JFileChooser fileChooser = new UniFileChooser("Save As", "png");
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fileChooser.rescanCurrentDirectory();
-            try {
-                fileChooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-                fileChooser.setSelectedFile(new File(currentSaveImageFile));
-                option = fileChooser.showSaveDialog(component);
-                if (option == JFileChooser.APPROVE_OPTION) {
-                    files = fileChooser.getSelectedFiles();
-                }
-
-            } catch (Exception ex) {
-                LOG.error(ex.getMessage(), ex);
-            }
-        }
-        if (files != null && files.length > 0) {
-            File exportFile = files[0];
-            FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());
-            currentSaveImageFile = exportFile.getName();
-            imageExportService.headlessComponentExport(component, exportFile, ".png", true);
         }
     }
 

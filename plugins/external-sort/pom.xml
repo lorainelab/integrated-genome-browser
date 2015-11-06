@@ -56,26 +56,6 @@
             <artifactId>org.osgi.compendium</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igb</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.miglayout</groupId>
-            <artifactId>miglayout-swing</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>genometry</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igbSwingExt</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -131,7 +111,9 @@
                         <Import-Package>
                             *
                         </Import-Package>
-                        <Export-Package/>                    
+                        <Export-Package>
+                            ${project.groupId}.externalsort.api
+                        </Export-Package>                    
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

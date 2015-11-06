@@ -1,7 +1,7 @@
 package com.lorainelab.externalsort.api;
 
 import java.io.File;
-import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface ExternalSortService {
 
-    public List<File> sortInBatch(File file, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf);
+    public Optional<File> merge(File input, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf);
 }

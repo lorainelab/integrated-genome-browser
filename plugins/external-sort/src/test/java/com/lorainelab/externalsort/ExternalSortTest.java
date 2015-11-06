@@ -5,7 +5,8 @@
  */
 package com.lorainelab.externalsort;
 
-import com.google.code.externalsorting.ExternalSort;
+import com.google.code.externalsorting.ExternalMergeSort;
+import com.google.common.base.Stopwatch;
 import com.lorainelab.externalsort.api.ComparatorMetadata;
 import com.lorainelab.externalsort.api.ExternalSortConfiguration;
 import com.lorainelab.externalsort.api.ExternalSortService;
@@ -15,13 +16,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import junit.framework.Assert;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -29,12 +34,16 @@ import org.junit.Test;
  */
 public class ExternalSortTest {
 
-    private static final String TEST_FILE1_TXT = "TAIR10.bed";
+    private static final Logger logger = LoggerFactory.getLogger(ExternalSortTest.class);
+
+    private static final String TEST1_FILE = "test1.txt";
+    private static final String TEST1_FILE_ANSWER = "test1.answer.txt";
+
 
     private File file1;
     private List<File> fileList;
 
-    private ExternalSortService exsort = new ExternalSort();
+    private final ExternalSortService exsort = new ExternalMergeSort();
 
     private static void copyFile(File sourceFile, File destFile) throws IOException {
         if (!destFile.exists()) {
@@ -60,11 +69,11 @@ public class ExternalSortTest {
 
     @Before
     public void setUp() throws Exception {
-        this.fileList = new ArrayList<File>(1);
+        this.fileList = new ArrayList<>(1);
         this.file1 = new File(this.getClass().getClassLoader()
-                .getResource(TEST_FILE1_TXT).toURI());
+                .getResource(TEST1_FILE).toURI());
 
-        File tmpFile1 = new File(this.file1.getPath().toString() + ".tmp");
+        File tmpFile1 = new File(this.file1.getPath() + ".tmp");
 
         copyFile(this.file1, tmpFile1);
 
@@ -85,11 +94,11 @@ public class ExternalSortTest {
     }
 
     @Test
-    public void simpleTest() throws IOException {
+    public void simpleTest() throws IOException, URISyntaxException {
 
         ExternalSortConfiguration conf = new ExternalSortConfiguration();
-        conf.setNumHeaderRows(2);
-        conf.setMaxMemoryInBytes(1000);
+        conf.setNumHeaderRows(0);
+        conf.setMaxMemoryInBytes(10_000_000);
         conf.setMaxTmpFiles(100);
 
         ComparatorMetadata comparatorMetadata = new ComparatorMetadata();
@@ -111,18 +120,41 @@ public class ExternalSortTest {
             return Long.parseLong(sSplit[2]);
         });
 
-        List<File> listOfFiles = exsort.sortInBatch(this.file1, comparatorMetadata, conf);
-        Assert.assertEquals(1, listOfFiles.size());
+        Stopwatch watch = Stopwatch.createStarted();
+        Optional<File> output = exsort.merge(this.file1, comparatorMetadata, conf);
+        logger.info(watch.stop().toString());
+        
+        ArrayList<String> result = readLines(output.get());
+        ArrayList<String> answer = readLines(new File(this.getClass().getClassLoader()
+                .getResource(TEST1_FILE_ANSWER).toURI()));
+        Assert.assertEquals(result.size(), answer.size());
+        for (int i = 0; i < result.size(); i++) {
+            String actualLine = result.get(i);
+            String answerLine = answer.get(i);
+            try {
+                Assert.assertTrue(isLinesEqual(actualLine, answerLine));
+            } catch (Exception ex) {
+                Assert.fail();
+            }
 
-        ArrayList<String> result = readLines(listOfFiles.get(0));
-        result.forEach(r -> {
-            System.out.println(r);
-        });
+        }
+       
     }
 
-    public static ArrayList<String> readLines(File f) throws IOException {
+    private boolean isLinesEqual(String line1, String line2) {
+        String[] line1Words = line1.split("\\s+");
+        String[] line2Words = line2.split("\\s+");
+        for (int i = 0; i < line1Words.length; i++) {
+            if (!line1Words[i].equals(line2Words[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private ArrayList<String> readLines(File f) throws IOException {
         BufferedReader r = new BufferedReader(new FileReader(f));
-        ArrayList<String> answer = new ArrayList<String>();
+        ArrayList<String> answer = new ArrayList<>();
         String line;
         while ((line = r.readLine()) != null) {
             answer.add(line);

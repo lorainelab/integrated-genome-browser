@@ -12,24 +12,168 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.PriorityQueue;
 import java.util.zip.Deflater;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Referenced git@github.com:lemire/externalsortinginjava.git for external merge sort algorithm.
  */
 @Component
-public class ExternalSort implements ExternalSortService {
+public class ExternalMergeSort implements ExternalSortService {
 
-    public ExternalSort() {
+    private static final Logger logger = LoggerFactory.getLogger(ExternalMergeSort.class);
+
+    public ExternalMergeSort() {
+    }
+
+    @Override
+    public Optional<File> merge(File input, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) {
+        List<File> tmpFiles = sortInBatch(input, comparatorMetadata, conf);
+        logger.info("Temp file count: " + tmpFiles.size());
+        try {
+            return Optional.ofNullable(mergeSortedFiles(tmpFiles, comparatorMetadata, conf));
+        } catch (IOException ex) {
+            return Optional.empty();
+        }
+    }
+
+    private File mergeSortedFiles(List<File> files,
+            final ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) throws IOException {
+        boolean usegzip = conf.isUseGzipOnTmpFiles();
+        Charset cs = conf.getCharset();
+        boolean distinct = conf.isIsDistinctValues();
+        Date now = new Date();
+        File outputFile = Files.createTempFile(conf.getTmpDir().toPath(), "out", "", new FileAttribute[]{}).toFile();
+        //File outputfile = new File(conf.getTmpDir().getPath() + File.pathSeparator + "out_" + UUID.randomUUID() + "_" + now.getTime());
+        ArrayList<BinaryFileBuffer> bfbs = new ArrayList<>();
+        for (File f : files) {
+            final int BUFFERSIZE = 2048;
+            InputStream in = new FileInputStream(f);
+            BufferedReader br;
+            if (usegzip) {
+                br = new BufferedReader(
+                        new InputStreamReader(
+                                new GZIPInputStream(in,
+                                        BUFFERSIZE), cs));
+            } else {
+                br = new BufferedReader(new InputStreamReader(
+                        in, cs));
+            }
+
+            BinaryFileBuffer bfb = new BinaryFileBuffer(br);
+            bfbs.add(bfb);
+        }
+        BufferedWriter fbw = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(outputFile, false), cs));
+        mergeSortedFiles(fbw, comparatorMetadata, distinct, bfbs);
+        files.stream().forEach((f) -> {
+            f.delete();
+        });
+        return outputFile;
+    }
+
+    private int mergeSortedFiles(BufferedWriter fbw,
+            final ComparatorMetadata comparatorMetadata, boolean distinct,
+            List<BinaryFileBuffer> buffers) throws IOException {
+        PriorityQueue<BinaryFileBuffer> pq = new PriorityQueue<>(
+                11, new Comparator<BinaryFileBuffer>() {
+                    @Override
+            public int compare(BinaryFileBuffer i,
+                    BinaryFileBuffer j) {
+                ComparatorInstance oI = new ComparatorInstance();
+                oI.setComparatorMetadata(comparatorMetadata);
+                        oI.setLine(i.peek());
+
+                        ComparatorInstance oJ = new ComparatorInstance();
+                        oJ.setComparatorMetadata(comparatorMetadata);
+                        oJ.setLine(j.peek());
+                        return comparatorMetadata.getComparator().compare(oI, oJ);
+                    }
+                });
+        for (BinaryFileBuffer bfb : buffers) {
+            if (!bfb.empty()) {
+                pq.add(bfb);
+            }
+        }
+        int rowcounter = 0;
+        try {
+            if (!distinct) {
+                while (pq.size() > 0) {
+                    BinaryFileBuffer bfb = pq.poll();
+                    String r = bfb.pop();
+                    fbw.write(r);
+                    fbw.newLine();
+                    ++rowcounter;
+                    if (bfb.empty()) {
+                        bfb.fbr.close();
+                    } else {
+                        pq.add(bfb); // add it back
+                    }
+                }
+            } else {
+                String lastLine = null;
+                if (pq.size() > 0) {
+                    BinaryFileBuffer bfb = pq.poll();
+                    lastLine = bfb.pop();
+                    fbw.write(lastLine);
+                    fbw.newLine();
+                    ++rowcounter;
+                    if (bfb.empty()) {
+                        bfb.fbr.close();
+                    } else {
+                        pq.add(bfb); // add it back
+                    }
+                }
+                while (pq.size() > 0) {
+                    BinaryFileBuffer bfb = pq.poll();
+                    String r = bfb.pop();
+                    // Skip duplicate lines
+                    ComparatorInstance oR = new ComparatorInstance();
+                    oR.setComparatorMetadata(comparatorMetadata);
+                    oR.setLine(r);
+                    ComparatorInstance oLastLine = new ComparatorInstance();
+                    oLastLine.setComparatorMetadata(comparatorMetadata);
+                    oLastLine.setLine(lastLine);
+
+                    if (comparatorMetadata.getComparator().compare(oR, oLastLine) != 0) {
+                        fbw.write(r);
+                        fbw.newLine();
+                        lastLine = r;
+                    }
+                    ++rowcounter;
+                    if (bfb.empty()) {
+                        bfb.fbr.close();
+                    } else {
+                        pq.add(bfb); // add it back
+                    }
+                }
+            }
+        } finally {
+
+            fbw.close();
+            for (BinaryFileBuffer bfb : pq) {
+                bfb.close();
+            }
+        }
+        return rowcounter;
     }
 
     /**
@@ -53,8 +197,8 @@ public class ExternalSort implements ExternalSortService {
         // files
         // for naught. If blocksize is smaller than half the free
         // memory, grow it.
-        if (blocksize < maxMemory / 2) {
-            blocksize = maxMemory / 2;
+        if (blocksize < maxMemory) {
+            blocksize = maxMemory;
         }
         return blocksize;
     }
@@ -171,7 +315,6 @@ public class ExternalSort implements ExternalSortService {
         return files;
     }
 
-
     /**
      * This will simply load the file by blocks of lines, then sort them in-memory, and write the result to temporary
      * files that have to be merged later. You can specify a bound on the number of temporary files that will be
@@ -199,8 +342,7 @@ public class ExternalSort implements ExternalSortService {
                 numHeader, usegzip);
     }
 
-    @Override
-    public List<File> sortInBatch(File file, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) {
+    private List<File> sortInBatch(File file, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) {
         try {
             return sortInBatch(file, comparatorMetadata, conf.getMaxTmpFiles(), conf.getMaxMemoryInBytes(), conf.getCharset(), conf.getTmpDir(), conf.isIsDistinctValues(), conf.getNumHeaderRows(), conf.isUseGzipOnTmpFiles());
         } catch (IOException ex) {

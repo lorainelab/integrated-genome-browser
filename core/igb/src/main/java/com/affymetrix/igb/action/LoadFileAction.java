@@ -1,9 +1,8 @@
 /**
  * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
- * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
- * of the license must be included with any distribution of this source code.
- * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
+ * Licensed under the Common Public License, Version 1.0 (the "License"). A copy of the license must be included with
+ * any distribution of this source code. Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
@@ -18,9 +17,9 @@ import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.action.files.JavaFxFileChooser;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.lorainelab.igb.javafx.JavaFxFileChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -152,7 +151,7 @@ public final class LoadFileAction extends OpenURIAction {
         List<File> files = null;
         Optional<List<File>> selectedFiles;
         if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
-            selectedFiles = JavaFxFileChooser.retrieveFilesFromFxChooser(Optional.ofNullable(currDir));
+            selectedFiles = JavaFxFileChooser.build().setContext(currDir).retrieveFilesFromFxChooser();
             if (selectedFiles.isPresent()) {
                 files = selectedFiles.get();
             }

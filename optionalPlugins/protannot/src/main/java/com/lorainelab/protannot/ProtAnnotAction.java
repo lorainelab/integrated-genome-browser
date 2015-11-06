@@ -6,7 +6,6 @@ package com.lorainelab.protannot;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.event.GenericAction;
@@ -27,6 +26,7 @@ import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import com.lorainelab.igb.javafx.JavaFxFileChooser;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.image.exporter.service.ImageExportService;
 import com.lorainelab.protannot.event.StartInterProScanEvent;
@@ -38,7 +38,6 @@ import com.lorainelab.protannot.view.StatusBar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
@@ -86,7 +85,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -101,7 +99,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import net.miginfocom.swing.MigLayout;
 import org.osgi.service.component.ComponentFactory;
@@ -144,7 +141,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     // used for choosing new files to load
     private FileDialog nativeFileChooser = null;
-    private JFileChooser javaFileChooser = null;
     // for printing
     private ComponentPagePrinter print_panel = null;
     // for choosing sample path from server
@@ -390,41 +386,14 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
      * Action performed when a path is selected in the path browser. Calls up load(name) to load the path.
      */
     void doLoadFile() {
-        File[] files = null;
-        if (!CommonUtils.IS_UBUNTU) {
-            if (this.nativeFileChooser == null) {
-                this.nativeFileChooser = new FileDialog(frm);
-                this.nativeFileChooser.setTitle("Open paxml");
-
-                this.nativeFileChooser.setFilenameFilter((dir, name) -> {
-                    if (name != null && name.endsWith(".paxml")) {
-                        return true;
-                    }
-                    return false;
-                });
-            }
-            nativeFileChooser.setDirectory(FileTracker.DATA_DIR_TRACKER.getFile().toString());
-            nativeFileChooser.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-            nativeFileChooser.setAutoRequestFocus(true);
-            nativeFileChooser.setVisible(true);
-            nativeFileChooser.toFront();
-            files = nativeFileChooser.getFiles();
-        } else {
-            javaFileChooser = new JFileChooser();
-            javaFileChooser.setDialogTitle("Open paxml");
-            FileNameExtensionFilter paxmlFilter = new FileNameExtensionFilter("paxml files", "paxml");
-            javaFileChooser.setFileFilter(paxmlFilter);
-            this.javaFileChooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-            int option = this.javaFileChooser.showOpenDialog(frm);
-            if (option == JFileChooser.APPROVE_OPTION) {
-                files = javaFileChooser.getSelectedFiles();
-            }
-        }
-        if (files != null && files.length > 0) {
-            File cfil = files[0];
+        Optional<File> file = null;
+        file = JavaFxFileChooser.build().setContext(FileTracker.DATA_DIR_TRACKER.getFile())
+                .retrieveFileFromFxChooser();
+        if (file.isPresent()) {
+            File cfil = file.get();
             FileTracker.DATA_DIR_TRACKER.setFile(cfil.getParentFile());
             load(cfil);
-        } else if ((files == null || files.length == 0) && loadFileOnStart) {
+        } else if (!file.isPresent() && loadFileOnStart) {
             getExitAction().actionPerformed(null);
         }
     }

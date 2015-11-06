@@ -1,12 +1,12 @@
 package com.lorainelab.image.exporter;
 
 import aQute.bnd.annotation.component.Reference;
-import static com.affymetrix.common.CommonUtils.IS_UBUNTU;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.collect.ImmutableMap;
+import com.lorainelab.igb.javafx.JavaFxFileChooser;
 import static com.lorainelab.image.exporter.ExportDialogGui.UNIT;
 import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.Color;
@@ -21,13 +21,11 @@ import java.text.NumberFormat;
 import java.util.Map;
 import java.util.Optional;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileFilter;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -315,39 +313,11 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
                 }
             }
         }
-        showFileDialog(directory.getAbsolutePath(), fileName);
-        exportDialogGui.getExportDialogFrame().setVisible(false);
-    }
-
-    private void showFileDialog(String directory, String defaultFileName) {
-        String ext = GeneralUtils.getExtension(defaultFileName);
-        if (StringUtils.isBlank(ext)) {
-            defaultFileName += selectedExt;
-        }
-        if (IS_UBUNTU) {
-            JFileChooser fileChooser = new JFileChooser(directory);
-            fileChooser.setDialogTitle("Save Image");
-            fileChooser.setSelectedFile(new File(defaultFileName));
-            int option = fileChooser.showOpenDialog(exportDialogGui);
-            if (option == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                completeSaveButtonAction(selectedFile);
-            }
-        } else {
-            FileDialog dialog = new FileDialog(exportDialogGui.getExportDialogFrame(), "Save Image", FileDialog.SAVE);
-            dialog.setDirectory(directory);
-            dialog.setFile(defaultFileName);
-            centerAndShowSaveDialog(dialog);
-            Optional.ofNullable(dialog.getFile()).ifPresent(fileName -> {
-                String currentExt = GeneralUtils.getExtension(fileName);
-                if (!ArrayUtils.contains(EXTENSION, currentExt)) {
-                    fileName += EXTENSION[1];
-                    currentExt = EXTENSION[1];
-                }
-                selectedExt = currentExt;
-                File imageFile = new File(dialog.getDirectory(), fileName);
-                completeSaveButtonAction(imageFile);
-            });
+        Optional<File> fileFromChooser = JavaFxFileChooser.build().setTitle("Save Image").setContext(new File(directory.getAbsolutePath()))
+                .setDefaultFileName(fileName).saveFilesFromFxChooser();
+        if (fileFromChooser.isPresent()) {
+            completeSaveButtonAction(fileFromChooser.get());
+            exportDialogGui.getExportDialogFrame().setVisible(false);
         }
     }
 

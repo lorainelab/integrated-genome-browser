@@ -157,6 +157,11 @@
             <artifactId>frameManager</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igb-javafx-util</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -87,11 +87,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>igb</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.lorainelab</groupId>
             <artifactId>igb-javafx-util</artifactId>
             <scope>provided</scope>

@@ -58,13 +58,14 @@ public class FrameVisibilityManager {
     @Reference
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
-        Timer delayVisibilityTimer = new Timer(5000, (ActionEvent e) -> {
+        //Start anyway if a service fails
+        Timer failSafeTimer = new Timer(5000, (ActionEvent e) -> {
             if (!igbService.getApplicationFrame().isVisible()) {
                 igbService.getApplicationFrame().setVisible(true);
             }
         });
-        delayVisibilityTimer.setRepeats(false);
-        delayVisibilityTimer.start();
+        failSafeTimer.setRepeats(false);
+        failSafeTimer.start();
     }
 
     @Reference(target = "(&(component.name=" + DATA_MANAGEMENT_TAB + "))")

@@ -18,7 +18,7 @@ import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.action.files.JavaFxFileChooser;
+import com.affymetrix.igb.shared.JavaFxFileChooser;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.event.ActionEvent;
@@ -152,7 +152,7 @@ public final class LoadFileAction extends OpenURIAction {
         List<File> files = null;
         Optional<List<File>> selectedFiles;
         if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
-            selectedFiles = JavaFxFileChooser.retrieveFilesFromFxChooser(Optional.ofNullable(currDir));
+            selectedFiles = JavaFxFileChooser.build().setContext(currDir).retrieveFilesFromFxChooser();
             if (selectedFiles.isPresent()) {
                 files = selectedFiles.get();
             }

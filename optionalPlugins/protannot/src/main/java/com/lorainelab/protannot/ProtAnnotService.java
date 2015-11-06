@@ -13,6 +13,7 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.UniFileChooser;
+import com.affymetrix.igb.shared.JavaFxFileChooser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
@@ -768,29 +769,11 @@ public class ProtAnnotService {
 
     public void exportAsXml(Component component, JFrame frm) {
         int option = 0;
-        File[] files = null;
-        if (!CommonUtils.IS_UBUNTU) {
-            FileDialog nativeFileChooser = new FileDialog(frm);
-            nativeFileChooser.setDirectory(FileTracker.DATA_DIR_TRACKER.getFile().toString());
-            nativeFileChooser.setTitle(BUNDLE.getString("paxmlFileChooserTitle"));
-            nativeFileChooser.setMode(FileDialog.SAVE);
-            nativeFileChooser.setVisible(true);
-            nativeFileChooser.toFront();
-            files = nativeFileChooser.getFiles();
-
-        } else {
-
-            JFileChooser chooser = new UniFileChooser(BUNDLE.getString("paxmlFileChooserTitle"), "paxml");
-            chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            chooser.rescanCurrentDirectory();
-            option = chooser.showSaveDialog(component);
-            if (option == JFileChooser.APPROVE_OPTION) {
-                files = chooser.getSelectedFiles();
-            }
-        }
-        if (files != null && files.length > 0) {
-            File exportFile = files[0];
+        Optional<File> file = null;
+        file = JavaFxFileChooser.build().setContext(FileTracker.DATA_DIR_TRACKER.getFile())
+                .setDefaultFileName(".paxml").saveFilesFromFxChooser();
+        if (file.isPresent()) {
+            File exportFile = file.get();
             FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());
             Dnaseq dnaseq = getDnaseq();
             JAXBContext jaxbContext;

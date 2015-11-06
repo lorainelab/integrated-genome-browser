@@ -3,14 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.affymetrix.igb.shared;
+package com.lorainelab.igb.javafx;
 
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +17,14 @@ import org.slf4j.LoggerFactory;
 public class JavaFxFileChooser {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaFxFileChooser.class);
-    private static final JFXPanel fxRuntimeInitializer = new JFXPanel(); // see https://docs.oracle.com/javase/8/javafx/api/javafx/application/Platform.html#runLater-java.lang.Runnable- for why this is needed
     private static final Object LOCK = new Object();
     private Optional<String> title = Optional.empty();
     private Optional<String> defaultFileName = Optional.empty();
     private Optional<File> context = Optional.empty();
 
     private JavaFxFileChooser() {
-
     }
-
+    
     public static JavaFxFileChooser build() {
         return new JavaFxFileChooser();
     }
@@ -80,12 +77,15 @@ public class JavaFxFileChooser {
         FileChooser fileChooser = new FileChooser();
         if (title.isPresent()) {
             fileChooser.setTitle(title.get());
+            title = Optional.empty();
         }
         if (defaultFileName.isPresent()) {
             fileChooser.setInitialFileName(defaultFileName.get());
+            defaultFileName = Optional.empty();
         }
         if (context.isPresent()) {
             fileChooser.setInitialDirectory(context.get());
+            context = Optional.empty();
         }
         return fileChooser;
     }

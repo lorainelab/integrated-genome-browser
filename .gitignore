@@ -149,3 +149,4 @@ main/nb-configuration.xml
 /plugins/narrowpeak/target/
 /plugins/bed/target/
 /plugins/bam/target/
+/core/igb-javafx-util/target/

@@ -115,6 +115,11 @@
             <artifactId>frameManager</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igb-javafx-util</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!--End of core module dependencies-->
         
         <!-- Start of external bundle dependencies-->

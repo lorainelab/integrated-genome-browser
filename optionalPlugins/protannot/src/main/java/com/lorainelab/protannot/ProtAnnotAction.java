@@ -23,10 +23,10 @@ import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
-import com.affymetrix.igb.shared.JavaFxFileChooser;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import com.lorainelab.igb.javafx.JavaFxFileChooser;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.image.exporter.service.ImageExportService;
 import com.lorainelab.protannot.event.StartInterProScanEvent;
@@ -85,7 +85,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -142,7 +141,6 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     // used for choosing new files to load
     private FileDialog nativeFileChooser = null;
-    private JFileChooser javaFileChooser = null;
     // for printing
     private ComponentPagePrinter print_panel = null;
     // for choosing sample path from server

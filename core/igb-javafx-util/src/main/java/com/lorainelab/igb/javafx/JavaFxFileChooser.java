@@ -77,15 +77,12 @@ public class JavaFxFileChooser {
         FileChooser fileChooser = new FileChooser();
         if (title.isPresent()) {
             fileChooser.setTitle(title.get());
-            title = Optional.empty();
         }
         if (defaultFileName.isPresent()) {
             fileChooser.setInitialFileName(defaultFileName.get());
-            defaultFileName = Optional.empty();
         }
         if (context.isPresent()) {
             fileChooser.setInitialDirectory(context.get());
-            context = Optional.empty();
         }
         return fileChooser;
     }

@@ -16,6 +16,7 @@ import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.style.PropertyConstants;
 import java.awt.Color;
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -133,58 +134,25 @@ public final class TrackLineParser {
     /**
      * Creates an instance of TrackStyle based on the given track hash. A default track name must be provided in case
      * none is specified by the track line itself.
+     *
      * @param trackLineContent
-     * @param defaultTrackName
+     * @param trackUri
      * @param fileType
      * @return
      */
-    public static ITrackStyleExtended createTrackStyle(Map<String, String> trackLineContent, String defaultTrackName, String fileType) {
-        String human_name = appendTrackName(trackLineContent, defaultTrackName);
-        String name = trackLineContent.get(NAME);
+    public static ITrackStyleExtended createTrackStyle(Map<String, String> trackLineContent, String trackUri, String fileType) {
+        String name = trackUri;
+        if (trackLineContent.containsKey(NAME)) {
+            name = trackLineContent.get(NAME);
+        } else if (name.contains(File.separator)) {
+            name = name.substring(name.lastIndexOf(File.separator) + 1);
+        } else {
+            name = name.substring(name.lastIndexOf("/") + 1);
+        }
 
-        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name, getHumanName(trackLineContent, name, human_name), fileType, getTrackProperties(trackLineContent));
+        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(trackUri, name, fileType, getTrackProperties(trackLineContent));
         applyTrackProperties(trackLineContent, style);
         return style;
-    }
-
-    private static String appendTrackName(Map<String, String> trackLineContent, String defaultTrackName) {
-        String human_name = trackLineContent.get(NAME);
-        String name = trackLineContent.get(NAME);
-
-        //this will create the correct track name for IGB to display the track correctly
-        if (name != null) {
-            if (((defaultTrackName.indexOf('/') > -1) || (defaultTrackName.contains("\\\\"))) && !name.equals(defaultTrackName)) {
-                String separator = "";
-                if (defaultTrackName.indexOf('/') > -1) {
-                    separator = "/";
-                } else {
-                    separator = "\\\\";
-                }
-                String[] s = defaultTrackName.split(separator);
-                //if the filename equals the name of the specific track
-                if (s[s.length - 1].equals(name)) {
-                    name = defaultTrackName;
-                } else {  //if the track name does not equal the filename
-                    StringBuilder newTrackName = new StringBuilder();
-                    //append path to name
-                    for (int i = 0; i < s.length - 1; i++) {
-                        newTrackName.append(s[i]).append(separator);
-                    }
-                    //append track name
-                    newTrackName.append(name);
-                    name = newTrackName.toString();
-                }
-                trackLineContent.put(NAME, name);
-            }
-        }
-
-        if (name == null) {
-            trackLineContent.put(NAME, defaultTrackName);
-            name = defaultTrackName;
-            human_name = name;
-        }
-
-        return human_name;
     }
 
     private static String getHumanName(Map<String, String> trackLineContent, String id, String default_name) {
@@ -254,6 +222,7 @@ public final class TrackLineParser {
     /**
      * Applies the UCSC track properties that it understands to the GraphState object. Understands: "viewlimits",
      * "graphtype" = "bar" or "points".
+     *
      * @param trackLineContent
      */
     public static void createGraphStyle(Map<String, String> trackLineContent, String graphId, String graphName, String extension) {

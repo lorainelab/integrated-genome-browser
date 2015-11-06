@@ -187,7 +187,7 @@ public class NarrowPeak extends SymLoader {
         blockMins[0] = min;
         int[] blockMaxs = new int[1];
         blockMaxs[0] = max;
-        UcscBedSym ucscBedSym = new UcscBedSym("narrowpeak", chromosomeReference.get(chrom), min, max, name, score, isForwardStrand, peakStart, peakStop, blockMins, blockMaxs);
+        UcscBedSym ucscBedSym = new UcscBedSym(uri.toString().toLowerCase(), chromosomeReference.get(chrom), min, max, name, score, isForwardStrand, peakStart, peakStop, blockMins, blockMaxs);
         if (!signalValue.isEmpty()) {
             ucscBedSym.setProperty("signalValue", signalValue);
         }

@@ -188,6 +188,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>external-sort</artifactId>
+                <version>${project.parent.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>affymetrix-common</artifactId>
                  <version>${project.parent.version}</version>

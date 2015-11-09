@@ -19,6 +19,7 @@ import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.SortTabFile;
 import com.lorainelab.cache.api.CacheStatus;
 import com.lorainelab.cache.api.RemoteFileCacheService;
+import com.lorainelab.externalsort.api.ExternalSortService;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -62,6 +63,7 @@ public abstract class SymLoader {
     protected final GenomeVersion genomeVersion;
     public final String featureName;
     protected static RemoteFileCacheService remoteFileCacheService;
+    protected static ExternalSortService externalSortService;
     protected BundleContext bundleContext;
 
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
@@ -95,7 +97,6 @@ public abstract class SymLoader {
         this.indexUri = indexUri;
     }
 
-
     protected void init() throws Exception {
         this.isInitialized = true;
     }
@@ -109,16 +110,29 @@ public abstract class SymLoader {
     }
 
     private void initCacheServiceTracker() {
-        ServiceTracker<RemoteFileCacheService, Object> dependencyTracker;
+        ServiceTracker<RemoteFileCacheService, Object> rcDependencyTracker;
 
-        dependencyTracker = new ServiceTracker<RemoteFileCacheService, Object>(bundleContext, RemoteFileCacheService.class, null) {
+        rcDependencyTracker = new ServiceTracker<RemoteFileCacheService, Object>(bundleContext, RemoteFileCacheService.class, null) {
             @Override
             public Object addingService(ServiceReference<RemoteFileCacheService> serviceReference) {
                 remoteFileCacheService = bundleContext.getService(serviceReference);
                 return super.addingService(serviceReference);
             }
         };
-        dependencyTracker.open();
+
+        rcDependencyTracker.open();
+
+        ServiceTracker<ExternalSortService, Object> esDependencyTracker;
+
+        esDependencyTracker = new ServiceTracker<ExternalSortService, Object>(bundleContext, ExternalSortService.class, null) {
+            @Override
+            public Object addingService(ServiceReference<ExternalSortService> serviceReference) {
+                externalSortService = bundleContext.getService(serviceReference);
+                return super.addingService(serviceReference);
+            }
+        };
+
+        esDependencyTracker.open();
     }
 
     private Optional<BufferedInputStream> checkRemoteFileCache(URL fileUrl) throws IOException {
@@ -166,6 +180,36 @@ public abstract class SymLoader {
             if (bis == null) {
                 throw new IOException("Input Stream NULL");
             }
+            //TODO: sort file here
+            remoteFileCacheService.getFilebyUrl(fileUrl, false);
+//            CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
+//            if (cacheStatus.isDataExists()) {
+//                ExternalSortConfiguration conf = new ExternalSortConfiguration();
+//                conf.setNumHeaderRows(0);
+//                conf.setMaxMemoryInBytes(10_000_000);
+//                conf.setMaxTmpFiles(100);
+//
+//                ComparatorMetadata comparatorMetadata = new ComparatorMetadata();
+//
+//                //Define multisort
+//                //First sort
+//                comparatorMetadata.getPreparers().add(s -> {
+//                    String[] sSplit = s.split("\\s+");
+//                    return sSplit[0];
+//                });
+//                //Second sort
+//                comparatorMetadata.getPreparers().add(s -> {
+//                    String[] sSplit = s.split("\\s+");
+//                    return Long.parseLong(sSplit[1]);
+//                });
+//                //Third sort
+//                comparatorMetadata.getPreparers().add(s -> {
+//                    String[] sSplit = s.split("\\s+");
+//                    return Long.parseLong(sSplit[2]);
+//                });
+//                externalMergeSortService.merge(cacheStatus.getData(), comparatorMetadata, conf);
+//            }
+            //externalMergeSortService.merge(null, null, null)
             if (parseLines(bis, chrLength, chrFiles)) {
                 createResults(chrLength, chrFiles);
                 Logger.getLogger(SymLoader.class.getName()).fine("Indexing successful");

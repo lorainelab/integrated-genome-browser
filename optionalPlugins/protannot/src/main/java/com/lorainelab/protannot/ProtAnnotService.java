@@ -775,6 +775,7 @@ public class ProtAnnotService {
         if (!CommonUtils.IS_UBUNTU) {
             FileDialog nativeFileChooser = new FileDialog(frm);
             nativeFileChooser.setDirectory(FileTracker.DATA_DIR_TRACKER.getFile().toString());
+            nativeFileChooser.setFile("Protannot.paxml");
             nativeFileChooser.setTitle(BUNDLE.getString("paxmlFileChooserTitle"));
             nativeFileChooser.setMode(FileDialog.SAVE);
             nativeFileChooser.setVisible(true);
@@ -808,13 +809,14 @@ public class ProtAnnotService {
 
         }
     }
-
+    
     public void exportAsImage(Component component, JFrame frm) {
         File[] files = null;
         int option = 0;
         if (!CommonUtils.IS_UBUNTU) {
             FileDialog nativeFileChooser = new FileDialog(frm);
             nativeFileChooser.setDirectory(FileTracker.DATA_DIR_TRACKER.getFile().toString());
+            nativeFileChooser.setFile(new File(currentSaveImageFile).toString());
             nativeFileChooser.setTitle("Save As");
             nativeFileChooser.setMode(FileDialog.SAVE);
             nativeFileChooser.setVisible(true);

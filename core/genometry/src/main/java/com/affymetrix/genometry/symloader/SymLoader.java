@@ -19,7 +19,6 @@ import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.SortTabFile;
 import com.lorainelab.cache.api.CacheStatus;
 import com.lorainelab.cache.api.RemoteFileCacheService;
-import com.lorainelab.externalsort.api.ExternalSortService;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,12 +43,15 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author jnicol
  */
 public abstract class SymLoader {
+
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SymLoader.class);
 
     public static final String TOO_MANY_CONTIGS_EXCEPTION = "Too many open files";
     public static final int UNKNOWN_CHROMOSOME_LENGTH = 1; // for unknown chromosomes when the length is not known
@@ -63,7 +65,7 @@ public abstract class SymLoader {
     protected final GenomeVersion genomeVersion;
     public final String featureName;
     protected static RemoteFileCacheService remoteFileCacheService;
-    protected static ExternalSortService externalSortService;
+    //protected static ExternalSortService externalSortService;
     protected BundleContext bundleContext;
 
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
@@ -122,17 +124,17 @@ public abstract class SymLoader {
 
         rcDependencyTracker.open();
 
-        ServiceTracker<ExternalSortService, Object> esDependencyTracker;
-
-        esDependencyTracker = new ServiceTracker<ExternalSortService, Object>(bundleContext, ExternalSortService.class, null) {
-            @Override
-            public Object addingService(ServiceReference<ExternalSortService> serviceReference) {
-                externalSortService = bundleContext.getService(serviceReference);
-                return super.addingService(serviceReference);
-            }
-        };
-
-        esDependencyTracker.open();
+//        ServiceTracker<ExternalSortService, Object> esDependencyTracker;
+//
+//        esDependencyTracker = new ServiceTracker<ExternalSortService, Object>(bundleContext, ExternalSortService.class, null) {
+//            @Override
+//            public Object addingService(ServiceReference<ExternalSortService> serviceReference) {
+//                externalSortService = bundleContext.getService(serviceReference);
+//                return super.addingService(serviceReference);
+//            }
+//        };
+//
+//        esDependencyTracker.open();
     }
 
     private Optional<BufferedInputStream> checkRemoteFileCache(URL fileUrl) throws IOException {
@@ -182,8 +184,13 @@ public abstract class SymLoader {
             }
             //TODO: sort file here
             remoteFileCacheService.getFilebyUrl(fileUrl, false);
-//            CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
-//            if (cacheStatus.isDataExists()) {
+            CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
+            if (cacheStatus.isDataExists()) {
+                InputStream is = GeneralUtils.unzipStream(new FileInputStream(cacheStatus.getData()), cacheStatus.getUrl(), new StringBuffer());
+                byte[] read = new byte[100];
+                is.read(read, 0, 1000);
+                logger.info("read: {}", new String(read));
+            }
 //                ExternalSortConfiguration conf = new ExternalSortConfiguration();
 //                conf.setNumHeaderRows(0);
 //                conf.setMaxMemoryInBytes(10_000_000);

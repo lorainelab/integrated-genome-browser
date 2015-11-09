@@ -7,8 +7,12 @@ import com.affymetrix.genometry.comparator.BioSeqComparator;
 import com.affymetrix.genometry.parsers.TrackLineParser;
 import com.affymetrix.genometry.symloader.BedUtils;
 import com.affymetrix.genometry.symloader.SymLoader;
+import com.affymetrix.genometry.symmetry.impl.NarrowPeakSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.PEAK;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.P_VALUE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.Q_VALUE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SIGNAL_VALUE;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -187,20 +191,20 @@ public class NarrowPeak extends SymLoader {
         blockMins[0] = min;
         int[] blockMaxs = new int[1];
         blockMaxs[0] = max;
-        UcscBedSym ucscBedSym = new UcscBedSym(uri.toString().toLowerCase(), chromosomeReference.get(chrom), min, max, name, score, isForwardStrand, peakStart, peakStop, blockMins, blockMaxs);
+        NarrowPeakSym narrowPeakSym = new NarrowPeakSym(uri.toString().toLowerCase(), chromosomeReference.get(chrom), min, max, name, score, isForwardStrand, peakStart, peakStop, blockMins, blockMaxs);
         if (!signalValue.isEmpty()) {
-            ucscBedSym.setProperty("signalValue", signalValue);
+            narrowPeakSym.setProperty(SIGNAL_VALUE, signalValue);
         }
         if (peakStart != Integer.MIN_VALUE) {
-            ucscBedSym.setProperty("peak", peakStart);
+            narrowPeakSym.setProperty(PEAK, peakStart);
         }
         if (pValue != Float.NEGATIVE_INFINITY) {
-            ucscBedSym.setProperty("pValue", pValue);
+            narrowPeakSym.setProperty(P_VALUE, pValue);
         }
         if (qValue != Float.NEGATIVE_INFINITY) {
-            ucscBedSym.setProperty("qValue", qValue);
+            narrowPeakSym.setProperty(Q_VALUE, qValue);
         }
-        dataModelContent.add(ucscBedSym);
+        dataModelContent.add(narrowPeakSym);
         return true;
     }
 

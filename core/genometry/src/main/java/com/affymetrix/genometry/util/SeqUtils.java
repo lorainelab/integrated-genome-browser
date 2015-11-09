@@ -21,6 +21,7 @@ import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.MultiTierSymWrapper;
 import com.affymetrix.genometry.symmetry.impl.MutableSingletonSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.NarrowPeakSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleDerivedSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
@@ -39,15 +40,13 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Holds many static methods for manipulating BioSeqs, SeqSpans, and
- * SeqSymmetries
+ * Holds many static methods for manipulating BioSeqs, SeqSpans, and SeqSymmetries
  *
  */
 public class SeqUtils {
 
     /**
-     * Get depth of the symmetry. (Longest number of recursive calls to
-     * getChild() required to reach deepest descendant)
+     * Get depth of the symmetry. (Longest number of recursive calls to getChild() required to reach deepest descendant)
      */
     public static int getDepth(SeqSymmetry sym) {
         return getDepth(sym, 1);
@@ -88,8 +87,8 @@ public class SeqUtils {
     }
 
     /**
-     * Compares two spans, and returns true if they both refer to the same
-     * BioSeq and their starts and equal and their ends are equal.
+     * Compares two spans, and returns true if they both refer to the same BioSeq and their starts and equal and their
+     * ends are equal.
      */
     public static boolean spansEqual(SeqSpan spanA, SeqSpan spanB) {
         return (spanA != null
@@ -205,8 +204,8 @@ public class SeqUtils {
     }
 
     /**
-     * Like a one-sided xor. Creates a SeqSymmetry that contains children for
-     * regions covered by symA that are not covered by symB.
+     * Like a one-sided xor. Creates a SeqSymmetry that contains children for regions covered by symA that are not
+     * covered by symB.
      */
     public static SeqSymmetry exclusive(SeqSymmetry symA, SeqSymmetry symB, BioSeq seq) {
         SeqSymmetry xorSym = xor(symA, symB, seq);
@@ -424,8 +423,8 @@ public class SeqUtils {
     }
 
     /**
-     * Merges spans into a SeqSymmetry. now ensures that spanMerger returns a
-     * resultSym whose children are sorted relative to span.getBioSeq()
+     * Merges spans into a SeqSymmetry. now ensures that spanMerger returns a resultSym whose children are sorted
+     * relative to span.getBioSeq()
      */
     private static void spanMerger(List<SeqSpan> spans, MutableSeqSymmetry resultSym) {
         int min = Integer.MAX_VALUE;
@@ -499,8 +498,7 @@ public class SeqUtils {
     }
 
     /**
-     * Returns the first BioSeq in the SeqSymmetry that is NOT equivalent to the
-     * given BioSeq. (Compared using '=='.)
+     * Returns the first BioSeq in the SeqSymmetry that is NOT equivalent to the given BioSeq. (Compared using '=='.)
      */
     public static BioSeq getOtherSeq(SeqSymmetry sym, BioSeq seq) {
         int spanCount = sym.getSpanCount();
@@ -514,16 +512,14 @@ public class SeqUtils {
     }
 
     /**
-     * More general version of transformSymmetry(resultSet, SeqSymmetry[] syms,
-     * BioSeq[] seqs). In this version, try and calculate resultSet span(s) for
-     * all BioSeqs encountered in syms, not just the BioSeqs found in an input
-     * seqs List.
+     * More general version of transformSymmetry(resultSet, SeqSymmetry[] syms, BioSeq[] seqs). In this version, try and
+     * calculate resultSet span(s) for all BioSeqs encountered in syms, not just the BioSeqs found in an input seqs
+     * List.
      *
-     * WARNING!!! GAH 5-21-2003 There seems to be a bug somewhere in transform
-     * methods that ends up sometimes getting strand orientation of spans in
-     * non-leaf symmetries wrong. This can be fixed by calling trim(resultSym)
-     * after the transformation. But _really_ need to fix this in the transform
-     * methods themselves rather than have a post-operative fix!
+     * WARNING!!! GAH 5-21-2003 There seems to be a bug somewhere in transform methods that ends up sometimes getting
+     * strand orientation of spans in non-leaf symmetries wrong. This can be fixed by calling trim(resultSym) after the
+     * transformation. But _really_ need to fix this in the transform methods themselves rather than have a
+     * post-operative fix!
      */
     public static boolean transformSymmetry(MutableSeqSymmetry resultSet, SeqSymmetry[] symPath) {
         for (SeqSymmetry sym : symPath) {
@@ -535,16 +531,14 @@ public class SeqUtils {
     }
 
     /**
-     * More general version of transformSymmetry(resultSet, src2dstSym, srcSeq,
-     * dstSeq, rootSeq, src2dst_recurse). in this version, try and calculate
-     * resultSet span(s) for all BioSeqs encountered in syms, not just rolling
-     * back to rootSeq and forward to dstSeq
+     * More general version of transformSymmetry(resultSet, src2dstSym, srcSeq, dstSeq, rootSeq, src2dst_recurse). in
+     * this version, try and calculate resultSet span(s) for all BioSeqs encountered in syms, not just rolling back to
+     * rootSeq and forward to dstSeq
      *
-     * WARNING!!! GAH 5-21-2003 There seems to be a bug somewhere in transform
-     * methods that ends up sometimes getting strand orientation of spans in
-     * non-leaf symmetries wrong. This can be fixed by calling trim(resultSym)
-     * after the transformation. But _really_ need to fix this in the transform
-     * methods themselves rather than have a post-operative fix!
+     * WARNING!!! GAH 5-21-2003 There seems to be a bug somewhere in transform methods that ends up sometimes getting
+     * strand orientation of spans in non-leaf symmetries wrong. This can be fixed by calling trim(resultSym) after the
+     * transformation. But _really_ need to fix this in the transform methods themselves rather than have a
+     * post-operative fix!
      */
     public static boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqSymmetry mapSym,
             boolean src2dst_recurse) {
@@ -558,7 +552,7 @@ public class SeqUtils {
             addParentSpans(resultSym, mapSym);
             return true;
         }
-		// is resultSym leaf?  yes
+        // is resultSym leaf?  yes
 
         // is mapSym leaf?  no
         if (src2dst_recurse
@@ -811,15 +805,13 @@ public class SeqUtils {
     }
 
     /**
-     * Given a source SeqSpan srcSpan (which refers to a BioSeq srcSeq), a
-     * destination BioSeq dstSeq, and a SeqSymmetry sym that maps a span on
-     * srcSeq to a span on dstSeq, calculate and return the SeqSpan dstSpan on
-     * BioSeq dstSeq that corresponds to the SeqSpan srcSpan on BioSeq srcSeq.
+     * Given a source SeqSpan srcSpan (which refers to a BioSeq srcSeq), a destination BioSeq dstSeq, and a SeqSymmetry
+     * sym that maps a span on srcSeq to a span on dstSeq, calculate and return the SeqSpan dstSpan on BioSeq dstSeq
+     * that corresponds to the SeqSpan srcSpan on BioSeq srcSeq.
      *
-     * Assumptions: no splitting of one span into multiple spans -- this is
-     * handled by transformSymmetry() methods never more than one SeqSpan with a
-     * given BioSeq in the same SeqSymmetry (no BioSeq duplications in
-     * SeqSymmetry) linearity
+     * Assumptions: no splitting of one span into multiple spans -- this is handled by transformSymmetry() methods never
+     * more than one SeqSpan with a given BioSeq in the same SeqSymmetry (no BioSeq duplications in SeqSymmetry)
+     * linearity
      *
      * note that srcSpan and dstSpan may well be the same object...
      */
@@ -870,22 +862,19 @@ public class SeqUtils {
     }
 
     /**
-     * Return true if input spans overlap; orientation of spans is ignored.
-     * WARNING: assumes both are on same sequence
+     * Return true if input spans overlap; orientation of spans is ignored. WARNING: assumes both are on same sequence
      *
-     * GAH 6-30-2003 changed overlap() to call strictOverlap() instead of
-     * looseOverlap() Should fix many issues with intersection(), etc.
-     * generating 0-length overlaps... And hopefully won't break anything! (I
-     * don't think there's anything relying on overlap() including abutment
+     * GAH 6-30-2003 changed overlap() to call strictOverlap() instead of looseOverlap() Should fix many issues with
+     * intersection(), etc. generating 0-length overlaps... And hopefully won't break anything! (I don't think there's
+     * anything relying on overlap() including abutment
      */
     public static boolean overlap(SeqSpan spanA, SeqSpan spanB) {
         return strictOverlap(spanA, spanB);
     }
 
     /**
-     * Return true if input spans overlap; orientation of spans is ignored.
-     * Loose means that abutment is considered overlap. WARNING: assumes both
-     * are on same sequence
+     * Return true if input spans overlap; orientation of spans is ignored. Loose means that abutment is considered
+     * overlap. WARNING: assumes both are on same sequence
      */
     public static boolean looseOverlap(SeqSpan spanA, SeqSpan spanB) {
         // should (overlap() should also check to make sure they are the same seq?)
@@ -899,9 +888,8 @@ public class SeqUtils {
     }
 
     /**
-     * Exactly like looseOverlap(spanA, spanB), except exact abutment is not
-     * considered overlap. (&gt; and &lt; rather than &gt;= and &lt;= used for
-     * comparisons...).
+     * Exactly like looseOverlap(spanA, spanB), except exact abutment is not considered overlap. (&gt; and &lt; rather
+     * than &gt;= and &lt;= used for comparisons...).
      */
     private static boolean strictOverlap(SeqSpan spanA, SeqSpan spanB) {
         double AMin = spanA.getMinDouble();
@@ -914,9 +902,8 @@ public class SeqUtils {
     }
 
     /**
-     * Returns true if the extent of spanB is contained within spanA. Note that
-     * this method currently does _not_ check to ensure that the SeqSpans refer
-     * to the same BioSeq.
+     * Returns true if the extent of spanB is contained within spanA. Note that this method currently does _not_ check
+     * to ensure that the SeqSpans refer to the same BioSeq.
      */
     public static boolean contains(SeqSpan spanA, SeqSpan spanB) {
         return ((spanA.getMinDouble() <= spanB.getMinDouble())
@@ -926,13 +913,11 @@ public class SeqUtils {
     /**
      * Return SeqSpan that is the intersection of spanA and spanB.
      *
-     * returns null if spans aren't on same seq returns null if spans have no
-     * intersection (don't overlap) orientation of returned SeqSpan: forward if
-     * both spans are forward reverse if both spans are reverse (currently) same
+     * returns null if spans aren't on same seq returns null if spans have no intersection (don't overlap) orientation
+     * of returned SeqSpan: forward if both spans are forward reverse if both spans are reverse (currently) same
      * orientation as spanA, if spanA and spanB are in different orientations
      *
-     * Performance issues: new MutableSeqSpan creation -- to avoid, use
-     * intersection(span, span, mutspan) instead
+     * Performance issues: new MutableSeqSpan creation -- to avoid, use intersection(span, span, mutspan) instead
      *
      */
     private static SeqSpan intersection(SeqSpan spanA, SeqSpan spanB) {
@@ -947,12 +932,10 @@ public class SeqUtils {
     }
 
     /**
-     * Returns the resulting span in dstSpan, and returns true if attempt to
-     * calculate intersection was a success (if couldn't calculate intersection,
-     * returns false, and dstSpan is unmodified) orientation of returned
-     * SeqSpan: forward if both spans are forward reverse if both spans are
-     * reverse (currently) same orientation as spanA, if spanA and spanB are in
-     * different orientations
+     * Returns the resulting span in dstSpan, and returns true if attempt to calculate intersection was a success (if
+     * couldn't calculate intersection, returns false, and dstSpan is unmodified) orientation of returned SeqSpan:
+     * forward if both spans are forward reverse if both spans are reverse (currently) same orientation as spanA, if
+     * spanA and spanB are in different orientations
      */
     public static boolean intersection(SeqSpan spanA, SeqSpan spanB, MutableSeqSpan dstSpan) {
         if (null == spanA || null == spanB) {
@@ -974,8 +957,7 @@ public class SeqUtils {
         } else if ((!AForward) && (!BForward)) {
             start = Math.min(spanA.getStartDouble(), spanB.getStartDouble());
             end = Math.max(spanA.getEndDouble(), spanB.getEndDouble());
-        } else {
-            // for now, give priority to spanA...
+        } else // for now, give priority to spanA...
             if (AForward) {
                 start = Math.max(spanA.getStartDouble(), spanB.getEndDouble());
                 end = Math.min(spanA.getEndDouble(), spanB.getStartDouble());
@@ -983,7 +965,6 @@ public class SeqUtils {
                 start = Math.min(spanA.getStartDouble(), spanB.getEndDouble());
                 end = Math.max(spanA.getEndDouble(), spanB.getStartDouble());
             }
-        }
         dstSpan.setStartDouble(start);
         dstSpan.setEndDouble(end);
         dstSpan.setBioSeq(spanA.getBioSeq());
@@ -991,10 +972,9 @@ public class SeqUtils {
     }
 
     /**
-     * Variant of making union of two spans, this one taking an additional
-     * boolean argument specifying whether to use strictOverlap() or
-     * looseOverlap(). In other words, specifying whether "abutting but not
-     * overlapping" spans be merged.
+     * Variant of making union of two spans, this one taking an additional boolean argument specifying whether to use
+     * strictOverlap() or looseOverlap(). In other words, specifying whether "abutting but not overlapping" spans be
+     * merged.
      */
     public static boolean union(SeqSpan spanA, SeqSpan spanB, MutableSeqSpan dstSpan,
             boolean use_strict_overlap) {
@@ -1024,22 +1004,18 @@ public class SeqUtils {
             if (!strictOverlap(AMin, AMax, BMin, BMax)) {
                 return false;
             }
-        } else {
-            if (!looseOverlap(AMin, AMax, BMin, BMax)) {
-                return false;
-            }
+        } else if (!looseOverlap(AMin, AMax, BMin, BMax)) {
+            return false;
         }
         encompass(AForward, AMin, AMax, BMin, BMax, spanA.getBioSeq(), dstSpan);
         return true;
     }
 
     /**
-     * More efficient method to retrieve "encompass" of two spans. returns the
-     * resulting span in dstSpan, and returns true if attempt to calculate
-     * encompass was a success (if couldn't calculate encompass, returns false,
-     * and dstSpan is unmodified) orientation of returned SeqSpan: forward if
-     * both spans are forward reverse if both spans are reverse (currently) same
-     * orientation as spanA, if spanA and spanB are in different orientations
+     * More efficient method to retrieve "encompass" of two spans. returns the resulting span in dstSpan, and returns
+     * true if attempt to calculate encompass was a success (if couldn't calculate encompass, returns false, and dstSpan
+     * is unmodified) orientation of returned SeqSpan: forward if both spans are forward reverse if both spans are
+     * reverse (currently) same orientation as spanA, if spanA and spanB are in different orientations
      */
     public static boolean encompass(SeqSpan spanA, SeqSpan spanB, MutableSeqSpan dstSpan) {
         if (spanA.getBioSeq() != spanB.getBioSeq()) {
@@ -1054,8 +1030,7 @@ public class SeqUtils {
         } else if ((!AForward) && (!BForward)) {
             start = Math.max(spanA.getStartDouble(), spanB.getStartDouble());
             end = Math.min(spanA.getEndDouble(), spanB.getEndDouble());
-        } else {
-            // for now, give priority to spanA...
+        } else // for now, give priority to spanA...
             if (AForward) {
                 start = Math.min(spanA.getStartDouble(), spanB.getEndDouble());
                 end = Math.max(spanA.getEndDouble(), spanB.getStartDouble());
@@ -1063,7 +1038,6 @@ public class SeqUtils {
                 start = Math.max(spanA.getStartDouble(), spanB.getEndDouble());
                 end = Math.min(spanA.getEndDouble(), spanB.getStartDouble());
             }
-        }
         dstSpan.setStartDouble(start);
         dstSpan.setEndDouble(end);
         dstSpan.setBioSeq(spanA.getBioSeq());
@@ -1225,14 +1199,12 @@ public class SeqUtils {
     /**
      * Find min and max of annotations along BioSeq aseq.
      * <p>
-     * takes a boolean argument for whether to excludes GraphSym bounds (actual
-     * bounds of GraphSyms are currently problematic, but if (!exclude_graphs)
-     * then this method uses the first and last point in graph to determine
-     * graph bounds, and assumes that graph x coords are in order)
+     * takes a boolean argument for whether to excludes GraphSym bounds (actual bounds of GraphSyms are currently
+     * problematic, but if (!exclude_graphs) then this method uses the first and last point in graph to determine graph
+     * bounds, and assumes that graph x coords are in order)
      * <p>
-     * This method is currently somewhat problematic, since it does not descend
-     * into BioSeqs that aseq might be composed of to factor in bounds of
-     * annotations on those sequences
+     * This method is currently somewhat problematic, since it does not descend into BioSeqs that aseq might be composed
+     * of to factor in bounds of annotations on those sequences
      *
      * Synchronized to keep aseq non-null
      */
@@ -1273,9 +1245,8 @@ public class SeqUtils {
     }
 
     /**
-     * Returns the minimum and maximum positions of all included annotations.
-     * Necessary because getMin() and getMax() do not give this information for
-     * this type of SeqSymmetry.
+     * Returns the minimum and maximum positions of all included annotations. Necessary because getMin() and getMax() do
+     * not give this information for this type of SeqSymmetry.
      *
      * @param seq consider annotations only on this seq
      * @param min an initial minimum value.
@@ -1405,9 +1376,8 @@ public class SeqUtils {
     }
 
     /**
-     * Return only the symmetries that have some overlap with this span.
-     * Chromosome is not an issue; everything returned is on the same
-     * chromosome.
+     * Return only the symmetries that have some overlap with this span. Chromosome is not an issue; everything returned
+     * is on the same chromosome.
      *
      * @param overlapSpan
      * @param symList
@@ -1477,7 +1447,7 @@ public class SeqUtils {
         return (sym instanceof BAMSym
                 || BAMSym.isBamChildType(sym));
     }
-    
+
     public static boolean isBamInsSym(SeqSymmetry sym) {
         return BAMSym.isBamInsChildType(sym);
     }
@@ -1491,6 +1461,10 @@ public class SeqUtils {
                 || sym instanceof UcscBedDetailSym
                 || UcscBedSym.isBedChildSingletonSeqSymClass(sym)
                 || sym instanceof CdsSeqSymmetry);
+    }
+
+    public static boolean isNarrowPeakSym(SeqSymmetry sym) {
+        return sym instanceof NarrowPeakSym;
     }
 
     public static boolean isLinkPSL(SeqSymmetry sym) {

@@ -187,9 +187,7 @@ public abstract class SymLoader {
             CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
             if (cacheStatus.isDataExists()) {
                 InputStream is = GeneralUtils.unzipStream(new FileInputStream(cacheStatus.getData()), cacheStatus.getUrl(), new StringBuffer());
-                byte[] read = new byte[100];
-                is.read(read, 0, 1000);
-                logger.info("read: {}", new String(read));
+              
             }
 //                ExternalSortConfiguration conf = new ExternalSortConfiguration();
 //                conf.setNumHeaderRows(0);

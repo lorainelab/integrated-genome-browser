@@ -1199,9 +1199,20 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
             double coordWidth = Math.abs(Math.max(selectStart, min) - Math.min(selectEnd, max));
             double pixelWidth = seqmap.getView().getPixelBox().width;
             double pixelPerCoord = pixelWidth / coordWidth;
+            boolean scrollWhenZoom = pixelPerCoord > seqmap.getMaxZoom(NeoAbstractWidget.X);
             pixelPerCoord = Math.min(pixelPerCoord, seqmap.getMaxZoom(NeoAbstractWidget.X));
             seqmap.zoom(NeoAbstractWidget.X, pixelPerCoord);
-            seqmap.scroll(NeoAbstractWidget.X, Math.max(selectStart, min));
+            if (scrollWhenZoom) {
+                double seqmapWidth = seqmap.getView().getCoordBox().width;
+                double padding = seqmapWidth - coordWidth;
+                double scrollPoint = Math.max(selectStart, min) - padding / 2;
+                if (scrollPoint < 0) {
+                    scrollPoint = 0;
+                }
+                seqmap.scroll(NeoAbstractWidget.X, scrollPoint);
+            } else {
+                seqmap.scroll(NeoAbstractWidget.X, Math.max(selectStart, min));
+            }
             seqmap.updateWidget();
             draggedToZoom = false;
         }

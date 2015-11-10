@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,13 +19,18 @@ public class JavaFxFileChooser {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaFxFileChooser.class);
     private static final Object LOCK = new Object();
-    private Optional<String> title = Optional.empty();
-    private Optional<String> defaultFileName = Optional.empty();
-    private Optional<File> context = Optional.empty();
+    private Optional<String> title;
+    private Optional<String> defaultFileName;
+    private Optional<File> context;
+    private Optional<ExtensionFilter> extensionFilter;
 
     private JavaFxFileChooser() {
+        title = Optional.empty();
+        defaultFileName = Optional.empty();
+        context = Optional.empty();
+        extensionFilter = Optional.empty();
     }
-    
+
     public static JavaFxFileChooser build() {
         return new JavaFxFileChooser();
     }
@@ -41,6 +47,11 @@ public class JavaFxFileChooser {
 
     public JavaFxFileChooser setContext(File file) {
         this.context = Optional.ofNullable(file);
+        return this;
+    }
+
+    public JavaFxFileChooser setFileExtensionFilter(ExtensionFilter extensionFilter) {
+        this.extensionFilter = Optional.ofNullable(extensionFilter);
         return this;
     }
 
@@ -83,6 +94,9 @@ public class JavaFxFileChooser {
         }
         if (context.isPresent()) {
             fileChooser.setInitialDirectory(context.get());
+        }
+        if (extensionFilter.isPresent()) {
+            fileChooser.getExtensionFilters().add(extensionFilter.get());
         }
         return fileChooser;
     }

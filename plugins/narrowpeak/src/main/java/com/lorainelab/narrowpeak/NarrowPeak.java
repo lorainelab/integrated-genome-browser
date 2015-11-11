@@ -146,6 +146,10 @@ public class NarrowPeak extends SymLoader {
         boolean isForwardStrand;
         if (fields.size() >= 4) {
             name = fields.get(3);
+            if (name.equals(".")) {
+                //set to empty String
+                name = "";
+            }
         }
         float score = Float.NEGATIVE_INFINITY;
         if (fields.size() >= 5) {

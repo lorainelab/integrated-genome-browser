@@ -17,6 +17,7 @@ import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.SeqUtils;
+import com.lorainelab.externalsort.api.ComparatorMetadata;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -108,6 +109,24 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
 
     @Override
     public void init() throws Exception {
+        comparatorMetadata = new ComparatorMetadata();
+
+            //Define multisort
+        //First sort
+        comparatorMetadata.getPreparers().add(s -> {
+            String[] sSplit = s.split("\\s+");
+            return sSplit[13];
+        });
+        //Second sort
+        comparatorMetadata.getPreparers().add(s -> {
+            String[] sSplit = s.split("\\s+");
+            return Long.parseLong(sSplit[15]);
+        });
+        //Third sort
+        comparatorMetadata.getPreparers().add(s -> {
+            String[] sSplit = s.split("\\s+");
+            return Long.parseLong(sSplit[16]);
+        });
         if (this.isInitialized) {
             return;
         }

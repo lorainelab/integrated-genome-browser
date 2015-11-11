@@ -11,6 +11,7 @@ import com.affymetrix.genometry.symloader.BedUtils;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
+import com.google.code.externalsorting.ExternalMergeSort;
 import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
 import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
 import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
@@ -59,6 +60,7 @@ public class BedParserTest {
         testFileResult(result);
 
         BedSymloader bed = new BedSymloader(new File(filename).toURI(), Optional.empty(), filename, genomeVersion);
+        bed.setExternalSortService(new ExternalMergeSort());
         result = bed.getGenome();
         testFileResult(result);
     }
@@ -117,6 +119,7 @@ public class BedParserTest {
         File tempFile = createFileFromString(string);
 
         BedSymloader bed = new BedSymloader(tempFile.toURI(), Optional.empty(), tempFile.getName(), genomeVersion);
+        bed.setExternalSortService(new ExternalMergeSort());
         result = bed.getGenome();
         testStringResult(result);
     }
@@ -300,6 +303,7 @@ public class BedParserTest {
         File file = createFileFromString(string);
 
         BedSymloader bed = new BedSymloader(file.toURI(), Optional.empty(), file.getName(), genomeVersion);
+        bed.setExternalSortService(new ExternalMergeSort());
         syms = bed.getGenome();
 
         testWrite(syms, seq, string);
@@ -341,6 +345,7 @@ public class BedParserTest {
         File file = createFileFromString(string);
 
         BedSymloader bed = new BedSymloader(file.toURI(), Optional.empty(), file.getName(), genomeVersion);
+        bed.setExternalSortService(new ExternalMergeSort());
         syms = bed.getGenome();
 
         testWrite(syms, seq, string);
@@ -391,7 +396,7 @@ public class BedParserTest {
         BioSeq seq = genomeVersion.addSeq("chr2L", 1965498);
 
         BedSymloader bed = new BedSymloader(new File(filename).toURI(), Optional.empty(), filename, genomeVersion);
-
+        bed.setExternalSortService(new ExternalMergeSort());
         List<BioSeq> allSeq = bed.getChromosomeList();
         assertEquals(4, allSeq.size());
 

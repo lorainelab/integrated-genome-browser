@@ -21,6 +21,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
+import com.lorainelab.externalsort.api.ComparatorMetadata;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -83,6 +84,25 @@ public class BedSymloader extends SymLoader implements LineProcessor {
 
     @Override
     public void init() throws Exception {
+        comparatorMetadata = new ComparatorMetadata();
+
+        //Define multisort
+        //First sort
+        comparatorMetadata.getPreparers().add(s -> {
+            String[] sSplit = s.split("\\s+");
+            return sSplit[0];
+        });
+        //Second sort
+        comparatorMetadata.getPreparers().add(s -> {
+            String[] sSplit = s.split("\\s+");
+            return Long.parseLong(sSplit[1]);
+        });
+        //Third sort
+        comparatorMetadata.getPreparers().add(s -> {
+            String[] sSplit = s.split("\\s+");
+            return Long.parseLong(sSplit[2]);
+        });
+
         if (this.isInitialized) {
             return;
         }

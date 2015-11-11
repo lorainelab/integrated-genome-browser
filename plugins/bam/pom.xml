@@ -48,6 +48,11 @@
         </dependency>
         <dependency>
             <groupId>com.lorainelab</groupId>
+            <artifactId>external-sort</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
             <artifactId>synonym-lookup</artifactId>
             <scope>test</scope>
         </dependency>

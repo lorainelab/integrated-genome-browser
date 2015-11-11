@@ -19,6 +19,7 @@ public class ExternalSortConfiguration {
     private boolean useGzipOnTmpFiles;
 
     public ExternalSortConfiguration() {
+        numHeaderRows = 0;
         charset = Charset.defaultCharset();
         tmpDir = Files.createTempDir();
         isDistinctValues = false;

@@ -3,10 +3,10 @@ package com.lorainelab.bam;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.lorainelab.bam.SAM;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.google.code.externalsorting.ExternalMergeSort;
 import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
 import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
 import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
@@ -45,6 +45,7 @@ public class SAMParserTest {
         BioSeq seq = group.addSeq("chr1", 197069962);
 
         SymLoader symL = new SAM(new File(filename).toURI(), "featureName", group);
+        symL.setExternalSortService(new ExternalMergeSort());
         assertNotNull(symL);
 
         List<? extends SeqSymmetry> result = symL.getChromosome(seq);

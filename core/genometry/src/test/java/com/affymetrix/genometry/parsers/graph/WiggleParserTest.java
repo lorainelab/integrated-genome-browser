@@ -14,6 +14,7 @@ import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.symloader.Wiggle;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.google.code.externalsorting.ExternalMergeSort;
 import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
 import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
 import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
@@ -105,6 +106,7 @@ public class WiggleParserTest {
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         Wiggle wiggle = new Wiggle(url.toURI(), Optional.empty(), filename, genomeVersion);
+        wiggle.setExternalSortService(new ExternalMergeSort());
         BioSeq aseq = genomeVersion.addSeq("chr19", 59310300);
 
         List<GraphSym> results = wiggle.getGenome();
@@ -196,7 +198,7 @@ public class WiggleParserTest {
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         Wiggle wiggle = new Wiggle(url.toURI(), Optional.empty(), filename, genomeVersion);
-
+        wiggle.setExternalSortService(new ExternalMergeSort());
         List<GraphSym> results = wiggle.getGenome();
 
         testResults2(url.getFile(), results, true);

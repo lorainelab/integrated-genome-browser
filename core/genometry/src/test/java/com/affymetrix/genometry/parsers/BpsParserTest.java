@@ -61,7 +61,7 @@ public class BpsParserTest {
         }
 
         try {
-            String filename = "test1.bps";
+            String filename = "data/bps/test1.bps";
             filename = BpsParserTest.class.getClassLoader().getResource(filename).getFile();
             istr = new FileInputStream(filename);
             assertNotNull(istr);

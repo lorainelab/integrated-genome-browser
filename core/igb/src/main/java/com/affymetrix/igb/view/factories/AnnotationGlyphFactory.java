@@ -64,8 +64,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @version $Id: AnnotationGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman
- * $
+ * @version $Id: AnnotationGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman $
  */
 @Component(name = AnnotationGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
 public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
@@ -79,8 +78,8 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         COMMA_FORMAT.setDecimalSeparatorAlwaysShown(false);
     }
     /**
-     * Set to true if the we can assume the container SeqSymmetry being passed
-     * to addLeafsToTier has all its leaf nodes at the same depth from the top.
+     * Set to true if the we can assume the container SeqSymmetry being passed to addLeafsToTier has all its leaf nodes
+     * at the same depth from the top.
      */
     private static final Class<?> UNLABELLED_PARENT_GLYPH_CLASS = (new EfficientLineContGlyph()).getClass();
     private static final Class<?> CHILD_GLYPH_CLASS = (new EfficientOutlinedRectGlyph()).getClass();
@@ -93,10 +92,8 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
     private SeqSpan symSpan;
     private boolean isValidSymSpan;
     /**
-     * @param drawChildren Whether to draw this sym as a parent and also draw
-     * its children, or to just draw the sym itself (using the child glyph
-     * style). If this is set to true, then the symmetry must have a depth of at
-     * least 2.
+     * @param drawChildren Whether to draw this sym as a parent and also draw its children, or to just draw the sym
+     * itself (using the child glyph style). If this is set to true, then the symmetry must have a depth of at least 2.
      */
     boolean drawChildren;
     private Track track;
@@ -444,7 +441,9 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                     cds_glyph.setColor(childColor); // CDS same color as exon
                     tierGlyph.setDataModelFromOriginalSym(cds_glyph, cdsSym2);
                     pglyph.addChild(cds_glyph);
-                    codon_glyph_processor.processGlyph(cds_glyph, cdsSym2, annotSeq);
+                    if (cds_span.getLength() > 2) { // sanity check, narrowpeak uses cds for peak and should not have any code glyph child
+                        codon_glyph_processor.processGlyph(cds_glyph, cdsSym2, annotSeq);
+                    }
                 }
             }
         } catch (InstantiationException ex) {

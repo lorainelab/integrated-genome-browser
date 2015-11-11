@@ -1,5 +1,6 @@
 package com.affymetrix.igb.window.service.def;
 
+import com.lorainelab.igb.frame.api.FrameManagerService;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -8,23 +9,33 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JTabbedTrayPane that is on the right
  */
 public class JTabbedTrayRightPane extends JTabbedTrayHorizontalPane {
 
+    private static final Logger logger = LoggerFactory.getLogger(JTabbedTrayRightPane.class);
+
     private static final long serialVersionUID = 1L;
-    private static final double RIGHT_DIVIDER_PROPORTIONAL_LOCATION = 0.20;
+    private static final double RIGHT_DIVIDER_PROPORTIONAL_LOCATION = 0.80;
+    private FrameManagerService frameManagerService;
 
     public JTabbedTrayRightPane(JComponent _baseComponent) {
-        super("Main_rightPane", TabState.COMPONENT_STATE_RIGHT_TAB, _baseComponent, JTabbedPane.RIGHT, JSplitPane.HORIZONTAL_SPLIT, 1.0 - RIGHT_DIVIDER_PROPORTIONAL_LOCATION);
+        super("Main_rightPane", TabState.COMPONENT_STATE_RIGHT_TAB, _baseComponent, JTabbedPane.RIGHT, JSplitPane.HORIZONTAL_SPLIT, RIGHT_DIVIDER_PROPORTIONAL_LOCATION);
         setLeftComponent(_baseComponent);
+    }
+
+    JTabbedTrayRightPane(FrameManagerService frameManagerService, JTabbedTrayPane left_pane) {
+        this(left_pane);
+        this.frameManagerService = frameManagerService;
     }
 
     @Override
     protected int getFullSize() {
-        return getWidth();
+        return frameManagerService.getIgbMainFrame().getBounds().width;
     }
 
     private int getTabKnobWidth(Component tabComponent) {

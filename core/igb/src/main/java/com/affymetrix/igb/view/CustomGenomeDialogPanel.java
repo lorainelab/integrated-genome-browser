@@ -2,22 +2,23 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.genometry.util.UniFileFilter;
 import com.affymetrix.igb.shared.OpenURIAction;
 import static com.affymetrix.igb.shared.OpenURIAction.CUSTOM_GENOME_COUNTER;
 import static com.affymetrix.igb.shared.OpenURIAction.UNKNOWN_GENOME_PREFIX;
 import static com.affymetrix.igb.shared.OpenURIAction.UNKNOWN_SPECIES_PREFIX;
-import com.affymetrix.igb.swing.JRPFileChooser;
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
+import com.lorainelab.igb.javafx.JavaFxFileChooser;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.HierarchyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
-import javax.swing.JFileChooser;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javafx.stage.FileChooser;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
@@ -87,26 +88,20 @@ public class CustomGenomeDialogPanel extends JPanel {
 
     private void refSeqBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {
         FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
-        JRPFileChooser chooser = new JRPFileChooser("newGenome", fileTracker.getFile());
-        Set<String> filters = Sets.newHashSet();
-        OpenURIAction.getSupportedFiles(FileTypeCategory.Sequence).stream().forEach(filter -> {
-            chooser.addChoosableFileFilter(filter);
-            filters.addAll(filter.getExtensions());
-        });
-        chooser.setAcceptAllFileFilterUsed(false);
-        UniFileFilter allFilter = new UniFileFilter(filters, "All Supported Files", true);
-        chooser.addChoosableFileFilter(allFilter);
-        chooser.setFileFilter(allFilter);
-        chooser.setMultiSelectionEnabled(false);
-        int selection = chooser.showOpenDialog(this);
-        if (selection != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-        fileTracker.setFile(chooser.getCurrentDirectory());
-        File selectedRefSeqFile = chooser.getSelectedFile();
-        if (selectedRefSeqFile != null) {
+        List<String> supportedExtensions = OpenURIAction.getSupportedFiles(FileTypeCategory.Sequence).stream()
+                .flatMap(filter -> filter.getExtensions().stream())
+                .map(ext -> "*." + ext).collect(Collectors.toList());
+        final String extensionInfo = Joiner.on(",").join(supportedExtensions);
+        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Sequence file (" + extensionInfo + ")", supportedExtensions);
+        Optional<File> selectedRefSeqFile = JavaFxFileChooser.build()
+                .setContext(fileTracker.getFile())
+                .setTitle("Choose Reference Sequence File")
+                .setFileExtensionFilter(extensionFilter)
+                .retrieveFileFromFxChooser();
+        if (selectedRefSeqFile.isPresent()) {
+            fileTracker.setFile(selectedRefSeqFile.get().getParentFile());
             try {
-                refSeqTextField.setText(selectedRefSeqFile.getCanonicalPath());
+                refSeqTextField.setText(selectedRefSeqFile.get().getCanonicalPath());
                 if (Strings.isNullOrEmpty(versionTextField.getText())) {
                     versionTextField.setText("Custom Genome " + CUSTOM_GENOME_COUNTER);
                 }

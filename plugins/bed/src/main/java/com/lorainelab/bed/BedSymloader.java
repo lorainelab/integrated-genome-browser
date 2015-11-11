@@ -87,7 +87,6 @@ public class BedSymloader extends SymLoader implements LineProcessor {
             return;
         }
         if (buildIndex()) {
-            sortCreatedFiles();
             super.init();
         }
     }
@@ -125,7 +124,7 @@ public class BedSymloader extends SymLoader implements LineProcessor {
 
     private List<SeqSymmetry> parse(BioSeq seq, int min, int max) throws Exception {
         File file = chrList.get(seq);
-        boolean isSorted = chrSort.get(seq);
+        boolean isSorted = true;
         try (InputStream istr = new FileInputStream(file)) {
             return parse(istr, isSorted, min, max);
         }

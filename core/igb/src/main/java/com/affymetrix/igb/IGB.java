@@ -58,7 +58,6 @@ import com.lorainelab.igb.frame.api.FrameManagerService;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -322,9 +321,6 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         gmodel.addSeqSelectionListener(mapView);
         gmodel.addGroupSelectionListener(mapView);
         gmodel.addSymSelectionListener(mapView.getSymSelectionListener());
-        Rectangle frame_bounds = PreferenceUtils.retrieveWindowLocation("main window",
-                new Rectangle(0, 0, 1100, 720)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
-        PreferenceUtils.setWindowSize(igbMainFrame, frame_bounds);
         // Show the frame before loading the plugins.  Thus any error panel
         // that is created by an exception during plugin set-up will appear
         // on top of the main frame, not hidden by it.
@@ -412,7 +408,9 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         String version = PreferenceUtils.getStringParam(APP_NAME, null);
         if (version == null || !version.equals(APP_VERSION)) {
             PreferenceUtils.getTopNode().put(APP_NAME, APP_VERSION);
-            GeneralUtils.browse(IGBConstants.BUNDLE.getString("quickstart"));
+            if (!isDevelopmentMode()) {
+                GeneralUtils.browse(IGBConstants.BUNDLE.getString("quickstart"));
+            }
         }
     }
 

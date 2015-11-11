@@ -167,19 +167,19 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
             if (line.startsWith("track")) {
                 track_line_parser.parseTrackLine(line);
 //				ITrackStyleExtended style = TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), default_type, "bed");
-                String trackLineName = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+                String trackLineName = track_line_parser.getTrackLineContent().get(TrackLineParser.NAME);
                 if (StringUtils.isNotBlank(trackLineName)) {
                     if (type.contains(".bed")) {
                         type = type.substring(0, type.indexOf(".bed")) + " " + trackLineName;
                     } else {
                         type = type + "_" + trackLineName;
                     }
-                    track_line_parser.getCurrentTrackHash().put(TrackLineParser.NAME, type);
+                    track_line_parser.getTrackLineContent().put(TrackLineParser.NAME, type);
                 }
 //				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 //				use_item_rgb = item_rgb_string != null && item_rgb_string.length() > 0 ? "on".equalsIgnoreCase(item_rgb_string) : true;
 //				style.setColorProvider(use_item_rgb? new RGB() : null);
-                bedType = track_line_parser.getCurrentTrackHash().get("type");
+                bedType = track_line_parser.getTrackLineContent().get("type");
             } else if (line.startsWith("browser")) {
                 // currently take no action for browser lines
             } else {
@@ -378,7 +378,7 @@ public class BedParser implements AnnotationWriter, IndexWriter, Parser {
     private void annotationParsed(SeqSymmetry bedline_sym, Map<BioSeq, Map<String, SeqSymmetry>> seq2types) {
         BioSeq seq = bedline_sym.getSpan(0).getBioSeq();
         if (create_container_annot) {
-            String type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+            String type = track_line_parser.getTrackLineContent().get(TrackLineParser.NAME);
             if (type == null) {
                 type = default_type;
             }

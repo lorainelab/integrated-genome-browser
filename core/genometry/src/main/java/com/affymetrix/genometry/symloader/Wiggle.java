@@ -232,7 +232,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
             if (firstChar == 't' && line.startsWith("track")) {
                 if (previous_track_line) {
                     // finish previous graph(s) using previous track properties
-                    grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), genomeVersion, current_datamap, uri.toString(), extension));
+                    grafs.addAll(createGraphSyms(track_line_parser.getTrackLineContent(), genomeVersion, current_datamap, uri.toString(), extension));
                 }
 
                 track_line_parser.parseTrackLine(line);
@@ -268,7 +268,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
             current_start = parseData(
                     previous_track_line, line, current_format, current_data, current_datamap, current_seq_id, current_span, current_start, current_step, seq, min, max);
         }
-        grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), genomeVersion, current_datamap, uri.toString(), extension));
+        grafs.addAll(createGraphSyms(track_line_parser.getTrackLineContent(), genomeVersion, current_datamap, uri.toString(), extension));
 
         return grafs;
     }

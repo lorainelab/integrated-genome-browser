@@ -92,6 +92,7 @@
         <module>core/das2</module>
         <module>core/frameManager</module>
         <module>core/synonym-lookup</module>
+        <module>core/igb-javafx-util</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
         <module>plugins/track-operations-panel</module>
@@ -122,6 +123,9 @@
         <module>plugins/cache-api</module>
         <module>plugins/feedback</module>
 	<module>plugins/external-sort</module>
+        <module>plugins/narrowpeak</module>
+        <module>plugins/bed</module>
+        <module>plugins/bam</module>
     </modules>
 
     <profiles>
@@ -269,6 +273,12 @@
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>frameManager</artifactId>
+                 <version>${project.parent.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>igb-javafx-util</artifactId>
                  <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -477,6 +487,21 @@
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>feedback</artifactId>
+                 <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>narrowpeak</artifactId>
+                 <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>bed</artifactId>
+                 <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>bam</artifactId>
                  <version>${project.parent.version}</version>
             </dependency>
             <!--End of plugin module dependencies-->

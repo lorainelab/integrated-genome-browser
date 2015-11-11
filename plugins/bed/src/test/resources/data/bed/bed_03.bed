@@ -1,0 +1,8 @@
+track name="Bed Test File" description="Test bed file" color=255,255,0 itemRgb="on" useScore=0 url="http://www.google.com/search?q=$$"
+#
+# Note that the itemRgb is set to "On", but only some of the lines are assigned a color.
+# The default track color applies to all others.
+#
+591	chr1	0	100	CR31656-RA	0	+	0	10	1,233,124
+592	chr1	0	100	CR31653-RA	0	+	0	15	1,233,124
+595	chr1	150	200	CR31927-RA	0	+	150	155	244,190,98

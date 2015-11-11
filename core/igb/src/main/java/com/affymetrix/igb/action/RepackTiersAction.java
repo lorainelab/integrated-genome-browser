@@ -2,7 +2,6 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;

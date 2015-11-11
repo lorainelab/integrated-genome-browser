@@ -87,7 +87,7 @@ public final class WiggleParser implements GraphParser {
             if (line.startsWith("track")) {
                 if (previous_track_line) {
                     // finish previous graph(s) using previous track properties
-                    grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), seq_group, current_datamap, stream_name));
+                    grafs.addAll(createGraphSyms(track_line_parser.getTrackLineContent(), seq_group, current_datamap, stream_name));
                 }
 
                 track_line_parser.parseTrackLine(line);
@@ -131,7 +131,7 @@ public final class WiggleParser implements GraphParser {
         }
 
         grafs.addAll(createGraphSyms(
-                track_line_parser.getCurrentTrackHash(), seq_group, current_datamap, stream_name));
+                track_line_parser.getTrackLineContent(), seq_group, current_datamap, stream_name));
 
         if (annotate_seq) {
             for (GraphSym graf : grafs) {

@@ -195,7 +195,7 @@ public final class DataSet {
     }
 
     public Optional<URI> getIndex() {
-        if (getProperties().containsKey("index")) {
+        if (this.getProperties() != null && getProperties().containsKey("index")) {
             String fileIndex = getProperties().get("index");
             File file = new File(fileIndex);
             URI indexUri = file.toURI();

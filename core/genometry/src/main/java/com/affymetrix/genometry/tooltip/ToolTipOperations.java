@@ -22,6 +22,10 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.GFF_IGNORE_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.GFF_INFO_CATEGORY;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.GFF_LOCATION_CATEGORY;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.MISC_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NARROW_PEAK_CIGAR_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NARROW_PEAK_IGNORE_LIST;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NARROW_PEAK_INFO_CATEGORY;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NARROW_PEAK_LOCATION_CATEGORY;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.PSL_IGNORE_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.PSL_INFO_CATEGORY;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.PSL_LOCATION_CATEGORY;
@@ -55,6 +59,16 @@ public class ToolTipOperations {
         populateCategory(props, BED14_LOCATION_CATEGORY, categories);
         populateCategory(props, BED14_CIGAR_CATEGORY, categories);
         populateMisc(props, categories, BED14_IGNORE_LIST);
+        return categories;
+    }
+
+    public static List<ToolTipCategory> formatNarrowPeakSymTooltip(Map<String, Object> props) {
+        List<ToolTipCategory> categories = new ArrayList<>();
+
+        populateCategory(props, NARROW_PEAK_INFO_CATEGORY, categories);
+        populateCategory(props, NARROW_PEAK_LOCATION_CATEGORY, categories);
+        populateCategory(props, NARROW_PEAK_CIGAR_CATEGORY, categories);
+        populateMisc(props, categories, NARROW_PEAK_IGNORE_LIST);
         return categories;
     }
 

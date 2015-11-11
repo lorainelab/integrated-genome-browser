@@ -71,12 +71,18 @@ public class ToolTipConstants {
     public static final String FRAME = "frame";
     public static final String DIRECTION = "direction";
     public static final String REVERSE_DIRECTION = "reverse";
-    
+
     public static final String FILE_NAME = "File name";
     public static final String URL = "url";
     public static final String SERVER = "Server";
     public static final String MIN_SCORE = "min score";
     public static final String MAX_SCORE = "max score";
+
+    //NarrowPeak
+    public static final String SIGNAL_VALUE = "signalValue";
+    public static final String P_VALUE = "pValue";
+    public static final String Q_VALUE = "qValue";
+    public static final String PEAK = "peak";
 
     // BAM
     public static final List<String> BAM_INFO_GRP = Arrays.asList(NAME, ID, CHROMOSOME, START, END, LENGTH, AVERAGE_QUALITY);
@@ -85,19 +91,20 @@ public class ToolTipConstants {
             SECOND_IN_PAIR, DUPLICATE, SUPPLEMENTARY, FAILED_QC, CIGAR, VN, NH, XS, NM);
     public static final List<String> BAM_IGNORE_LIST = Arrays.asList(CL, BAM_FLAG);
     public static final List<String> BAM_PROP_LIST = new ArrayList<>();
+    private static final String BASIC__INFO_CATEGORY = "Basic Info";
 
-    public static final Map<String, List<String>> BAM_INFO_CATEGORY = ImmutableMap.of("Basic Info", BAM_INFO_GRP);
+    public static final Map<String, List<String>> BAM_INFO_CATEGORY = ImmutableMap.of(BASIC__INFO_CATEGORY, BAM_INFO_GRP);
     public static final Map<String, List<String>> BAM_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", BAM_LOC_GRP);
     public static final Map<String, List<String>> BAM_DETAILS_CATEGORY = ImmutableMap.of("Details", BAM_DETAILS_GRP);
     public static final String MISC_CATEGORY = "Misc";
-    
+
     // BAM Insertion
     public static final List<String> BAM_INS_INFO_GRP = Arrays.asList(FEATURE_TYPE, ID, CHROMOSOME, START, END, LENGTH);
     public static final List<String> BAM_INS_LOC_GRP = Arrays.asList(STRAND, RESIDUES, FORWARD);
-    
+
     public static final List<String> BAM_INS_PROP_LIST = new ArrayList<>();
 
-    public static final Map<String, List<String>> BAM_INS_INFO_CATEGORY = ImmutableMap.of("Basic Info", BAM_INS_INFO_GRP);
+    public static final Map<String, List<String>> BAM_INS_INFO_CATEGORY = ImmutableMap.of(BASIC__INFO_CATEGORY, BAM_INS_INFO_GRP);
     public static final Map<String, List<String>> BAM_INS_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", BAM_INS_LOC_GRP);
 
     // BED-14
@@ -107,9 +114,20 @@ public class ToolTipConstants {
     public static final List<String> BED14_IGNORE_LIST = Arrays.asList(CL, NAME);
     public static final List<String> BED14_PROP_LIST = new ArrayList<>();
 
-    public static final Map<String, List<String>> BED14_INFO_CATEGORY = ImmutableMap.of("Basic Info", BED14_INFO_GRP);
+    public static final Map<String, List<String>> BED14_INFO_CATEGORY = ImmutableMap.of(BASIC__INFO_CATEGORY, BED14_INFO_GRP);
     public static final Map<String, List<String>> BED14_LOCATION_CATEGORY = ImmutableMap.of("BED14 Info", BED14_LOC_GRP);
     public static final Map<String, List<String>> BED14_CIGAR_CATEGORY = ImmutableMap.of("Cigar", BED14_CIGAR_GRP);
+
+    //NarrowPeak+BroadPeak
+    public static final List<String> NARROW_PEAK_INFO_GRP = Arrays.asList(TITLE, ID, SIGNAL_VALUE, P_VALUE, Q_VALUE, PEAK);
+    public static final List<String> NARROW_PEAK_LOC_GRP = Arrays.asList(START, END, LENGTH, STRAND, CHROMOSOME);
+    public static final List<String> NARROW_PEAK_CIGAR_GRP = Arrays.asList(SCORES, RESIDUES, SHOW_MASK);
+    public static final List<String> NARROW_PEAK_IGNORE_LIST = Arrays.asList(CL, NAME, CDS_START, CDS_END);
+    public static final List<String> NARROW_PEAK_PROP_LIST = new ArrayList<>();
+
+    public static final Map<String, List<String>> NARROW_PEAK_INFO_CATEGORY = ImmutableMap.of(BASIC__INFO_CATEGORY, NARROW_PEAK_INFO_GRP);
+    public static final Map<String, List<String>> NARROW_PEAK_LOCATION_CATEGORY = ImmutableMap.of("NARROW_PEAK Info", NARROW_PEAK_LOC_GRP);
+    public static final Map<String, List<String>> NARROW_PEAK_CIGAR_CATEGORY = ImmutableMap.of("Cigar", NARROW_PEAK_CIGAR_GRP);
 
     //PSL
     public static final List<String> PSL_INFO_GRP = Arrays.asList(ID, DESCRIPTION);
@@ -117,7 +135,7 @@ public class ToolTipConstants {
     public static final List<String> PSL_IGNORE_LIST = Arrays.asList(CL, NAME);
     public static final List<String> PSL_PROP_LIST = new ArrayList<>();
 
-    public static final Map<String, List<String>> PSL_INFO_CATEGORY = ImmutableMap.of("Basic Info", PSL_INFO_GRP);
+    public static final Map<String, List<String>> PSL_INFO_CATEGORY = ImmutableMap.of(BASIC__INFO_CATEGORY, PSL_INFO_GRP);
     public static final Map<String, List<String>> PSL_LOCATION_CATEGORY = ImmutableMap.of("PSL Info", PSL_LOC_GRP);
 
     // DEFAULT
@@ -127,7 +145,7 @@ public class ToolTipConstants {
     public static final List<String> DEFAULT_IGNORE_LIST = Arrays.asList(CL);
     public static final List<String> DEFAULT_PROP_LIST = new ArrayList<>();
 
-    public static final Map<String, List<String>> DEFAULT_INFO_CATEGORY = ImmutableMap.of("Basic Info", DEFAULT_INFO_GRP);
+    public static final Map<String, List<String>> DEFAULT_INFO_CATEGORY = ImmutableMap.of(BASIC__INFO_CATEGORY, DEFAULT_INFO_GRP);
     public static final Map<String, List<String>> DEFAULT_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", DEFAULT_LOC_GRP);
     public static final Map<String, List<String>> DEFAULT_CIGAR_CATEGORY = ImmutableMap.of("Cigar", DEFAULT_CIGAR_GRP);
 
@@ -138,7 +156,7 @@ public class ToolTipConstants {
     public static final List<String> GFF_IGNORE_LIST = Arrays.asList(CL);
     public static final List<String> GFF_PROP_LIST = new ArrayList<>();
 
-    public static final Map<String, List<String>> GFF_INFO_CATEGORY = ImmutableMap.of("Basic Info", GFF_INFO_GRP);
+    public static final Map<String, List<String>> GFF_INFO_CATEGORY = ImmutableMap.of(BASIC__INFO_CATEGORY, GFF_INFO_GRP);
     public static final Map<String, List<String>> GFF_LOCATION_CATEGORY = ImmutableMap.of("GFF Info", GFF_LOC_GRP);
     public static final Map<String, List<String>> GFF_CIGAR_CATEGORY = ImmutableMap.of("Cigar", GFF_CIGAR_GRP);
 
@@ -146,13 +164,17 @@ public class ToolTipConstants {
         BAM_PROP_LIST.addAll(BAM_INFO_GRP);
         BAM_PROP_LIST.addAll(BAM_LOC_GRP);
         BAM_PROP_LIST.addAll(BAM_DETAILS_GRP);
-        
+
         BAM_INS_PROP_LIST.addAll(BAM_INS_INFO_GRP);
         BAM_INS_PROP_LIST.addAll(BAM_INS_LOC_GRP);
 
         BED14_PROP_LIST.addAll(BED14_INFO_GRP);
         BED14_PROP_LIST.addAll(BED14_LOC_GRP);
         BED14_PROP_LIST.addAll(BED14_CIGAR_GRP);
+
+        NARROW_PEAK_PROP_LIST.addAll(NARROW_PEAK_INFO_GRP);
+        NARROW_PEAK_PROP_LIST.addAll(NARROW_PEAK_LOC_GRP);
+        NARROW_PEAK_PROP_LIST.addAll(NARROW_PEAK_CIGAR_GRP);
 
         PSL_PROP_LIST.addAll(PSL_INFO_GRP);
         PSL_PROP_LIST.addAll(PSL_LOC_GRP);

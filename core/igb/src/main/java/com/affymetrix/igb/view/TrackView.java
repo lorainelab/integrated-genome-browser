@@ -233,9 +233,9 @@ public class TrackView {
 
     }
 
-    public ITrackStyleExtended getStyle(String method, DataSet feature) {
-        if (GraphSymUtils.isAGraphExtension(feature.getExtension())) {
-            GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(method, feature.getDataSetName(), feature.getExtension(), feature.getProperties());
+    public ITrackStyleExtended getStyle(String method, DataSet dataSet) {
+        if (GraphSymUtils.isAGraphExtension(dataSet.getExtension())) {
+            GraphState state = DefaultStateProvider.getGlobalStateProvider().getGraphState(method, dataSet.getDataSetName(), dataSet.getExtension(), dataSet.getProperties());
 
             if (state.getTierStyle().isFloatTier()) {
                 return null;
@@ -243,7 +243,7 @@ public class TrackView {
 
             return state.getTierStyle();
         } else {
-            return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, feature.getDataSetName(), feature.getExtension(), feature.getProperties());
+            return DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, dataSet.getDataSetName(), dataSet.getExtension(), dataSet.getProperties());
         }
     }
 

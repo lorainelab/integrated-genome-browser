@@ -5,8 +5,8 @@ import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
-import com.affymetrix.genometry.symloader.BAM;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
+import com.affymetrix.genometry.symloader.Das2SliceSupport;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -99,22 +99,27 @@ public class Das2Symloader extends SymLoader {
 
             logger.debug("Parsing {} format for DAS2 feature response", content_subtype.toUpperCase());
 
-            FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(content_subtype.toLowerCase());
+            FileTypeHandler fileTypeHandler = FileTypehandlerRegistry.getFileTypeHolder().getFileTypeHandler(content_subtype.toLowerCase());
             if (fileTypeHandler == null) {
                 logger.warn("ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {}", content_subtype);
                 return seqSyms;
             } else {
                 SymLoader symL = fileTypeHandler.createSymLoader(dataSetUri, Optional.ofNullable(indexUri), featureName, aseq.getGenomeVersion());
-                symL.setExtension(content_subtype);
-                if (symL instanceof BAM) {
+                symL.setExtension(content_subtype.toLowerCase());
+                if (symL instanceof Das2SliceSupport) {
                     File bamfile = GeneralUtils.convertStreamToFile(bis, featureName);
                     bamfile.deleteOnExit();
-                    BAM bam = new BAM(bamfile.toURI(), Optional.ofNullable(indexUri), featureName, aseq.getGenomeVersion());
-                    //for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
-                    if (dataSetUri.getScheme().equals("http")) {
-                        seqSyms = bam.parseAll(overlapSpan.getBioSeq(), dataSetUri.toString());
-                    } else {
-                        seqSyms = bam.getRegion(overlapSpan);
+                    SymLoader updatedSymLoader = fileTypeHandler.createSymLoader(bamfile.toURI(), Optional.ofNullable(indexUri), featureName, aseq.getGenomeVersion());
+                    if (updatedSymLoader instanceof Das2SliceSupport) {
+                        Das2SliceSupport sliceSupportSymL = (Das2SliceSupport) updatedSymLoader;
+                        if (dataSetUri.getScheme().equals("http")) {
+                            seqSyms = sliceSupportSymL.parseAll(overlapSpan.getBioSeq(), dataSetUri.toString());
+                        } else {
+                            seqSyms = symL.getRegion(overlapSpan);
+                        }
+                    } //for DAS/2 responses, the bam data is already trimmed so should just load it and not build an index, note bam files loaded from a url are not parsed here but elsewhere so the only http inputs are from DAS
+                    else {
+                        seqSyms = symL.getRegion(overlapSpan);
                     }
                 } else {
                     seqSyms = symL.parse(bis, false);

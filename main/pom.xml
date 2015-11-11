@@ -115,6 +115,11 @@
             <artifactId>frameManager</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>igb-javafx-util</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!--End of core module dependencies-->
         
         <!-- Start of external bundle dependencies-->
@@ -309,6 +314,26 @@
             <groupId>com.lorainelab</groupId>
             <artifactId>cache</artifactId>
             <scope>runtime</scope>  
+        </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>feedback</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>narrowpeak</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>bed</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>bam</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <!--End of plugin module dependencies--> 
         <dependency> 

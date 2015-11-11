@@ -3,7 +3,6 @@ package com.affymetrix.genometry.parsers.useq;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
-import com.affymetrix.genometry.parsers.BedParser;
 import com.affymetrix.genometry.parsers.graph.GraphParser;
 import com.affymetrix.genometry.parsers.useq.data.Position;
 import com.affymetrix.genometry.parsers.useq.data.PositionData;
@@ -26,6 +25,7 @@ import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
+import com.google.common.base.Strings;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -345,19 +345,19 @@ public final class USeqRegionParser implements GraphParser {
                 // blockCount
                 int blockCount = Integer.parseInt(tokens[4]);
                 // blockSizes
-                int[] blockSizes = BedParser.parseIntArray(tokens[5]);
+                int[] blockSizes = parseIntArray(tokens[5]);
                 if (blockCount != blockSizes.length) {
                     System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + bioSeq);
                     return;
                 }
                 // blockStarts
-                int[] blockStarts = BedParser.parseIntArray(tokens[6]);
+                int[] blockStarts = parseIntArray(tokens[6]);
                 if (blockCount != blockStarts.length) {
                     System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + bioSeq);
                     return;
                 }
-                int[] blockMins = BedParser.makeBlockMins(min, blockStarts);
-                int[] blockMaxs = BedParser.makeBlockMaxs(blockSizes, blockMins);
+                int[] blockMins = makeBlockMins(min, blockStarts);
+                int[] blockMaxs = makeBlockMaxs(blockSizes, blockMins);
                 bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, min, max, annot_name, score, forwardStrand, thick_min, thick_max, blockMins, blockMaxs);
             } //no
             else {
@@ -372,6 +372,45 @@ public final class USeqRegionParser implements GraphParser {
         if (r[r.length - 1].getStop() > bioSeq.getLength()) {
             bioSeq.setLength(r[r.length - 1].getStop());
         }
+    }
+    private static final Pattern COMMA_REGEX = Pattern.compile(",");
+
+    private static int[] parseIntArray(String intArray) {
+        if (Strings.isNullOrEmpty(intArray)) {
+            return new int[0];
+        }
+        String[] intstrings = COMMA_REGEX.split(intArray);
+        int count = intstrings.length;
+        int[] results = new int[count];
+        for (int i = 0; i < count; i++) {
+            int val = Integer.parseInt(intstrings[i]);
+            results[i] = val;
+        }
+        return results;
+    }
+
+    /**
+     * Converting blockStarts to blockMins.
+     *
+     * @param blockStarts in coords relative to min of annotation
+     * @return blockMins in coords relative to sequence that annotation is "on"
+     */
+    private static int[] makeBlockMins(int min, int[] blockStarts) {
+        int count = blockStarts.length;
+        int[] blockMins = new int[count];
+        for (int i = 0; i < count; i++) {
+            blockMins[i] = blockStarts[i] + min;
+        }
+        return blockMins;
+    }
+
+    private static int[] makeBlockMaxs(int[] blockMins, int[] blockSizes) {
+        int count = blockMins.length;
+        int[] blockMaxs = new int[count];
+        for (int i = 0; i < count; i++) {
+            blockMaxs[i] = blockMins[i] + blockSizes[i];
+        }
+        return blockMaxs;
     }
 
     private void parseRegionScoreTextData(RegionScoreTextData pd) {
@@ -394,19 +433,19 @@ public final class USeqRegionParser implements GraphParser {
                 // blockCount
                 int blockCount = Integer.parseInt(tokens[4]);
                 // blockSizes
-                int[] blockSizes = BedParser.parseIntArray(tokens[5]);
+                int[] blockSizes = parseIntArray(tokens[5]);
                 if (blockCount != blockSizes.length) {
                     System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + bioSeq);
                     return;
                 }
                 // blockStarts
-                int[] blockStarts = BedParser.parseIntArray(tokens[6]);
+                int[] blockStarts = parseIntArray(tokens[6]);
                 if (blockCount != blockStarts.length) {
                     System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + bioSeq);
                     return;
                 }
-                int[] blockMins = BedParser.makeBlockMins(min, blockStarts);
-                int[] blockMaxs = BedParser.makeBlockMaxs(blockSizes, blockMins);
+                int[] blockMins = makeBlockMins(min, blockStarts);
+                int[] blockMaxs = makeBlockMaxs(blockSizes, blockMins);
                 bedline_sym = new UcscBedSym(nameOfTrack, bioSeq, min, max, annot_name, aR.getScore(), forwardStrand, thick_min, thick_max, blockMins, blockMaxs);
             } //no
             else {

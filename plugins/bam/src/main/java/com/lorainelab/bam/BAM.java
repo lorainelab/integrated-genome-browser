@@ -1,8 +1,9 @@
-package com.affymetrix.genometry.symloader;
+package com.lorainelab.bam;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.symloader.Das2SliceSupport;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL_SCHEME;
@@ -47,7 +48,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author jnicol
  */
-public final class BAM extends XAM {
+public final class BAM extends XAM implements Das2SliceSupport {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BAM.class);
     public final static List<String> pref_list = new ArrayList<>();
@@ -255,6 +256,7 @@ public final class BAM extends XAM {
      * Returns a list of symmetries for the entire file. Good for loading DAS/2 derived data slices, skips building an
      * index.
      */
+    @Override
     public List<SeqSymmetry> parseAll(BioSeq seq, String method) {
         reader = new SAMFileReader(new File(uri));
         reader.setValidationStringency(ValidationStringency.SILENT);
@@ -418,19 +420,6 @@ public final class BAM extends XAM {
             }
         }
         throw new BamIndexNotFoundException();
-    }
-
-    public static boolean hasIndex(URI uri) throws BamIndexNotFoundException {
-        String scheme = uri.getScheme().toLowerCase();
-        if (StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)) {
-            File f = findIndexFile(new File(uri));
-            return f != null;
-        } else if (StringUtils.equals(scheme, HTTP_PROTOCOL_SCHEME) || StringUtils.equals(scheme, HTTPS_PROTOCOL_SCHEME) || StringUtils.equals(scheme, FTP_PROTOCOL_SCHEME)) {
-            String uriStr = findIndexFile(uri.toString());
-            return uriStr != null;
-        }
-
-        return false;
     }
 
     //Can be used later. Do not remove.

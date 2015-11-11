@@ -332,8 +332,8 @@ public class GFF extends UnindexedSymLoader implements LineProcessor {
             }
             if (line.startsWith("track")) {
                 track_line_parser.parseTrackLine(line);
-                TrackLineParser.createTrackStyle(track_line_parser.getCurrentTrackHash(), uri.toString(), getExtension());
-                track_name = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+                TrackLineParser.createTrackStyle(track_line_parser.getTrackLineContent(), uri.toString(), getExtension());
+                track_name = track_line_parser.getTrackLineContent().get(TrackLineParser.NAME);
                 continue;
             }
             String fields[] = line_regex.split(line);

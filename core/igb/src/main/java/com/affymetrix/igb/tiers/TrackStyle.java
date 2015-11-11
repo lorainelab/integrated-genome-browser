@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
 import com.affymetrix.genometry.general.DataSet;
@@ -7,7 +8,6 @@ import com.affymetrix.genometry.style.ITrackStyle;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.style.PropertyConstants;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.stylesheet.AssociationElement;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 import com.affymetrix.igb.stylesheet.Stylesheet;
@@ -23,12 +23,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 /**
- * When setting up a TrackStyle, want to prioritize: <ol type="A"> <li> Start
- * with default instance (from system style sheet?) <li> Modify with user-set
- * default parameters from default Preferences node. <li> Modify with
- * method-matching parameters from system style sheet. <li> Modify with user-set
- * method parameters from Preferences nodes. </ol> Not sure yet where style
- * sheets from DAS/2 servers fits in yet -- between B and C or between C and D?
+ * When setting up a TrackStyle, want to prioritize: <ol type="A"> <li> Start with default instance (from system style
+ * sheet?) <li> Modify with user-set default parameters from default Preferences node. <li> Modify with method-matching
+ * parameters from system style sheet. <li> Modify with user-set method parameters from Preferences nodes. </ol> Not
+ * sure yet where style sheets from DAS/2 servers fits in yet -- between B and C or between C and D?
  */
 public class TrackStyle implements ITrackStyleExtended, TrackConstants, PropertyConstants {
 
@@ -134,8 +132,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
      */
     private double reverseHeight = TrackConstants.default_height;
     /**
-     * for maximum depth of stacked glyphs on the reverse strand. To help with
-     * resizing.
+     * for maximum depth of stacked glyphs on the reverse strand. To help with resizing.
      */
     private int reverseMaxDepth = 0;
 
@@ -149,18 +146,15 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     /**
-     * Creates an instance associated with a case-insensitive form of the unique
-     * name.
+     * Creates an instance associated with a case-insensitive form of the unique name.
      *
      * When setting up an AnnotStyle, want to prioritize:
      *
-     * A) Start with default instance (from system stylesheet?) B) Modify with
-     * user-set default parameters from default Preferences node C) Modify with
-     * method-matching parameters from system stylesheet D) Modify with user-set
-     * method parameters from Preferences nodes
+     * A) Start with default instance (from system stylesheet?) B) Modify with user-set default parameters from default
+     * Preferences node C) Modify with method-matching parameters from system stylesheet D) Modify with user-set method
+     * parameters from Preferences nodes
      *
-     * Not sure yet where stylesheets from DAS/2 servers fits in yet -- between
-     * B/C or between C/D ?
+     * Not sure yet where stylesheets from DAS/2 servers fits in yet -- between B/C or between C/D ?
      */
     TrackStyle(String unique_ame, String track_name, String file_type, TrackStyle template, Map<String, String> properties) {
         this.method_name = unique_ame;
@@ -219,6 +213,9 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         // Hidden default file type pref. from system stylesheet
         Stylesheet stylesheet = XmlStylesheetParser.getSystemStylesheet();
         AssociationElement assel = stylesheet.getAssociationForFileType(file_type);
+        if (assel == null && file_type != null) {
+            assel = stylesheet.getAssociationForFileType(file_type.toLowerCase());
+        }
         if (assel != null) {
             PropertyMap props = assel.getPropertyMap();
             if (props != null) {
@@ -501,9 +498,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     /**
-     * Gets a name that may be shorter and more user-friendly than the unique
-     * name. The human-readable name may contain upper- and lower-case
-     * characters. The default is equivalent to the unique name.
+     * Gets a name that may be shorter and more user-friendly than the unique name. The human-readable name may contain
+     * upper- and lower-case characters. The default is equivalent to the unique name.
      */
     @Override
     public String getTrackName() {
@@ -535,8 +531,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     /**
-     * Sets whether the tier is shown or hidden; this is a non-persistent
-     * setting.
+     * Sets whether the tier is shown or hidden; this is a non-persistent setting.
      */
     @Override
     public void setShow(boolean b) {
@@ -584,9 +579,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     /**
-     * Set the maximum number of rows of annotations for this tier (both
-     * directions). Any attempt to set this less than zero will fail, the value
-     * will be truncated to fit the range.
+     * Set the maximum number of rows of annotations for this tier (both directions). Any attempt to set this less than
+     * zero will fail, the value will be truncated to fit the range.
      *
      * @param max a non-negative number.
      */
@@ -657,8 +651,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     /**
-     * Returns the field name from which the glyph labels should be taken. This
-     * will never return null, but will return "" instead.
+     * Returns the field name from which the glyph labels should be taken. This will never return null, but will return
+     * "" instead.
      */
     @Override
     public String getLabelField() {
@@ -779,8 +773,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     /**
-     * A non-persistent property. Usually set by UCSC browser "track" lines. Can
-     * return null.
+     * A non-persistent property. Usually set by UCSC browser "track" lines. Can return null.
      */
     @Override
     public String getUrl() {
@@ -801,8 +794,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     /**
-     * Returns false by default. This class is only intended for annotation
-     * tiers, not graph tiers.
+     * Returns false by default. This class is only intended for annotation tiers, not graph tiers.
      */
     @Override
     public boolean isGraphTier() {
@@ -810,8 +802,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     }
 
     /**
-     * Avoid setting to anything but false. This class is only intended for
-     * annotation tiers, not graph tiers.
+     * Avoid setting to anything but false. This class is only intended for annotation tiers, not graph tiers.
      */
     @Override
     public void setGraphTier(boolean b) {

@@ -11,8 +11,6 @@ import com.affymetrix.genometry.parsers.graph.ScoredMapParser;
 import com.affymetrix.genometry.parsers.graph.SgrParser;
 import com.affymetrix.genometry.parsers.graph.WiggleParser;
 import com.affymetrix.genometry.parsers.useq.USeqRegionParser;
-import com.affymetrix.genometry.symloader.BAM;
-import com.affymetrix.genometry.symloader.BED;
 import com.affymetrix.genometry.symloader.BNIB;
 import com.affymetrix.genometry.symloader.Bar;
 import com.affymetrix.genometry.symloader.Fasta;
@@ -22,7 +20,6 @@ import com.affymetrix.genometry.symloader.GFF3;
 import com.affymetrix.genometry.symloader.Genbank;
 import com.affymetrix.genometry.symloader.Gr;
 import com.affymetrix.genometry.symloader.PSL;
-import com.affymetrix.genometry.symloader.SAM;
 import com.affymetrix.genometry.symloader.Sgr;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderInst;
@@ -37,12 +34,12 @@ import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,95 +50,18 @@ import org.slf4j.LoggerFactory;
 public class FileTypeHolder {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileTypeHolder.class);
-    private static final FileTypeHolder instance = new FileTypeHolder();
+
     private final Map<String, FileTypeHandler> fileTypeHandlerMap;
-    private final Map<String, FileTypeHandler> dummyHandlerMap;
 
-    public static FileTypeHolder getInstance() {
-        return instance;
-    }
-
-    private FileTypeHolder() {
-        fileTypeHandlerMap = new HashMap<>();
-        dummyHandlerMap = new HashMap<>();
+    FileTypeHolder() {
+        fileTypeHandlerMap = new ConcurrentHashMap<>();
         initializeFileTypeHandlers();
     }
 
     private void initializeFileTypeHandlers() {
         // load all built in FileTypeHandlers
         addFileTypeHandler("Copy Number CHP", new String[]{"cnchp", "lohchp"}, FileTypeCategory.Annotation, AffyCnChpParser.class, SymLoaderInstNC.class);
-        addFileTypeHandler("BAM", new String[]{"bam"}, FileTypeCategory.Alignment, null, BAM.class);
-        addFileTypeHandler(new FileTypeHandler() {
-            String[] extensions = new String[]{"sam"};
-
-            @Override
-            public String getName() {
-                return "SAM";
-            }
-
-            @Override
-            public String[] getExtensions() {
-                return extensions;
-            }
-
-            @Override
-            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
-                SAM sam = new SAM(uri, featureName, genomeVersion);
-                return SymLoaderTabix.getSymLoader(sam);
-            }
-
-            @Override
-            public Parser getParser() {
-                return null;
-            }
-
-            @Override
-            public IndexWriter getIndexWriter(String stream_name) {
-                return null;
-            }
-
-            @Override
-            public FileTypeCategory getFileTypeCategory() {
-                return FileTypeCategory.Alignment;
-            }
-        }
-        );
         addFileTypeHandler("Graph", new String[]{"bar"}, FileTypeCategory.Graph, BarParser.class, Bar.class /* SymLoaderInstNC.class */);
-        addFileTypeHandler(new FileTypeHandler() {
-            String[] extensions = new String[]{"bed"};
-
-            @Override
-            public String getName() {
-                return "BED";
-            }
-
-            @Override
-            public String[] getExtensions() {
-                return extensions;
-            }
-
-            @Override
-            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
-                BED bed = new BED(uri, indexUri, featureName, genomeVersion);
-                return SymLoaderTabix.getSymLoader(bed);
-            }
-
-            @Override
-            public Parser getParser() {
-                return new BedParser();
-            }
-
-            @Override
-            public IndexWriter getIndexWriter(String stream_name) {
-                return (IndexWriter) getParser();
-            }
-
-            @Override
-            public FileTypeCategory getFileTypeCategory() {
-                return FileTypeCategory.Annotation;
-            }
-        }
-        );
         addFileTypeHandler(new FileTypeHandler() {
             String[] extensions = new String[]{"gff3"};
 
@@ -441,42 +361,6 @@ public class FileTypeHolder {
         );
     }
 
-    private void addDummyHandler(final String name, final String[] extensions, final FileTypeCategory category) {
-        addFileTypeHandler(new FileTypeHandler() {
-            @Override
-            public Parser getParser() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public String[] getExtensions() {
-                return extensions;
-            }
-
-            @Override
-            public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName,
-                    GenomeVersion genomeVersion) {
-                return null;
-            }
-
-            @Override
-            public IndexWriter getIndexWriter(String stream_name) {
-                return null;
-            }
-
-            @Override
-            public FileTypeCategory getFileTypeCategory() {
-                return category;
-            }
-        }
-        );
-    }
-
     private void addFileTypeHandler(final String name, final String[] extensions, final FileTypeCategory category, final Class<? extends Parser> parserClass, final Class<? extends SymLoader> symLoaderClass) {
         addFileTypeHandler(new FileTypeHandler() {
             @Override
@@ -533,8 +417,14 @@ public class FileTypeHolder {
         );
     }
 
-    public void addDummyHandler(FileTypeHandler fileTypeHandler) {
-        addHandler(fileTypeHandler, dummyHandlerMap);
+    private static void addHandler(FileTypeHandler fileTypeHandler, Map<String, FileTypeHandler> map) {
+        String[] extensions = fileTypeHandler.getExtensions();
+        for (String extension : extensions) {
+            if (map.get(extension) != null) {
+                LOG.error("duplicate SymLoaderFactory for extension {0}!!!", extension);
+            }
+            map.put(extension, fileTypeHandler);
+        }
     }
 
     /**
@@ -544,16 +434,6 @@ public class FileTypeHolder {
      */
     public void addFileTypeHandler(FileTypeHandler fileTypeHandler) {
         addHandler(fileTypeHandler, fileTypeHandlerMap);
-    }
-
-    private static void addHandler(FileTypeHandler fileTypeHandler, Map<String, FileTypeHandler> map) {
-        String[] extensions = fileTypeHandler.getExtensions();
-        for (String extension : extensions) {
-            if (map.get(extension) != null) {
-                LOG.error("duplicate SymLoaderFactory for extension {0}!!!", extension);
-            }
-            map.put(extension, fileTypeHandler);
-        }
     }
 
     /**
@@ -585,10 +465,6 @@ public class FileTypeHolder {
             return fileTypeHandlerMap.get("das2xml");
         }
         FileTypeHandler handler = fileTypeHandlerMap.get(extension);
-        // If handler is not found then look up in dummy handlers
-        if (handler == null) {
-            handler = dummyHandlerMap.get(extension);
-        }
         return handler;
     }
 

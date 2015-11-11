@@ -1,14 +1,14 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.general.DataSetUtils;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.style.DefaultStateProvider;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.common.PreferenceUtils;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -145,7 +145,7 @@ public final class IGBStateProvider extends DefaultStateProvider {
             }
 
             style = new TrackStyle(unique_name, track_name, file_type, template, props);
-            FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(file_type);
+            FileTypeHandler fth = FileTypehandlerRegistry.getFileTypeHolder().getFileTypeHandler(file_type);
             if (fth != null && (fth.getFileTypeCategory() == FileTypeCategory.Graph || fth.getFileTypeCategory() == FileTypeCategory.Mismatch)) {
                 style.setExpandable(false);
                 style.setGraphTier(true);

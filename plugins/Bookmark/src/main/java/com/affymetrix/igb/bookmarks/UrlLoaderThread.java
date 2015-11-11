@@ -14,7 +14,7 @@ import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.parsers.BpsParser;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.parsers.PSLParser;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
@@ -360,7 +360,7 @@ public final class UrlLoaderThread extends Thread {
             throws Exception {
         int dotIndex = stream_name.lastIndexOf('.');
         String annot_type = dotIndex <= 0 ? stream_name : stream_name.substring(0, dotIndex);
-        FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandlerForURI(stream_name);
+        FileTypeHandler fileTypeHandler = FileTypehandlerRegistry.getFileTypeHolder().getFileTypeHandlerForURI(stream_name);
         if (fileTypeHandler == null) {
             logger.warn(
                     "ABORTING FEATURE LOADING, FORMAT NOT RECOGNIZED: {}", stream_name);

@@ -11,12 +11,14 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.BAM_PROP_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.BED14_PROP_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.DEFAULT_PROP_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.GFF_PROP_LIST;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NARROW_PEAK_PROP_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.PSL_PROP_LIST;
 import static com.affymetrix.genometry.util.SeqUtils.isBamInsSym;
 import static com.affymetrix.genometry.util.SeqUtils.isBamSym;
 import static com.affymetrix.genometry.util.SeqUtils.isBedSym;
 import static com.affymetrix.genometry.util.SeqUtils.isGFFSym;
 import static com.affymetrix.genometry.util.SeqUtils.isLinkPSL;
+import static com.affymetrix.genometry.util.SeqUtils.isNarrowPeakSym;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,8 @@ public class SelectionInfoUtils {
             }
         } else if (isBedSym(sym)) {
             propertyKeys = BED14_PROP_LIST;
+        } else if (isNarrowPeakSym(sym)) {
+            propertyKeys = NARROW_PEAK_PROP_LIST;
         } else if (isLinkPSL(sym)) {
             propertyKeys = PSL_PROP_LIST;
         } else if (isGFFSym(sym)) {
@@ -83,4 +87,5 @@ public class SelectionInfoUtils {
         }
         return orderedProps;
     }
+
 }

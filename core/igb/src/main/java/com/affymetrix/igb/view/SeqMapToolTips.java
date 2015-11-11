@@ -14,6 +14,7 @@ import static com.affymetrix.genometry.util.SeqUtils.isBedSym;
 import static com.affymetrix.genometry.util.SeqUtils.isGFFSym;
 import static com.affymetrix.genometry.util.SeqUtils.isLinkPSL;
 import static com.affymetrix.genometry.util.SeqUtils.isMultiStrandWrapperType;
+import static com.affymetrix.genometry.util.SeqUtils.isNarrowPeakSym;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -96,6 +97,8 @@ public class SeqMapToolTips extends JWindow {
                 propList = ToolTipOperations.formatBamSymTooltip(properties);
             } else if (isBedSym(sym)) {
                 propList = ToolTipOperations.formatBED14SymTooltip(properties);
+            } else if (isNarrowPeakSym(sym)) {
+                propList = ToolTipOperations.formatNarrowPeakSymTooltip(properties);
             } else if (isLinkPSL(sym)) {
                 propList = ToolTipOperations.formatLinkPSLSymTooltip(properties);
             } else if (isGFFSym(sym)) {

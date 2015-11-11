@@ -16,6 +16,7 @@ import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.tooltip.ToolTipConstants;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SHOW_MASK;
 import com.affymetrix.genometry.util.ErrorHandler;
 import java.net.URI;
 import java.util.ArrayList;
@@ -482,7 +483,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
             residueSym.setProperty(ToolTipConstants.CIGAR, cigar);
         }
         residueSym.setInsResidues(insertion ? alt.substring(1) : "");
-        residueSym.setProperty(BAM.SHOWMASK, true);
+        residueSym.setProperty(SHOW_MASK, true);
         residueSym.setProperty("type", nameType);
         residueSym.setProperty("seq", seq.getId());
         residueSym.setProperty("pos", start);

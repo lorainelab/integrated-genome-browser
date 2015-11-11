@@ -7,7 +7,7 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.filter.SymmetryFilterIntersecting;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
-import com.affymetrix.genometry.parsers.FileTypeHolder;
+import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
@@ -563,7 +563,7 @@ public abstract class SymLoader {
 
     public List<? extends SeqSymmetry> parse(InputStream is, boolean annotate_seq)
             throws Exception {
-        FileTypeHandler fileTypeHandler = FileTypeHolder.getInstance().getFileTypeHandler(extension);
+        FileTypeHandler fileTypeHandler = FileTypehandlerRegistry.getFileTypeHolder().getFileTypeHandler(extension);
         if (fileTypeHandler == null) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension));
             return null;

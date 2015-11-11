@@ -320,6 +320,16 @@ will not work well with these styles.
 			<PROPERTY key="label_field" value="id"/>	  
 			<PROPERTY key="color_by_rgb" value="true" />
 		</FILE_TYPE_ASSOCIATION>
+		<FILE_TYPE_ASSOCIATION file_type="narrowpeak">
+			<PROPERTY key="direction_type" value="arrow"/>
+			<PROPERTY key="label_field" value="id"/>	  
+			<PROPERTY key="color_by_rgb" value="true" />
+		</FILE_TYPE_ASSOCIATION>
+		<FILE_TYPE_ASSOCIATION file_type="broadpeak">
+			<PROPERTY key="direction_type" value="arrow"/>
+			<PROPERTY key="label_field" value="id"/>	  
+			<PROPERTY key="color_by_rgb" value="true" />
+		</FILE_TYPE_ASSOCIATION>
 		
 		<FILE_TYPE_ASSOCIATION file_type="gtf">
 			<PROPERTY key="direction_type" value="arrow"/>

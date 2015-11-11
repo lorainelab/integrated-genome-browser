@@ -24,6 +24,8 @@ import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -31,6 +33,8 @@ import javax.swing.Timer;
  */
 @Component(immediate = true, provide = FrameVisibilityManager.class)
 public class FrameVisibilityManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(FrameVisibilityManager.class);
 
     private IgbTabPanelI dataAccess;
     private IgbTabPanelI altSpliceView;
@@ -59,8 +63,9 @@ public class FrameVisibilityManager {
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
         //Start anyway if a service fails
-        Timer failSafeTimer = new Timer(5000, (ActionEvent e) -> {
+        Timer failSafeTimer = new Timer(6000, (ActionEvent e) -> {
             if (!igbService.getApplicationFrame().isVisible()) {
+                logger.warn("A fail safe timer was triggered to visualize the main frame, some tabs may be missing.");
                 igbService.getApplicationFrame().setVisible(true);
             }
         });

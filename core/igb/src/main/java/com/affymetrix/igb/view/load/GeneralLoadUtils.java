@@ -886,14 +886,6 @@ public final class GeneralLoadUtils {
         return residuesLoaded;
     }
 
-    /**
-     * Load residues on span. First, attempt to load them with DAS/2 servers. Second, attempt to load them with
-     * QuickLoad servers. Third, attempt to load them with DAS/1 servers.
-     *
-     * @param aseq
-     * @param span	-- may be null, if the entire sequence is requested.
-     * @return true if succeeded.
-     */
     static boolean loadResidues(SeqSpan span) {
         BioSeq aseq = span.getBioSeq();
         int min = span.getMin();

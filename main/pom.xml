@@ -372,6 +372,11 @@
             <artifactId>org.apache.felix.scr</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency> 
+            <groupId>com.lorainelab</groupId>
+            <artifactId>external-sort</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -11,6 +11,8 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,10 +20,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +32,9 @@ import java.util.PriorityQueue;
 import java.util.zip.Deflater;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,14 +50,40 @@ public class ExternalMergeSort implements ExternalSortService {
     }
 
     @Override
-    public Optional<File> merge(File input, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) {
-        List<File> tmpFiles = sortInBatch(input, comparatorMetadata, conf);
-        logger.info("Temp file count: " + tmpFiles.size());
+    public Optional<File> merge(File input, String compressionName, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) {
+
         try {
-            return Optional.ofNullable(mergeSortedFiles(tmpFiles, comparatorMetadata, conf));
+            File out = prepareHeader(input, conf);
+            List<File> tmpFiles = sortInBatch(input, compressionName, comparatorMetadata, conf);
+            logger.info("Temp file count: " + tmpFiles.size());
+            File mergedData = mergeSortedFiles(tmpFiles, comparatorMetadata, conf);
+            try (BufferedReader br = new BufferedReader(new FileReader(mergedData));
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(out, true))) {
+                int r;
+                while ((r = br.read()) != -1) {
+                    bw.append((char) r);
+                }
+            }
+            return Optional.ofNullable(out);
         } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
             return Optional.empty();
         }
+    }
+
+    private File prepareHeader(File input, ExternalSortConfiguration conf) throws IOException {
+        int counter = 0;
+        File out = Files.createTempFile(conf.getTmpDir().toPath(), "header", "", new FileAttribute[]{}).toFile();
+        try (BufferedReader br = new BufferedReader(new FileReader(input))) {
+
+            List<String> headerLines = new ArrayList<>();
+            while (counter < conf.getNumHeaderRows()) {
+                headerLines.add(br.readLine());
+                counter++;
+            }
+            Files.write(out.toPath(), headerLines, StandardOpenOption.CREATE);
+        }
+        return out;
     }
 
     private File mergeSortedFiles(List<File> files,
@@ -94,25 +125,19 @@ public class ExternalMergeSort implements ExternalSortService {
             final ComparatorMetadata comparatorMetadata, boolean distinct,
             List<BinaryFileBuffer> buffers) throws IOException {
         PriorityQueue<BinaryFileBuffer> pq = new PriorityQueue<>(
-                11, new Comparator<BinaryFileBuffer>() {
-                    @Override
-            public int compare(BinaryFileBuffer i,
-                    BinaryFileBuffer j) {
-                ComparatorInstance oI = new ComparatorInstance();
-                oI.setComparatorMetadata(comparatorMetadata);
-                        oI.setLine(i.peek());
+                11, (BinaryFileBuffer i, BinaryFileBuffer j) -> {
+                    ComparatorInstance oI = new ComparatorInstance();
+                    oI.setComparatorMetadata(comparatorMetadata);
+                    oI.setLine(i.peek());
 
-                        ComparatorInstance oJ = new ComparatorInstance();
-                        oJ.setComparatorMetadata(comparatorMetadata);
-                        oJ.setLine(j.peek());
-                        return comparatorMetadata.getComparator().compare(oI, oJ);
-                    }
+                    ComparatorInstance oJ = new ComparatorInstance();
+                    oJ.setComparatorMetadata(comparatorMetadata);
+                    oJ.setLine(j.peek());
+                    return comparatorMetadata.getComparator().compare(oI, oJ);
                 });
-        for (BinaryFileBuffer bfb : buffers) {
-            if (!bfb.empty()) {
-                pq.add(bfb);
-            }
-        }
+        buffers.stream().filter((bfb) -> (!bfb.empty())).forEach((bfb) -> {
+            pq.add(bfb);
+        });
         int rowcounter = 0;
         try {
             if (!distinct) {
@@ -219,9 +244,8 @@ public class ExternalMergeSort implements ExternalSortService {
                 }
             };
         }
-        BufferedWriter fbw = new BufferedWriter(new OutputStreamWriter(
-                out, cs));
-        try {
+        try (BufferedWriter fbw = new BufferedWriter(new OutputStreamWriter(
+                out, cs))) {
             if (!distinct) {
                 for (ComparatorInstance r : tmplist) {
                     fbw.write(r.getLine());
@@ -246,8 +270,6 @@ public class ExternalMergeSort implements ExternalSortService {
                     }
                 }
             }
-        } finally {
-            fbw.close();
         }
         return newtmpfile;
     }
@@ -331,20 +353,46 @@ public class ExternalMergeSort implements ExternalSortService {
      * @return a list of temporary flat files
      * @throws IOException
      */
-    private List<File> sortInBatch(File file, ComparatorMetadata comparatorMetadata,
+    private List<File> sortInBatch(File file, String compressionName, ComparatorMetadata comparatorMetadata,
             int maxtmpfiles, long maxMemoryInBytes, Charset cs, File tmpdirectory,
             boolean distinct, int numHeader, boolean usegzip)
             throws IOException {
         BufferedReader fbr = new BufferedReader(new InputStreamReader(
-                new FileInputStream(file), cs));
+                unzipStream(new FileInputStream(file), compressionName), cs));
         return sortInBatch(fbr, file.length(), comparatorMetadata, maxtmpfiles,
                 maxMemoryInBytes, cs, tmpdirectory, distinct,
                 numHeader, usegzip);
     }
 
-    private List<File> sortInBatch(File file, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) {
+    public static InputStream unzipStream(InputStream istr, String compressionName)
+            throws IOException {
+        String lc_stream_name = compressionName.toLowerCase();
+        if (lc_stream_name.endsWith(".gz") || lc_stream_name.endsWith(".gzip")
+                || lc_stream_name.endsWith(".z")) {
+            InputStream gzstr = new GZIPInputStream(istr);
+            String new_name = compressionName.substring(0, compressionName.lastIndexOf('.'));
+            return unzipStream(gzstr, new_name);
+        } else if (lc_stream_name.endsWith(".zip")) {
+            ZipInputStream zstr = new ZipInputStream(istr);
+            zstr.getNextEntry();
+            String new_name = compressionName.substring(0, compressionName.lastIndexOf('.'));
+            return unzipStream(zstr, new_name);
+        } else if (lc_stream_name.endsWith(".bz2")) {
+            BZip2CompressorInputStream bz2 = new BZip2CompressorInputStream(istr);
+            String new_name = compressionName.substring(0, compressionName.lastIndexOf('.'));
+            return unzipStream(bz2, new_name);
+        } else if (lc_stream_name.endsWith(".tar")) {
+            TarArchiveInputStream tarInput = new TarArchiveInputStream(istr);
+            tarInput.getNextTarEntry();
+            String new_name = compressionName.substring(0, compressionName.lastIndexOf('.'));
+            return unzipStream(tarInput, new_name);
+        }
+        return istr;
+    }
+
+    private List<File> sortInBatch(File file, String compressionName, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) {
         try {
-            return sortInBatch(file, comparatorMetadata, conf.getMaxTmpFiles(), conf.getMaxMemoryInBytes(), conf.getCharset(), conf.getTmpDir(), conf.isIsDistinctValues(), conf.getNumHeaderRows(), conf.isUseGzipOnTmpFiles());
+            return sortInBatch(file, compressionName, comparatorMetadata, conf.getMaxTmpFiles(), conf.getMaxMemoryInBytes(), conf.getCharset(), conf.getTmpDir(), conf.isIsDistinctValues(), conf.getNumHeaderRows(), conf.isUseGzipOnTmpFiles());
         } catch (IOException ex) {
             return new ArrayList<>();
         }

@@ -97,7 +97,7 @@ public class ExternalSortTest {
     public void simpleTest() throws IOException, URISyntaxException {
 
         ExternalSortConfiguration conf = new ExternalSortConfiguration();
-        conf.setNumHeaderRows(0);
+        conf.setNumHeaderRows(1);
         conf.setMaxMemoryInBytes(10_000_000);
         conf.setMaxTmpFiles(100);
 
@@ -121,7 +121,7 @@ public class ExternalSortTest {
         });
 
         Stopwatch watch = Stopwatch.createStarted();
-        Optional<File> output = exsort.merge(this.file1, comparatorMetadata, conf);
+        Optional<File> output = exsort.merge(this.file1, file1.getName(), comparatorMetadata, conf);
         logger.info(watch.stop().toString());
         
         ArrayList<String> result = readLines(output.get());

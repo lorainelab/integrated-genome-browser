@@ -16,18 +16,23 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.GraphSymUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
-import com.affymetrix.genometry.util.SortTabFile;
 import com.lorainelab.cache.api.CacheStatus;
 import com.lorainelab.cache.api.RemoteFileCacheService;
+import com.lorainelab.externalsort.api.ComparatorMetadata;
+import com.lorainelab.externalsort.api.ExternalSortConfiguration;
+import com.lorainelab.externalsort.api.ExternalSortService;
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.osgi.framework.Bundle;
@@ -65,8 +71,12 @@ public abstract class SymLoader {
     protected final GenomeVersion genomeVersion;
     public final String featureName;
     protected static RemoteFileCacheService remoteFileCacheService;
-    //protected static ExternalSortService externalSortService;
+    protected static ExternalSortService externalSortService;
     protected BundleContext bundleContext;
+    private static final Predicate<String> IS_NOT_TRACK_LINE = line -> !line.startsWith("track");
+    private static final Predicate<String> IS_NOT_COMMENT_LINE = line -> !line.startsWith("#");
+    private static final Predicate<String> IS_NOT_BROWSER_LINE = line -> !line.startsWith("browser");
+    private static final Predicate<String> IS_PARSEABLE_LINE = IS_NOT_COMMENT_LINE.and(IS_NOT_TRACK_LINE).and(IS_NOT_BROWSER_LINE);
 
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
@@ -124,24 +134,24 @@ public abstract class SymLoader {
 
         rcDependencyTracker.open();
 
-//        ServiceTracker<ExternalSortService, Object> esDependencyTracker;
-//
-//        esDependencyTracker = new ServiceTracker<ExternalSortService, Object>(bundleContext, ExternalSortService.class, null) {
-//            @Override
-//            public Object addingService(ServiceReference<ExternalSortService> serviceReference) {
-//                externalSortService = bundleContext.getService(serviceReference);
-//                return super.addingService(serviceReference);
-//            }
-//        };
-//
-//        esDependencyTracker.open();
+        ServiceTracker<ExternalSortService, Object> esDependencyTracker;
+
+        esDependencyTracker = new ServiceTracker<ExternalSortService, Object>(bundleContext, ExternalSortService.class, null) {
+            @Override
+            public Object addingService(ServiceReference<ExternalSortService> serviceReference) {
+                externalSortService = bundleContext.getService(serviceReference);
+                return super.addingService(serviceReference);
+            }
+        };
+
+        esDependencyTracker.open();
     }
 
     private Optional<BufferedInputStream> checkRemoteFileCache(URL fileUrl) throws IOException {
         BufferedInputStream bis = null;
 
         if (remoteFileCacheService.cacheExists(fileUrl)) {
-            Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, true);
+            Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, false);
             try {
                 CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
                 if (cacheStatus.isDataExists()) {
@@ -165,7 +175,8 @@ public abstract class SymLoader {
         BufferedInputStream bis = null;
         Map<String, Integer> chrLength = new HashMap<>();
         Map<String, File> chrFiles = new HashMap<>();
-
+        BufferedInputStream sortedResult = null;
+        Optional<File> result = Optional.empty();
         try {
 
             URL fileUrl = uri.toURL();
@@ -182,59 +193,82 @@ public abstract class SymLoader {
             if (bis == null) {
                 throw new IOException("Input Stream NULL");
             }
-            //TODO: sort file here
-            remoteFileCacheService.getFilebyUrl(fileUrl, false);
-            CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
-            if (cacheStatus.isDataExists()) {
-                InputStream is = GeneralUtils.unzipStream(new FileInputStream(cacheStatus.getData()), cacheStatus.getUrl(), new StringBuffer());
-              
+            ExternalSortConfiguration conf = new ExternalSortConfiguration();
+            conf.setNumHeaderRows(0);
+            conf.setMaxMemoryInBytes(50_000_000);
+            conf.setMaxTmpFiles(100);
+
+            ComparatorMetadata comparatorMetadata = new ComparatorMetadata();
+
+            //Define multisort
+            //First sort
+            comparatorMetadata.getPreparers().add(s -> {
+                String[] sSplit = s.split("\\s+");
+                return sSplit[0];
+            });
+            //Second sort
+            comparatorMetadata.getPreparers().add(s -> {
+                String[] sSplit = s.split("\\s+");
+                return Long.parseLong(sSplit[1]);
+            });
+            //Third sort
+            comparatorMetadata.getPreparers().add(s -> {
+                String[] sSplit = s.split("\\s+");
+                return Long.parseLong(sSplit[2]);
+            });
+
+            if (BedUtils.isRemoteBedFile(fileUrl)) {
+                CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
+                if (cacheStatus.isDataExists()) {
+                    conf.setNumHeaderRows(findChromStartIndex(cacheStatus.getData()));
+                    result = externalSortService.merge(cacheStatus.getData(), cacheStatus.getUrl(), comparatorMetadata, conf);
+                    if (result.isPresent()) {
+                        sortedResult = new BufferedInputStream(new FileInputStream(result.get()));
+                    }
+
+                }
+            } else {
+                File input = new File(uri.getPath());
+                conf.setNumHeaderRows(findChromStartIndex(input));
+                result = externalSortService.merge(input, uri.toString(), comparatorMetadata, conf);
+                if (result.isPresent()) {
+                    sortedResult = new BufferedInputStream(new FileInputStream(result.get()));
+                }
             }
-//                ExternalSortConfiguration conf = new ExternalSortConfiguration();
-//                conf.setNumHeaderRows(0);
-//                conf.setMaxMemoryInBytes(10_000_000);
-//                conf.setMaxTmpFiles(100);
-//
-//                ComparatorMetadata comparatorMetadata = new ComparatorMetadata();
-//
-//                //Define multisort
-//                //First sort
-//                comparatorMetadata.getPreparers().add(s -> {
-//                    String[] sSplit = s.split("\\s+");
-//                    return sSplit[0];
-//                });
-//                //Second sort
-//                comparatorMetadata.getPreparers().add(s -> {
-//                    String[] sSplit = s.split("\\s+");
-//                    return Long.parseLong(sSplit[1]);
-//                });
-//                //Third sort
-//                comparatorMetadata.getPreparers().add(s -> {
-//                    String[] sSplit = s.split("\\s+");
-//                    return Long.parseLong(sSplit[2]);
-//                });
-//                externalMergeSortService.merge(cacheStatus.getData(), comparatorMetadata, conf);
-//            }
-            //externalMergeSortService.merge(null, null, null)
-            if (parseLines(bis, chrLength, chrFiles)) {
+
+            if (parseLines(sortedResult, chrLength, chrFiles)) {
                 createResults(chrLength, chrFiles);
-                Logger.getLogger(SymLoader.class.getName()).fine("Indexing successful");
+                //Delete temp file
+                GeneralUtils.safeClose(sortedResult);
+                Files.delete(result.get().toPath());
                 return true;
             }
+
         } catch (Exception ex) {
             throw ex;
         } finally {
             GeneralUtils.safeClose(bis);
+
         }
         return false;
     }
 
-    protected void sortCreatedFiles() throws Exception {
-        synchronized (this) {
-            //Now Sort all files
-            for (Entry<BioSeq, File> entry : chrList.entrySet()) {
-                chrSort.put(entry.getKey(), SortTabFile.sort(entry.getValue()));
+    private int findChromStartIndex(File file) {
+        int index = 0;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (IS_PARSEABLE_LINE.test(line)) {
+                    break;
+                }
+                index++;
             }
+        } catch (IOException ex) {
+            return 0;
         }
+        return index;
     }
 
     public GenomeVersion getAnnotatedSeqGroup() {

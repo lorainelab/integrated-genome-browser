@@ -9,5 +9,5 @@ import java.util.Optional;
  */
 public interface ExternalSortService {
 
-    public Optional<File> merge(File input, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf);
+    public Optional<File> merge(File input, String compressionName, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf);
 }

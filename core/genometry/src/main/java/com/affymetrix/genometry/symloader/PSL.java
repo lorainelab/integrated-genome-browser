@@ -113,7 +113,6 @@ public class PSL extends SymLoader implements AnnotationWriter, IndexWriter, Lin
         }
 
         if (buildIndex()) {
-            sortCreatedFiles();
             super.init();
         }
 

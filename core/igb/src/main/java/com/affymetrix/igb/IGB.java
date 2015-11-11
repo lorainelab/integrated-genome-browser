@@ -408,7 +408,9 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         String version = PreferenceUtils.getStringParam(APP_NAME, null);
         if (version == null || !version.equals(APP_VERSION)) {
             PreferenceUtils.getTopNode().put(APP_NAME, APP_VERSION);
-            GeneralUtils.browse(IGBConstants.BUNDLE.getString("quickstart"));
+            if (!isDevelopmentMode()) {
+                GeneralUtils.browse(IGBConstants.BUNDLE.getString("quickstart"));
+            }
         }
     }
 

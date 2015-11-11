@@ -12,6 +12,8 @@ import com.affymetrix.igb.swing.JRPRadioButtonMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
+import com.google.common.collect.Sets;
+import static com.lorainelab.igb.frame.FrameManager.MAIN_WINDOW_PREF_KEY;
 import com.lorainelab.igb.frame.api.FrameManagerService;
 import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
@@ -41,24 +43,24 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 
-@Component(name = WindowServiceDefaultImpl.COMPONENT_NAME, provide = {IWindowService.class})
+@Component(provide = {IWindowService.class})
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
 
-    public static final String COMPONENT_NAME = "WindowServiceDefaultImpl";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
-    private Map<TabState, JRPMenuItem> move_tab_to_window_items;
-    private Map<TabState, JRPMenuItem> move_tabbed_panel_to_window_items;
+    private final Map<TabState, JRPMenuItem> move_tab_to_window_items;
+    private final Map<TabState, JRPMenuItem> move_tabbed_panel_to_window_items;
     private JRPMenu tabsMenu;
     private JFrame frame;
-    private Map<TabState, TabHolder> tabHolders;
-    private Map<IgbTabPanel, JMenu> tabMenus;
-    private Map<JMenu, Integer> tabMenuPositions;
-    private volatile HashSet<WindowServiceLifecycleHook> stopRoutines = new HashSet<>();
+    private final Map<TabState, TabHolder> tabHolders;
+    private final Map<IgbTabPanel, JMenu> tabMenus;
+    private final Map<JMenu, Integer> tabMenuPositions;
+    private volatile Set<WindowServiceLifecycleHook> stopRoutines;
     private JPanel innerPanel;
     private boolean tabSeparatorSet = false;
     private FrameManagerService frameManagerService;
 
     public WindowServiceDefaultImpl() {
+        stopRoutines = Sets.newConcurrentHashSet();
         move_tab_to_window_items = new EnumMap<>(TabState.class);
         move_tabbed_panel_to_window_items = new EnumMap<>(TabState.class);
         tabHolders = new EnumMap<>(TabState.class);
@@ -87,7 +89,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
     @Override
     public void setSeqMapView(JPanel map_view) {
-        JTabbedTrayPane bottomPane = new JTabbedTrayBottomPane(map_view);
+        JTabbedTrayPane bottomPane = new JTabbedTrayBottomPane(frameManagerService, map_view);
         bottomPane.setResizeWeight(1.0);
         bottomPane.addTrayStateChangeListener(this);
         tabHolders.put(TabState.COMPONENT_STATE_BOTTOM_TAB, bottomPane);
@@ -96,7 +98,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         } catch (Exception x) {
             bottomPane.invokeTrayState(TrayState.getDefaultTrayState());
         }
-        JTabbedTrayPane left_pane = new JTabbedTrayLeftPane(bottomPane);
+        JTabbedTrayPane left_pane = new JTabbedTrayLeftPane(frameManagerService, bottomPane);
         left_pane.addTrayStateChangeListener(this);
         tabHolders.put(TabState.COMPONENT_STATE_LEFT_TAB, left_pane);
         try {
@@ -104,7 +106,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         } catch (Exception x) {
             left_pane.invokeTrayState(TrayState.getDefaultTrayState());
         }
-        JTabbedTrayPane right_pane = new JTabbedTrayRightPane(left_pane);
+        JTabbedTrayPane right_pane = new JTabbedTrayRightPane(frameManagerService, left_pane);
         right_pane.setResizeWeight(1.0);
         right_pane.addTrayStateChangeListener(this);
         tabHolders.put(TabState.COMPONENT_STATE_RIGHT_TAB, right_pane);
@@ -167,7 +169,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
      */
     private void saveWindowLocations() {
         // Save the main window location
-        PreferenceUtils.saveWindowLocation(frame, "main window");
+        PreferenceUtils.saveWindowLocation(frame, MAIN_WINDOW_PREF_KEY);
 
         tabHolders.values().forEach(com.lorainelab.igb.services.window.tabs.TabHolder::close);
         for (IgbTabPanel comp : tabHolders.get(TabState.COMPONENT_STATE_WINDOW).getIGBTabPanels()) {
@@ -336,7 +338,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
 
     @Override
     public void restoreState() {
-        Rectangle pos = PreferenceUtils.retrieveWindowLocation("main window", frame.getBounds());
+        Rectangle pos = PreferenceUtils.retrieveWindowLocation(MAIN_WINDOW_PREF_KEY, frame.getBounds());
         if (pos != null) {
             PreferenceUtils.setWindowSize(frame, pos);
         }

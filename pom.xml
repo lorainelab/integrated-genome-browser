@@ -122,7 +122,7 @@
         <module>plugins/cache</module>
         <module>plugins/cache-api</module>
         <module>plugins/feedback</module>
-	<module>plugins/external-sort</module>
+        <module>plugins/external-sort</module>
         <module>plugins/narrowpeak</module>
         <module>plugins/bed</module>
         <module>plugins/bam</module>
@@ -149,7 +149,7 @@
                 <module>optionalPlugins/geometric-mean</module>
                 <module>optionalPlugins/igb-command-socket</module> 
                 <module>optionalPlugins/23andMe-snp-converter</module>
-		<module>optionalPlugins/protannot</module>
+                <module>optionalPlugins/protannot</module>
                 <module>developmentPlugins/FindAnnotations</module>
                 <module>developmentPlugins/OverlapAnnotationOperator</module>                
                 <module>developmentPlugins/SampleSelection</module>
@@ -188,7 +188,7 @@
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>heatmap-editor</artifactId>
-               <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -200,86 +200,86 @@
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>affymetrix-common</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>genometry</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>igb</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>igb-services</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>igbSwingExt</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>window-service</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>igb-preferences</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>weblinks</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>synonym-lookup</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>quickload</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>das</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>das2</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>frameManager</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>igb-javafx-util</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!--End of core module dependencies-->
@@ -288,221 +288,221 @@
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>apollo-library</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>annotation-tab</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>track-operations-panel</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>bigBedHandler</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>bigWigHandler</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>bookmark</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>externalView</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>graphTab</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>igbScript</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>keyWordSearch</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>ncbiBlast</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>           
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>propertyView</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>restrictionSites</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>searchModelIdOrProps</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>searchView</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>sequenceViewer</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>survey</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>thresholding</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>tutorial</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>update</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>plugins-manager</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>shared-lib-wrapper</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>logging-config</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency> 
                 <groupId>com.lorainelab</groupId>
                 <artifactId>igb-genoviz-extensions</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>paired-data-preprocessor</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>igb-command-socket</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>23andMe-snp-converter</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>console-gui</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>image-exporter</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>session-manager</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>keybinding-registry</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>cache</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>cache-api</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>protannot</artifactId>
-                 <version>${project.parent.version}</version>
-		<scope>provided</scope>
+                <version>${project.parent.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>feedback</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>narrowpeak</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>bed</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>bam</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
             </dependency>
             <!--End of plugin module dependencies-->
             
@@ -510,73 +510,73 @@
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>findAnnotations</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>geometric-mean</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>merge-annotation-operator</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>ncbiPrimer</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>overlapAnnotationOperator</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>parentOperators</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>sampleSelection</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>searchModeSymetryFilter</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>talleyHandler</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>transcriptIsoForm</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>tutorial-helper</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>searchModeLucene</artifactId>
-                 <version>${project.parent.version}</version>
+                <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <!-- End of development plugins -->
@@ -964,7 +964,7 @@
                                     <artifactItem>
                                         <groupId>${project.groupId}</groupId>
                                         <artifactId>${project.artifactId}</artifactId>
-                                         <version>${project.parent.version}</version>
+                                        <version>${project.parent.version}</version>
                                     </artifactItem>
                                 </artifactItems>
                                 <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>
@@ -978,6 +978,11 @@
                     <groupId>com.lorainelab</groupId>
                     <artifactId>bundle-markdown-encoder</artifactId>
                     <version>0.0.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.15</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -1022,11 +1027,7 @@
                     </filesets>
                 </configuration>
             </plugin>
-             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.15</version>
-            </plugin>
+             
         </plugins>
     </build>
 

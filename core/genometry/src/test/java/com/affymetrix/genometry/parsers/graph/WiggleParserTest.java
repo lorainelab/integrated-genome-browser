@@ -43,7 +43,7 @@ public class WiggleParserTest {
     public void testParse() throws Exception {
         String filename = "data/wiggle/wiggleExample.wig";
 
-        InputStream istr = WiggleParserTest.class.getClassLoader().getResourceAsStream(filename);
+        InputStream istr = this.getClass().getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
 
         GenomeVersion genomeVersion = new GenomeVersion("test");
@@ -100,7 +100,7 @@ public class WiggleParserTest {
     @Test
     public void testWiggle1() throws Exception {
         String filename = "data/wiggle/wiggleExample.wig";
-        URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
+        URL url = this.getClass().getClassLoader().getResource(filename);
         GenomeVersion genomeVersion = new GenomeVersion("test");
         genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());

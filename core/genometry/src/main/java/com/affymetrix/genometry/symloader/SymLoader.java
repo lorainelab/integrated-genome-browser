@@ -160,7 +160,7 @@ public abstract class SymLoader {
     private Optional<BufferedInputStream> checkRemoteFileCache(URL fileUrl) throws IOException {
         BufferedInputStream bis = null;
 
-        if (remoteFileCacheService.cacheExists(fileUrl)) {
+        if (!remoteFileCacheService.cacheExists(fileUrl)) {
             Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, false);
             try {
                 CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);

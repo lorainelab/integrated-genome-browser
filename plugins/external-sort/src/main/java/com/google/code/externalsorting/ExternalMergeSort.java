@@ -59,7 +59,7 @@ public class ExternalMergeSort implements ExternalSortService {
         try {
             File out = prepareHeader(input, conf);
             List<File> tmpFiles = sortInBatch(input, compressionName, comparatorMetadata, conf);
-            logger.info("Temp file count: " + tmpFiles.size());
+            logger.debug("Temp file count: " + tmpFiles.size());
             File mergedData = mergeSortedFiles(tmpFiles, comparatorMetadata, conf);
             try (BufferedReader br = new BufferedReader(new FileReader(mergedData));
                     BufferedWriter bw = new BufferedWriter(new FileWriter(out, true))) {

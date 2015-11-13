@@ -15,7 +15,7 @@ version = commonProps.get('appVersion')
 
 //securely read in keystore info from disk
 ext.props = new Properties()
-ext.props.load(new FileInputStream(System.getProperty("user.home") + '/build.properties'))
+ext.props.load(new FileInputStream('/opt/jenkins/build.properties'))
 project.setProperty('props', ext.props)
 
 buildscript {
@@ -36,7 +36,7 @@ buildscript {
 apply plugin: 'install4j'
 
 install4j {
-    installDir = file('/opt/install4j')
+    installDir = file('/opt/jenkins/install4j')
 }
 
 task cleanOldBuild(type: Delete) {

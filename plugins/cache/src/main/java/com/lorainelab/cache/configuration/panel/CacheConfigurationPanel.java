@@ -8,6 +8,7 @@ package com.lorainelab.cache.configuration.panel;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
+import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.google.common.eventbus.Subscribe;
@@ -312,6 +313,8 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         clearAllBtn = new JButton("Clear All");
         clearAllBtn.addActionListener((ActionEvent e) -> {
             remoteFileCacheService.clearAllCaches();
+            //Remove this once igb is purged of the LocalUrlCacher
+            LocalUrlCacher.clearCache();
             refresh();
         });
         clearAllBtn.setEnabled(true);

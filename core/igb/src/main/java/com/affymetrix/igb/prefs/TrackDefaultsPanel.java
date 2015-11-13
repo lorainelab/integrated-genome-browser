@@ -4,7 +4,11 @@
  */
 package com.affymetrix.igb.prefs;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.IgbServiceDependencyManager;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -25,6 +29,20 @@ public class TrackDefaultsPanel extends TrackPreferencesPanel implements Prefere
     //TODO remove this dependency on a singleton
     public TrackDefaultsPanel() {
         super("Track Defaults", TrackDefaultView.getSingleton());
+    }
+
+    @Activate
+    public void activate() {
+        IGB igb = IGB.getInstance();
+        if (igb != null) {
+            smv = igb.getMapView();
+            smv.addToRefreshList(this);
+        }
+    }
+
+    @Reference
+    public void setIgbServiceDependencyManager(IgbServiceDependencyManager igbServiceDependencyManager) {
+
     }
 
     @Override

@@ -8,12 +8,15 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenomeVersionSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.view.SeqMapView;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 
 /**
  *
@@ -29,10 +32,10 @@ public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapR
      */
     public TrackPreferences tdv;
     public boolean pref;
-    public javax.swing.JTable dtable;
-    public javax.swing.JTextField tracknametype;
-    public javax.swing.JLabel tracknametypeLabel;
-    public javax.swing.JButton addButton, deleteButton;
+    public JTable dtable;
+    public JTextField tracknametype;
+    public JLabel tracknametypeLabel;
+    public JButton addButton, deleteButton;
     public SeqMapView smv;
 
     public TrackPreferencesPanel(String title, TrackPreferences tdv) {
@@ -40,11 +43,6 @@ public abstract class TrackPreferencesPanel extends JRPJPanel implements SeqMapR
         this.tdv = tdv;
         this.setName(title);
         dtable = tdv.table;
-        IGB igb = IGB.getInstance();
-        if (igb != null) {
-            smv = igb.getMapView();
-            smv.addToRefreshList(this);
-        }
         tracknametype = tdv.getTrackDefaultTextField();
         GenometryModel.getInstance().addGroupSelectionListener(this);
         initComponents();

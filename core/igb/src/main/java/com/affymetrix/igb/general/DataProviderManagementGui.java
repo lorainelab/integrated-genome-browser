@@ -70,7 +70,6 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     private final JPanel dataSourcesPanel;
     private JPanel synonymsPanel;
     private SynonymsControlPanel synonymsControlPanel;
-    private final JPanel cachePanel;
     private JButton loadPriorityUpBtn;
     private JButton loadPriorityDownBtn;
     private JButton removeBtn;
@@ -84,7 +83,6 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         setLayout(new MigLayout("fill"));
         dataSourcesTable = getStyledJTable();
         dataSourcesPanel = initilizeDataSourcesPanel();
-        cachePanel = CacheControlPanel.getCachePanel();
     }
 
     @Activate
@@ -123,7 +121,6 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     private void initilizeLayout() {
         add(dataSourcesPanel, "grow, wrap");
         add(synonymsPanel, "grow, wrap");
-        add(cachePanel, "grow");
     }
 
     private JPanel initilizeDataSourcesPanel() {

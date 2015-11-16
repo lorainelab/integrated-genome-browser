@@ -14,6 +14,7 @@ import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.symloader.Wiggle;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
+import com.google.code.externalsorting.ExternalMergeSort;
 import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
 import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
 import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
@@ -42,7 +43,7 @@ public class WiggleParserTest {
     public void testParse() throws Exception {
         String filename = "data/wiggle/wiggleExample.wig";
 
-        InputStream istr = WiggleParserTest.class.getClassLoader().getResourceAsStream(filename);
+        InputStream istr = this.getClass().getClassLoader().getResourceAsStream(filename);
         assertNotNull(istr);
 
         GenomeVersion genomeVersion = new GenomeVersion("test");
@@ -99,12 +100,13 @@ public class WiggleParserTest {
     @Test
     public void testWiggle1() throws Exception {
         String filename = "data/wiggle/wiggleExample.wig";
-        URL url = WiggleParserTest.class.getClassLoader().getResource(filename);
+        URL url = this.getClass().getClassLoader().getResource(filename);
         GenomeVersion genomeVersion = new GenomeVersion("test");
         genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         Wiggle wiggle = new Wiggle(url.toURI(), Optional.empty(), filename, genomeVersion);
+        wiggle.setExternalSortService(new ExternalMergeSort());
         BioSeq aseq = genomeVersion.addSeq("chr19", 59310300);
 
         List<GraphSym> results = wiggle.getGenome();
@@ -196,7 +198,7 @@ public class WiggleParserTest {
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         Wiggle wiggle = new Wiggle(url.toURI(), Optional.empty(), filename, genomeVersion);
-
+        wiggle.setExternalSortService(new ExternalMergeSort());
         List<GraphSym> results = wiggle.getGenome();
 
         testResults2(url.getFile(), results, true);

@@ -1,6 +1,7 @@
 package com.google.code.externalsorting;
 
 import aQute.bnd.annotation.component.Component;
+import com.google.common.base.Strings;
 import com.lorainelab.externalsort.api.ComparatorInstance;
 import com.lorainelab.externalsort.api.ComparatorMetadata;
 import com.lorainelab.externalsort.api.ExternalSortConfiguration;
@@ -51,11 +52,14 @@ public class ExternalMergeSort implements ExternalSortService {
 
     @Override
     public Optional<File> merge(File input, String compressionName, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) {
+        if (comparatorMetadata.getPreparers().isEmpty()) {
+            return Optional.ofNullable(input);
+        }
 
         try {
             File out = prepareHeader(input, conf);
             List<File> tmpFiles = sortInBatch(input, compressionName, comparatorMetadata, conf);
-            logger.info("Temp file count: " + tmpFiles.size());
+            logger.debug("Temp file count: " + tmpFiles.size());
             File mergedData = mergeSortedFiles(tmpFiles, comparatorMetadata, conf);
             try (BufferedReader br = new BufferedReader(new FileReader(mergedData));
                     BufferedWriter bw = new BufferedWriter(new FileWriter(out, true))) {
@@ -231,7 +235,7 @@ public class ExternalMergeSort implements ExternalSortService {
     private File sortAndSave(List<ComparatorInstance> tmplist,
             ComparatorMetadata comparatorMetadata, Charset cs, File tmpdirectory,
             boolean distinct, boolean usegzip) throws IOException {
-        Collections.sort(tmplist, comparatorMetadata.getComparator());// In Java8, we can do tmplist = tmplist.parallelStream().sorted(comparatorMetadata).collect(Collectors.toCollection(ArrayList<String>::new));
+        Collections.sort(tmplist, comparatorMetadata.getComparator());
         File newtmpfile = File.createTempFile("sortInBatch",
                 "flatfile", tmpdirectory);
         newtmpfile.deleteOnExit();
@@ -315,8 +319,10 @@ public class ExternalMergeSort implements ExternalSortService {
                         }
                         ComparatorInstance ci = new ComparatorInstance();
                         ci.setComparatorMetadata(comparatorMetadata);
-                        ci.setLine(line);
-                        tmplist.add(ci);
+                        ci.setLine(line.trim());
+                        if (!Strings.isNullOrEmpty(line)) {
+                            tmplist.add(ci);
+                        }
                         currentblocksize += StringSizeEstimator
                                 .estimatedSizeOf(line);
                     }

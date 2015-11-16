@@ -71,12 +71,13 @@ public abstract class SymLoader {
     protected final GenomeVersion genomeVersion;
     public final String featureName;
     protected static RemoteFileCacheService remoteFileCacheService;
-    protected static ExternalSortService externalSortService;
+    protected ExternalSortService externalSortService;
     protected BundleContext bundleContext;
     private static final Predicate<String> IS_NOT_TRACK_LINE = line -> !line.startsWith("track");
     private static final Predicate<String> IS_NOT_COMMENT_LINE = line -> !line.startsWith("#");
     private static final Predicate<String> IS_NOT_BROWSER_LINE = line -> !line.startsWith("browser");
     private static final Predicate<String> IS_PARSEABLE_LINE = IS_NOT_COMMENT_LINE.and(IS_NOT_TRACK_LINE).and(IS_NOT_BROWSER_LINE);
+    protected ComparatorMetadata comparatorMetadata = new ComparatorMetadata();
 
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
 
@@ -100,6 +101,15 @@ public abstract class SymLoader {
             this.indexUri = indexUri.get();
         }
     }
+
+    public ExternalSortService getExternalSortService() {
+        return externalSortService;
+    }
+
+    public void setExternalSortService(ExternalSortService externalSortService) {
+        this.externalSortService = externalSortService;
+    }
+
 
     public URI getIndexUri() {
         return indexUri;
@@ -150,7 +160,7 @@ public abstract class SymLoader {
     private Optional<BufferedInputStream> checkRemoteFileCache(URL fileUrl) throws IOException {
         BufferedInputStream bis = null;
 
-        if (remoteFileCacheService.cacheExists(fileUrl)) {
+        if (!remoteFileCacheService.cacheExists(fileUrl)) {
             Optional<InputStream> fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, false);
             try {
                 CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
@@ -194,28 +204,10 @@ public abstract class SymLoader {
                 throw new IOException("Input Stream NULL");
             }
             ExternalSortConfiguration conf = new ExternalSortConfiguration();
-            conf.setNumHeaderRows(0);
             conf.setMaxMemoryInBytes(50_000_000);
             conf.setMaxTmpFiles(100);
 
-            ComparatorMetadata comparatorMetadata = new ComparatorMetadata();
-
-            //Define multisort
-            //First sort
-            comparatorMetadata.getPreparers().add(s -> {
-                String[] sSplit = s.split("\\s+");
-                return sSplit[0];
-            });
-            //Second sort
-            comparatorMetadata.getPreparers().add(s -> {
-                String[] sSplit = s.split("\\s+");
-                return Long.parseLong(sSplit[1]);
-            });
-            //Third sort
-            comparatorMetadata.getPreparers().add(s -> {
-                String[] sSplit = s.split("\\s+");
-                return Long.parseLong(sSplit[2]);
-            });
+            
 
             if (BedUtils.isRemoteBedFile(fileUrl)) {
                 CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);

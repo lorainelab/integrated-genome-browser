@@ -7,6 +7,7 @@ import com.affymetrix.genometry.comparator.UcscPslComparator;
 import com.affymetrix.genometry.symloader.PSL;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
+import com.google.code.externalsorting.ExternalMergeSort;
 import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
 import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
 import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
@@ -71,6 +72,7 @@ public class PSLParserTest {
         genomeVersion = new GenomeVersion("Test Group");
         PSL psl = new PSL(file.toURI(), Optional.empty(), stream_name, genomeVersion, null, null,
                 true, false, false);
+        psl.setExternalSortService(new ExternalMergeSort());
         syms = psl.getGenome();
         seq = genomeVersion.getSeq("chrl");
         outstream = new ByteArrayOutputStream();
@@ -146,6 +148,7 @@ public class PSLParserTest {
 
         PSL psl = new PSL(PSLParserTest.class.getClassLoader().getResource(filename).toURI(), Optional.empty(), filename, genomeVersion, null, null,
                 true, true, false);
+        psl.setExternalSortService(new ExternalMergeSort());
         List<BioSeq> seqs = psl.getChromosomeList();
 
         List<SeqSymmetry> syms1 = null;

@@ -51,6 +51,14 @@ public class ToolTipOperations {
         populateMisc(props, categories, BAM_IGNORE_LIST);
         return categories;
     }
+    
+    public static List<ToolTipCategory> formatBamInsSymTooltip(Map<String, Object> props) {
+        List<ToolTipCategory> categories = new ArrayList<>();
+
+        populateCategory(props, ToolTipConstants.BAM_INS_INFO_CATEGORY, categories);
+        populateMisc(props, categories, ToolTipConstants.BAM_INS_IGNORE_LIST);
+        return categories;
+    }
 
     public static List<ToolTipCategory> formatBED14SymTooltip(Map<String, Object> props) {
         List<ToolTipCategory> categories = new ArrayList<>();

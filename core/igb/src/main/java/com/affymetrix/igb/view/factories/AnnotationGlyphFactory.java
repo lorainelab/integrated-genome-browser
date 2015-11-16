@@ -470,7 +470,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         }
         SeqSpan pspan = seqMap.getViewSeqSpan(psym);
 
-        Color color = Color.RED;
+        Color color = Color.BLACK;
 
         for (int i = 0; i < inssym.getInsChildCount(); i++) {
 

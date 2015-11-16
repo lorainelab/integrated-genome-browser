@@ -27,7 +27,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.shared.TrackClickListener;
-import com.google.common.base.CaseFormat;
 import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
@@ -88,7 +87,7 @@ public final class TierLabelManager implements PropertyHolder {
         } catch (UnsupportedEncodingException ex) {
         }
         String server = feature.getDataContainer().getDataProvider().getName() + " (" + feature.getDataContainer().getDataProvider().getName() + ")";
-        props.put(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, ToolTipConstants.SERVER), server);
+        props.put(ToolTipConstants.SERVER, server);
 
         return props;
     }

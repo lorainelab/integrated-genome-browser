@@ -1,12 +1,9 @@
 package com.affymetrix.igb.prefs;
 
-import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import static com.affymetrix.common.PreferenceUtils.getAnnotationLabelPrefsNode;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.IgbServiceDependencyManager;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
@@ -73,15 +70,6 @@ public final class AnnotationLabelOptions extends JRPJPanel implements Preferenc
         super(COMPONENT_NAME);
         defaultFixedFontSize = 12;
         annotationLabelPrefsNode = getAnnotationLabelPrefsNode();
-    }
-
-    @Reference
-    public void setIgbServiceDependencyManager(IgbServiceDependencyManager igbServiceDependencyManager) {
-        //replace with igb service reference when migrated to osgi service
-    }
-
-    @Activate
-    public void activate() {
         initComponents();
         initializeComponentState();
         initializeLayout();

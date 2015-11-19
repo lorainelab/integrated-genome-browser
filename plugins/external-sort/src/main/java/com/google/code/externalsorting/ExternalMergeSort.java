@@ -1,6 +1,7 @@
 package com.google.code.externalsorting;
 
 import aQute.bnd.annotation.component.Component;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.externalsort.api.ComparatorInstance;
 import com.lorainelab.externalsort.api.ComparatorMetadata;
@@ -33,9 +34,6 @@ import java.util.PriorityQueue;
 import java.util.zip.Deflater;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import java.util.zip.ZipInputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -364,36 +362,10 @@ public class ExternalMergeSort implements ExternalSortService {
             boolean distinct, int numHeader, boolean usegzip)
             throws IOException {
         BufferedReader fbr = new BufferedReader(new InputStreamReader(
-                unzipStream(new FileInputStream(file), compressionName), cs));
+                GeneralUtils.unzipStream(new FileInputStream(file), compressionName, new StringBuffer()), cs));
         return sortInBatch(fbr, file.length(), comparatorMetadata, maxtmpfiles,
                 maxMemoryInBytes, cs, tmpdirectory, distinct,
                 numHeader, usegzip);
-    }
-
-    public static InputStream unzipStream(InputStream istr, String compressionName)
-            throws IOException {
-        String lc_stream_name = compressionName.toLowerCase();
-        if (lc_stream_name.endsWith(".gz") || lc_stream_name.endsWith(".gzip")
-                || lc_stream_name.endsWith(".z")) {
-            InputStream gzstr = new GZIPInputStream(istr);
-            String new_name = compressionName.substring(0, compressionName.lastIndexOf('.'));
-            return unzipStream(gzstr, new_name);
-        } else if (lc_stream_name.endsWith(".zip")) {
-            ZipInputStream zstr = new ZipInputStream(istr);
-            zstr.getNextEntry();
-            String new_name = compressionName.substring(0, compressionName.lastIndexOf('.'));
-            return unzipStream(zstr, new_name);
-        } else if (lc_stream_name.endsWith(".bz2")) {
-            BZip2CompressorInputStream bz2 = new BZip2CompressorInputStream(istr);
-            String new_name = compressionName.substring(0, compressionName.lastIndexOf('.'));
-            return unzipStream(bz2, new_name);
-        } else if (lc_stream_name.endsWith(".tar")) {
-            TarArchiveInputStream tarInput = new TarArchiveInputStream(istr);
-            tarInput.getNextTarEntry();
-            String new_name = compressionName.substring(0, compressionName.lastIndexOf('.'));
-            return unzipStream(tarInput, new_name);
-        }
-        return istr;
     }
 
     private List<File> sortInBatch(File file, String compressionName, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) {

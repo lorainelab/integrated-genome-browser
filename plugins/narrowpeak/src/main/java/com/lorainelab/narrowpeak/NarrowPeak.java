@@ -13,12 +13,14 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.PEAK;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.P_VALUE;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.Q_VALUE;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.SIGNAL_VALUE;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
@@ -70,30 +72,30 @@ public class NarrowPeak extends SymLoader {
     }
 
     private void initializeChromosomes() {
-
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(uri.toURL().openStream()))) {
-            bufferedReader.lines()
-                    .map(line -> line.trim())
-                    .filter(IS_PARSEABLE_LINE)
-                    .forEach(line -> {
-                        Iterable<String> splitLine = Splitter.on("\t").trimResults().split(line);
-                        final Iterator<String> iterator = splitLine.iterator();
-                        if (iterator.hasNext()) {
-                            String chromosome = iterator.next();
-                            BioSeq seq = genomeVersion.getSeq(chromosome);
-                            if (seq != null) {
-                                if (!chromosomes.contains(seq)) {
-                                    chromosomes.add(seq);
-                                    chromosomeReference.put(chromosome, seq);
+        try (final InputStream openStream = uri.toURL().openStream();
+                InputStream unzipedStream = GeneralUtils.unzipStream(openStream, uri.toString(), new StringBuffer());
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(unzipedStream))) {
+            bufferedReader.lines()                        .map(line -> line.trim())
+                        .filter(IS_PARSEABLE_LINE)
+                        .forEach(line -> {
+                            Iterable<String> splitLine = Splitter.on("\t").trimResults().split(line);
+                            final Iterator<String> iterator = splitLine.iterator();
+                            if (iterator.hasNext()) {
+                                String chromosome = iterator.next();
+                                BioSeq seq = genomeVersion.getSeq(chromosome);
+                                if (seq != null) {
+                                    if (!chromosomes.contains(seq)) {
+                                        chromosomes.add(seq);
+                                        chromosomeReference.put(chromosome, seq);
+                                    }
                                 }
                             }
-                        }
 
-                    });
+                        });
             Collections.sort(chromosomes, new BioSeqComparator());
-        } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
+            } catch (IOException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
     }
 
     @Override
@@ -117,7 +119,9 @@ public class NarrowPeak extends SymLoader {
 
     private List<SeqSymmetry> parse(BioSeq seq, int requestMin, int requestMax) {
         List<SeqSymmetry> dataModelContent = Lists.newArrayList();
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(uri.toURL().openStream()))) {
+        try (final InputStream openStream = uri.toURL().openStream();
+                InputStream unzipedStream = GeneralUtils.unzipStream(openStream, uri.toString(), new StringBuffer());
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(unzipedStream))) {
             Iterator<String> iterator = bufferedReader.lines().iterator();
             while (iterator.hasNext()) {
                 String line = iterator.next().trim();
@@ -214,7 +218,9 @@ public class NarrowPeak extends SymLoader {
     }
 
     private void parseTrackLine() {
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(uri.toURL().openStream()))) {
+        try (final InputStream openStream = uri.toURL().openStream();
+                InputStream unzipedStream = GeneralUtils.unzipStream(openStream, uri.toString(), new StringBuffer());
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(unzipedStream))) {
             String firstLine = bufferedReader.readLine();
             if (!IS_NOT_TRACK_LINE.test(firstLine)) {
                 TrackLineParser trackLineParser = new TrackLineParser(firstLine);
@@ -225,5 +231,6 @@ public class NarrowPeak extends SymLoader {
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
         }
+
     }
 }

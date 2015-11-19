@@ -56,6 +56,11 @@
             <artifactId>commons-compress</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>genometry</artifactId>
+           <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

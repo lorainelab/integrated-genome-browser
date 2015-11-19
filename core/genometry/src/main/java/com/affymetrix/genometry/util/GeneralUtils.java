@@ -4,6 +4,7 @@ import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.github.kevinsawicki.http.HttpRequest;
 import static com.google.common.io.Closeables.close;
@@ -464,17 +465,25 @@ public final class GeneralUtils {
      * this method will return an Input for a gzip, trying to determine if this is a regular or blocked gzip file. If it
      * cannot determine the default is blocked gzip.
      *
-     * @param url the url (should be a url for a gzip file)
+     * @param uriString
      * @param istr the raw (uncompressed) InputStream to wrap
      * @return BlockCompressedInputStream if this is a blocked gzip file, GZIPInputStream otherwise
      */
-    public static InputStream getGZipInputStream(String url, InputStream istr) throws IOException {
+    public static InputStream getGZipInputStream(String uriString, InputStream istr) throws IOException {
         InputStream gzstr = null;
         boolean blockedGZip = false;
         GZIPInputStream gis = null;
         try {
-            URLConnection conn = LocalUrlCacher.connectToUrl(url, -1);
-            gis = new GZIPInputStream(conn.getInputStream());
+            InputStream inputStream;
+            URI uri = new URI(uriString);
+            if (uri.getScheme().equalsIgnoreCase(FILE_PROTOCOL_SCHEME)) {
+                File f = new File(uri);
+                inputStream = new FileInputStream(f);
+            } else {
+                URLConnection conn = LocalUrlCacher.connectToUrl(uriString, -1);
+                inputStream = conn.getInputStream();
+            }
+            gis = new GZIPInputStream(inputStream);
             gis.read();
         } catch (ZipException x) {
             blockedGZip = true;
@@ -489,7 +498,7 @@ public final class GeneralUtils {
         if (blockedGZip) {
             gzstr = new BlockCompressedInputStream(istr);
         } else {
-            URLConnection conn = LocalUrlCacher.connectToUrl(url, -1);
+            URLConnection conn = LocalUrlCacher.connectToUrl(uriString, -1);
             gzstr = new GZIPInputStream(conn.getInputStream());
         }
 

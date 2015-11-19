@@ -640,7 +640,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         statusBar.showError(title, message, actions, level);
     }
 
-    public static IGB getInstance() {
+    public synchronized static IGB getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new IGB();
             INSTANCE.toolbar.initHack();

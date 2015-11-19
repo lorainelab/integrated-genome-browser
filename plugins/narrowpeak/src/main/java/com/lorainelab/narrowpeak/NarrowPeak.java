@@ -70,6 +70,7 @@ public class NarrowPeak extends SymLoader {
     }
 
     private void initializeChromosomes() {
+
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(uri.toURL().openStream()))) {
             bufferedReader.lines()
                     .map(line -> line.trim())

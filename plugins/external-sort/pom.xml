@@ -56,6 +56,11 @@
             <artifactId>commons-compress</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>net.sf</groupId>
+            <artifactId>sam-ext</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

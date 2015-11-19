@@ -1,7 +1,6 @@
 package com.google.code.externalsorting;
 
 import aQute.bnd.annotation.component.Component;
-import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.externalsort.api.ComparatorInstance;
 import com.lorainelab.externalsort.api.ComparatorMetadata;
@@ -20,6 +19,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -34,6 +36,11 @@ import java.util.PriorityQueue;
 import java.util.zip.Deflater;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipException;
+import java.util.zip.ZipInputStream;
+import net.sf.samtools.util.BlockCompressedInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +51,7 @@ import org.slf4j.LoggerFactory;
 public class ExternalMergeSort implements ExternalSortService {
 
     private static final Logger logger = LoggerFactory.getLogger(ExternalMergeSort.class);
+    private static final String FILE_PROTOCOL_SCHEME = "file";
 
     public ExternalMergeSort() {
     }
@@ -362,10 +370,88 @@ public class ExternalMergeSort implements ExternalSortService {
             boolean distinct, int numHeader, boolean usegzip)
             throws IOException {
         BufferedReader fbr = new BufferedReader(new InputStreamReader(
-                GeneralUtils.unzipStream(new FileInputStream(file), compressionName, new StringBuffer()), cs));
+                unzipStream(new FileInputStream(file), compressionName, new StringBuffer()), cs));
         return sortInBatch(fbr, file.length(), comparatorMetadata, maxtmpfiles,
                 maxMemoryInBytes, cs, tmpdirectory, distinct,
                 numHeader, usegzip);
+    }
+
+    public static InputStream unzipStream(InputStream istr, String stream_name,
+            StringBuffer stripped_name)
+            throws IOException {
+        String lc_stream_name = stream_name.toLowerCase();
+        if (lc_stream_name.endsWith(".gz") || lc_stream_name.endsWith(".gzip")
+                || lc_stream_name.endsWith(".z")) {
+            InputStream gzstr = getGZipInputStream(stream_name, istr);
+            String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
+            return unzipStream(gzstr, new_name, stripped_name);
+        } else if (lc_stream_name.endsWith(".zip")) {
+            ZipInputStream zstr = new ZipInputStream(istr);
+            zstr.getNextEntry();
+            String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
+            return unzipStream(zstr, new_name, stripped_name);
+        } else if (lc_stream_name.endsWith(".bz2")) {
+            BZip2CompressorInputStream bz2 = new BZip2CompressorInputStream(istr);
+            String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
+            return unzipStream(bz2, new_name, stripped_name);
+        } else if (lc_stream_name.endsWith(".tar")) {
+            TarArchiveInputStream tarInput = new TarArchiveInputStream(istr);
+            tarInput.getNextTarEntry();
+            String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
+            return unzipStream(tarInput, new_name, stripped_name);
+        }
+        stripped_name.append(stream_name);
+        return istr;
+    }
+
+    public static InputStream getGZipInputStream(String uriString, InputStream istr) throws IOException {
+        InputStream gzstr = null;
+        boolean blockedGZip = false;
+        GZIPInputStream gis = null;
+        try {
+            InputStream inputStream;
+            URI uri = new URI(uriString);
+            if (uri.getScheme().equalsIgnoreCase(FILE_PROTOCOL_SCHEME)) {
+                File f = new File(uri);
+                inputStream = new FileInputStream(f);
+            } else {
+                URLConnection conn = connectToUrl(uriString, -1);
+                inputStream = conn.getInputStream();
+            }
+            gis = new GZIPInputStream(inputStream);
+            gis.read();
+        } catch (ZipException x) {
+            blockedGZip = true;
+        } catch (Exception x) {
+            blockedGZip = true; // default
+        } finally {
+            try {
+                gis.close();
+            } catch (Exception e) {
+            }
+        }
+        if (blockedGZip) {
+            gzstr = new BlockCompressedInputStream(istr);
+        } else {
+            URLConnection conn = connectToUrl(uriString, -1);
+            gzstr = new GZIPInputStream(conn.getInputStream());
+        }
+
+        return gzstr;
+    }
+
+    public static URLConnection connectToUrl(String url, long local_timestamp) throws IOException {
+        URL theurl = new URL(url);
+        URLConnection conn = theurl.openConnection();
+        conn.setRequestProperty("Accept-Encoding", "gzip");
+        if (local_timestamp != -1) {
+            conn.setIfModifiedSince(local_timestamp);
+        }
+        //    because some method calls on URLConnection like those below don't always throw errors
+        //    when connection can't be opened -- which would end up allowing url_reachable to be set to true
+        ///   even when there's no connection
+        conn.connect();
+        return conn;
     }
 
     private List<File> sortInBatch(File file, String compressionName, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) {

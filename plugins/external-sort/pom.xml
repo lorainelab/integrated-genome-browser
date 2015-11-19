@@ -57,9 +57,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>genometry</artifactId>
-           <scope>provided</scope>
+            <groupId>net.sf</groupId>
+            <artifactId>sam-ext</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>

@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Constants;
 
 /**
  *
@@ -29,7 +30,8 @@ public class PluginListItemMetadata extends AbstractObservableModel<PluginListIt
 
     public PluginListItemMetadata(Bundle bundle, String version, String repository, Boolean isInstalled, Boolean isUpdatable) {
         this.bundle = bundle;
-        this.pluginName = new SimpleStringProperty(bundle.getSymbolicName());
+        String bundleName = getpluginName(bundle);
+        this.pluginName = new SimpleStringProperty(bundleName);
         this.version = new SimpleStringProperty(version);
         this.repository = new SimpleStringProperty(repository);
         this.isUpdatable = new SimpleBooleanProperty(isUpdatable);
@@ -37,6 +39,14 @@ public class PluginListItemMetadata extends AbstractObservableModel<PluginListIt
         this.description = new SimpleStringProperty(getBundleDescription(bundle));
         this.weight = new SimpleIntegerProperty(0);
         this.isBusy = new SimpleBooleanProperty(Boolean.FALSE);
+    }
+
+    private String getpluginName(Bundle bundle) {
+        try {
+            return bundle.getHeaders().get(Constants.BUNDLE_NAME);
+        } catch (Exception ex) {
+            return bundle.getSymbolicName();
+        }
     }
 
     //for unit testing...

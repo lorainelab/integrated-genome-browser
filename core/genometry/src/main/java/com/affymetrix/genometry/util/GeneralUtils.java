@@ -47,6 +47,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOImage;
 import net.sf.samtools.seekablestream.SeekableStream;
@@ -54,6 +55,7 @@ import net.sf.samtools.seekablestream.SeekableStreamFactory;
 import net.sf.samtools.util.BlockCompressedInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -679,5 +681,21 @@ public final class GeneralUtils {
         static_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         static_chooser.rescanCurrentDirectory();
         return static_chooser;
+    }
+
+    public static void openWebpage(String uriString) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            if (StringUtils.isNotBlank(uriString)) {
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        URI uri = new URI(uriString);
+                        desktop.browse(uri);
+                    } catch (IOException | URISyntaxException ex) {
+                        logger.error(ex.getMessage(), ex);
+                    }
+                });
+            }
+        }
     }
 }

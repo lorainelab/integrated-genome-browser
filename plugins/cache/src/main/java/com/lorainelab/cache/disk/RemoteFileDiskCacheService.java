@@ -246,7 +246,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
                     try {
                         return Optional.ofNullable(new BufferedInputStream(url.openStream()));
                     } catch (IOException ex) {
-                        LOG.error(ex.getMessage(), ex);
+                        LOG.debug(ex.getMessage(), ex);
                         return Optional.empty();
                     }
                 }

@@ -176,10 +176,22 @@
                             com.apple.eawt,
                             *
                         </Import-Package>
-                        <Export-Package/>                    
+                        <Export-Package/>   
+                        <Bundle-Description>${bundleDescription}</Bundle-Description>                 
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
+            </plugin>   
+            <plugin>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>bundle-markdown-encoder</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>encodeMarkdown</goal>
+                        </goals>
+                    </execution> 
+                </executions>
             </plugin>            
         </plugins>
     </build>

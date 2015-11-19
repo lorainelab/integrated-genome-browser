@@ -110,7 +110,6 @@ public abstract class SymLoader {
         this.externalSortService = externalSortService;
     }
 
-
     public URI getIndexUri() {
         return indexUri;
     }
@@ -185,8 +184,8 @@ public abstract class SymLoader {
         BufferedInputStream bis = null;
         Map<String, Integer> chrLength = new HashMap<>();
         Map<String, File> chrFiles = new HashMap<>();
-        BufferedInputStream sortedResult = null;
-        Optional<File> result = Optional.empty();
+        BufferedInputStream sortedResultIs = null;
+        Optional<File> sortedResult = Optional.empty();
         try {
 
             URL fileUrl = uri.toURL();
@@ -207,33 +206,42 @@ public abstract class SymLoader {
             conf.setMaxMemoryInBytes(50_000_000);
             conf.setMaxTmpFiles(100);
 
-            
-
             if (BedUtils.isRemoteBedFile(fileUrl)) {
                 CacheStatus cacheStatus = remoteFileCacheService.getCacheStatus(fileUrl);
                 if (cacheStatus.isDataExists()) {
                     conf.setNumHeaderRows(findChromStartIndex(cacheStatus.getData()));
-                    result = externalSortService.merge(cacheStatus.getData(), cacheStatus.getUrl(), comparatorMetadata, conf);
-                    if (result.isPresent()) {
-                        sortedResult = new BufferedInputStream(new FileInputStream(result.get()));
+                    sortedResult = externalSortService.merge(cacheStatus.getData(), cacheStatus.getUrl(), comparatorMetadata, conf);
+                    if (sortedResult.isPresent()) {
+                        sortedResultIs = new BufferedInputStream(new FileInputStream(sortedResult.get()));
                     }
 
                 }
             } else {
                 File input = new File(uri.getPath());
                 conf.setNumHeaderRows(findChromStartIndex(input));
-                result = externalSortService.merge(input, uri.toString(), comparatorMetadata, conf);
-                if (result.isPresent()) {
-                    sortedResult = new BufferedInputStream(new FileInputStream(result.get()));
+                sortedResult = externalSortService.merge(input, uri.toString(), comparatorMetadata, conf);
+                if (sortedResult.isPresent()) {
+                    sortedResultIs = new BufferedInputStream(new FileInputStream(sortedResult.get()));
                 }
             }
+            if (sortedResult.isPresent()) {
+                if (parseLines(sortedResultIs, chrLength, chrFiles)) {
+                    createResults(chrLength, chrFiles);
+                    //Delete temp file
+                    GeneralUtils.safeClose(sortedResultIs);
+                    Files.delete(sortedResult.get().toPath());
+                    return true;
+                }
+            } else {
+                File input = new File(uri.getPath());
+                try (InputStream is = new BufferedInputStream(new FileInputStream(input))) {
+                    if (parseLines(is, chrLength, chrFiles)) {
+                        createResults(chrLength, chrFiles);
+                   
+                        return true;
 
-            if (parseLines(sortedResult, chrLength, chrFiles)) {
-                createResults(chrLength, chrFiles);
-                //Delete temp file
-                GeneralUtils.safeClose(sortedResult);
-                Files.delete(result.get().toPath());
-                return true;
+                    }
+                }
             }
 
         } catch (Exception ex) {

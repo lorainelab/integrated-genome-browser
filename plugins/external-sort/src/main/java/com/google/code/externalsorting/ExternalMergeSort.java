@@ -53,7 +53,7 @@ public class ExternalMergeSort implements ExternalSortService {
     @Override
     public Optional<File> merge(File input, String compressionName, ComparatorMetadata comparatorMetadata, ExternalSortConfiguration conf) {
         if (comparatorMetadata.getPreparers().isEmpty()) {
-            return Optional.ofNullable(input);
+            return Optional.empty();
         }
 
         try {

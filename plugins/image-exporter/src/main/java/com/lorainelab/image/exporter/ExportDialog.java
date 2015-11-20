@@ -659,7 +659,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     private void refreshPreview() {
-        initImageInfo();
+        initImageInfo(exportComponent);
         initSpinner((String) exportDialogGui.getUnitComboBox().getSelectedItem());
         previewImage();
     }

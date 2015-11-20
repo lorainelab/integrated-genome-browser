@@ -9,6 +9,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.tooltip.ToolTipCategory;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.STRAND;
 import com.affymetrix.genometry.tooltip.ToolTipOperations;
+import com.affymetrix.genometry.util.SeqUtils;
 import static com.affymetrix.genometry.util.SeqUtils.isBamSym;
 import static com.affymetrix.genometry.util.SeqUtils.isBedSym;
 import static com.affymetrix.genometry.util.SeqUtils.isGFFSym;
@@ -94,7 +95,11 @@ public class SeqMapToolTips extends JWindow {
         tooltip.setText(null);
         if (properties != null && properties.size() > 0 && sym != null) {
             if (isBamSym(sym)) {
-                propList = ToolTipOperations.formatBamSymTooltip(properties);
+                if (SeqUtils.isBamInsSym(sym)) {
+                    propList = ToolTipOperations.formatBamInsSymTooltip(properties);
+                } else {
+                    propList = ToolTipOperations.formatBamSymTooltip(properties);
+                }
             } else if (isBedSym(sym)) {
                 propList = ToolTipOperations.formatBED14SymTooltip(properties);
             } else if (isNarrowPeakSym(sym)) {

@@ -41,6 +41,14 @@ public class ToolTipConstants {
     public static final String NH = "NH";
     public static final String XS = "XS";
     public static final String NM = "NM";
+    public static final String AS = "AS";
+    public static final String XM = "XM";
+    public static final String XN = "XN";
+    public static final String MD = "MD";
+    public static final String XO = "XO";
+    public static final String YT = "YT";
+    public static final String PN = "PN";
+    public static final String XG = "XG";
 
     public static final String DESCRIPTION = "description";
     public static final String CDS_START = "cds start";
@@ -72,9 +80,9 @@ public class ToolTipConstants {
     public static final String DIRECTION = "direction";
     public static final String REVERSE_DIRECTION = "reverse";
 
-    public static final String FILE_NAME = "File name";
+    public static final String FILE_NAME = "file name";
     public static final String URL = "url";
-    public static final String SERVER = "Server";
+    public static final String SERVER = "server";
     public static final String MIN_SCORE = "min score";
     public static final String MAX_SCORE = "max score";
 
@@ -99,13 +107,10 @@ public class ToolTipConstants {
     public static final String MISC_CATEGORY = "Misc";
 
     // BAM Insertion
-    public static final List<String> BAM_INS_INFO_GRP = Arrays.asList(FEATURE_TYPE, ID, CHROMOSOME, START, END, LENGTH);
-    public static final List<String> BAM_INS_LOC_GRP = Arrays.asList(STRAND, RESIDUES, FORWARD);
-
+    public static final List<String> BAM_INS_INFO_GRP = Arrays.asList(FEATURE_TYPE, LENGTH, RESIDUES, STRAND, START, END, ID);
+    public static final List<String> BAM_INS_IGNORE_LIST = Arrays.asList(NAME, SHOW_MASK, SCORES, FORWARD, MAPQ, PAIRED_READ, DUPLICATE, SUPPLEMENTARY, FAILED_QC, CIGAR, VN, XS, NM, AS, XM, XN, MD, XO, YT, PN, XG, CHROMOSOME, AVERAGE_QUALITY);
     public static final List<String> BAM_INS_PROP_LIST = new ArrayList<>();
-
     public static final Map<String, List<String>> BAM_INS_INFO_CATEGORY = ImmutableMap.of(BASIC__INFO_CATEGORY, BAM_INS_INFO_GRP);
-    public static final Map<String, List<String>> BAM_INS_LOCATION_CATEGORY = ImmutableMap.of("Bam Info", BAM_INS_LOC_GRP);
 
     // BED-14
     public static final List<String> BED14_INFO_GRP = Arrays.asList(TITLE, ID, DESCRIPTION);
@@ -164,9 +169,8 @@ public class ToolTipConstants {
         BAM_PROP_LIST.addAll(BAM_INFO_GRP);
         BAM_PROP_LIST.addAll(BAM_LOC_GRP);
         BAM_PROP_LIST.addAll(BAM_DETAILS_GRP);
-
+        
         BAM_INS_PROP_LIST.addAll(BAM_INS_INFO_GRP);
-        BAM_INS_PROP_LIST.addAll(BAM_INS_LOC_GRP);
 
         BED14_PROP_LIST.addAll(BED14_INFO_GRP);
         BED14_PROP_LIST.addAll(BED14_LOC_GRP);

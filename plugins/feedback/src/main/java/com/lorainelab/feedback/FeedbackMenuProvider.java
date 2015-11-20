@@ -7,11 +7,13 @@ package com.lorainelab.feedback;
 
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
+import javax.swing.AbstractAction;
 
 /**
  *
@@ -26,17 +28,24 @@ public class FeedbackMenuProvider extends GenericAction implements IgbMenuItemPr
     private final String parentMenuName;
     private final JRPMenuItem menuItem;
     private FeedbackWidget feedbackWidget;
+    private static final String BIOVIZ_HELP_PAGE = "http://bioviz.org/igb/help.html";
 
     public FeedbackMenuProvider() {
-        super(getProperty("menu.name"),
-                getProperty("menu.tooltip"),
+        super(BUNDLE.getString("menu.name"),
+                BUNDLE.getString("menu.tooltip"),
                 "16x16/actions/help.png",
                 "22x22/actions/help.png",
                 KeyEvent.VK_UNDEFINED);
-        menuWeight = Integer.parseInt(getProperty("menu.weight"));
-        parentMenuName = getProperty("menu.parent.name");
+        menuWeight = Integer.parseInt(BUNDLE.getString("menu.weight"));
+        parentMenuName = BUNDLE.getString("menu.parent.name");
         feedbackWidget = new FeedbackWidget();
-        menuItem = new JRPMenuItem(getProperty("menu.name"), this, menuWeight);
+//        menuItem = new JRPMenuItem(getProperty("menu.name"), this, menuWeight);
+        menuItem = new JRPMenuItem(BUNDLE.getString("menu.name"), new AbstractAction(BUNDLE.getString("menu.name")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GeneralUtils.openWebpage(BIOVIZ_HELP_PAGE);
+            }
+        });
     }
 
     @Override
@@ -52,10 +61,6 @@ public class FeedbackMenuProvider extends GenericAction implements IgbMenuItemPr
     @Override
     public int getMenuItemWeight() {
         return menuWeight;
-    }
-
-    private static String getProperty(String property) {
-        return BUNDLE.getString(property);
     }
 
     @Override

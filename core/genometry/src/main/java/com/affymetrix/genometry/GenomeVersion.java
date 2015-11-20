@@ -32,6 +32,11 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A container for {@link com.affymetrix.genometry.BioSeq} objects typically corresponding to a 
+ * genome assembly in Integrated Genome Browser.
+ * 
+ */
 public class GenomeVersion {
 
     private static final Logger logger = LoggerFactory.getLogger(GenomeVersion.class);

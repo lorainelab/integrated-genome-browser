@@ -53,6 +53,8 @@ public final class BAM extends XAM implements Das2SliceSupport {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BAM.class);
     public final static List<String> pref_list = new ArrayList<>();
     private SAMFileReader mateReader;
+    
+    //FYI: the variable reader is inherited from the parent class XAM.java
 
     static {
         pref_list.add("bam");

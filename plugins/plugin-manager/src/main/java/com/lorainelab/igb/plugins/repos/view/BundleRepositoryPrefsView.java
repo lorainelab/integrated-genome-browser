@@ -176,7 +176,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
         pluginRepositoryTable = table;
         removeButton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        done = new javax.swing.JButton();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Plugin Repositories"));
 
@@ -197,10 +197,10 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
             }
         });
 
-        jButton1.setText("Done");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        done.setText("Done");
+        done.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                doneActionPerformed(evt);
             }
         });
 
@@ -215,7 +215,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(removeButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(done)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -226,7 +226,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(removeButton)
                     .addComponent(addButton)
-                    .addComponent(jButton1))
+                    .addComponent(done))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -242,13 +242,13 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
         }
     }//GEN-LAST:event_removeButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void doneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneActionPerformed
         igbService.dismissPreferences();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_doneActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton done;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable pluginRepositoryTable;
     private javax.swing.JButton removeButton;

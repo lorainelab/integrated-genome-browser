@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesPanelProvider, HtmlHelpProvider {
 
     public static final String COMPONENT_NAME = "BundleRepositoryPrefsView";
-    public static final String TAB_NAME = "Plugin Repositories";
+    public static final String TAB_NAME = "App Repositories";
     private static final int TAB_POSITION = 7;
     private BundleRepositoryTableModel tableModel;
     private PluginRepositoryList pluginRepositoryList;

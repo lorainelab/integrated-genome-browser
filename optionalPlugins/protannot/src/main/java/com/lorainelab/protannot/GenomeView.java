@@ -122,6 +122,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
     private AxisGlyphWithSelection axisGlyph;
     private JRPToggleButton selectModeButton;
     private JRPToggleButton scrollModeButton;
+    private JRPToggleButton scrollLeftButton;
+    private JRPToggleButton scrollRightButton;
 
     private final Color col_sequence = Color.black;
     private final Color col_axis_bg = Color.lightGray;
@@ -338,6 +340,16 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         scrollModeButton.setText("");
         scrollModeButton.setToolTipText(BUNDLE.getString("scrollModeToolTip"));
         scrollModeButton.setMargin(new Insets(2, 4, 2, 4));
+        
+        scrollLeftButton = new JRPToggleButton("Protannot scroll left action", new ProtannotScrollLeftAction(seqmap));
+        scrollLeftButton.setText("");
+        scrollLeftButton.setToolTipText(BUNDLE.getString("scrollLeftTooltip"));
+        scrollLeftButton.setMargin(new Insets(2, 4, 2, 4));
+        
+        scrollRightButton = new JRPToggleButton("Protannot scroll right action", new ProtannotScrollRightAction(seqmap));
+        scrollRightButton.setText("");
+        scrollRightButton.setToolTipText(BUNDLE.getString("scrollRightTooltip"));
+        scrollRightButton.setMargin(new Insets(2, 4, 2, 4));
 
         selectModeButton.doClick();
         this.setLayout(new BorderLayout());
@@ -440,6 +452,8 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         JPanel xZoomPanel = new JPanel(new MigLayout("fillx, ins 2"));
         JButton xZoomOutBtn = new JButton(new ZoomOutEvent(xzoomer));
         JButton xZoomInBtn = new JButton(new ZoomInEvent(xzoomer));
+        xZoomPanel.add(scrollLeftButton, "width 28!, height 28!");
+        xZoomPanel.add(scrollRightButton, "width 28!, height 28!");
         xZoomPanel.add(selectModeButton, "width 28!, height 28!");
         xZoomPanel.add(scrollModeButton, "width 28!, height 28!");
         xZoomPanel.add(xZoomOutBtn, "width 20!, height 20!");

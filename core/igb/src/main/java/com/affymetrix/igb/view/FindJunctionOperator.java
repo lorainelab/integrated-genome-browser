@@ -31,11 +31,46 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * 
+ * Operates on BAM (alignment) tracks. Uses spliced alignments infer the
+ * location of introns. 
+ * <p>
+ * Produces two-span junction features that bracket introns. The score field 
+ * indicates the number of spliced reads supporting that junction.
+ * <p>
+ * Uses a sequence data to infer junction strand, as follows:
+ * <pre>
+ *       XXXXXX-------------XXXXXX spliced read 
+ *           gtxxxxxxxxxxxxxag top (plus) strand of DNA
+ *       junction is on plus strand, transcribed left to right 
+ *            >.............>
+ *
+ *       XXXXXX-------------XXXXXX spliced read 
+ *           ct-------------ac top (plus) strand of DNA
+ *       junction is on the minus strand, transcribed right to left 
+ *            <.............<
+ *</pre>
+ * Only read alignments with a threshold number of bases flanking the intron on each
+ * end are counted.
+ * <p>
+ * The size of the spans on either end of the junction feature depends on the
+ * threshold (flanking) parameter.
+ * <p>
+ * However, if the user selects the tophat option, the flanking spans are as
+ * large as the largest flanking region from an aligned read, as with the
+ * tophat spliced alignment program.
+ * <p>
+ * Users are supposed to be able to specifiy whether singly-mapped or 
+ * multiply-mapped reads can be used, but this appears to be broken as of
+ * IGB 8.5 as only singly-mapped reads are used.
+ */
 @Component(name = FindJunctionOperator.COMPONENT_NAME, provide = Operator.class, immediate = true)
 public class FindJunctionOperator extends AbstractAnnotationTransformer implements Operator, IParameters, Style {
 
     public static final String COMPONENT_NAME = "FindJunctionOperator";
     public static final String THRESHOLD = "threshold";
+
     /**
      * TopHat style flanking makes the junction flanks as long as the largest
      * length of extrons from each side of a qualified intron.

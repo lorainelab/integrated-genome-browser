@@ -233,13 +233,11 @@ public abstract class SymLoader {
                     return true;
                 }
             } else {
-                File input = new File(uri.getPath());
-                try (InputStream is = new BufferedInputStream(new FileInputStream(input))) {
+                StringBuffer strippedName = new StringBuffer();
+                try (InputStream is = GeneralUtils.unzipStream(uri.toURL().openStream(), uri.toString(), strippedName)) {
                     if (parseLines(is, chrLength, chrFiles)) {
                         createResults(chrLength, chrFiles);
-                   
                         return true;
-
                     }
                 }
             }

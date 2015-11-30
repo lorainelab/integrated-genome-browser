@@ -981,25 +981,21 @@
                         <initScript />
                         <visibilityScript />
                       </formComponent>
-                      <formComponent name="" id="190" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.HyperlinkActionLabelComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="5" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                      <formComponent name="" id="643" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.HyperlinkLabelComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
                         <serializedBean>
                           <java class="java.beans.XMLDecoder">
-                            <object class="com.install4j.runtime.beans.formcomponents.HyperlinkActionLabelComponent">
-                              <void property="actionScript">
-                                <object class="com.install4j.api.beans.ScriptProperty">
-                                  <void property="value">
-                                    <string>context.goForward(1, false, false);</string>
-                                  </void>
-                                </object>
-                              </void>
+                            <object class="com.install4j.runtime.beans.formcomponents.HyperlinkLabelComponent">
                               <void property="hyperlinkText">
-                                <string>${i18n:updater.ShowComments}</string>
+                                <string>View Changes</string>
+                              </void>
+                              <void property="url">
+                                <string>http://bioviz.org/igb/news.html</string>
                               </void>
                             </object>
                           </java>
                         </serializedBean>
                         <initScript />
-                        <visibilityScript> ((String)context.getVariable("updaterComment")).length() &gt; 0</visibilityScript>
+                        <visibilityScript />
                       </formComponent>
                     </beans>
                   </group>

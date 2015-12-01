@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesPanelProvider, HtmlHelpProvider {
 
     public static final String COMPONENT_NAME = "BundleRepositoryPrefsView";
-    public static final String TAB_NAME = "Plugin Repositories";
+    public static final String TAB_NAME = "App Repositories";
     private static final int TAB_POSITION = 7;
     private BundleRepositoryTableModel tableModel;
     private PluginRepositoryList pluginRepositoryList;
@@ -176,6 +176,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
         pluginRepositoryTable = table;
         removeButton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
+        done = new javax.swing.JButton();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Plugin Repositories"));
 
@@ -196,6 +197,13 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
             }
         });
 
+        done.setText("Done");
+        done.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                doneActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -205,7 +213,10 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(addButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(removeButton))
+                .addComponent(removeButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(done)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,7 +225,8 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(removeButton)
-                    .addComponent(addButton))
+                    .addComponent(addButton)
+                    .addComponent(done))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -230,8 +242,13 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
         }
     }//GEN-LAST:event_removeButtonActionPerformed
 
+    private void doneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doneActionPerformed
+        igbService.dismissPreferences();
+    }//GEN-LAST:event_doneActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
+    private javax.swing.JButton done;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable pluginRepositoryTable;
     private javax.swing.JButton removeButton;

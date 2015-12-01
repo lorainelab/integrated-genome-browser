@@ -222,6 +222,8 @@ public interface IgbService {
 
     public int getPreferencesPanelTabIndex(Component c);
 
+    public void dismissPreferences();
+    
     public float getDefaultTrackSize();
 
     public void deselect(GlyphI tierGlyph);

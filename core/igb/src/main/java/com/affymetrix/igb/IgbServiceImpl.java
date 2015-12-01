@@ -88,6 +88,11 @@ public class IgbServiceImpl implements IgbService {
     }
 
     @Override
+    public void dismissPreferences() {
+        PreferencesPanel.getSingleton().getFrame().setVisible(false);
+    }
+
+    @Override
     public void loadResidues(boolean partial) {
         GeneralLoadView.getLoadView().loadResidues(partial);
     }
@@ -486,5 +491,7 @@ public class IgbServiceImpl implements IgbService {
                     GeneralLoadView.getLoadView().removeDataSet(featureToRemove, true);
                 });
     }
+    
+    
 
 }

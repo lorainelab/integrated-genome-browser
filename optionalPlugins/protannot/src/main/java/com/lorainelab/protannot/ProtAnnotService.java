@@ -767,11 +767,11 @@ public class ProtAnnotService {
     public void exportAsXml(Component component, JFrame frm) {
         int option = 0;
         Optional<File> file = null;
-        file = JavaFxFileChooser.build().setContext(FileTracker.DATA_DIR_TRACKER.getFile())
-                .setDefaultFileName(".paxml").saveFilesFromFxChooser();
+        file = JavaFxFileChooser.build().setContext(FileTracker.DATA_DIR_TRACKER.getFile().getParentFile())
+                .setDefaultFileName(FileTracker.DATA_DIR_TRACKER.getFile().getName()).saveFilesFromFxChooser();
         if (file.isPresent()) {
             File exportFile = file.get();
-            FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());
+            FileTracker.DATA_DIR_TRACKER.setFile(exportFile);
             Dnaseq dnaseq = getDnaseq();
             JAXBContext jaxbContext;
             try {

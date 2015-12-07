@@ -41,6 +41,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,8 @@ import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -74,16 +77,25 @@ public final class TierLabelManager implements PropertyHolder {
         return getFeatureProperties(glyph.getAnnotStyle().getFeature());
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(TierLabelManager.class);
+
     public static Map<String, Object> getFeatureProperties(DataSet feature) {
         if (feature == null) {
             return null;
         }
 
-        Map<String, Object> props = new HashMap<>();
-        props.put(ToolTipConstants.FILE_NAME, feature.getDataSetName());
+        Map<String, Object> props = new LinkedHashMap<>();
+        Map<String, String> properties = feature.getProperties();
+        props.put(ToolTipConstants.NAME, feature.getDataSetName());
         props.put(ToolTipConstants.DESCRIPTION, feature.description());
+        props.put(ToolTipConstants.SOURCE, feature.getDataContainer().getDataProvider().getName());
+        if (feature.getDataContainer().getDataProvider().getFactoryName().isPresent()) {
+            props.put(ToolTipConstants.SOURCE_TYPE, feature.getDataContainer().getDataProvider().getFactoryName().get().toString());
+        }
+        props.put(ToolTipConstants.FILE_TITLE, feature.getDataSetName());
+
         try {
-            props.put(ToolTipConstants.URL, URLDecoder.decode(feature.getURI().toString(),"UTF-8"));
+            props.put(ToolTipConstants.FILE_URL, URLDecoder.decode(feature.getURI().toString(), "UTF-8"));
         } catch (UnsupportedEncodingException ex) {
         }
         String server = feature.getDataContainer().getDataProvider().getName() + " (" + feature.getDataContainer().getDataProvider().getName() + ")";
@@ -93,8 +105,7 @@ public final class TierLabelManager implements PropertyHolder {
     }
 
     /**
-     * Gets all the GraphGlyph objects inside the given list of
-     * TierLabelGlyph's.
+     * Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's.
      */
     public static List<GraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
         List<GraphGlyph> result = new ArrayList<>();
@@ -122,8 +133,7 @@ public final class TierLabelManager implements PropertyHolder {
     /**
      * Collapse or expand tier.
      *
-     * @param collapsed - boolean indicating whether to collapse or expand
-     * tiers.
+     * @param collapsed - boolean indicating whether to collapse or expand tiers.
      */
     static void setTierCollapsed(TierGlyph tg, boolean collapsed) {
         ITrackStyleExtended style = tg.getAnnotStyle();
@@ -174,9 +184,8 @@ public final class TierLabelManager implements PropertyHolder {
     };
 
     /**
-     * For moving tiers around and adjusting their sizes. Use Swing for the
-     * future. Otherwise could have used AWT's MouseAdapter. Actual dragging
-     * around is delegated to a GlyphDragger and a GlyphResizer. This is why the
+     * For moving tiers around and adjusting their sizes. Use Swing for the future. Otherwise could have used AWT's
+     * MouseAdapter. Actual dragging around is delegated to a GlyphDragger and a GlyphResizer. This is why the
      * mouseDragged method is not implemented.
      */
     private final MouseInputListener ourTierDragger = new MouseInputAdapter() {
@@ -271,8 +280,7 @@ public final class TierLabelManager implements PropertyHolder {
         }
 
         /**
-         * Finish a drag and drop of a tier label. Also change the map's
-         * vertical zoom focus to zoom in on this track.
+         * Finish a drag and drop of a tier label. Also change the map's vertical zoom focus to zoom in on this track.
          */
         @Override
         public void mouseReleased(MouseEvent evt) {
@@ -300,8 +308,8 @@ public final class TierLabelManager implements PropertyHolder {
     }; // End of tier dragging MouseInputListener
 
     /**
-     * Determines whether selecting a tier label of a tier that contains only
-     * GraphGlyphs should cause the graphs in that tier to become selected.
+     * Determines whether selecting a tier label of a tier that contains only GraphGlyphs should cause the graphs in
+     * that tier to become selected.
      */
     private boolean do_graph_selections = false;
 
@@ -438,20 +446,18 @@ public final class TierLabelManager implements PropertyHolder {
     }
 
     /**
-     * Determines whether selecting a tier label of a tier that contains only
-     * GraphGlyphs should cause the graphs in that tier to become selected.
+     * Determines whether selecting a tier label of a tier that contains only GraphGlyphs should cause the graphs in
+     * that tier to become selected.
      */
     public void setDoGraphSelections(boolean b) {
         do_graph_selections = b;
     }
 
     /**
-     * Handle selection generating a selection event. This was made public to
-     * serve the {@link com.affymetrix.igb.action.UnFloatTiersAction}. It needed
-     * to restore the selection after acting and to fire the selection changed
-     * event so the {@link com.affymetrix.igb.action.FloatTiersAction} could get
-     * the news and enable itself. There may be other actions that act on a
-     * selection of graph glyphs. Those may well need this too.
+     * Handle selection generating a selection event. This was made public to serve the
+     * {@link com.affymetrix.igb.action.UnFloatTiersAction}. It needed to restore the selection after acting and to fire
+     * the selection changed event so the {@link com.affymetrix.igb.action.FloatTiersAction} could get the news and
+     * enable itself. There may be other actions that act on a selection of graph glyphs. Those may well need this too.
      *
      * @param preserve_selection Clear selection if this is false.
      */
@@ -526,8 +532,7 @@ public final class TierLabelManager implements PropertyHolder {
     /**
      * Restores multiple hidden tiers and then repacks.
      *
-     * @param tier_labels a List of GlyphI objects for each of which getInfo()
-     * returns a TierGlyph.
+     * @param tier_labels a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
      * @param full_repack Whether to do a full repack
      * @param fit_y Whether to change the zoom to fit all the tiers in the view
      * @see #repackTheTiers(boolean, boolean)
@@ -544,8 +549,7 @@ public final class TierLabelManager implements PropertyHolder {
     /**
      * Hides multiple tiers and then repacks.
      *
-     * @param tier_labels a List of GlyphI objects for each of which getInfo()
-     * returns a TierGlyph.
+     * @param tier_labels a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
      * @param fit_y Whether to change the zoom to fit all the tiers in the view
      */
     public void hideTiers(List<TierLabelGlyph> tier_labels, boolean full_repack, boolean fit_y) {
@@ -561,8 +565,7 @@ public final class TierLabelManager implements PropertyHolder {
      * Collapse or expand tiers.
      *
      * @param tier_labels
-     * @param collapsed - boolean indicating whether to collapse or expand
-     * tiers.
+     * @param collapsed - boolean indicating whether to collapse or expand tiers.
      */
     public void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
         for (TierLabelGlyph tlg : tier_labels) {
@@ -612,8 +615,7 @@ public final class TierLabelManager implements PropertyHolder {
     }
 
     /**
-     * Repacks tiers. Should be called after hiding or showing tiers or changing
-     * their heights.
+     * Repacks tiers. Should be called after hiding or showing tiers or changing their heights.
      */
     public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
         tiermap.repackTheTiers(full_repack, stretch_vertically);
@@ -628,9 +630,8 @@ public final class TierLabelManager implements PropertyHolder {
     }
 
     /**
-     * Removes all elements from the popup, then notifies all
-     * {@link TierLabelManager.PopupListener} objects (which may add items to
-     * the menu), then displays the popup (if it isn't empty).
+     * Removes all elements from the popup, then notifies all {@link TierLabelManager.PopupListener} objects (which may
+     * add items to the menu), then displays the popup (if it isn't empty).
      */
     public void doPopup(MouseEvent e) {
         popup.removeAll();
@@ -650,8 +651,7 @@ public final class TierLabelManager implements PropertyHolder {
     }
 
     /**
-     * Sets title for popup. Sets feature name as title if available else shows
-     * number of selection.
+     * Sets title for popup. Sets feature name as title if available else shows number of selection.
      */
     private void setPopuptitle() {
         List<TierGlyph> tiers = getSelectedTiers();
@@ -781,15 +781,13 @@ public final class TierLabelManager implements PropertyHolder {
     }
 
     /**
-     * An interface that lets listeners modify the popup menu before it is
-     * shown.
+     * An interface that lets listeners modify the popup menu before it is shown.
      */
     public interface PopupListener {
 
         /**
-         * Called before the {@link TierLabelManager} popup menu is displayed.
-         * The listener may add elements to the popup menu before it gets
-         * displayed.
+         * Called before the {@link TierLabelManager} popup menu is displayed. The listener may add elements to the
+         * popup menu before it gets displayed.
          */
         public void popupNotify(JPopupMenu popup, TierLabelManager handler);
     }

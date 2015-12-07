@@ -73,6 +73,7 @@ public class ToolTipConstants {
     public static final String SEQ_ID = "seq id";
     public static final String METHOD = "method";
     public static final String SOURCE = "source";
+    public static String SOURCE_TYPE = "source type";
     public static final String TYPE = "type";
     public static final String MATCH = "match";
     public static final String FEATURE_TYPE = "feature type";
@@ -81,6 +82,8 @@ public class ToolTipConstants {
     public static final String REVERSE_DIRECTION = "reverse";
 
     public static final String FILE_NAME = "file name";
+    public static final String FILE_TITLE = "file title";
+    public static final String FILE_URL = "file URL";
     public static final String URL = "url";
     public static final String SERVER = "server";
     public static final String MIN_SCORE = "min score";

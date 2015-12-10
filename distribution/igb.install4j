@@ -483,6 +483,24 @@
                 <condition>com.install4j.api.Util.logInfo(null, context.getVariable("osgiBundleCacheDir").toString());
                                     return !context.getVariable("osgiBundleCacheDir").toString().equalsIgnoreCase("");</condition>
               </action>
+              <action name="" id="697" customizedId="" beanClass="com.install4j.runtime.beans.actions.registry.DeletePreferenceItemAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.registry.DeletePreferenceItemAction">
+                      <void property="packageName">
+                        <string>com.affymetrix.igb.window</string>
+                      </void>
+                      <void property="preferenceDeleteType">
+                        <object class="java.lang.Enum" method="valueOf">
+                          <class>com.install4j.runtime.beans.actions.registry.PreferenceDeleteType</class>
+                          <string>SYSTEM_AND_USER</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
             </actions>
             <formComponents />
           </screen>

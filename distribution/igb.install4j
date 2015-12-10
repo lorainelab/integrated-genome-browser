@@ -424,7 +424,7 @@
                 </serializedBean>
                 <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
               </action>
-              <action name="" id="468" customizedId="" beanClass="com.install4j.runtime.beans.actions.control.RunScriptAction" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action name="Define OSGi cache variable" id="468" customizedId="" beanClass="com.install4j.runtime.beans.actions.control.RunScriptAction" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.control.RunScriptAction">
@@ -458,7 +458,7 @@
                 </serializedBean>
                 <condition />
               </action>
-              <action name="" id="469" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action name="Delete OSGi Cache" id="469" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.files.DeleteFileAction">
@@ -483,18 +483,15 @@
                 <condition>com.install4j.api.Util.logInfo(null, context.getVariable("osgiBundleCacheDir").toString());
                                     return !context.getVariable("osgiBundleCacheDir").toString().equalsIgnoreCase("");</condition>
               </action>
-              <action name="" id="697" customizedId="" beanClass="com.install4j.runtime.beans.actions.registry.DeletePreferenceItemAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action name="Remove Window Preferences" id="697" customizedId="" beanClass="com.install4j.runtime.beans.actions.registry.DeletePreferenceItemAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.registry.DeletePreferenceItemAction">
+                      <void property="onlyIfEmpty">
+                        <boolean>false</boolean>
+                      </void>
                       <void property="packageName">
                         <string>com.affymetrix.igb.window</string>
-                      </void>
-                      <void property="preferenceDeleteType">
-                        <object class="java.lang.Enum" method="valueOf">
-                          <class>com.install4j.runtime.beans.actions.registry.PreferenceDeleteType</class>
-                          <string>SYSTEM_AND_USER</string>
-                        </object>
                       </void>
                     </object>
                   </java>
@@ -1590,5 +1587,5 @@
   <buildIds buildAll="false">
     <mediaSet refId="25" />
   </buildIds>
-  <buildOptions verbose="true" faster="false" disableSigning="false" disableJreBundling="false" debug="false" />
+  <buildOptions verbose="true" faster="true" disableSigning="true" disableJreBundling="true" debug="false" />
 </install4j>

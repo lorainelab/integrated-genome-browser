@@ -217,7 +217,8 @@ public abstract class SymLoader {
 
                 }
             } else {
-                File input = new File(uri.getPath());
+                //TODO: Replace with new remoteFileCacheService when other formats are approved
+                File input = LocalUrlCacher.convertURIToFile(uri);
                 conf.setNumHeaderRows(findChromStartIndex(input));
                 sortedResult = externalSortService.merge(input, uri.toString(), comparatorMetadata, conf);
                 if (sortedResult.isPresent()) {

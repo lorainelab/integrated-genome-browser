@@ -29,6 +29,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,10 +43,13 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(provide = {IWindowService.class})
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
 
+    private static final Logger logger = LoggerFactory.getLogger(WindowServiceDefaultImpl.class);
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private final Map<TabState, JRPMenuItem> move_tab_to_window_items;
     private final Map<TabState, JRPMenuItem> move_tabbed_panel_to_window_items;
@@ -88,34 +92,33 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     }
 
     @Override
-    public void setSeqMapView(JPanel map_view) {
-        JTabbedTrayPane bottomPane = new JTabbedTrayBottomPane(frameManagerService, map_view);
+    public void setMainPanel(JPanel mainPanel) {
+        JTabbedTrayPane bottomPane = new JTabbedTrayBottomPane(frameManagerService, mainPanel);
+        JTabbedTrayPane leftPane = new JTabbedTrayLeftPane(frameManagerService, bottomPane);
+        JTabbedTrayPane rightPane = new JTabbedTrayRightPane(frameManagerService, leftPane);
+        initializePaneTrayState(bottomPane, TabState.COMPONENT_STATE_BOTTOM_TAB);
         bottomPane.setResizeWeight(1.0);
-        bottomPane.addTrayStateChangeListener(this);
-        tabHolders.put(TabState.COMPONENT_STATE_BOTTOM_TAB, bottomPane);
+        initializePaneTrayState(leftPane, TabState.COMPONENT_STATE_LEFT_TAB);
+        initializePaneTrayState(rightPane, TabState.COMPONENT_STATE_RIGHT_TAB);
+        rightPane.setResizeWeight(1.0);
+        innerPanel.add(rightPane, "grow");
+    }
+
+    private void initializePaneTrayState(JTabbedTrayPane pane, TabState tabState) {
+        pane.addTrayStateChangeListener(this);
+        tabHolders.put(tabState, pane);
         try {
-            bottomPane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(bottomPane.getTitle())));
-        } catch (Exception x) {
-            bottomPane.invokeTrayState(TrayState.getDefaultTrayState());
+            final Optional<String> preferredComponentState = PreferenceUtils.getComponentState(pane.getTitle());
+            if (preferredComponentState.isPresent()) {
+                final TrayState preferredTrayState = TrayState.valueOf(preferredComponentState.get());
+                pane.setTrayState(preferredTrayState);
+            } else {
+                pane.setTrayState(TrayState.HIDDEN);
+            }
+        } catch (Exception ex) {
+            logger.error("error setting pane tray state" + ex.getMessage(), ex);
+            pane.setTrayState(TrayState.HIDDEN);
         }
-        JTabbedTrayPane left_pane = new JTabbedTrayLeftPane(frameManagerService, bottomPane);
-        left_pane.addTrayStateChangeListener(this);
-        tabHolders.put(TabState.COMPONENT_STATE_LEFT_TAB, left_pane);
-        try {
-            left_pane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(left_pane.getTitle())));
-        } catch (Exception x) {
-            left_pane.invokeTrayState(TrayState.getDefaultTrayState());
-        }
-        JTabbedTrayPane right_pane = new JTabbedTrayRightPane(frameManagerService, left_pane);
-        right_pane.setResizeWeight(1.0);
-        right_pane.addTrayStateChangeListener(this);
-        tabHolders.put(TabState.COMPONENT_STATE_RIGHT_TAB, right_pane);
-        try {
-            right_pane.invokeTrayState(TrayState.valueOf(PreferenceUtils.getComponentState(right_pane.getTitle())));
-        } catch (Exception x) {
-            right_pane.invokeTrayState(TrayState.getDefaultTrayState());
-        }
-        innerPanel.add(right_pane, "grow");
     }
 
     @Override
@@ -127,7 +130,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
                 JRPMenuItem change_tab_state_item = new JRPMenuItem(
                         "WindowServiceDefaultImpl_change_tab_state_item_" + tabState.name().replaceAll(" ", "_"),
                         new GenericAction(MessageFormat.format(BUNDLE.getString("openCurrentTabInNewWindow"), BUNDLE.getString(tabState.name())), null, null) {
-                            private static final long serialVersionUID = 1L;
+                    private static final long serialVersionUID = 1L;
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -146,11 +149,11 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
                 JRPMenuItem move_tabbed_panel_to_window_item = new JRPMenuItem(
                         "WindowServiceDefaultImpl_move_tabbed_panel_to_window_item_" + tabState.name().replaceAll(" ", "_"),
                         new GenericAction(MessageFormat.format(BUNDLE.getString("openTabbedPanesInNewWindow"), BUNDLE.getString(tabState.name())), null, null) {
-                            private static final long serialVersionUID = 1L;
+                    private static final long serialVersionUID = 1L;
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        ((JTabbedTrayPane) tabHolders.get(tabState)).invokeTrayState(TrayState.WINDOW);
+                        ((JTabbedTrayPane) tabHolders.get(tabState)).setTrayState(TrayState.WINDOW);
                     }
                 },
                         menuItemCounter++
@@ -186,9 +189,9 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         SwingUtilities.invokeLater(() -> {
             IgbTabPanel igbTabPanel = tabPanel.getIgbTabPanel();
             TabState tabState = igbTabPanel.getDefaultTabState();
-            try {
-                tabState = TabState.valueOf(PreferenceUtils.getComponentState(igbTabPanel.getName()));
-            } catch (Exception x) {
+            final Optional<String> preferredTabState = PreferenceUtils.getComponentState(igbTabPanel.getName());
+            if (preferredTabState.isPresent()) {
+                tabState = TabState.valueOf(preferredTabState.get());
             }
             setTabState(igbTabPanel, tabState);
             TabHolder tabHolder = tabHolders.get(tabState);
@@ -254,7 +257,15 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     public void showTabs() {
         SwingUtilities.invokeLater(() -> {
             // Resize all tab holder after frame is set to visible.
-            tabHolders.values().forEach(TabHolder::resize);
+            tabHolders.values().forEach(tabHolder -> {
+                if (tabHolder instanceof JTabbedTrayPane) {
+                    if (tabHolder.getIGBTabPanels().size() > 1) {
+                        JTabbedTrayPane.class.cast(tabHolder).setTrayState(TrayState.EXTENDED);
+                    }
+                }
+                tabHolder.resize();
+            });
+
         });
     }
 
@@ -343,7 +354,10 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
             PreferenceUtils.setWindowSize(frame, pos);
         }
         getPlugins().stream().forEach((tabPanel) -> {
-            setTabState(tabPanel, TabState.valueOf(PreferenceUtils.getComponentState(tabPanel.getName())));
+            final Optional<String> preferredTabState = PreferenceUtils.getComponentState(tabPanel.getName());
+            if (preferredTabState.isPresent()) {
+                setTabState(tabPanel, TabState.valueOf(preferredTabState.get()));
+            }
         });
         for (TabState tabState : tabHolders.keySet()) {
             TabHolder tabHolder = tabHolders.get(tabState);
@@ -419,7 +433,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
             tabState = _tabState;
             addActionListener(
                     new ActionListener() {
-                        TabState state = tabState;
+                TabState state = tabState;
 
                 @Override
                 public void actionPerformed(ActionEvent e) {

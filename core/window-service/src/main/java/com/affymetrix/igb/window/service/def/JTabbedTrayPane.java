@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -301,7 +302,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
         tabPane.setIconAt(0, getRetractIcon());
         tabPane.setToolTipTextAt(0, "retract tray.");
         if (tabPane.getSelectedIndex() < 1) {
-            tabPane.setSelectedIndex(1);
+            if (tabPane.getTabCount() > 1) {
+                tabPane.setSelectedIndex(1);
+            }
         }
     }
 
@@ -392,7 +395,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
      *
      * @param newState the new state for the tray
      */
-    public void invokeTrayState(TrayState newState) {
+    public void setTrayState(TrayState newState) {
         if (trayState == newState) {
             return;
         }
@@ -539,7 +542,7 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
 
     private void initTray() {
         if (trayState == TrayState.HIDDEN) {
-            invokeTrayState(TrayState.EXTENDED);
+            setTrayState(TrayState.EXTENDED);
         }
         if (trayState == TrayState.EXTENDED && !minSizeSet) {
             setMinSize();
@@ -568,9 +571,9 @@ public abstract class JTabbedTrayPane extends JSplitPane implements TabHolder {
         if (dividerProportionalLocation >= 0) {
             saveDividerProportionalLocation = dividerProportionalLocation;
         }
-        String trayState = PreferenceUtils.getComponentState(title);
-        if (trayState != null) {
-            invokeTrayState(TrayState.valueOf(trayState));
+        final Optional<String> preferreTrayState = PreferenceUtils.getComponentState(title);
+        if (preferreTrayState.isPresent()) {
+            setTrayState(TrayState.valueOf(preferreTrayState.get()));
         }
         String selectedTabPanelName = PreferenceUtils.getSelectedTab(title);
         if (selectedTabPanelName != null) {

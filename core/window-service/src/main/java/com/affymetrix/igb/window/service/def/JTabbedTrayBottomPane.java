@@ -47,7 +47,7 @@ public class JTabbedTrayBottomPane extends JTabbedTrayPane {
 
     @Override
     protected int getTabWidth(Component tabComponent) {
-        return getFullSize() - getTabKnobHeight(tabComponent);
+        return getHeight() - getTabKnobHeight(tabComponent);
     }
 
     @Override

@@ -133,9 +133,9 @@ public class IGBAuthenticator extends Authenticator {
             String passwordPlainText = new String(chars);
             if (dataProvider.isPresent()) {
                 PreferenceUtils.getDataProviderNode(dataProvider.get().getUrl()).putBoolean(REMEMBER_CREDENTIALS, rememberCredentials.isSelected());
+                dataProvider.get().setLogin(username);
+                dataProvider.get().setPassword(passwordPlainText);
             }
-            dataProvider.get().setLogin(username);
-            dataProvider.get().setPassword(passwordPlainText);
             if (Strings.isNullOrEmpty(username) || chars.length == 0) {
                 return null;
             }

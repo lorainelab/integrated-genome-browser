@@ -142,8 +142,10 @@ public class BundleActionManager {
             Bundle bundle = plugin.getBundle();
             try {
                 for (Bundle b : Arrays.asList(bundleContext.getBundles())) {
-                    if (b.getSymbolicName().equals(bundle.getSymbolicName()) && b.getVersion().toString().equals(bundle.getVersion().toString())) {
-                        b.uninstall();
+                    if (b.getSymbolicName().equals(bundle.getSymbolicName())) {
+                        if (b.getState() == Bundle.ACTIVE) {
+                            b.uninstall();
+                        }
                     }
                 }
 

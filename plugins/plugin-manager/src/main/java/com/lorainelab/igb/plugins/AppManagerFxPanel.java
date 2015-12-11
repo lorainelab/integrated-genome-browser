@@ -437,6 +437,7 @@ public class AppManagerFxPanel extends JFXPanel {
                     Platform.runLater(() -> {
                         plugin.setIsBusy(Boolean.FALSE);
                         plugin.setIsInstalled(Boolean.FALSE);
+                        plugin.setIsUpdatable(Boolean.FALSE);
                         updateWebContent();
                     });
                 }

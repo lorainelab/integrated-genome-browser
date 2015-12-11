@@ -102,6 +102,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         initializePaneTrayState(rightPane, TabState.COMPONENT_STATE_RIGHT_TAB);
         rightPane.setResizeWeight(1.0);
         innerPanel.add(rightPane, "grow");
+        validateTabHolders();
     }
 
     private void initializePaneTrayState(JTabbedTrayPane pane, TabState tabState) {
@@ -223,7 +224,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
             }
             igbTabPanel.setComponentPopupMenu(popup);
         });
-        showTabs();
+        validateTabHolders();
     }
 
     private int findMenuItemPosition(final IgbTabPanel tabPanel) {
@@ -254,7 +255,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         return validIndex;
     }
 
-    public void showTabs() {
+    public void validateTabHolders() {
         SwingUtilities.invokeLater(() -> {
             // Resize all tab holder after frame is set to visible.
             tabHolders.values().forEach(tabHolder -> {

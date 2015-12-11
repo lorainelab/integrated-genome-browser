@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.prefs.BackingStoreException;
@@ -49,6 +50,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.KeyStroke;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helps to save and load preferences such as locations of windows. The
@@ -60,6 +63,7 @@ import javax.swing.KeyStroke;
  */
 public abstract class PreferenceUtils {
 
+    private static final Logger logger = LoggerFactory.getLogger(PreferenceUtils.class);
     public static final String PREFS_MAIN = "/com/affymetrix";
     public static final String MENU_NODE_NAME = "main_menu";
     /**
@@ -211,12 +215,16 @@ public abstract class PreferenceUtils {
         Rectangle r = w.getBounds();
         try {
             Preferences p = getWindowPrefsNode();
+            logger.debug(name + " x", r.x);
+            logger.debug(name + " y", r.y);
+            logger.debug(name + " width", r.width);
+            logger.debug(name + " height", r.height);
             p.putInt(name + " x", r.x);
             p.putInt(name + " y", r.y);
             p.putInt(name + " width", r.width);
             p.putInt(name + " height", r.height);
-        } catch (Exception e) {
-            e.printStackTrace(System.out);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -289,8 +297,8 @@ public abstract class PreferenceUtils {
      * @param name name of tray or tab
      * @return state of tray or tab
      */
-    public static String getComponentState(String name) {
-        return getWindowPrefsNode().get(name + " state", null);
+    public static Optional<String> getComponentState(String name) {
+        return Optional.ofNullable(getWindowPrefsNode().get(name + " state", null));
     }
 
     /**

@@ -420,7 +420,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
 
     public void setWindowService(final IWindowService windowService) {
         this.windowService = windowService;
-        windowService.setSeqMapView(MainWorkspaceManager.getWorkspaceManager());
+        windowService.setMainPanel(MainWorkspaceManager.getWorkspaceManager());
         windowService.setTabsMenu(mbar);
     }
 

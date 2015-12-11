@@ -40,7 +40,7 @@ public interface IWindowService {
      *
      * @param jPanel the JPanel that contains the main IGB view
      */
-    public void setSeqMapView(JPanel jPanel);
+    public void setMainPanel(JPanel jPanel);
 
     /**
      * pass in the view menu

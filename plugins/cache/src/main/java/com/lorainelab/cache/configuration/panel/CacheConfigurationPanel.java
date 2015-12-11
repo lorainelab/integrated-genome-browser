@@ -70,6 +70,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     public JLabel minFileSizeLabel;
     public JLabel minFileSizeUnits;
     private JButton cacheSettingsApply;
+    private JButton cacheResetPref;
     private RemoteFileCacheService remoteFileCacheService;
     private CacheTableModel cacheTableModel;
     private final Preferences cachePrefsNode;
@@ -135,12 +136,16 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         JPanel panel = new JPanel(new MigLayout(new LC().insetsAll("0")));
         panel.setBorder(BorderFactory.createTitledBorder("Cache Settings"));
         initCacheSettingsApply();
+        initResetCachePref();
         initMaxCacheSize();
         initMinFileSize();
         initCacheEnable();
 
         JPanel cacheEnablePanel = new JPanel(new MigLayout(new LC().insetsAll("2")));
         cacheEnablePanel.add(cacheEnable);
+
+        JPanel cacheResetPrefPanel = new JPanel(new MigLayout(new LC().insetsAll("2")));
+        cacheResetPrefPanel.add(cacheResetPref, "width :100:");
 
         JPanel maxCacheSizePanel = new JPanel(new MigLayout(new LC().insetsAll("2")));
         maxCacheSizePanel.add(maxCacheSizeLabel, "width :125:");
@@ -156,6 +161,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         cacheSettingsApplyPanel.add(cacheSettingsApply, "width :100:");
 
         panel.add(cacheEnablePanel, "wrap");
+        panel.add(cacheResetPrefPanel, "wrap");
         panel.add(maxCacheSizePanel, "wrap");
         panel.add(minFileSizePanel, "wrap");
         panel.add(cacheSettingsApplyPanel, "wrap");
@@ -268,6 +274,17 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         } else {
             disableCacheSettings();
         }
+    }
+
+    private void initResetCachePref() {
+        cacheResetPref = new JButton("Reset Cache Preferences");
+        cacheResetPref.addActionListener((ActionEvent e) -> {
+            try {
+                cachePrefsNode.clear();
+            } catch (Exception ex) {
+                LOG.error(ex.getMessage(), ex);
+            }
+        });
     }
 
     private void initCacheSettingsApply() {

@@ -767,8 +767,14 @@ public class ProtAnnotService {
     public void exportAsXml(Component component, JFrame frm) {
         int option = 0;
         Optional<File> file = null;
-        file = JavaFxFileChooser.build().setContext(FileTracker.DATA_DIR_TRACKER.getFile())
-                .setDefaultFileName(".paxml").saveFilesFromFxChooser();
+        File savedDir = FileTracker.DATA_DIR_TRACKER.getFile();
+        String defaultFileName = "ProtAnnot.paxml";
+        if (savedDir.isFile()) {
+            defaultFileName = savedDir.getName();
+            savedDir = savedDir.getParentFile();
+        }
+        file = JavaFxFileChooser.build().setContext(savedDir)
+                .setDefaultFileName(defaultFileName).saveFilesFromFxChooser();
         if (file.isPresent()) {
             File exportFile = file.get();
             FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());

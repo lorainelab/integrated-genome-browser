@@ -382,6 +382,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
                 return c;
             }
         };
+
         Collections.list(table.getColumnModel().getColumns()).forEach(column -> {
 
             switch (column.getModelIndex()) {

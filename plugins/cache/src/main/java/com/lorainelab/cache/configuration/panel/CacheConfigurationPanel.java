@@ -29,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -63,6 +64,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     private JButton refreshBtn;
     private JTable cacheDataTable;
     private JPanel cacheDataPanel;
+    public JLabel currentCacheSizeLabel;
     public JTextField maxCacheSize;
     public JLabel maxCacheSizeLabel;
     public JLabel maxCacheSizeUnits;
@@ -115,6 +117,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         initMaxCacheSizeValue();
         initMinFileSizeValue();
         initCacheEnableValue();
+        initCacheSizeValue();
     }
 
     @Activate
@@ -135,11 +138,15 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
     private JPanel initilizeCacheSettingsPanel() {
         JPanel panel = new JPanel(new MigLayout(new LC().insetsAll("0")));
         panel.setBorder(BorderFactory.createTitledBorder("Cache Settings"));
+        initCacheSizeLabel();
         initCacheSettingsApply();
         initResetCachePref();
         initMaxCacheSize();
         initMinFileSize();
         initCacheEnable();
+
+        JPanel currentCacheSizePanel = new JPanel(new MigLayout(new LC().insetsAll("2")));
+        currentCacheSizePanel.add(currentCacheSizeLabel);
 
         JPanel cacheEnablePanel = new JPanel(new MigLayout(new LC().insetsAll("2")));
         cacheEnablePanel.add(cacheEnable);
@@ -160,6 +167,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         JPanel cacheSettingsApplyPanel = new JPanel(new MigLayout(new LC().insetsAll("2")));
         cacheSettingsApplyPanel.add(cacheSettingsApply, "width :100:");
 
+        panel.add(currentCacheSizePanel, "wrap");
         panel.add(cacheEnablePanel, "wrap");
         panel.add(cacheResetPrefPanel, "wrap");
         panel.add(maxCacheSizePanel, "wrap");
@@ -287,21 +295,46 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         });
     }
 
+    private void initCacheSizeLabel() {
+        currentCacheSizeLabel = new JLabel();
+        initCacheSizeValue();
+    }
+
+    private void initCacheSizeValue() {
+        BigInteger currentCacheSize = remoteFileCacheService.getCacheSizeInMB();
+        currentCacheSizeLabel.setText("Current Cache Size: " + currentCacheSize + " MB");
+    }
+
     private void initCacheSettingsApply() {
         cacheSettingsApply = new JButton("Apply");
         cacheSettingsApply.addActionListener((ActionEvent e) -> {
             try {
+
                 BigInteger maxCacheSizeValue = new BigInteger(maxCacheSize.getText());
-                remoteFileCacheService.setMaxCacheSizeMB(maxCacheSizeValue);
-            } catch (Exception ex) {
-                //TODO: Add warning
-            }
-            try {
                 BigInteger minFileSizeValue = new BigInteger(minFileSize.getText());
+                BigInteger currentCacheSize = remoteFileCacheService.getCacheSizeInMB();
+
+                if (currentCacheSize.compareTo(maxCacheSizeValue) > 0) {
+                    JPanel parentPanel = new JPanel(new MigLayout());
+                    parentPanel.add(new JLabel("The max cache size is less than the current cache size."));
+                    final JComponent[] inputs = new JComponent[]{
+                        parentPanel
+                    };
+                    Object[] options = {"OK"};
+
+                    int optionChosen = JOptionPane.showOptionDialog(null, inputs, "Cache Settings", JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
+                            null,
+                            options,
+                            options[0]);
+                    return;
+                }
+                remoteFileCacheService.setMaxCacheSizeMB(maxCacheSizeValue);
+
                 remoteFileCacheService.setMinFileSizeBytes(minFileSizeValue.multiply(new BigInteger("1000")));
             } catch (Exception ex) {
                 //TODO: Add warning
             }
+
             initMaxCacheSizeValue();
             initMinFileSizeValue();
         });

@@ -470,8 +470,6 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         }
         SeqSpan pspan = seqMap.getViewSeqSpan(psym);
 
-        Color color = Color.RED;
-
         for (int i = 0; i < inssym.getInsChildCount(); i++) {
 
             SeqSymmetry childsym = inssym.getInsChild(i);
@@ -487,16 +485,11 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                 continue;
             }
 
-            boolean showResidueMask = tierGlyph.getAnnotStyle().getShowResidueMask();
-            if (!coordseq.isAvailable(ispan.getMin() - 1, ispan.getMin() + 1)) {
-                showResidueMask = false;
-            }
-            TriangleInsertionSeqGlyph triangleInsertionGlyph = new TriangleInsertionSeqGlyph(showResidueMask, tierGlyph.getForegroundColor());
+            TriangleInsertionSeqGlyph triangleInsertionGlyph = new TriangleInsertionSeqGlyph();
             triangleInsertionGlyph.setSelectable(true);
             String residues = inssym.getResidues(ispan.getMin() - 1, ispan.getMin() + 1);
             triangleInsertionGlyph.setResidues(residues);
             triangleInsertionGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin() - 1), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
-            triangleInsertionGlyph.setColor(color);
             pglyph.addChild(triangleInsertionGlyph);
             tierGlyph.setDataModelFromOriginalSym(triangleInsertionGlyph, childsym);
         }

@@ -36,11 +36,11 @@ import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
 import com.affymetrix.genoviz.glyph.EfficientMateJoinGlyph;
 import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
 import com.affymetrix.genoviz.glyph.EfficientSolidGlyph;
-import com.affymetrix.genoviz.glyph.InsertionSeqGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.glyph.AlignedResidueGlyph;
 import com.affymetrix.igb.glyph.DeletionGlyph;
+import com.affymetrix.igb.glyph.TriangleInsertionSeqGlyph;
 import com.affymetrix.igb.shared.PreprocessorRegistry;
 import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
 import static com.affymetrix.igb.view.factories.MapTierGlyphFactoryI.DEFAULT_CHILD_HEIGHT;
@@ -367,7 +367,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             alignResidueGlyph.setCoords(span.getMin(), 0, span.getLength(), height);
             alignResidueGlyph.setBackgroundColor(Color.WHITE);
             alignResidueGlyph.setForegroundColor(pglyph.getForegroundColor());
-            alignResidueGlyph.setDefaultShowMask(tierGlyph.getAnnotStyle().getShowResidueMask());
+            alignResidueGlyph.setShowMask(tierGlyph.getAnnotStyle().getShowResidueMask());
             alignResidueGlyph.setUseBaseQuality(tierGlyph.getAnnotStyle().getShadeBasedOnQualityScore());
             tierGlyph.setDataModelFromOriginalSym(alignResidueGlyph, sym);
             pglyph.addChild(alignResidueGlyph);
@@ -470,7 +470,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         }
         SeqSpan pspan = seqMap.getViewSeqSpan(psym);
 
-        Color color = Color.BLACK;
+        Color color = Color.RED;
 
         for (int i = 0; i < inssym.getInsChildCount(); i++) {
 
@@ -487,15 +487,18 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                 continue;
             }
 
-            InsertionSeqGlyph isg = new InsertionSeqGlyph();
-            isg.setSelectable(true);
+            boolean showResidueMask = tierGlyph.getAnnotStyle().getShowResidueMask();
+            if (!coordseq.isAvailable(ispan.getMin() - 1, ispan.getMin() + 1)) {
+                showResidueMask = false;
+            }
+            TriangleInsertionSeqGlyph triangleInsertionGlyph = new TriangleInsertionSeqGlyph(showResidueMask, tierGlyph.getForegroundColor());
+            triangleInsertionGlyph.setSelectable(true);
             String residues = inssym.getResidues(ispan.getMin() - 1, ispan.getMin() + 1);
-            isg.setResidues(residues);
-            isg.setCoords(Math.max(pspan.getMin(), dspan.getMin() - 1), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
-            isg.setColor(color);
-
-            pglyph.addChild(isg);
-            tierGlyph.setDataModelFromOriginalSym(isg, childsym);
+            triangleInsertionGlyph.setResidues(residues);
+            triangleInsertionGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin() - 1), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
+            triangleInsertionGlyph.setColor(color);
+            pglyph.addChild(triangleInsertionGlyph);
+            tierGlyph.setDataModelFromOriginalSym(triangleInsertionGlyph, childsym);
         }
     }
 

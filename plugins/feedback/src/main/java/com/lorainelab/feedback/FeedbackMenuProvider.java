@@ -10,6 +10,7 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
@@ -25,7 +26,6 @@ public class FeedbackMenuProvider extends GenericAction implements IgbMenuItemPr
     public static final String COMPONENT_NAME = "FeedbackMenuProvider";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private final int menuWeight;
-    private final String parentMenuName;
     private final JRPMenuItem menuItem;
     private FeedbackWidget feedbackWidget;
     private static final String BIOVIZ_HELP_PAGE = "http://bioviz.org/igb/help.html";
@@ -37,7 +37,6 @@ public class FeedbackMenuProvider extends GenericAction implements IgbMenuItemPr
                 "22x22/actions/help.png",
                 KeyEvent.VK_UNDEFINED);
         menuWeight = Integer.parseInt(BUNDLE.getString("menu.weight"));
-        parentMenuName = BUNDLE.getString("menu.parent.name");
         feedbackWidget = new FeedbackWidget();
 //        menuItem = new JRPMenuItem(getProperty("menu.name"), this, menuWeight);
         menuItem = new JRPMenuItem(BUNDLE.getString("menu.name"), new AbstractAction(BUNDLE.getString("menu.name")) {
@@ -49,8 +48,8 @@ public class FeedbackMenuProvider extends GenericAction implements IgbMenuItemPr
     }
 
     @Override
-    public String getParentMenuName() {
-        return parentMenuName;
+    public IgbToolBarParentMenu getParentMenu() {
+        return IgbToolBarParentMenu.HELP;
     }
 
     @Override

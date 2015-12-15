@@ -20,6 +20,7 @@ import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.awt.event.ActionEvent;
 import java.util.Collections;
@@ -140,8 +141,8 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     }
 
     @Override
-    public String getParentMenuName() {
-        return "view";
+    public IgbToolBarParentMenu getParentMenu() {
+        return IgbToolBarParentMenu.VIEW;
     }
 
     @Override

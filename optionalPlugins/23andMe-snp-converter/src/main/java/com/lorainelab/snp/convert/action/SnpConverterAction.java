@@ -6,6 +6,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import com.lorainelab.snp.convert.ui.SnpConverterFrame;
 import java.awt.event.ActionEvent;
 
@@ -41,8 +42,8 @@ public class SnpConverterAction extends GenericAction implements IgbMenuItemProv
     }
 
     @Override
-    public String getParentMenuName() {
-        return "tools";
+    public IgbToolBarParentMenu getParentMenu() {
+        return IgbToolBarParentMenu.TOOLS;
     }
 
     @Override

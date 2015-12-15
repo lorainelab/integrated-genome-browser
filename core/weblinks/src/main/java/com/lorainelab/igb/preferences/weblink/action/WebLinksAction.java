@@ -6,6 +6,7 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.preferences.weblink.view.WebLinkDisplayProvider;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 import javax.swing.Action;
@@ -42,8 +43,8 @@ public class WebLinksAction extends GenericAction implements IgbMenuItemProvider
     }
 
     @Override
-    public String getParentMenuName() {
-        return "tools";
+    public IgbToolBarParentMenu getParentMenu() {
+        return IgbToolBarParentMenu.TOOLS;
     }
 
     @Override

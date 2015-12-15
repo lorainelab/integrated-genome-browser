@@ -6,7 +6,6 @@ import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
 import static com.affymetrix.genoviz.util.NeoConstants.default_bold_font;
-import com.affymetrix.igb.util.ResidueColorHelper;
 import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_EDGE_MATCH_COLOR;
 import java.awt.Color;
 import java.awt.Font;
@@ -57,14 +56,7 @@ public class TriangleInsertionSeqGlyph extends SequenceGlyph {
             }
         }
     }
-    private Color bgcolor = Color.white;
-    private final boolean showMask;
-    private final Color maskColor;
-
-    public TriangleInsertionSeqGlyph(boolean showMask, Color maskColor) {
-        this.showMask = showMask;
-        this.maskColor = maskColor;
-    }
+    private Color bgcolor = Color.CYAN;
 
     @Override
     public void draw(ViewI view) {
@@ -88,12 +80,19 @@ public class TriangleInsertionSeqGlyph extends SequenceGlyph {
             g.setColor(bgcolor);
             Graphics2D g2d = (Graphics2D) g.create();
 //            g.fillRect(pixelbox.x + 1, pixelbox.y + 1, pixelbox.width - 2, pixelbox.height - 2);
-            Triangle triangle = new Triangle(
+            Triangle topTriangle = new Triangle(
                     new Point2D.Double(pixelbox.width / 2, pixelbox.height / 4),
                     new Point2D.Double(pixelbox.width, 0),
                     new Point2D.Double(0, 0));
+
             g2d.translate(pixelbox.x, pixelbox.y);
-            g2d.fill(triangle);
+            g2d.fill(topTriangle);
+            Triangle bottomTriangle = new Triangle(
+                    new Point2D.Double(pixelbox.width / 2, (3 * (pixelbox.height / 4))),
+                    new Point2D.Double(pixelbox.width, pixelbox.height),
+                    new Point2D.Double(0, pixelbox.height));
+            g2d.fill(bottomTriangle);
+            g2d.fillRect(pixelbox.width / 2, 0, 1, pixelbox.height);
         }
 
     }
@@ -140,12 +139,7 @@ public class TriangleInsertionSeqGlyph extends SequenceGlyph {
     private void drawResidueRectangles(Graphics g, double pixelsPerBase, char[] charArray, int x, int y, int height) {
         int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
         for (int j = 0; j < charArray.length; j++) {
-            if (showMask) {
-                g.setColor(maskColor);
-            } else {
-                g.setColor(ResidueColorHelper.getColorHelper().determineResidueColor(charArray[j]));
-            }
-
+            g.setColor(Color.BLACK);
             //Create a colored rectangle.
             //We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
             int offset = (int) (j * pixelsPerBase);
@@ -155,22 +149,20 @@ public class TriangleInsertionSeqGlyph extends SequenceGlyph {
     }
 
     private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, int pixelStart) {
-        if (!showMask) {
-            if (MIN_CHAR_PIX > pixelsPerBase) {
-                return;
-            }
-            int index = (int) (pixelsPerBase > MAX_CHAR_PIX ? MAX_CHAR_PIX : pixelsPerBase);
-            Font xmax_font = xpix2fonts[index];
-            setFont(xmax_font);
-            // Ample room to draw residue letters.
-            g.setFont(getResidueFont());
-            g.setColor(getForegroundColor());
-            int baseline = (this.getPixelBox().y + (this.getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
-            int pixelOffset = (int) (pixelsPerBase - this.font_width);
-            pixelOffset = pixelOffset > 2 ? pixelOffset / 2 : pixelOffset;
-            for (int i = 0; i < charArray.length; i++) {
-                g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase) + pixelOffset, baseline);
-            }
+        if (MIN_CHAR_PIX > pixelsPerBase) {
+            return;
+        }
+        int index = (int) (pixelsPerBase > MAX_CHAR_PIX ? MAX_CHAR_PIX : pixelsPerBase);
+        Font xmax_font = xpix2fonts[index];
+        setFont(xmax_font);
+        // Ample room to draw residue letters.
+        g.setFont(getResidueFont());
+        g.setColor(Color.WHITE);
+        int baseline = (this.getPixelBox().y + (this.getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
+        int pixelOffset = (int) (pixelsPerBase - this.font_width);
+        pixelOffset = pixelOffset > 2 ? pixelOffset / 2 : pixelOffset;
+        for (int i = 0; i < charArray.length; i++) {
+            g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase) + pixelOffset, baseline);
         }
     }
 

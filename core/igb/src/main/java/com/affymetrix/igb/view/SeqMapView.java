@@ -88,6 +88,7 @@ import com.affymetrix.igb.action.ZoomOutYAction;
 import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphSelectionManager;
+import com.affymetrix.igb.glyph.TriangleInsertionSeqGlyph;
 import com.affymetrix.igb.services.registry.MapTierTypeHolder;
 import com.affymetrix.igb.swing.JRPPopupMenu;
 import com.affymetrix.igb.swing.JRPWidget;
@@ -153,6 +154,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -1371,6 +1373,9 @@ public class SeqMapView extends JPanel
     public void doEdgeMatching(List<GlyphI> query_glyphs, boolean update_map) {
         // Clear previous edges
         seqmap.clearEdgeMatches();
+
+        //remove insertion glyphs
+        query_glyphs = query_glyphs.stream().filter(glyph -> !(glyph instanceof TriangleInsertionSeqGlyph)).collect(Collectors.toList());
 
         int qcount = query_glyphs.size();
         if (qcount <= 0) {

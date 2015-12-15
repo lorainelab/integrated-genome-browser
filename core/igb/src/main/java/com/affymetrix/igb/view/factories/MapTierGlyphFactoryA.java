@@ -15,13 +15,13 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.IGBConstants;
 import com.google.common.base.Optional;
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
 
@@ -80,7 +80,7 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
         AlignedResidueGlyph csg = new AlignedResidueGlyph();
         csg.setResidues(residueStr);
         csg.setHitable(false);
-        csg.setDefaultShowMask(false);
+        csg.setShowMask(false);
         if (setMask) {
             BitSet residueMask = swr.getResidueMask();
             if (residueMask == null && annotseq.isAvailable(span.getMin(), span.getMin() + residueStr.length())) {
@@ -94,16 +94,6 @@ public abstract class MapTierGlyphFactoryA implements MapTierGlyphFactoryI {
             csg.setBaseQuality(((SymWithBaseQuality) sym).getBaseQuality());
         }
         return csg;
-
-        // SEQ array has unexpected behavior;  commenting out for now.
-        /*if (((SymWithProps) sym).getProperty("SEQ") != null) {
-         byte[] seqArr = (byte[]) ((SymWithProps) sym).getProperty("SEQ");
-         for (int i = 0; i < seqArr.length; i++) {
-         System.out.print((char) seqArr[i]);
-         }
-         System.out.println();
-         isg.setResidueMask(seqArr);
-         }*/
     }
 
     //Determines residue mismatches

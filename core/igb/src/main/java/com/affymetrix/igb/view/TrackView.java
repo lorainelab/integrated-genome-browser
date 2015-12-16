@@ -166,7 +166,7 @@ public class TrackView {
         }
     }
 
-    public void deleteSymsOnSeq(SeqMapView smv, String method, BioSeq seq, DataSet feature) {
+    public void deleteSymsOnSeq(SeqMapView smv, String method, BioSeq seq, DataSet dataSet) {
 
         if (seq != null) {
             SeqSymmetry sym = seq.getAnnotation(method);
@@ -187,10 +187,10 @@ public class TrackView {
                 }
                 seq.unloadAnnotation(sym);
 
-                if (feature != null) {
-                    feature.clear(seq);
-                    if (feature.getLoadStrategy() == LoadStrategy.GENOME || feature.getLoadStrategy() == LoadStrategy.AUTOLOAD) {
-                        feature.setLoadStrategy(LoadStrategy.NO_LOAD);
+                if (dataSet != null) {
+                    dataSet.clear(seq);
+                    if (dataSet.getLoadStrategy() == LoadStrategy.GENOME || dataSet.getLoadStrategy() == LoadStrategy.AUTOLOAD) {
+                        dataSet.setLoadStrategy(LoadStrategy.NO_LOAD);
                     }
                 }
             }

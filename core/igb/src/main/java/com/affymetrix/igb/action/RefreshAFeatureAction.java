@@ -13,7 +13,7 @@ import java.awt.event.ActionEvent;
 public class RefreshAFeatureAction extends GenericAction {
 
     private static final long serialVersionUID = 1L;
-    private DataSet feature;
+    private DataSet dataSet;
 
     public static RefreshAFeatureAction createRefreshAFeatureAction(final DataSet feature) {
         final String text = "Load " + feature.getDataSetName();
@@ -26,14 +26,14 @@ public class RefreshAFeatureAction extends GenericAction {
         super(text, "toolbarButtonGraphics/general/Refresh16.gif", null);
     }
 
-    private void setFeature(DataSet feature) {
-        this.feature = feature;
-        this.enabled = (feature.getLoadStrategy() != LoadStrategy.NO_LOAD && feature.getLoadStrategy() != LoadStrategy.GENOME);
+    private void setFeature(DataSet dataSet) {
+        this.dataSet = dataSet;
+        this.enabled = (dataSet.getLoadStrategy() != LoadStrategy.NO_LOAD && dataSet.getLoadStrategy() != LoadStrategy.GENOME);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        GeneralLoadUtils.loadAndDisplayAnnotations(feature);
+        GeneralLoadUtils.loadAndDisplayAnnotations(dataSet);
     }
 }

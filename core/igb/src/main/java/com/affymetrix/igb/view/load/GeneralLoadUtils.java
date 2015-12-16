@@ -1276,22 +1276,22 @@ public final class GeneralLoadUtils {
     /**
      * For unoptimized file formats load symmetries and add them.
      *
-     * @param feature
+     * @param dataSet
      */
-    public static void loadAllSymmetriesThread(final DataSet feature) {
-        SymLoader symL = feature.getSymL();
-        QuickLoadSymLoader loadSymLoader = new QuickLoadSymLoader(feature.getURI(), feature.getIndex(), feature.getDataSetName(), symL, feature.getDataContainer().getGenomeVersion());
+    public static void loadAllSymmetriesThread(final DataSet dataSet) {
+        SymLoader symL = dataSet.getSymL();
+        QuickLoadSymLoader loadSymLoader = new QuickLoadSymLoader(dataSet.getURI(), dataSet.getIndex(), dataSet.getDataSetName(), symL, dataSet.getDataContainer().getGenomeVersion());
         final SeqMapView gviewer = IGB.getInstance().getMapView();
 
-        CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(LOADING_MESSAGE_PREFIX + feature.getDataSetName()) {
+        CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(LOADING_MESSAGE_PREFIX + dataSet.getDataSetName()) {
 
             @Override
             protected Object runInBackground() {
                 try {
-                    loadSymLoader.loadAndAddAllSymmetries(feature);
+                    loadSymLoader.loadAndAddAllSymmetries(dataSet);
                 } catch (Exception ex) {
                     logger.error(ex.getMessage(), ex);
-                    removeFeatureAndRefresh(feature, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
+                    removeFeatureAndRefresh(dataSet, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
                 }
                 return null;
             }
@@ -1315,7 +1315,7 @@ public final class GeneralLoadUtils {
             }
         };
 
-        CThreadHolder.getInstance().execute(feature, worker);
+        CThreadHolder.getInstance().execute(dataSet, worker);
     }
 
     public static boolean isLoaded(DataSet gFeature) {

@@ -41,12 +41,12 @@ public class LinkControl implements ContextualPopupListener {
     }
 
     @Override
-    public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_syms, SeqSymmetry primary_sym) {
-        if (primary_sym == null || selected_syms.size() != 1) {
+    public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selectedSyms, SeqSymmetry primarySym) {
+        if (primarySym == null || selectedSyms.size() != 1) {
             return;
         }
-        if (primary_sym instanceof CdsSeqSymmetry) {
-            primary_sym = ((CdsSeqSymmetry) primary_sym).getPropertySymmetry();
+        if (primarySym instanceof CdsSeqSymmetry) {
+            primarySym = ((CdsSeqSymmetry) primarySym).getPropertySymmetry();
         }
 
         Map<String, String> menu_items = new LinkedHashMap<>(); // map of menu url->name, or url -> url if there is no name
@@ -54,14 +54,14 @@ public class LinkControl implements ContextualPopupListener {
         // DAS files can contain links for each individual feature.
         // These are stored in the "link" property
         Object links = null;
-        if (primary_sym instanceof SymWithProps) {
-            links = ((SymWithProps) primary_sym).getProperty("link");
+        if (primarySym instanceof SymWithProps) {
+            links = ((SymWithProps) primarySym).getProperty("link");
             if (links != null) {
-                generateMenuItemsFromLinks(links, primary_sym, menu_items);
+                generateMenuItemsFromLinks(links, primarySym, menu_items);
             }
         }
 
-        makeMenuItemsFromMap(primary_sym, popup);
+        makeMenuItemsFromMap(primarySym, popup);
 
     }
 

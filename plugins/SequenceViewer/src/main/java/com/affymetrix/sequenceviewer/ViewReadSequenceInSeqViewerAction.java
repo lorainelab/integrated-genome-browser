@@ -12,6 +12,7 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -61,8 +62,8 @@ public class ViewReadSequenceInSeqViewerAction extends GenericAction implements 
     }
 
     @Override
-    public String getParentMenuName() {
-        return "view";
+    public IgbToolBarParentMenu getParentMenu() {
+        return IgbToolBarParentMenu.VIEW;
     }
 
     @Override

@@ -6,6 +6,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
@@ -15,7 +16,6 @@ public class ShowConsoleAction extends GenericAction implements IgbMenuItemProvi
     
     public static final String COMPONENT_NAME = "ShowConsoleAction";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
-    private static final String PARENT_MENU_NAME = "help";
     private static final int CONSOLE_MENU_ITEM_WEIGHT = 5;
     private static final long serialVersionUID = 1L;
     private ConsoleLogger consoleGui;
@@ -46,8 +46,8 @@ public class ShowConsoleAction extends GenericAction implements IgbMenuItemProvi
     }
     
     @Override
-    public String getParentMenuName() {
-        return PARENT_MENU_NAME;
+    public IgbToolBarParentMenu getParentMenu() {
+        return IgbToolBarParentMenu.HELP;
     }
     
     @Override

@@ -641,7 +641,6 @@ public final class GeneralLoadView {
                 if (!Strings.isNullOrEmpty(dataSet.getMethod())) {
                     removeTier(dataSet.getMethod());
                 }
-                dataSet.clear();
             } else {
                 removeDataSet(dataSet, true);
             }

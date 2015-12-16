@@ -13,6 +13,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -137,8 +138,8 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     }
 
     @Override
-    public String getParentMenuName() {
-        return "file";
+    public IgbToolBarParentMenu getParentMenu() {
+        return IgbToolBarParentMenu.FILE;
     }
 
     @Override

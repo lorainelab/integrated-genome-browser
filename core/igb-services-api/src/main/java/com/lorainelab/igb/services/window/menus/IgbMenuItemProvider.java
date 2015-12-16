@@ -8,7 +8,7 @@ import com.affymetrix.igb.swing.JRPMenuItem;
  */
 public interface IgbMenuItemProvider {
 
-    public String getParentMenuName();
+    public IgbToolBarParentMenu getParentMenu();
 
     public JRPMenuItem getMenuItem();
 

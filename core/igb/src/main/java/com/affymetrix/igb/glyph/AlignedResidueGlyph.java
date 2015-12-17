@@ -15,9 +15,8 @@ import java.util.WeakHashMap;
  *
  * @author jnicol
  *
- * A glyph that shows a sequence of aligned residues. At low resolution (small
- * scale) as a solid background rectangle and at high resolution overlays the
- * residue letters.
+ * A glyph that shows a sequence of aligned residues. At low resolution (small scale) as a solid background rectangle
+ * and at high resolution overlays the residue letters.
  *
  * Residues can be masked out if they agree with a reference sequence.
  *
@@ -29,26 +28,17 @@ public class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
 
     private static int minQ = 0;
     private static int maxQ = 40;
-    //By default mask the residues.
-    private boolean defaultShowMask = true;
+    private boolean showMask = true;
     private boolean useBaseQuality = false;
     private SearchableCharIterator qualCharIter;
 
-    public void setDefaultShowMask(boolean show) {
-        defaultShowMask = show;
+    public void setShowMask(boolean show) {
+        showMask = show;
     }
 
     @Override
     protected boolean getShowMask() {
-//		Object mod = this.getInfo();
-//		if (mod instanceof SymWithProps) {
-//			SymWithProps swp = (SymWithProps)mod;
-//			Object show_mask = swp.getProperty(BAM.SHOWMASK);
-//			if(show_mask != null){
-//				return Boolean.parseBoolean(show_mask.toString());
-//			}
-//		}
-        return defaultShowMask;
+        return showMask;
     }
 
     @Override
@@ -69,7 +59,7 @@ public class AlignedResidueGlyph extends AbstractAlignedTextGlyph {
         float alpha;
         for (int j = 0; j < charArray.length; j++) {
 
-            if (getShowMask() && residueMask != null && !residueMask.get(j)) {
+            if (showMask && residueMask != null && !residueMask.get(j)) {
                 if (useBaseQuality) {
                     alpha = 1.0f - getAlpha(quals[j]);
 

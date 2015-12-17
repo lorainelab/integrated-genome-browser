@@ -1,6 +1,6 @@
 # Integrated Genome Browser
 
-The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and flexible desktop genome browser. It is also a platform for developers to creat all-new visualizations.
+The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and flexible desktop genome browser. It is also a platform for developers to create new visualizations and visual analysis functions for genomics.
 
 To get a copy, you can clone this repository or visit the [IGB Download](http://bioviz.org/igb/download.html) page at [BioViz.org](http://www.bioviz.org).
 

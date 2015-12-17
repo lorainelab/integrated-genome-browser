@@ -4,13 +4,14 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.thresholding.GraphScoreThreshSetter;
 import com.affymetrix.igb.thresholding.SelectionListener;
+import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
+import com.lorainelab.igb.services.IgbService;
+import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -64,8 +65,8 @@ public class ThresholdingAction extends GenericAction implements IgbMenuItemProv
     }
 
     @Override
-    public String getParentMenuName() {
-        return "tools";
+    public IgbToolBarParentMenu getParentMenu() {
+        return IgbToolBarParentMenu.TOOLS;
     }
 
     @Override

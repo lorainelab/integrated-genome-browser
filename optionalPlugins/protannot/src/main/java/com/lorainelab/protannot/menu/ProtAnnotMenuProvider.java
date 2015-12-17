@@ -10,6 +10,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import com.lorainelab.protannot.ProtAnnotAction;
 import java.awt.event.ActionEvent;
 import java.util.Hashtable;
@@ -47,8 +48,8 @@ public class ProtAnnotMenuProvider extends GenericAction implements IgbMenuItemP
     }
 
     @Override
-    public String getParentMenuName() {
-        return "tools";
+    public IgbToolBarParentMenu getParentMenu() {
+        return IgbToolBarParentMenu.TOOLS;
     }
 
     @Override

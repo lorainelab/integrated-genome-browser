@@ -44,6 +44,7 @@ import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -214,8 +215,8 @@ public class MainMenuUtil implements MainMenuManager {
     }
 
     @Override
-    public JRPMenu getMenu(String menuId) {
-        String fullId = ID_PREFIX + menuId + "Menu";
+    public JRPMenu getMenu(IgbToolBarParentMenu igbToolBarParentMenu) {
+        String fullId = ID_PREFIX + igbToolBarParentMenu.getName() + "Menu";
         int num_menus = menuBar.getMenuCount();
         for (int i = 0; i < num_menus; i++) {
             JRPMenu menu_i = (JRPMenu) menuBar.getMenu(i);
@@ -230,7 +231,7 @@ public class MainMenuUtil implements MainMenuManager {
     @Reference(optional = true, multiple = true, unbind = "removeAMenuItem", dynamic = true)
     public void addAMenuItem(AMenuItem aMenuItem) {
         if (componentActivated) {
-            JMenu parent = getMenu(aMenuItem.getParentMenu());
+            JMenu parent = getMenu(IgbToolBarParentMenu.valueOf(aMenuItem.getParentMenu().toUpperCase()));
             if (parent == null) {
                 logger.warn("No menu found with name {}. {} is not added.", new Object[]{aMenuItem.getParentMenu(), aMenuItem.getMenuItem()});
                 return;
@@ -246,7 +247,7 @@ public class MainMenuUtil implements MainMenuManager {
     }
 
     public void removeAMenuItem(AMenuItem aMenuItem) {
-        JMenu parent = getMenu(aMenuItem.getParentMenu());
+        JMenu parent = getMenu(IgbToolBarParentMenu.valueOf(aMenuItem.getParentMenu()));
         if (parent == null) {
             logger.warn("No menu found with name {}. {} is cannot be removed.", new Object[]{aMenuItem.getMenuItem(), aMenuItem.getMenuItem()});
             return;
@@ -257,9 +258,9 @@ public class MainMenuUtil implements MainMenuManager {
     @Reference(optional = true, multiple = true, unbind = "removeMenuItem", dynamic = true)
     public void addMenuItem(IgbMenuItemProvider igbMenuItemProvider) {
         if (componentActivated) {
-            JRPMenu parent = getMenu(igbMenuItemProvider.getParentMenuName());
+            JRPMenu parent = getMenu(igbMenuItemProvider.getParentMenu());
             if (parent == null) {
-                logger.warn("No menu found with name {}. {} is not added.", new Object[]{igbMenuItemProvider.getParentMenuName(), igbMenuItemProvider.getMenuItem()});
+                logger.warn("No menu found with name {}. {} is not added.", new Object[]{igbMenuItemProvider.getParentMenu(), igbMenuItemProvider.getMenuItem()});
                 return;
             }
             if (igbMenuItemProvider.getMenuItemWeight() == -1) {
@@ -273,9 +274,9 @@ public class MainMenuUtil implements MainMenuManager {
     }
 
     public void removeMenuItem(IgbMenuItemProvider igbMenuItemProvider) {
-        JMenu parent = getMenu(igbMenuItemProvider.getParentMenuName());
+        JMenu parent = getMenu(igbMenuItemProvider.getParentMenu());
         if (parent == null) {
-            logger.warn("No menu found with name {}. {} is cannot be removed.", new Object[]{igbMenuItemProvider.getParentMenuName(), igbMenuItemProvider.getMenuItem()});
+            logger.warn("No menu found with name {}. {} is cannot be removed.", new Object[]{igbMenuItemProvider.getParentMenu(), igbMenuItemProvider.getMenuItem()});
             return;
         }
         MenuUtil.removeFromMenu(parent, igbMenuItemProvider.getMenuItem());

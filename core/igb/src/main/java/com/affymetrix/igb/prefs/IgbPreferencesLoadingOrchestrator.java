@@ -3,13 +3,13 @@ package com.affymetrix.igb.prefs;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderUtils;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.general.DataProviderManager;
 import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeEvent;
@@ -99,7 +99,13 @@ public class IgbPreferencesLoadingOrchestrator {
         try {
             Arrays.stream(PreferenceUtils.getDataProvidersNode().childrenNames())
                     .map(nodeName -> PreferenceUtils.getDataProvidersNode().node(nodeName))
-                    .forEach(dataProviderManager::initializeDataProvider);
+                    .forEach(node -> {
+                        try {
+                            dataProviderManager.initializeDataProvider(node);
+                        } catch (Exception ex) {
+                            logger.error(ex.getMessage(), ex);
+                        }
+                    });
         } catch (BackingStoreException ex) {
             logger.error(ex.getMessage(), ex);
         }

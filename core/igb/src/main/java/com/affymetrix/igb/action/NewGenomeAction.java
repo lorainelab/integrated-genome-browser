@@ -12,6 +12,7 @@ import com.affymetrix.igb.view.CustomGenomeDialogPanel;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.google.common.base.Strings;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
 import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
 import java.awt.event.ActionEvent;
@@ -108,8 +109,8 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
     }
 
     @Override
-    public String getParentMenuName() {
-        return "file";
+    public IgbToolBarParentMenu getParentMenu() {
+        return IgbToolBarParentMenu.FILE;
     }
 
     @Override

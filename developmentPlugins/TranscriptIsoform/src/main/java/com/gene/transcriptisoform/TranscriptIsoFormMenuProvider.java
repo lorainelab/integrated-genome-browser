@@ -7,6 +7,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -107,8 +108,8 @@ public class TranscriptIsoFormMenuProvider implements IgbMenuItemProvider {
     }
 
     @Override
-    public String getParentMenuName() {
-        return "view";
+    public IgbToolBarParentMenu getParentMenu() {
+        return IgbToolBarParentMenu.VIEW;
     }
 
     @Override

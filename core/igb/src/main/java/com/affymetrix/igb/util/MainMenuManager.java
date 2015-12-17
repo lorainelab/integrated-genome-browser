@@ -1,6 +1,7 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.igb.swing.JRPMenu;
+import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 
 /**
  *
@@ -8,6 +9,6 @@ import com.affymetrix.igb.swing.JRPMenu;
  */
 public interface MainMenuManager {
 
-    JRPMenu getMenu(String menuId);
+    JRPMenu getMenu(IgbToolBarParentMenu igbToolBarParentMenu);
 
 }

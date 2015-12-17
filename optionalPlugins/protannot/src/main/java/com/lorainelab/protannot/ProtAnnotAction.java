@@ -5,6 +5,7 @@ package com.lorainelab.protannot;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Deactivate;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
@@ -109,7 +110,7 @@ import org.slf4j.LoggerFactory;
  * @see com.affymetrix.genometryImpl.BioSeq
  * @see com.affymetrix.genoviz.util.ComponentPagePrinter
  */
-@Component(provide = {ProtAnnotAction.class}, factory = "protannot.factory.provider")
+@Component(provide = {GenericAction.class}, factory = "protannot.factory.provider")
 public class ProtAnnotAction extends GenericAction implements WindowListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ProtAnnotAction.class);
@@ -202,6 +203,11 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
         gview = (GenomeView) genomeViewFactory.newInstance(serviceProps).getInstance();
         eventBus = eventService.getEventBus();
         eventBus.register(this);
+    }
+
+    @Deactivate
+    public void deactivate() {
+        close();
     }
 
     @Reference
@@ -558,7 +564,9 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
     }
 
     void close() {
-
+        if (frm != null) {
+            frm.dispose();
+        }
     }
 
     GenomeView getGenomeView() {

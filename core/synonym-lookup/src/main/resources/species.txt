@@ -8,6 +8,7 @@ Arabidopsis lyrata	Lyrate rockcress	A. lyrata	A_lyrata
 Aquilegia coerulea	Colorado blue columbine	A_coerulea
 Arabidopsis thaliana	Thale cress	A_thaliana
 Arbacia punctulata	Purple-spined sea urchin	A_punctulata
+Balaenoptera acutorostrata	Minke whale	B_acutorostrata balAcu
 Bos taurus	Cow	B_taurus	bosTau	Bos_taurus
 Brachypodium distachyon	Purple false brome	B_distachyon
 Branchiostoma floridae	Lancet	B_floridae	braFlo
@@ -18,6 +19,7 @@ Caenorhabditis elegans	C. elegans (nematode)	C_elegans	ce	Caenorhabditis_elegans
 Caenorhabditis japonica	C. japonica (nematode)	C_japonica	caeJap
 Caenorhabditis remanei	C. remanei (nematode)	C_remanei	caeRem
 Callithrix jacchus	Common marmoset	C_jacchus	calJac	Callithrix_jacchus
+Callorhinchus milii	Elephant shark	C_milii	calMil
 Candida albicans SC	Yeast (Human Flora) SC	C_albicans_SC
 Candida albicans WO	Yeast (Human Flora) WO	C_albicans_WO
 Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
@@ -32,6 +34,7 @@ Citrus clementina	Clementine mandarin	C_clementina
 Citrus sinensis	Sweet orange	C_sinensis
 Ciona intestinalis	vase tunicate (sea squirt)	C_intestinalis	ci	Ciona_intestinalis
 Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi
+Cricetulus griseus	Chinese hamster	C_griseus	criGri
 Cucumis sativus	Cucumber	C_sativus
 Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio
 Dasypus novemcinctus	Nine-banded armadillo	D_novemcinctus	dasNov	Dasypus_novemcinctus
@@ -48,6 +51,7 @@ Drosophila simulans	D. simulans (fruit fly)	D_simulans	droSim
 Drosophila virilis	D. virilis (fruit fly)	D_virilis	droVir
 Drosophila yakuba	D. yakuba (fruit fly)	D_yakuba	droYak
 Dipodomys ordii	Kangaroo rat	D_ordii	dipOrd	Dipodomys_ordii
+Ebola virus	Ebola virus	E_virus	eboVir
 Echinops telfairi	Lesser hedgehog tenrec	E_telfairi		Echinops_telfairi	echTel
 Equus caballus	Horse	E_caballus	equCab	Equus_caballus
 Erinaceus europaeus	European hedgehog	E_europaeus	eriEur	Erinaceus_europaeus
@@ -103,6 +107,7 @@ Oryzias latipes	Medaka	O_latipes	oryLat	Oryzias_latipes
 Otolemur garnettii	Nothern greater galago	O_garnettii	otoGar	Otolemur_garnettii
 Ostreococcus lucimarinus	O. lucimarinus	O_lucimarinus	
 Ovis aries	sheep	O_aries	OAR	oviAri
+Pan paniscus	Bonobo	P_paniscus	panPan	
 Pan troglodytes	Chimp	P_troglodytes	panTro	Pan_troglodytes
 Panicum virgatum	Switchgrass	P_virgatum
 Papio anubis	olive baboon	P_anubis	papAnu

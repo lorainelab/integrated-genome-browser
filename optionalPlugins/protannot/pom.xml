@@ -170,6 +170,21 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>build plugin repository</id>
+                        <goals>
+                            <goal>
+                                index
+                            </goal>                       
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <obrRepository>${project.build.directory}</obrRepository>    
+                            <mavenRepository>${project.build.directory}</mavenRepository>                      
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
                     <instructions>    
                         <Import-Package>

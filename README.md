@@ -41,3 +41,4 @@ Use the -Xmx option to control how much memory the java process can consume. IGB
 
 * Ask on the [Biostars question and answer site](https://www.biostars.org/p/new/post/?tag_val=igb")
 * Visit the [Bioviz help page](http://bioviz.org/igb/help.html)
+

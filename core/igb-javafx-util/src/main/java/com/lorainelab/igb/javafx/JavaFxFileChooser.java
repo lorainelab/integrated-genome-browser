@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 public class JavaFxFileChooser {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaFxFileChooser.class);
+//    private static final JFXPanel fxRuntimeInitializer = new JFXPanel(); // see https://docs.oracle.com/javase/8/javafx/api/javafx/application/Platform.html#runLater-java.lang.Runnable- for why this is needed
     private static final Object LOCK = new Object();
     private Optional<String> title;
     private Optional<String> defaultFileName;
@@ -46,7 +47,13 @@ public class JavaFxFileChooser {
     }
 
     public JavaFxFileChooser setContext(File file) {
-        this.context = Optional.ofNullable(file);
+        if (file != null) {
+            if (file.isDirectory()) {
+                this.context = Optional.ofNullable(file);
+            } else {
+                this.context = Optional.ofNullable(file.getParentFile());
+            }
+        }
         return this;
     }
 

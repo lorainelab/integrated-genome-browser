@@ -91,8 +91,11 @@ public class ProtAnnotMapTierGlyph extends MapTierGlyph {
 
     private void drawlabel(ViewI view) {
         Graphics2D g = view.getGraphics();
-        GlyphI firstChild = getChild(0);
-
+        GlyphI firstChild = null;
+        try {
+            firstChild = getChild(0);
+        } catch (NullPointerException ex) {
+        }
         if (firstChild == null || !showLabel || Strings.isNullOrEmpty(label)) {
             return;
         }

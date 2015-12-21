@@ -103,7 +103,7 @@ public abstract class AbstractExportFileAction
 
             int option = chooser.showSaveDialog(null);
             if (option == JFileChooser.APPROVE_OPTION) {
-                FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
+                
                 Optional<BioSeq> aseq = gmodel.getSelectedSeq();
                 File fil = chooser.getSelectedFile();
                 try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)))) {
@@ -113,6 +113,7 @@ public abstract class AbstractExportFileAction
                 } catch (Exception ex) {
                     ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
                 }
+                FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
             }
         } else {
             ErrorHandler.errorPanel("not supported yet", "cannot export files of type "

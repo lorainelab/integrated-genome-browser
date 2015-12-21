@@ -1,10 +1,10 @@
 package com.lorainelab.igb.preferences.weblink.view;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.ModalUtils;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.jidesoft.grid.JideTable;
@@ -375,7 +375,7 @@ public final class WebLinksView {
         int option = chooser.showSaveDialog(frame);
         if (option == JFileChooser.APPROVE_OPTION) {
             try {
-                FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
+                
                 File fil = chooser.getSelectedFile();
                 String full_path = fil.getCanonicalPath();
 
@@ -387,6 +387,7 @@ public final class WebLinksView {
                 ErrorHandler.errorPanel("Error exporting web links", ex, Level.SEVERE);
             }
         }
+        FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
     }
 
     public void clear() {

@@ -4,8 +4,9 @@
  */
 package com.affymetrix.sequenceviewer;
 
-import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
@@ -18,7 +19,6 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.affymetrix.genoviz.datamodel.NASequence;
@@ -552,7 +552,6 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
         String r = null;
         int option = chooser.showSaveDialog(null);
         if (option == JFileChooser.APPROVE_OPTION) {
-            FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
             String fileName = chooser.getSelectedFile().toString();
             if (null != fileName) {
                 try {
@@ -583,6 +582,7 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
                     ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
                 }
             }
+            FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
         }
     }
     ButtonGroup bg = new ButtonGroup();

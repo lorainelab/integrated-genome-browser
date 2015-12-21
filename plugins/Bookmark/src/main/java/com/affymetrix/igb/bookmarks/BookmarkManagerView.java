@@ -9,10 +9,10 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
@@ -343,8 +343,8 @@ public final class BookmarkManagerView {
         int option = chooser.showSaveDialog(null);
         if (option == JFileChooser.APPROVE_OPTION) {
             try {
-                setLoadDirectory(chooser.getCurrentDirectory());
                 ((ExportFileFilter) chooser.getFileFilter()).export(main_bookmark_list, chooser.getSelectedFile());
+                setLoadDirectory(chooser.getCurrentDirectory());
             } catch (Exception ex) {
                 ErrorHandler.errorPanel("Error exporting bookmarks", ex, Level.SEVERE);
             }

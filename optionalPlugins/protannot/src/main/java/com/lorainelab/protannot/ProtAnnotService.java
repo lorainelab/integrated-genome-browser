@@ -773,11 +773,12 @@ public class ProtAnnotService {
             defaultFileName = savedDir.getName();
             savedDir = savedDir.getParentFile();
         }
+        LOG.info(savedDir.getAbsolutePath());
         file = JavaFxFileChooser.build().setContext(savedDir)
                 .setDefaultFileName(defaultFileName).saveFilesFromFxChooser();
+        LOG.info(file.get().getAbsolutePath());
         if (file.isPresent()) {
             File exportFile = file.get();
-            FileTracker.DATA_DIR_TRACKER.setFile(exportFile);
             Dnaseq dnaseq = getDnaseq();
             JAXBContext jaxbContext;
             try {
@@ -788,7 +789,7 @@ public class ProtAnnotService {
             } catch (JAXBException ex) {
                 LOG.error(ex.getMessage(), ex);
             }
-
+            FileTracker.DATA_DIR_TRACKER.setFile(exportFile);
         }
     }
 

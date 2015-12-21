@@ -10,13 +10,13 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.igb.bookmarks.model.Bookmark;
-import com.affymetrix.igb.swing.JRPMenuItem;
-import java.awt.Font;
+import javax.swing.JMenuItem;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A JMenuItem that contains a reference to a Bookmark object.
  */
-public final class BookmarkJMenuItem extends JRPMenuItem {
+public final class BookmarkMenuItem extends JMenuItem {
 
     private static final long serialVersionUID = 1L;
     private final Bookmark bookmark;
@@ -27,11 +27,8 @@ public final class BookmarkJMenuItem extends JRPMenuItem {
      * change its Font and/or Icon based on whether the bookmark is designed to
      * open in Unibrow or in an external browser.
      */
-    public BookmarkJMenuItem(String id, Bookmark b) {
-        super(id, b.getName());
-        Font f = this.getFont();
-        Font f2 = new Font(f.getName(), b.isValidBookmarkFormat() ? Font.BOLD : Font.ITALIC, f.getSize());
-        setFont(f2);
+    public BookmarkMenuItem(Bookmark b) {
+        super(StringUtils.abbreviate(b.getName(), 60));
         this.bookmark = b;
     }
 

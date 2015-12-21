@@ -9,17 +9,15 @@
  */
 package com.affymetrix.igb.bookmarks.action;
 
+import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.common.PreferenceUtils;
-import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
-import com.affymetrix.igb.bookmarks.BookmarkJMenuItem;
 import com.affymetrix.igb.bookmarks.BookmarkList;
+import com.affymetrix.igb.bookmarks.BookmarkMenuItem;
 import com.affymetrix.igb.bookmarks.BookmarksParser;
 import com.affymetrix.igb.bookmarks.Separator;
-import com.affymetrix.igb.swing.JRPMenu;
-import com.affymetrix.igb.swing.JRPMenuItem;
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.lorainelab.igb.services.IgbService;
 import java.awt.Component;
 import java.awt.Container;
@@ -28,11 +26,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -42,14 +41,14 @@ import org.slf4j.LoggerFactory;
 public final class BookmarkActionManager implements ActionListener, TreeModelListener {
 
     private final static boolean DEBUG = false;
-    private final Map<Object, Component> component_hash = new HashMap<>();
-    private final JRPMenu main_bm_menu;
+    private final Map<Object, Component> componentHash = new HashMap<>();
+    private final JMenu main_bm_menu;
     private final BookmarkList main_bookmark_list;
     private IgbService igbService;
     private static BookmarkActionManager instance;
     private static final Logger logger = LoggerFactory.getLogger(BookmarkActionManager.class);
 
-    public static void init(IgbService _igbService, JRPMenu bm_menu, BookmarkList main_bookmark_list) {
+    public static void init(IgbService _igbService, JMenu bm_menu, BookmarkList main_bookmark_list) {
         if (instance == null) {
             instance = new BookmarkActionManager(_igbService, bm_menu, main_bookmark_list);
         }
@@ -59,11 +58,11 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
         return instance;
     }
 
-    public BookmarkActionManager(IgbService _igbService, JRPMenu bm_menu, BookmarkList main_bm_list) {
+    public BookmarkActionManager(IgbService _igbService, JMenu bm_menu, BookmarkList main_bm_list) {
         igbService = _igbService;
         main_bm_menu = bm_menu;
         main_bookmark_list = main_bm_list;
-        component_hash.put(main_bookmark_list, main_bm_menu);
+        componentHash.put(main_bookmark_list, main_bm_menu);
 
         addDefaultBookmarks();
         buildMenus(main_bm_menu, main_bookmark_list);
@@ -135,8 +134,8 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
 
     public void actionPerformed(ActionEvent evt) {
         Object src = evt.getSource();
-        if (src instanceof BookmarkJMenuItem) {
-            BookmarkJMenuItem item = (BookmarkJMenuItem) src;
+        if (src instanceof BookmarkMenuItem) {
+            BookmarkMenuItem item = (BookmarkMenuItem) src;
             Bookmark bm = item.getBookmark();
             try {
                 BookmarkController.viewBookmark(igbService, bm);
@@ -150,27 +149,27 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
     }
 
     private void removeAllBookmarkMenuItems() {
-        for (Component comp : component_hash.values()) {
+        for (Component comp : componentHash.values()) {
             if (comp == main_bm_menu) {
                 // component_hash contains a mapping of main_bookmark_list to main_bm_menu.
-                // That is the only JRPMenu we do not want to remove from its parent.
+                // That is the only JMenu we do not want to remove from its parent.
                 continue;
             }
-            if (comp instanceof JRPMenuItem) {
-                JRPMenuItem item = (JRPMenuItem) comp;
+            if (comp instanceof JMenuItem) {
+                JMenuItem item = (JMenuItem) comp;
                 ActionListener[] listeners = item.getActionListeners();
                 for (ActionListener listener : listeners) {
                     item.removeActionListener(listener);
                 }
-            } else { // if not a JRPMenuItem, should be a JSeparator
+            } else { // if not a JMenuItem, should be a JSeparator
             }
             Container cont = comp.getParent();
             if (cont != null) {
                 cont.remove(comp);
             }
         }
-        component_hash.clear();
-        component_hash.put(main_bookmark_list, main_bm_menu);
+        componentHash.clear();
+        componentHash.put(main_bookmark_list, main_bm_menu);
     }
 
     /**
@@ -179,10 +178,10 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
      * @param pp
      * @param bl
      */
-    private void buildMenus(JRPMenu pp, BookmarkList bl) {
-        JRPMenu bl_menu = (JRPMenu) component_hash.get(bl);
-        if (bl_menu == null) {
-            bl_menu = addBookmarkListMenu(pp, bl);
+    private void buildMenus(JMenu pp, BookmarkList bl) {
+        JMenu listMenu = (JMenu) componentHash.get(bl);
+        if (listMenu == null) {
+            listMenu = addBookmarkListMenu(pp, bl);
         }
         @SuppressWarnings("unchecked")
         Enumeration<BookmarkList> e = bl.children();
@@ -190,11 +189,11 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
             BookmarkList node = e.nextElement();
             Object o = node.getUserObject();
             if (o instanceof String) {
-                buildMenus(bl_menu, node);
+                buildMenus(listMenu, node);
             } else if (o instanceof Bookmark) {
-                addBookmarkMI(bl_menu, (Bookmark) o);
+                addBookmarkMI(listMenu, (Bookmark) o);
             } else if (o instanceof Separator) {
-                addSeparator(bl_menu, (Separator) o);
+                addSeparator(listMenu, (Separator) o);
             }
         }
 
@@ -203,29 +202,20 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
     /**
      * Add passed bookmark to passed menu.
      *
-     * @param parent_menu
-     * @param bm
+     * @param parentMenu
+     * @param bookmark
      * @return
      */
-    private JRPMenuItem addBookmarkMI(JRPMenu parent_menu, Bookmark bm) {
-        JRPMenuItem markMI = (JRPMenuItem) component_hash.get(bm);
-        if (markMI != null) {
-            return markMI;
+    private JMenuItem addBookmarkMI(JMenu parentMenu, Bookmark bookmark) {
+        JMenuItem menuItem = (JMenuItem) componentHash.get(bookmark);
+        if (menuItem != null) {
+            return menuItem;
         }
-        markMI = new BookmarkJMenuItem(getIdFromName(bm.getName()), bm);
-        component_hash.put(bm, markMI);
-        parent_menu.add(markMI);
-        markMI.addActionListener(this);
-        return markMI;
-    }
-
-    private String getIdFromName(String name) {
-        String id = "";
-        try {
-            id = "Bookmark_" + URLEncoder.encode("UTF-8", name);
-        } catch (Exception x) {
-        }
-        return id;
+        menuItem = new BookmarkMenuItem(bookmark);
+        componentHash.put(bookmark, menuItem);
+        parentMenu.add(menuItem);
+        menuItem.addActionListener(this);
+        return menuItem;
     }
 
     /**
@@ -235,13 +225,13 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
      * @param bm_list
      * @return
      */
-    private JRPMenu addBookmarkListMenu(JRPMenu parent_menu, BookmarkList bm_list) {
-        JRPMenu sub_menu = (JRPMenu) component_hash.get(bm_list);
+    private JMenu addBookmarkListMenu(JMenu parent_menu, BookmarkList bm_list) {
+        JMenu sub_menu = (JMenu) componentHash.get(bm_list);
         if (sub_menu != null) {
             return sub_menu;
         }
-        sub_menu = new JRPMenu(getIdFromName(bm_list.getName()), bm_list.getName());
-        component_hash.put(bm_list, sub_menu);
+        sub_menu = new JMenu(bm_list.getName());
+        componentHash.put(bm_list, sub_menu);
         parent_menu.add(sub_menu);
         return sub_menu;
     }
@@ -253,13 +243,13 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
      * @param s
      * @return
      */
-    private JSeparator addSeparator(JRPMenu parent_menu, Separator s) {
-        JSeparator jsep = (JSeparator) component_hash.get(s);
+    private JSeparator addSeparator(JMenu parent_menu, Separator s) {
+        JSeparator jsep = (JSeparator) componentHash.get(s);
         if (jsep != null) {
             return null;
         }
         jsep = new JSeparator();
-        component_hash.put(s, jsep);
+        componentHash.put(s, jsep);
         parent_menu.add(jsep);
         return jsep;
     }
@@ -281,15 +271,15 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
                 BookmarkList node = (BookmarkList) child;
                 Object o = node.getUserObject();
                 if (o instanceof String) {
-                    Component comp = component_hash.get(node);
-                    if (comp instanceof JRPMenu) {
-                        ((JRPMenu) comp).setText(node.getName());
+                    Component comp = componentHash.get(node);
+                    if (comp instanceof JMenu) {
+                        ((JMenu) comp).setText(node.getName());
                     }
                 } else if (o instanceof Bookmark) {
                     //addBookmarkMI(bl_menu, (Bookmark) o);
-                    Component comp = component_hash.get(o);
-                    if (comp != null && comp instanceof BookmarkJMenuItem) {
-                        ((BookmarkJMenuItem) comp).setText(((Bookmark) o).getName());
+                    Component comp = componentHash.get(o);
+                    if (comp != null && comp instanceof BookmarkMenuItem) {
+                        ((BookmarkMenuItem) comp).setText(((Bookmark) o).getName());
                     }
                 } else if (o instanceof Separator) {
 

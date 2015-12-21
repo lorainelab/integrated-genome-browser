@@ -8,6 +8,7 @@ Arabidopsis lyrata	Lyrate rockcress	A. lyrata	A_lyrata
 Aquilegia coerulea	Colorado blue columbine	A_coerulea
 Arabidopsis thaliana	Thale cress	A_thaliana
 Arbacia punctulata	Purple-spined sea urchin	A_punctulata
+Balaenoptera acutorostrata	Minke whale	B_acutorostrata	balAcu
 Bos taurus	Cow	B_taurus	bosTau	Bos_taurus
 Brachypodium distachyon	Purple false brome	B_distachyon
 Branchiostoma floridae	Lancet	B_floridae	braFlo

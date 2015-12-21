@@ -774,7 +774,7 @@ public class ProtAnnotService {
             savedDir = savedDir.getParentFile();
         }
         file = FileChooserUtil.build().setContext(savedDir).setDefaultFileName(defaultFileName).saveFilesFromFxChooser();
-        LOG.info(file.get().getAbsolutePath());
+   
         if (file.isPresent()) {
             File exportFile = file.get();
             Dnaseq dnaseq = getDnaseq();

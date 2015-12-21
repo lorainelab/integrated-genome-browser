@@ -788,7 +788,7 @@ public class ProtAnnotService {
             } catch (JAXBException ex) {
                 LOG.error(ex.getMessage(), ex);
             }
-
+            FileTracker.DATA_DIR_TRACKER.setFile(exportFile);
         }
     }
 

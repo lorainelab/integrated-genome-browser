@@ -38,10 +38,7 @@ C_elegans_Oct_2010	ce10	WS220
 C_familiaris_Jul_2003	canFam1
 C_familiaris_May_2005	canFam2	Dog_May_2005	Canis_familiaris.BROADD2.reference
 C_familiaris_Sep_2011	canFam3	CanFam3.1
-<<<<<<< HEAD
-=======
 C_griseus_Jul_2013	criGri
->>>>>>> 9998a9b... fixes for small mistakes in new synonyms for unmapped species from UCSC
 C_hoffmanni_Sep_2008	Choloepus_hoffmanni.choHof1.reference
 C_intestinalis_Dec_2002	ci1	Ciona_intestinalis.JGI1.reference
 C_intestinalis_Mar_2005	ci2	Ciona_intestinalis.JGI2.reference
@@ -49,10 +46,7 @@ C_jacchus_Jun_2007	calJac1
 C_jacchus_Mar_2009	calJac3	Callithrix_jacchus.calJac3.reference	WUGSC 3.2
 C_japonica_Jan_2009	caeJap2
 C_japonica_Mar_2008	caeJap1	WUGSC 3.0.2
-<<<<<<< HEAD
-=======
 C_milii_Dec_2013	calMil
->>>>>>> 9998a9b... fixes for small mistakes in new synonyms for unmapped species from UCSC
 C_porcellus_Feb_2008	cavPor3	Cavia_porcellus.cavPor3.reference
 C_picta_Dec_2011	chrPic1
 C_remanei_Mar_2005	caeRem1
@@ -87,10 +81,7 @@ D_virilis_Aug_2005	droVir2
 D_virilis_Jul_2004	droVir1
 D_yakuba_Apr_2004	droYak1
 D_yakuba_Nov_2005	droYak2
-<<<<<<< HEAD
-=======
 E_virus_Jun_2014	eboVir
->>>>>>> 9998a9b... fixes for small mistakes in new synonyms for unmapped species from UCSC
 E_caballus_Jan_2007	equCab1
 E_caballus_Sep_2007	equCab2	Equus_caballus.EquCab2.reference
 E_coli_K12-MG1655_Jan_2012	E_coli_K12_Jan_2012	E. coli

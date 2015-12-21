@@ -174,7 +174,9 @@ public abstract class SymLoader {
                     return Optional.ofNullable(bis);
                 }
             } finally {
-                fileIs.get().close();
+                if (fileIs.isPresent()) {
+                    fileIs.get().close();
+                }
             }
         }
         return Optional.empty();

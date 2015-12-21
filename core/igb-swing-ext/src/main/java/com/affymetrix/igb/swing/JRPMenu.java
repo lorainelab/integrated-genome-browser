@@ -46,11 +46,13 @@ public class JRPMenu extends JMenu implements WeightedJRPWidget {
 
     @Override
     public void remove(JMenuItem item) {
-        JRPMenuItem itemToDelete = (JRPMenuItem) item;
-        for(int i = 0; i<menuItemComponents.size(); i++) {
-            WeightedJRPWidget menuItem = menuItemComponents.get(i);
-            if(menuItem.getId() != null && menuItem.getId().equals(itemToDelete.getId())) {
-                menuItemComponents.remove(i);
+        if (item instanceof JRPMenuItem) {
+            JRPMenuItem itemToDelete = (JRPMenuItem) item;
+            for (int i = 0; i < menuItemComponents.size(); i++) {
+                WeightedJRPWidget menuItem = menuItemComponents.get(i);
+                if (menuItem.getId() != null && menuItem.getId().equals(itemToDelete.getId())) {
+                    menuItemComponents.remove(i);
+                }
             }
         }
         super.remove(item);

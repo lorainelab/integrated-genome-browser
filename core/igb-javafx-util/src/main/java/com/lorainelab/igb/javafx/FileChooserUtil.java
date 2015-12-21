@@ -10,44 +10,45 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JavaFxFileChooser {
+public class FileChooserUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(JavaFxFileChooser.class);
-//    private static final JFXPanel fxRuntimeInitializer = new JFXPanel(); // see https://docs.oracle.com/javase/8/javafx/api/javafx/application/Platform.html#runLater-java.lang.Runnable- for why this is needed
+    private static final Logger logger = LoggerFactory.getLogger(FileChooserUtil.class);
+    private static final JFXPanel FX_RUNTIME_INITIALIZER = new JFXPanel(); // see https://docs.oracle.com/javase/8/javafx/api/javafx/application/Platform.html#runLater-java.lang.Runnable- for why this is needed
     private static final Object LOCK = new Object();
     private Optional<String> title;
     private Optional<String> defaultFileName;
     private Optional<File> context;
     private Optional<ExtensionFilter> extensionFilter;
 
-    private JavaFxFileChooser() {
+    private FileChooserUtil() {
         title = Optional.empty();
         defaultFileName = Optional.empty();
         context = Optional.empty();
         extensionFilter = Optional.empty();
     }
 
-    public static JavaFxFileChooser build() {
-        return new JavaFxFileChooser();
+    public static FileChooserUtil build() {
+        return new FileChooserUtil();
     }
 
-    public JavaFxFileChooser setTitle(String title) {
+    public FileChooserUtil setTitle(String title) {
         this.title = Optional.of(title);
         return this;
     }
 
-    public JavaFxFileChooser setDefaultFileName(String defaultFileName) {
+    public FileChooserUtil setDefaultFileName(String defaultFileName) {
         this.defaultFileName = Optional.of(defaultFileName);
         return this;
     }
 
-    public JavaFxFileChooser setContext(File file) {
-        if (file != null) {
+    public FileChooserUtil setContext(File file) {
+        if (file != null && file.exists()) {
             if (file.isDirectory()) {
                 this.context = Optional.ofNullable(file);
             } else {
@@ -57,7 +58,7 @@ public class JavaFxFileChooser {
         return this;
     }
 
-    public JavaFxFileChooser setFileExtensionFilter(ExtensionFilter extensionFilter) {
+    public FileChooserUtil setFileExtensionFilter(ExtensionFilter extensionFilter) {
         this.extensionFilter = Optional.ofNullable(extensionFilter);
         return this;
     }

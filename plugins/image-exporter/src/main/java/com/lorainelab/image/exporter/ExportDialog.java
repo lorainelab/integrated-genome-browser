@@ -6,7 +6,7 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.collect.ImmutableMap;
-import com.lorainelab.igb.javafx.JavaFxFileChooser;
+import com.lorainelab.igb.javafx.FileChooserUtil;
 import static com.lorainelab.image.exporter.ExportDialogGui.UNIT;
 import com.lorainelab.image.exporter.service.ImageExportService;
 import java.awt.Color;
@@ -313,7 +313,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
                 }
             }
         }
-        Optional<File> fileFromChooser = JavaFxFileChooser.build().setTitle("Save Image").setContext(new File(directory.getAbsolutePath()))
+        Optional<File> fileFromChooser = FileChooserUtil.build().setTitle("Save Image").setContext(new File(directory.getAbsolutePath()))
                 .setDefaultFileName(fileName).saveFilesFromFxChooser();
         if (fileFromChooser.isPresent()) {
             completeSaveButtonAction(fileFromChooser.get());

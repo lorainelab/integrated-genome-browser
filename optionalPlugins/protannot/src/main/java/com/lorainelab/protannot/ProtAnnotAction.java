@@ -27,7 +27,7 @@ import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
-import com.lorainelab.igb.javafx.JavaFxFileChooser;
+import com.lorainelab.igb.javafx.FileChooserUtil;
 import com.lorainelab.igb.services.IgbService;
 import com.lorainelab.image.exporter.service.ImageExportService;
 import com.lorainelab.protannot.event.StartInterProScanEvent;
@@ -393,7 +393,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
      */
     void doLoadFile() {
         Optional<File> file = null;
-        file = JavaFxFileChooser.build().setContext(FileTracker.DATA_DIR_TRACKER.getFile())
+        file = FileChooserUtil.build().setContext(FileTracker.DATA_DIR_TRACKER.getFile())
                 .retrieveFileFromFxChooser();
         if (file.isPresent()) {
             File cfil = file.get();

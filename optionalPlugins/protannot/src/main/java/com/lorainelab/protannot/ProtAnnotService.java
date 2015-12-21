@@ -15,7 +15,7 @@ import com.affymetrix.genometry.util.FileTracker;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
-import com.lorainelab.igb.javafx.JavaFxFileChooser;
+import com.lorainelab.igb.javafx.FileChooserUtil;
 import com.lorainelab.image.exporter.service.ImageExportService;
 import com.lorainelab.protannot.event.StartInterProScanEvent;
 import com.lorainelab.protannot.event.StatusSetEvent;
@@ -773,8 +773,7 @@ public class ProtAnnotService {
             defaultFileName = savedDir.getName();
             savedDir = savedDir.getParentFile();
         }
-        file = JavaFxFileChooser.build().setContext(savedDir)
-                .setDefaultFileName(defaultFileName).saveFilesFromFxChooser();
+        file = FileChooserUtil.build().setContext(savedDir).setDefaultFileName(defaultFileName).saveFilesFromFxChooser();
         if (file.isPresent()) {
             File exportFile = file.get();
             FileTracker.DATA_DIR_TRACKER.setFile(exportFile.getParentFile());

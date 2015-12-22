@@ -71,6 +71,11 @@
             <artifactId>synonym-lookup</artifactId>
             <scope>provided</scope>
         </dependency>
+         <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>context-menu-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

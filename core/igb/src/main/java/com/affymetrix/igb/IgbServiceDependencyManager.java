@@ -5,6 +5,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.igb.window.service.IWindowService;
+import com.lorainelab.context.menu.service.AnnotationContextMenuRegistryI;
 import com.lorainelab.igb.frame.api.FrameManagerService;
 import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
@@ -48,13 +49,11 @@ public class IgbServiceDependencyManager {
 //    public void trackDasDataProviderFactory(DataProviderFactory quickloadFactory) {
 //        logger.info("Das Factory now available.");
 //    }
-
     //This isn't strictly necessary, but waiting for this will prevent brief opportunity in the ui for users to click on genome icons before providers are initialized
 //    @Reference(target = "(&(component.name=Das2DataProviderFactory))")
 //    public void trackDas2DataProviderFactory(DataProviderFactory quickloadFactory) {
 //        logger.info("Das2 Factory now available.");
 //    }
-
     @Reference
     public void trackWindowService(IWindowService windowService) {
         logger.info("Window Service now available.");
@@ -79,6 +78,11 @@ public class IgbServiceDependencyManager {
     @Reference
     public void trackFrameManagerService(FrameManagerService frameManagerService) {
         logger.info("FrameManagerService now available.");
+    }
+
+    @Reference
+    public void trackAnnotationContextMenuRegistry(AnnotationContextMenuRegistryI annotationContextMenuRegistry) {
+        logger.info("AnnotationContextMenuRegistryI now available.");
     }
 
     public IWindowService getWindowService() {

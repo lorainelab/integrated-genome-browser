@@ -112,6 +112,10 @@ import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.factories.MapTierGlyphFactoryI;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
 import com.google.common.base.Strings;
+import com.lorainelab.context.menu.AnnotationContextMenuProvider;
+import com.lorainelab.context.menu.model.AnnotationContextEvent;
+import com.lorainelab.context.menu.model.ContextMenuItem;
+import com.lorainelab.context.menu.service.AnnotationContextMenuRegistryI;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
@@ -169,6 +173,11 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -424,6 +433,8 @@ public class SeqMapView extends JPanel
     private final SeqMapToolTips seqMapToolTips;
     private AutoLoadThresholdHandler autoload;
     private final PreferenceChangeListener pref_change_listener;
+    private BundleContext bundleContext;
+    private AnnotationContextMenuRegistryI annotationContextMenuRegistry;
 
     private MouseListener continuousActionListener = new MouseAdapter() {
         private javax.swing.Timer timer;
@@ -592,6 +603,24 @@ public class SeqMapView extends JPanel
         symSelectionListener = new SeqMapViewSymSelectionListenerImpl(this);
 
         PreferenceUtils.getTopNode().addPreferenceChangeListener(pref_change_listener);
+
+        final Bundle bundle = FrameworkUtil.getBundle(SeqMapView.class);
+        if (bundle != null) { // this could happen in unit tests
+            bundleContext = bundle.getBundleContext();
+            initAnnotationContextMenuRegistry();
+        }
+    }
+
+    private void initAnnotationContextMenuRegistry() {
+        ServiceTracker<AnnotationContextMenuRegistryI, Object> serviceTracker;
+        serviceTracker = new ServiceTracker<AnnotationContextMenuRegistryI, Object>(bundleContext, AnnotationContextMenuRegistryI.class, null) {
+            @Override
+            public Object addingService(ServiceReference<AnnotationContextMenuRegistryI> serviceReference) {
+                annotationContextMenuRegistry = bundleContext.getService(serviceReference);
+                return super.addingService(serviceReference);
+            }
+        };
+        serviceTracker.open();
     }
 
     protected void addZoomInXButton(String id) {
@@ -1770,6 +1799,21 @@ public class SeqMapView extends JPanel
         if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
             for (ContextualPopupListener listener : popup_listeners) {
                 listener.popupNotify(popup, selected_syms, sym_used_for_title);
+            }
+            for (AnnotationContextMenuProvider contextMenuProvider : annotationContextMenuRegistry.getAnnotationContextMenuItems()) {
+                Optional<ContextMenuItem> buildMenuItem = contextMenuProvider.buildMenuItem(new AnnotationContextEvent(selected_syms));
+                if (buildMenuItem.isPresent()) {
+                    ContextMenuItem menuItem = buildMenuItem.get();
+                    if (menuItem.getSubMenuItems().isEmpty()) {
+                        JMenuItem jMenuItem = new JMenuItem(new AbstractAction() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                menuItem.getAction().apply(null);
+                            }
+                        });
+                        popup.add(jMenuItem, 2);
+                    }
+                }
             }
             JSeparator afterGetInfoSep = new JSeparator();
             JSeparator afterViewReadSep = new JSeparator();

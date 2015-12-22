@@ -3,27 +3,24 @@ package com.lorainelab.igb.preferences.weblink;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.common.CommonUtils;
-import com.affymetrix.genometry.event.ContextualPopupListener;
-import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.google.common.base.Strings;
+import com.lorainelab.context.menu.AnnotationContextMenuProvider;
+import com.lorainelab.context.menu.model.AnnotationContextEvent;
+import com.lorainelab.context.menu.model.ContextMenuItem;
+import com.lorainelab.context.menu.model.MenuIcon;
 import com.lorainelab.igb.preferences.weblink.model.WebLink;
 import com.lorainelab.igb.services.IgbService;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import javax.swing.JMenu;
+import java.util.Optional;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-@Component(name = LinkControl.COMPONENT_NAME, immediate = true)
-public class LinkControl implements ContextualPopupListener {
+@Component(immediate = true)
+public class LinkControl implements AnnotationContextMenuProvider {
 
-    public static final String COMPONENT_NAME = "LinkControl";
     private static final String searchWebIconPath = "16x16/actions/searchweb.png";
     private IgbService igbService;
 
@@ -32,7 +29,6 @@ public class LinkControl implements ContextualPopupListener {
 
     @Activate
     private void activate() {
-        igbService.getSeqMapView().addPopupListener(this);
     }
 
     @Reference
@@ -41,103 +37,75 @@ public class LinkControl implements ContextualPopupListener {
     }
 
     @Override
-    public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selectedSyms, SeqSymmetry primarySym) {
-        if (primarySym == null || selectedSyms.size() != 1) {
-            return;
+    public Optional<ContextMenuItem> buildMenuItem(AnnotationContextEvent event) {
+        if (event.getSelectedItems().isEmpty()) {
+            return Optional.empty();
         }
+        SeqSymmetry primarySym = event.getSelectedItems().get(0);
         if (primarySym instanceof CdsSeqSymmetry) {
             primarySym = ((CdsSeqSymmetry) primarySym).getPropertySymmetry();
         }
-
-        Map<String, String> menu_items = new LinkedHashMap<>(); // map of menu url->name, or url -> url if there is no name
-
-        // DAS files can contain links for each individual feature.
-        // These are stored in the "link" property
-        Object links = null;
-        if (primarySym instanceof SymWithProps) {
-            links = ((SymWithProps) primarySym).getProperty("link");
-            if (links != null) {
-                generateMenuItemsFromLinks(links, primarySym, menu_items);
-            }
-        }
-
-        makeMenuItemsFromMap(primarySym, popup);
-
+        return buildContextMenuItem(primarySym);
     }
 
-    @SuppressWarnings("unchecked")
-    private void generateMenuItemsFromLinks(Object links, SeqSymmetry primary_sym, Map<String, String> menu_items) {
-        if (links instanceof String) {
-            Object link_names = null;
-            if (primary_sym instanceof SymWithProps) {
-                link_names = ((SymWithProps) primary_sym).getProperty("link_name");
-            }
-            String url = (String) links;
-            url = WebLink.replacePlaceholderWithId(url, primary_sym.getID());
-            if (link_names instanceof String) {
-                menu_items.put(url, (String) link_names);
-            } else {
-                menu_items.put(url, url);
-            }
-        } else if (links instanceof List) {
-            List<String> urls = (List<String>) links;
-            for (String url : urls) {
-                url = WebLink.replacePlaceholderWithId(url, primary_sym.getID());
-                menu_items.put(url, url);
-            }
-        } else if (links instanceof Map) {
-            Map<String, String> name2url = (Map<String, String>) links;
-            for (Map.Entry<String, String> entry : name2url.entrySet()) {
-                String name = entry.getKey();
-                String url = entry.getValue();
-                url = WebLink.replacePlaceholderWithId(url, primary_sym.getID());
-                menu_items.put(url, name);
-            }
-        }
+    @Override
+    public MenuSection getMenuSection() {
+        return MenuSection.INFORMATION;
     }
 
-    private static void makeMenuItemsFromMap(SeqSymmetry primary_sym, JPopupMenu popup) {
-        List<WebLink> results = new ArrayList<>();
-        results.addAll(WebLinkUtils.getServerList().getWebLinks(primary_sym));
-        results.addAll(WebLinkUtils.getLocalList().getWebLinks(primary_sym));
-        if (results.isEmpty()) {
+    public void popupNotify(JPopupMenu popup, SeqSymmetry primarySym) {
+        if (primarySym == null) {
             return;
         }
 
-        String name, url;
-        JMenuItem mi;
+    }
+
+    private Optional<ContextMenuItem> buildContextMenuItem(SeqSymmetry primarySym) {
+        List<WebLink> results = new ArrayList<>();
+        results.addAll(WebLinkUtils.getServerList().getWebLinks(primarySym));
+        results.addAll(WebLinkUtils.getLocalList().getWebLinks(primarySym));
+        if (results.isEmpty()) {
+            return Optional.empty();
+        }
+
+        String name;
+        ContextMenuItem contextMenuItem;
         if (results.size() == 1) {
             for (WebLink webLink : results) {
-                url = webLink.getURLForSym(primary_sym);
                 name = webLink.getName();
+                final String url = webLink.getURLForSym(primarySym);
                 if (name == null || name.equals(url)) {
                     name = "Search Web";
                 }
-
-                mi = makeMenuItem(name, url);
-                mi.setIcon(CommonUtils.getInstance().getIcon(webLink.getImageIconPath()));
-                popup.add(mi, 2);
+                contextMenuItem = new ContextMenuItem(name, (Void t) -> {
+                    GeneralUtils.browse(url);
+                    return t;
+                });
+                MenuIcon menuIcon = new MenuIcon(webLink.getImageIconPath());
+                contextMenuItem.setMenuIcon(menuIcon);
+                return Optional.of(contextMenuItem);
 
             }
         } else {
-            name = "Search Web";
-            JMenu linkMenu = new JMenu(name);
-            linkMenu.setIcon(CommonUtils.getInstance().getIcon(searchWebIconPath));
-            popup.add(linkMenu, 2);
-
-            for (WebLink webLink : results) {
-                url = webLink.getURLForSym(primary_sym);
-                name = webLink.getName();
-                if (name == null || name.equals(url)) {
-                    name = "Unnamed link to web";
-                }
-                mi = makeMenuItem(name, url);
-                if (!Strings.isNullOrEmpty(webLink.getImageIconPath())) {
-                    mi.setIcon(CommonUtils.getInstance().getIcon(webLink.getImageIconPath()));
-                }
-                linkMenu.add(mi);
-            }
+//            name = "Search Web";
+//            JMenu linkMenu = new JMenu(name);
+//            linkMenu.setIcon(CommonUtils.getInstance().getIcon(searchWebIconPath));
+//            popup.add(linkMenu, 2);
+//
+//            for (WebLink webLink : results) {
+//                url = webLink.getURLForSym(primarySym);
+//                name = webLink.getName();
+//                if (name == null || name.equals(url)) {
+//                    name = "Unnamed link to web";
+//                }
+//                mi = makeMenuItem(name, url);
+//                if (!Strings.isNullOrEmpty(webLink.getImageIconPath())) {
+//                    mi.setIcon(CommonUtils.getInstance().getIcon(webLink.getImageIconPath()));
+//                }
+//                linkMenu.add(mi);
+//            }
         }
+        return Optional.empty();
     }
 
     private static JMenuItem makeMenuItem(String name, final String url) {

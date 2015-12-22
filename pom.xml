@@ -92,6 +92,8 @@
         <module>core/frameManager</module>
         <module>core/synonym-lookup</module>
         <module>core/igb-javafx-util</module>
+        <module>core/context-menu-api</module>
+        <module>core/context-menu-service</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
         <module>plugins/track-operations-panel</module>
@@ -278,6 +280,18 @@
             <dependency>
                 <groupId>com.lorainelab</groupId>
                 <artifactId>igb-javafx-util</artifactId>
+                <version>${project.parent.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>context-menu-api</artifactId>
+                <version>${project.parent.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.lorainelab</groupId>
+                <artifactId>context-menu-service</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>

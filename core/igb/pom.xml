@@ -162,6 +162,16 @@
             <artifactId>igb-javafx-util</artifactId>
             <scope>provided</scope>
         </dependency>
+         <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>context-menu-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.lorainelab</groupId>
+            <artifactId>context-menu-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

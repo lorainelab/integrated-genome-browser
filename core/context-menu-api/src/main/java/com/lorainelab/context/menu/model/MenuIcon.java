@@ -20,8 +20,8 @@ public class MenuIcon {
     private String encodedImage;
     private static final Logger logger = LoggerFactory.getLogger(MenuIcon.class);
 
-    public MenuIcon(String path) {
-        try (InputStream resourceAsStream = MenuIcon.class.getClassLoader().getResourceAsStream(path);) {
+    public MenuIcon(InputStream resourceAsStream) {
+        try {
             encodedImage = BaseEncoding.base64().encode(IOUtils.toByteArray(resourceAsStream));
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);

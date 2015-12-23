@@ -3,7 +3,6 @@ package com.lorainelab.igb.preferences.weblink;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -15,18 +14,22 @@ import com.lorainelab.context.menu.model.ContextMenuItem;
 import com.lorainelab.context.menu.model.MenuIcon;
 import com.lorainelab.igb.preferences.weblink.model.WebLink;
 import com.lorainelab.igb.services.IgbService;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPopupMenu;
+import org.slf4j.LoggerFactory;
 
 @Component(immediate = true)
 public class LinkControl implements AnnotationContextMenuProvider {
 
-    private static final String searchWebIconPath = "16x16/actions/searchweb.png";
+    private static final String SEARCH_WEB_ICONPATH = "searchweb.png";
+     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MenuIcon.class);    
     private IgbService igbService;
 
     public LinkControl() {
@@ -105,24 +108,26 @@ public class LinkControl implements AnnotationContextMenuProvider {
                     GeneralUtils.browse(url);
                     return t;
                 });
-//                if (!Strings.isNullOrEmpty(webLink.getImageIconPath())) {
-//                    mi.setIcon(CommonUtils.getInstance().getIcon(webLink.getImageIconPath()));
-//                }
+                if (!Strings.isNullOrEmpty(webLink.getImageIconPath())) {
+                    try (InputStream resourceAsStream = LinkControl.class.getClassLoader().getResourceAsStream(webLink.getImageIconPath())) {
+                        childContextMenu.setMenuIcon(new MenuIcon(resourceAsStream));
+                    } catch (Exception ex) {
+                        logger.error(ex.getMessage(), ex);
+                    }
+                }
                 childMenuItems.add(childContextMenu);
             }
             name = "Search Web";
             ContextMenuItem parentContextMenu = new ContextMenuItem(name, childMenuItems);
+            try (InputStream resourceAsStream = LinkControl.class.getClassLoader().getResourceAsStream(SEARCH_WEB_ICONPATH)) {
+                parentContextMenu.setMenuIcon(new MenuIcon(resourceAsStream));
+            } catch (Exception ex) {
+                logger.error(ex.getMessage(), ex);
+            }
+                  
             return Optional.ofNullable(parentContextMenu);
         }
         return Optional.empty();
-    }
-
-    private static JMenuItem makeMenuItem(String name, final String url) {
-        JMenuItem linkMI = new JMenuItem(name);
-        if (url != null) {
-            linkMI.addActionListener(evt -> GeneralUtils.browse(url));
-        }
-        return linkMI;
     }
 
 }

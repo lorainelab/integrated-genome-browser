@@ -3,9 +3,12 @@ package com.lorainelab.igb.preferences.weblink;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import com.lorainelab.context.menu.AnnotationContextMenuProvider;
 import com.lorainelab.context.menu.model.AnnotationContextEvent;
 import com.lorainelab.context.menu.model.ContextMenuItem;
@@ -15,6 +18,8 @@ import com.lorainelab.igb.services.IgbService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -81,29 +86,33 @@ public class LinkControl implements AnnotationContextMenuProvider {
                     GeneralUtils.browse(url);
                     return t;
                 });
-                MenuIcon menuIcon = new MenuIcon(webLink.getImageIconPath());
-                contextMenuItem.setMenuIcon(menuIcon);
+//                MenuIcon menuIcon = new MenuIcon(webLink.getImageIconPath());
+//                contextMenuItem.setMenuIcon(menuIcon);
                 return Optional.of(contextMenuItem);
 
             }
         } else {
-//            name = "Search Web";
-//            JMenu linkMenu = new JMenu(name);
-//            linkMenu.setIcon(CommonUtils.getInstance().getIcon(searchWebIconPath));
-//            popup.add(linkMenu, 2);
-//
-//            for (WebLink webLink : results) {
-//                url = webLink.getURLForSym(primarySym);
-//                name = webLink.getName();
-//                if (name == null || name.equals(url)) {
-//                    name = "Unnamed link to web";
-//                }
-//                mi = makeMenuItem(name, url);
+            Set<ContextMenuItem> childMenuItems = Sets.newHashSet();
+
+            for (WebLink webLink : results) {
+                name = webLink.getName();
+                String url = webLink.getURLForSym(primarySym);
+                if (name == null || name.equals(url)) {
+                    name = "Unnamed link to web";
+                }
+
+                ContextMenuItem childContextMenu = new ContextMenuItem(name, (Void t) -> {
+                    GeneralUtils.browse(url);
+                    return t;
+                });
 //                if (!Strings.isNullOrEmpty(webLink.getImageIconPath())) {
 //                    mi.setIcon(CommonUtils.getInstance().getIcon(webLink.getImageIconPath()));
 //                }
-//                linkMenu.add(mi);
-//            }
+                childMenuItems.add(childContextMenu);
+            }
+            name = "Search Web";
+            ContextMenuItem parentContextMenu = new ContextMenuItem(name, childMenuItems);
+            return Optional.ofNullable(parentContextMenu);
         }
         return Optional.empty();
     }

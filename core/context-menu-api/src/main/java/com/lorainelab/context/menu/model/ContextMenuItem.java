@@ -9,6 +9,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -64,6 +65,10 @@ public class ContextMenuItem {
 
     public void setMenuIcon(MenuIcon menuIcon) {
         this.menuIcon = menuIcon;
+    }
+
+    public Optional<MenuIcon> getMenuIcon() {
+        return Optional.ofNullable(menuIcon);
     }
 
 

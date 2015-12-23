@@ -115,6 +115,7 @@ import com.google.common.base.Strings;
 import com.lorainelab.context.menu.AnnotationContextMenuProvider;
 import com.lorainelab.context.menu.model.AnnotationContextEvent;
 import com.lorainelab.context.menu.model.ContextMenuItem;
+import com.lorainelab.context.menu.model.MenuIcon;
 import com.lorainelab.context.menu.service.AnnotationContextMenuRegistryI;
 import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
@@ -164,9 +165,11 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -1805,13 +1808,18 @@ public class SeqMapView extends JPanel
                 if (buildMenuItem.isPresent()) {
                     ContextMenuItem menuItem = buildMenuItem.get();
                     if (menuItem.getSubMenuItems().isEmpty()) {
-                        JMenuItem jMenuItem = new JMenuItem(new AbstractAction() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                menuItem.getAction().apply(null);
-                            }
-                        });
-                        popup.add(jMenuItem, 2);
+                        JMenuItem jMenuItem = convertContextMenuItemToJMenuItem(menuItem);
+                        popup.add(jMenuItem);
+                    } else {
+                        JMenu jMenu = new JMenu();
+                        jMenu.setText(menuItem.getMenuLabel());
+                        menuItem.getSubMenuItems()
+                                .stream()
+                                .map(contextMenuItem -> convertContextMenuItemToJMenuItem(contextMenuItem))
+                                .forEach(jMenuItem -> {
+                                    jMenu.add(jMenuItem);
+                                });
+                        popup.add(jMenu);
                     }
                 }
             }
@@ -1851,6 +1859,21 @@ public class SeqMapView extends JPanel
                 }
             }
         }
+    }
+
+    private JMenuItem convertContextMenuItemToJMenuItem(ContextMenuItem menuItem) {
+        JMenuItem jMenuItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                menuItem.getAction().apply(null);
+            }
+        });
+        jMenuItem.setText(menuItem.getMenuLabel());
+        Optional<MenuIcon> menuItemIcon = menuItem.getMenuIcon();
+        if (menuItemIcon.isPresent()) {
+            jMenuItem.setIcon(new ImageIcon(menuItemIcon.get().getEncodedImage()));
+        }
+        return jMenuItem;
     }
 
     @Override

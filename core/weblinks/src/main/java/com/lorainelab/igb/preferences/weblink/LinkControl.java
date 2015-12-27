@@ -14,14 +14,11 @@ import com.lorainelab.context.menu.model.ContextMenuItem;
 import com.lorainelab.context.menu.model.MenuIcon;
 import com.lorainelab.igb.preferences.weblink.model.WebLink;
 import com.lorainelab.igb.services.IgbService;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JPopupMenu;
 import org.slf4j.LoggerFactory;
 
@@ -29,19 +26,13 @@ import org.slf4j.LoggerFactory;
 public class LinkControl implements AnnotationContextMenuProvider {
 
     private static final String SEARCH_WEB_ICONPATH = "searchweb.png";
-     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MenuIcon.class);    
-    private IgbService igbService;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MenuIcon.class);
 
     public LinkControl() {
     }
 
     @Activate
     private void activate() {
-    }
-
-    @Reference
-    public void setIgbService(IgbService igbService) {
-        this.igbService = igbService;
     }
 
     @Override
@@ -89,8 +80,11 @@ public class LinkControl implements AnnotationContextMenuProvider {
                     GeneralUtils.browse(url);
                     return t;
                 });
-//                MenuIcon menuIcon = new MenuIcon(webLink.getImageIconPath());
-//                contextMenuItem.setMenuIcon(menuIcon);
+                try (InputStream resourceAsStream = LinkControl.class.getClassLoader().getResourceAsStream(SEARCH_WEB_ICONPATH)) {
+                    contextMenuItem.setMenuIcon(new MenuIcon(resourceAsStream));
+                } catch (Exception ex) {
+                    logger.error(ex.getMessage(), ex);
+                }
                 return Optional.of(contextMenuItem);
 
             }
@@ -124,7 +118,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
             }
-                  
+
             return Optional.ofNullable(parentContextMenu);
         }
         return Optional.empty();

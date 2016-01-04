@@ -7,7 +7,7 @@
         <version>8.6.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>com.lorainelab</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>igb-command-socket</artifactId>
     <packaging>bundle</packaging>
 
@@ -98,14 +98,14 @@
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
                         <Export-Package/>
-                        <Bundle-Activator>com.lorainelab.igbr.Activator</Bundle-Activator>
+                        <Bundle-Activator>org.lorainelab.igb.igbr.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Description>${bundleDescription}</Bundle-Description>
                     </instructions>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>bundle-markdown-encoder</artifactId>
                 <executions>
                     <execution>

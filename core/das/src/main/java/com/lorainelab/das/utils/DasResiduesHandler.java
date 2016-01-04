@@ -1,4 +1,4 @@
-package com.lorainelab.das.utils;
+package org.lorainelab.igb.das.utils;
 
 import com.affymetrix.genometry.SeqSpan;
 import java.io.BufferedInputStream;

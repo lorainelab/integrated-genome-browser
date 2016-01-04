@@ -1,10 +1,10 @@
-package com.lorainelab.igb.preferences.weblink.view;
+package org.lorainelab.igb.igb.preferences.weblink.view;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.util.DisplayUtils;
-import com.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.igb.services.IgbService;
 import java.awt.Point;
 import javax.swing.JFrame;
 

@@ -1,4 +1,4 @@
-package com.lorainelab.synonymlookup.services;
+package org.lorainelab.igb.synonymlookup.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

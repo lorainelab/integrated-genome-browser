@@ -1,11 +1,11 @@
-package com.lorainelab.quickload;
+package org.lorainelab.igb.quickload;
 
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
-import static com.lorainelab.quickload.util.QuickloadUtils.toExternalForm;
+import static org.lorainelab.igb.quickload.util.QuickloadUtils.toExternalForm;
 
 /**
  *

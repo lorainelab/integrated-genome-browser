@@ -1,7 +1,7 @@
 /**
  * Main class. This builds the GUI components and establishes their behavior.
  */
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -26,16 +26,16 @@ import com.affymetrix.genoviz.swing.MenuUtil;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
-import com.lorainelab.igb.javafx.FileChooserUtil;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.image.exporter.service.ImageExportService;
-import com.lorainelab.protannot.event.StartInterProScanEvent;
-import com.lorainelab.protannot.event.StatusTerminateEvent;
-import com.lorainelab.protannot.model.Dnaseq;
-import com.lorainelab.protannot.model.Dnaseq.MRNA;
-import com.lorainelab.protannot.model.ProtannotParser;
-import com.lorainelab.protannot.view.StatusBar;
+import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewI;
+import org.lorainelab.igb.igb.javafx.FileChooserUtil;
+import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.image.exporter.service.ImageExportService;
+import org.lorainelab.igb.protannot.event.StartInterProScanEvent;
+import org.lorainelab.igb.protannot.event.StatusTerminateEvent;
+import org.lorainelab.igb.protannot.model.Dnaseq;
+import org.lorainelab.igb.protannot.model.Dnaseq.MRNA;
+import org.lorainelab.igb.protannot.model.ProtannotParser;
+import org.lorainelab.igb.protannot.view.StatusBar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;

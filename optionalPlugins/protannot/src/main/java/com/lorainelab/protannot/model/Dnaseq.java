@@ -4,7 +4,7 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.06.25 at 02:07:45 PM EDT 
 //
-package com.lorainelab.protannot.model;
+package org.lorainelab.igb.protannot.model;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

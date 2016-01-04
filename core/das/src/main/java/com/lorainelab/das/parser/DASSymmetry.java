@@ -1,11 +1,11 @@
-package com.lorainelab.das.parser;
+package org.lorainelab.igb.das.parser;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.Scored;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
-import com.lorainelab.das.parser.DASFeatureParser.Orientation;
+import org.lorainelab.igb.das.parser.DASFeatureParser.Orientation;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;

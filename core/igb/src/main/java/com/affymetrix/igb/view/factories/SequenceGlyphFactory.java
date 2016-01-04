@@ -10,9 +10,9 @@ import com.affymetrix.genometry.symmetry.impl.SimpleSymWithResidues;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.google.common.collect.ImmutableSet;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewExtendedI;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.StyledGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
 import java.util.Set;
 
 @Component(name = SequenceGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)

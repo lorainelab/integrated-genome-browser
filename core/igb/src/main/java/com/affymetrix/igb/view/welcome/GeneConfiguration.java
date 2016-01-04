@@ -7,7 +7,7 @@ package com.affymetrix.igb.view.welcome;
 import be.pwnt.jflow.Configuration;
 import be.pwnt.jflow.Shape;
 import com.affymetrix.common.CommonUtils;
-import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
+import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;

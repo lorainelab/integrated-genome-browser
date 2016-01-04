@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.snp.convert.ui;
+package org.lorainelab.igb.snp.convert.ui;
 
 import aQute.bnd.annotation.component.Component;
-import com.lorainelab.snp.convert.SnpConverterAction;
+import org.lorainelab.igb.snp.convert.SnpConverterAction;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFileChooser;

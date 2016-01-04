@@ -2,7 +2,7 @@ package com.affymetrix.sequenceviewer.actions;
 
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.sequenceviewer.AbstractSequenceViewer;
-import com.lorainelab.image.exporter.service.ImageExportService;
+import org.lorainelab.igb.image.exporter.service.ImageExportService;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;

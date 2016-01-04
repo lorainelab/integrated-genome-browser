@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.plugins;
+package org.lorainelab.igb.igb.plugins;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -11,10 +11,10 @@ import aQute.bnd.annotation.component.Reference;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import static com.lorainelab.igb.plugins.Constants.MATERIAL_DESIGN_COLORS;
-import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
-import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
-import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
+import static org.lorainelab.igb.igb.plugins.Constants.MATERIAL_DESIGN_COLORS;
+import org.lorainelab.igb.igb.plugins.model.PluginListItemMetadata;
+import org.lorainelab.igb.igb.plugins.repos.events.PluginRepositoryEventPublisher;
+import org.lorainelab.igb.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;

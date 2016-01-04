@@ -1,4 +1,4 @@
-package com.lorainelab.logging.console;
+package org.lorainelab.igb.logging.console;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;

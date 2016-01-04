@@ -1,4 +1,4 @@
-package com.lorainelab.igb.preferences.model;
+package org.lorainelab.igb.igb.preferences.model;
 
 import com.google.gson.annotations.Expose;
 import org.apache.commons.lang3.builder.EqualsBuilder;

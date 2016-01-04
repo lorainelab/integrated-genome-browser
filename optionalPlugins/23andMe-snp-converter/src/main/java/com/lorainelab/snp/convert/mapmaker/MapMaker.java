@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.snp.convert.mapmaker;
+package org.lorainelab.igb.snp.convert.mapmaker;
 
 import com.google.common.base.Splitter;
-import static com.lorainelab.snp.convert.SnpConverterAction.IGB_HACK_FAKE_SNP;
+import static org.lorainelab.igb.snp.convert.SnpConverterAction.IGB_HACK_FAKE_SNP;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;

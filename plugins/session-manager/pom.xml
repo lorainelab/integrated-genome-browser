@@ -8,7 +8,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <groupId>com.lorainelab</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>session-manager</artifactId>
     <packaging>bundle</packaging>
 
@@ -48,7 +48,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-preferences</artifactId>
             <scope>provided</scope>
         </dependency>

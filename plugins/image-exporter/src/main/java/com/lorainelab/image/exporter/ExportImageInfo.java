@@ -1,4 +1,4 @@
-package com.lorainelab.image.exporter;
+package org.lorainelab.igb.image.exporter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,11 +1,11 @@
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import com.affymetrix.genometry.util.DNAUtils;
 import java.math.BigInteger;
-import com.lorainelab.protannot.model.Dnaseq;
-import com.lorainelab.protannot.model.Dnaseq.MRNA;
-import com.lorainelab.protannot.model.Dnaseq.MRNA.Cds;
-import com.lorainelab.protannot.model.Dnaseq.MRNA.Exon;
+import org.lorainelab.igb.protannot.model.Dnaseq;
+import org.lorainelab.igb.protannot.model.Dnaseq.MRNA;
+import org.lorainelab.igb.protannot.model.Dnaseq.MRNA.Cds;
+import org.lorainelab.igb.protannot.model.Dnaseq.MRNA.Exon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ErrorHandler;

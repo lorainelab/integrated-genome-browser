@@ -1,4 +1,4 @@
-package com.lorainelab.bam;
+package org.lorainelab.igb.bam;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
@@ -7,9 +7,9 @@ import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.google.code.externalsorting.ExternalMergeSort;
-import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
-import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
-import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;

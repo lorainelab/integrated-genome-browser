@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.synonymlookup.services.impl;
+package org.lorainelab.igb.synonymlookup.services.impl;
 
 import aQute.bnd.annotation.component.Component;
-import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import org.slf4j.LoggerFactory;

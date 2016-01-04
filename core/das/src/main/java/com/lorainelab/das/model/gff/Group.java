@@ -6,7 +6,7 @@
 //
 
 
-package com.lorainelab.das.model.gff;
+package org.lorainelab.igb.das.model.gff;
 
 import java.util.ArrayList;
 import java.util.List;

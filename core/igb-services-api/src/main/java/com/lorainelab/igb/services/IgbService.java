@@ -1,4 +1,4 @@
-package com.lorainelab.igb.services;
+package org.lorainelab.igb.igb.services;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
@@ -12,10 +12,10 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.swing.JRPMenu;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
-import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
-import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewI;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.igb.services.window.preferences.PreferencesPanelProvider;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;

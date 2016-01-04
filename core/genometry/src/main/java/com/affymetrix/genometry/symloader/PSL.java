@@ -17,7 +17,7 @@ import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.lorainelab.externalsort.api.ComparatorMetadata;
+import org.lorainelab.igb.externalsort.api.ComparatorMetadata;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

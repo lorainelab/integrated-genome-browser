@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.interproscan.api;
+package org.lorainelab.igb.protannot.interproscan.api;
 
-import com.lorainelab.protannot.interproscan.api.InterProscanService.Status;
+import org.lorainelab.igb.protannot.interproscan.api.InterProscanService.Status;
 
 /**
  *

@@ -1,15 +1,15 @@
-package com.lorainelab.das.utils;
+package org.lorainelab.igb.das.utils;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.google.common.collect.Maps;
-import com.lorainelab.das.model.dsn.DasDsn;
-import com.lorainelab.das.model.ep.DasEp;
-import com.lorainelab.das.model.gff.DasGff;
-import com.lorainelab.das.model.types.DasTypes;
-import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.lorainelab.igb.das.model.dsn.DasDsn;
+import org.lorainelab.igb.das.model.ep.DasEp;
+import org.lorainelab.igb.das.model.gff.DasGff;
+import org.lorainelab.igb.das.model.types.DasTypes;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;

@@ -5,7 +5,7 @@ import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.igb.services.IgbService;
 
 import java.awt.BorderLayout;
 import java.awt.Image;

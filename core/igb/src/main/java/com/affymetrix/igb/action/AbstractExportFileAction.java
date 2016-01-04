@@ -15,7 +15,7 @@ import com.affymetrix.genometry.util.GFileChooser;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IgbServiceImpl;
-import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;

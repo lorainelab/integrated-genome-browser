@@ -1,4 +1,4 @@
-package com.lorainelab.cache.api;
+package org.lorainelab.igb.cache.api;
 
 import java.io.File;
 import java.math.BigInteger;

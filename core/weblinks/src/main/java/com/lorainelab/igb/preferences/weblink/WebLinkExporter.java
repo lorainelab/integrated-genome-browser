@@ -1,4 +1,4 @@
-package com.lorainelab.igb.preferences.weblink;
+package org.lorainelab.igb.igb.preferences.weblink;
 
 /**
  *

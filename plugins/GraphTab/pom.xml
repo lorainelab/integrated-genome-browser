@@ -48,12 +48,12 @@
         </dependency>
         <!--End of logging dependencies-->
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>track-operations-panel</artifactId>
             <scope>provided</scope>
         </dependency>

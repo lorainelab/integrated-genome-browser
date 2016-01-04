@@ -957,8 +957,8 @@ fb600000-100000000 ---p 00000000 00:00 0
 7f8904be1000-7f8904be2000 rw-p 00016000 fd:01 4467790                    /opt/java/jdk1.8.0_40/jre/lib/amd64/libnet.so
 7f8904be2000-7f8904be3000 r--s 00000000 fd:02 6297591                    /home/dcnorris/.m2/repository/org/codehaus/mojo/animal-sniffer-annotations/1.9/animal-sniffer-annotations-1.9.jar
 7f8904be3000-7f8904be8000 r--s 0003d000 fd:02 6554004                    /home/dcnorris/.m2/repository/org/apache/felix/org.apache.felix.scr/1.8.2/org.apache.felix.scr-1.8.2.jar
-7f8904be8000-7f8904bea000 r--s 00009000 fd:02 7083539                    /home/dcnorris/.m2/repository/com/lorainelab/igb-genoviz-extensions/8.4.0/igb-genoviz-extensions-8.4.0.jar
-7f8904bea000-7f8904beb000 r--s 00000000 fd:02 7476077                    /home/dcnorris/.m2/repository/com/lorainelab/logging-config/8.4.0/logging-config-8.4.0.jar
+7f8904be8000-7f8904bea000 r--s 00009000 fd:02 7083539                    /home/dcnorris/.m2/repository/org.lorainelab.igb/igb-genoviz-extensions/8.4.0/igb-genoviz-extensions-8.4.0.jar
+7f8904bea000-7f8904beb000 r--s 00000000 fd:02 7476077                    /home/dcnorris/.m2/repository/org.lorainelab.igb/logging-config/8.4.0/logging-config-8.4.0.jar
 7f8904beb000-7f8904bf1000 r--s 0003d000 fd:02 5245169                    /home/dcnorris/.m2/repository/ch/qos/logback/logback-classic/1.1.2/logback-classic-1.1.2.jar
 7f8904bf1000-7f8904bfb000 r--s 0005f000 fd:02 5245199                    /home/dcnorris/.m2/repository/ch/qos/logback/logback-core/1.1.2/logback-core-1.1.2.jar
 7f8904bfb000-7f8904bfd000 r--s 00006000 fd:02 6163993                    /home/dcnorris/.m2/repository/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.jar
@@ -967,8 +967,8 @@ fb600000-100000000 ---p 00000000 00:00 0
 7f8904c8f000-7f8904c98000 r--s 00061000 fd:02 6160628                    /home/dcnorris/.m2/repository/org/osgi/org.osgi.core/5.0.0/org.osgi.core-5.0.0.jar
 7f8904c98000-7f8904c9d000 r--s 00031000 fd:02 6165111                    /home/dcnorris/.m2/repository/org/apache/felix/org.apache.felix.bundlerepository/2.0.2/org.apache.felix.bundlerepository-2.0.2.jar
 7f8904c9d000-7f8904cad000 r--s 000ac000 fd:02 6164010                    /home/dcnorris/.m2/repository/org/osgi/org.osgi.compendium/4.3.1/org.osgi.compendium-4.3.1.jar
-7f8904cad000-7f8904cae000 r--s 00006000 fd:02 7607117                    /home/dcnorris/.m2/repository/com/lorainelab/track-operations-panel/8.4.0/track-operations-panel-8.4.0.jar
-7f8904cae000-7f8904caf000 r--s 00001000 fd:02 7738525                    /home/dcnorris/.m2/repository/com/lorainelab/paired-data-preprocessor/8.4.0/paired-data-preprocessor-8.4.0.jar
+7f8904cad000-7f8904cae000 r--s 00006000 fd:02 7607117                    /home/dcnorris/.m2/repository/org.lorainelab.igb/track-operations-panel/8.4.0/track-operations-panel-8.4.0.jar
+7f8904cae000-7f8904caf000 r--s 00001000 fd:02 7738525                    /home/dcnorris/.m2/repository/org.lorainelab.igb/paired-data-preprocessor/8.4.0/paired-data-preprocessor-8.4.0.jar
 7f8904caf000-7f8904cb2000 r--s 0000e000 fd:02 13762573                   /home/dcnorris/.m2/repository/com/affymetrix/plugins-manager/8.4.0/plugins-manager-8.4.0.jar
 7f8904cb2000-7f8904cb3000 r--s 00002000 fd:02 7607126                    /home/dcnorris/.m2/repository/com/affymetrix/update/8.4.0/update-8.4.0.jar
 7f8904cb3000-7f8904cb7000 r--s 00031000 fd:02 5767997                    /home/dcnorris/.m2/repository/org/codehaus/jackson/jackson-core-lgpl/1.7.9/jackson-core-lgpl-1.7.9.jar
@@ -1002,7 +1002,7 @@ fb600000-100000000 ---p 00000000 00:00 0
 7f8904d1a000-7f8904d1c000 r--s 00001000 fd:02 7738558                    /home/dcnorris/.m2/repository/com/affymetrix/bigBedHandler/8.4.0/bigBedHandler-8.4.0.jar
 7f8904d1c000-7f8904d1e000 r--s 00004000 fd:02 7607121                    /home/dcnorris/.m2/repository/com/affymetrix/annotation-tab/8.4.0/annotation-tab-8.4.0.jar
 7f8904d1e000-7f8904d1f000 r--s 00005000 fd:02 7476500                    /home/dcnorris/.m2/repository/com/affymetrix/apollo-library/8.4.0/apollo-library-8.4.0.jar
-7f8904d1f000-7f8904d21000 r--s 00007000 fd:02 6426316                    /home/dcnorris/.m2/repository/com/lorainelab/image-exporter/8.4.0/image-exporter-8.4.0.jar
+7f8904d1f000-7f8904d21000 r--s 00007000 fd:02 6426316                    /home/dcnorris/.m2/repository/org.lorainelab.igb/image-exporter/8.4.0/image-exporter-8.4.0.jar
 7f8904d21000-7f8904d24000 r--s 00019000 fd:02 5375001                    /home/dcnorris/.m2/repository/commons-pool/commons-pool/1.6/commons-pool-1.6.jar
 7f8904d24000-7f8904d2a000 r--s 00033000 fd:02 5374621                    /home/dcnorris/.m2/repository/commons-codec/commons-codec/1.6/commons-codec-1.6.jar
 7f8904d2a000-7f8904d2e000 r--s 00026000 fd:02 5505843                    /home/dcnorris/.m2/repository/org/apache/commons/commons-compress/1.2/commons-compress-1.2.jar
@@ -1013,11 +1013,11 @@ fb600000-100000000 ---p 00000000 00:00 0
 7f8904d3e000-7f8904d44000 r--s 00048000 fd:02 5506053                    /home/dcnorris/.m2/repository/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar
 7f8904d44000-7f8904d49000 r--s 0002f000 fd:02 5508605                    /home/dcnorris/.m2/repository/com/google/code/gson/gson/2.3.1/gson-2.3.1.jar
 7f8904d49000-7f8904d74000 r--s 001f5000 fd:02 5246264                    /home/dcnorris/.m2/repository/com/google/guava/guava/16.0.1/guava-16.0.1.jar
-7f8904d74000-7f8904d76000 r--s 0000c000 fd:02 8131119                    /home/dcnorris/.m2/repository/com/lorainelab/weblinks/8.4.0/weblinks-8.4.0.jar
-7f8904d76000-7f8904d77000 r--s 00003000 fd:02 6949705                    /home/dcnorris/.m2/repository/com/lorainelab/igb-preferences/8.4.0/igb-preferences-8.4.0.jar
-7f8904d77000-7f8904d79000 r--s 00006000 fd:02 6165081                    /home/dcnorris/.m2/repository/com/lorainelab/keybinding-registry/8.4.0/keybinding-registry-8.4.0.jar
-7f8904d79000-7f8904d7a000 r--s 00002000 fd:02 8782114                    /home/dcnorris/.m2/repository/com/lorainelab/session-manager/8.4.0/session-manager-8.4.0.jar
-7f8904d7a000-7f8904d7b000 r--s 00002000 fd:02 7213694                    /home/dcnorris/.m2/repository/com/lorainelab/console-gui/8.4.0/console-gui-8.4.0.jar
+7f8904d74000-7f8904d76000 r--s 0000c000 fd:02 8131119                    /home/dcnorris/.m2/repository/org.lorainelab.igb/weblinks/8.4.0/weblinks-8.4.0.jar
+7f8904d76000-7f8904d77000 r--s 00003000 fd:02 6949705                    /home/dcnorris/.m2/repository/org.lorainelab.igb/igb-preferences/8.4.0/igb-preferences-8.4.0.jar
+7f8904d77000-7f8904d79000 r--s 00006000 fd:02 6165081                    /home/dcnorris/.m2/repository/org.lorainelab.igb/keybinding-registry/8.4.0/keybinding-registry-8.4.0.jar
+7f8904d79000-7f8904d7a000 r--s 00002000 fd:02 8782114                    /home/dcnorris/.m2/repository/org.lorainelab.igb/session-manager/8.4.0/session-manager-8.4.0.jar
+7f8904d7a000-7f8904d7b000 r--s 00002000 fd:02 7213694                    /home/dcnorris/.m2/repository/org.lorainelab.igb/console-gui/8.4.0/console-gui-8.4.0.jar
 7f8904d7b000-7f8904d7d000 r--s 0000a000 fd:02 7213409                    /home/dcnorris/.m2/repository/com/affymetrix/window-service/8.4.0/window-service-8.4.0.jar
 7f8904d7d000-7f8904d80000 r--s 0000d000 fd:02 6686509                    /home/dcnorris/.m2/repository/com/affymetrix/igbSwingExt/8.4.0/igbSwingExt-8.4.0.jar
 7f8904d80000-7f8904d8f000 r--s 00105000 fd:02 6685187                    /home/dcnorris/.m2/repository/com/affymetrix/genometry/8.4.0/genometry-8.4.0.jar

@@ -1,13 +1,13 @@
-package com.lorainelab.snp.convert.action;
+package org.lorainelab.igb.snp.convert.action;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
-import com.lorainelab.snp.convert.ui.SnpConverterFrame;
+import org.lorainelab.igb.igb.services.window.menus.IgbMenuItemProvider;
+import org.lorainelab.igb.igb.services.window.menus.IgbToolBarParentMenu;
+import org.lorainelab.igb.snp.convert.ui.SnpConverterFrame;
 import java.awt.event.ActionEvent;
 
 /**

@@ -1,4 +1,4 @@
-package com.lorainelab.image.exporter.service;
+package org.lorainelab.igb.image.exporter.service;
 
 import java.awt.Component;
 import java.io.File;

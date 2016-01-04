@@ -1,9 +1,9 @@
 package com.affymetrix.igb.window.service.def;
 
 import com.affymetrix.common.PreferenceUtils;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
-import com.lorainelab.igb.services.window.tabs.TabHolder;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel.TabState;
+import org.lorainelab.igb.igb.services.window.tabs.TabHolder;
 import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;

@@ -6,7 +6,7 @@
  *  The license is also available at
  *  http://www.opensource.org/licenses/CPL
  */
-package com.lorainelab.igb.keystrokes.model;
+package org.lorainelab.igb.igb.keystrokes.model;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -18,13 +18,13 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.GenericActionListener;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.google.common.collect.Sets;
-import com.lorainelab.igb.keystrokes.KeyStrokesView;
-import static com.lorainelab.igb.keystrokes.KeyStrokesView.ActionColumn;
-import static com.lorainelab.igb.keystrokes.KeyStrokesView.IconColumn;
-import static com.lorainelab.igb.keystrokes.KeyStrokesView.IdColumn;
-import static com.lorainelab.igb.keystrokes.KeyStrokesView.KeyStrokeColumn;
-import static com.lorainelab.igb.keystrokes.KeyStrokesView.ToolbarColumn;
-import com.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.igb.keystrokes.KeyStrokesView;
+import static org.lorainelab.igb.igb.keystrokes.KeyStrokesView.ActionColumn;
+import static org.lorainelab.igb.igb.keystrokes.KeyStrokesView.IconColumn;
+import static org.lorainelab.igb.igb.keystrokes.KeyStrokesView.IdColumn;
+import static org.lorainelab.igb.igb.keystrokes.KeyStrokesView.KeyStrokeColumn;
+import static org.lorainelab.igb.igb.keystrokes.KeyStrokesView.ToolbarColumn;
+import org.lorainelab.igb.igb.services.IgbService;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;

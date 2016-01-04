@@ -1,10 +1,10 @@
-package com.lorainelab.das2;
+package org.lorainelab.igb.das2;
 
 import com.google.common.collect.Maps;
-import com.lorainelab.das2.model.segments.Segments;
-import com.lorainelab.das2.model.sources.Sources;
-import com.lorainelab.das2.model.types.Types;
-import com.lorainelab.das2.utils.Das2ServerUtils;
+import org.lorainelab.igb.das2.model.segments.Segments;
+import org.lorainelab.igb.das2.model.sources.Sources;
+import org.lorainelab.igb.das2.model.types.Types;
+import org.lorainelab.igb.das2.utils.Das2ServerUtils;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.Ignore;

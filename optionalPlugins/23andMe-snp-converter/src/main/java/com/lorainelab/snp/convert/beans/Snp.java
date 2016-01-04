@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.snp.convert.beans;
+package org.lorainelab.igb.snp.convert.beans;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

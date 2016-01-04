@@ -17,7 +17,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-preferences</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -119,7 +119,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -138,12 +138,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>cache-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>synonym-lookup</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -153,22 +153,22 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>frameManager</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-javafx-util</artifactId>
             <scope>provided</scope>
         </dependency>
          <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>context-menu-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>context-menu-service</artifactId>
             <scope>provided</scope>
         </dependency>

@@ -7,12 +7,12 @@ import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
-import com.lorainelab.igb.genoviz.extensions.GraphVisibleBoundsSetter;
+import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.*;
-import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
 import java.util.Optional;
 
 public class YScaleAxisGUI extends javax.swing.JPanel implements Selections.RefreshSelectionListener {

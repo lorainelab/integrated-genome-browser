@@ -93,7 +93,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-preferences</artifactId>
             <scope>provided</scope>
         </dependency>

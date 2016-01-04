@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.feedback;
+package org.lorainelab.igb.feedback;
 
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
+import org.lorainelab.igb.igb.services.window.menus.IgbMenuItemProvider;
+import org.lorainelab.igb.igb.services.window.menus.IgbToolBarParentMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;

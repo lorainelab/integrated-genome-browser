@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.interproscan;
+package org.lorainelab.igb.protannot.interproscan;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
-import com.lorainelab.protannot.interproscan.api.InterProscanService;
-import com.lorainelab.protannot.interproscan.api.Job;
-import com.lorainelab.protannot.interproscan.api.JobRequest;
-import com.lorainelab.protannot.interproscan.api.JobSequence;
-import com.lorainelab.protannot.interproscan.appl.model.ParameterType;
+import org.lorainelab.igb.protannot.interproscan.api.InterProscanService;
+import org.lorainelab.igb.protannot.interproscan.api.Job;
+import org.lorainelab.igb.protannot.interproscan.api.JobRequest;
+import org.lorainelab.igb.protannot.interproscan.api.JobSequence;
+import org.lorainelab.igb.protannot.interproscan.appl.model.ParameterType;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -53,7 +53,7 @@ public class InterProscanServiceRest implements InterProscanService {
 
     @Activate
     public void activate() throws JAXBException {
-        jaxbc = JAXBContext.newInstance("com.lorainelab.protannot.interproscan.appl.model", this.getClass().getClassLoader());
+        jaxbc = JAXBContext.newInstance("org.lorainelab.igb.protannot.interproscan.appl.model", this.getClass().getClassLoader());
     }
 
     @Override

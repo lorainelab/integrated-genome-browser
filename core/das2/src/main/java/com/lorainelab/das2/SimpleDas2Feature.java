@@ -10,7 +10,7 @@
  * The license is also available at
  * http://www.opensource.org/licenses/cpl.php
  */
-package com.lorainelab.das2;
+package org.lorainelab.igb.das2;
 
 import com.affymetrix.genometry.symmetry.TypedSym;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;

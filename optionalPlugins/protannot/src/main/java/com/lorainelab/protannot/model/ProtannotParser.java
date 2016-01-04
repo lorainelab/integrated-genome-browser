@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.model;
+package org.lorainelab.igb.protannot.model;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -30,15 +30,15 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.protannot.NormalizeXmlStrand;
-import com.lorainelab.protannot.ProtAnnotEventService;
-import com.lorainelab.protannot.event.StatusSetEvent;
-import com.lorainelab.protannot.event.StatusStartEvent;
-import com.lorainelab.protannot.event.StatusTerminateEvent;
-import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch;
-import com.lorainelab.protannot.view.StatusBar;
+import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewI;
+import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.protannot.NormalizeXmlStrand;
+import org.lorainelab.igb.protannot.ProtAnnotEventService;
+import org.lorainelab.igb.protannot.event.StatusSetEvent;
+import org.lorainelab.igb.protannot.event.StatusStartEvent;
+import org.lorainelab.igb.protannot.event.StatusTerminateEvent;
+import org.lorainelab.igb.protannot.model.Dnaseq.Aaseq.Simsearch;
+import org.lorainelab.igb.protannot.view.StatusBar;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;

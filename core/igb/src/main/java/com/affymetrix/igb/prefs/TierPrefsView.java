@@ -17,7 +17,7 @@ import com.affymetrix.igb.tiers.TrackStylePropertyListener;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqMapView;
-import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;

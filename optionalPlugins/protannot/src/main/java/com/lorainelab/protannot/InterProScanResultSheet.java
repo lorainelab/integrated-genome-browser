@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
-import static com.lorainelab.protannot.ProtAnnotAction.BUNDLE;
-import com.lorainelab.protannot.model.InterProScanTableModel;
+import static org.lorainelab.igb.protannot.ProtAnnotAction.BUNDLE;
+import org.lorainelab.igb.protannot.model.InterProScanTableModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;

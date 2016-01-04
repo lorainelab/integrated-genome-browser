@@ -1,7 +1,7 @@
 package com.gene.geometricmean;
 
 import com.affymetrix.genometry.operator.Operator;
-import com.lorainelab.igb.services.SimpleServiceRegistrar;
+import org.lorainelab.igb.igb.services.SimpleServiceRegistrar;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;

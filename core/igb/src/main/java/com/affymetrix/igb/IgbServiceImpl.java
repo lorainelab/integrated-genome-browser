@@ -42,11 +42,11 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.collect.ImmutableList;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
-import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewI;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.igb.services.window.preferences.PreferencesPanelProvider;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -259,7 +259,7 @@ public class IgbServiceImpl implements IgbService {
     public void saveState() {
         (IGB.getInstance()).getWindowService().saveState();
         ((SeqMapView) getSeqMapView()).saveSession();
-        ((IGB) IGB.getInstance()).getTabs().forEach(com.lorainelab.igb.services.window.tabs.IgbTabPanel::saveSession);
+        ((IGB) IGB.getInstance()).getTabs().forEach(org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel::saveSession);
     }
 
     @Override
@@ -267,7 +267,7 @@ public class IgbServiceImpl implements IgbService {
         (IGB.getInstance()).getWindowService().restoreState();
         SeqMapView mapView = IGB.getInstance().getMapView();
         mapView.loadSession();
-        ((IGB) IGB.getInstance()).getTabs().forEach(com.lorainelab.igb.services.window.tabs.IgbTabPanel::loadSession);
+        ((IGB) IGB.getInstance()).getTabs().forEach(org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel::loadSession);
     }
 
     @Override

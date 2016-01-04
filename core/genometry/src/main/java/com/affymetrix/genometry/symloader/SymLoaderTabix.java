@@ -17,7 +17,7 @@ import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.lorainelab.cache.api.CacheStatus;
+import org.lorainelab.igb.cache.api.CacheStatus;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

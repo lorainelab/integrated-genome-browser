@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.view;
+package org.lorainelab.igb.protannot.view;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import java.awt.Dimension;
 import java.util.Map;
-import com.lorainelab.protannot.ModPropertySheet;
+import org.lorainelab.igb.protannot.ModPropertySheet;
 import org.slf4j.LoggerFactory;
 
 /**

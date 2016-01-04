@@ -1,4 +1,4 @@
-package com.lorainelab.igb.services.window;
+package org.lorainelab.igb.igb.services.window;
 
 /**
  * Represents any routine that should be run when IGB starts/exits.

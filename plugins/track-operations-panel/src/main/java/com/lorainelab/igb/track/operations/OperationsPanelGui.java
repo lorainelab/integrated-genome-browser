@@ -1,4 +1,4 @@
-package com.lorainelab.igb.track.operations;
+package org.lorainelab.igb.igb.track.operations;
 
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.igb.swing.JRPButton;

@@ -9,13 +9,13 @@ import com.affymetrix.igb.bookmarks.action.ImportBookmarkAction;
 import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.swing.MenuUtil;
-import com.lorainelab.igb.services.IgbService;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.BOOKMARK_TAB;
-import com.lorainelab.igb.services.XServiceRegistrar;
-import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.lorainelab.igb.igb.services.IgbService;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.BOOKMARK_TAB;
+import org.lorainelab.igb.igb.services.XServiceRegistrar;
+import org.lorainelab.igb.igb.services.window.WindowServiceLifecycleHook;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanelI;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
@@ -27,7 +27,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.COMPONENT_NAME;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.COMPONENT_NAME;
 
 public class Activator extends XServiceRegistrar<IgbService> implements BundleActivator {
 

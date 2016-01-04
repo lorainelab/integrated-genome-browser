@@ -3,14 +3,14 @@
  *
  * Created on Dec 30, 2011, 12:26:34 PM
  */
-package com.lorainelab.igb.plugins.repos.view;
+package org.lorainelab.igb.igb.plugins.repos.view;
 
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.google.common.base.Strings;
-import com.lorainelab.igb.plugins.repos.PluginRepositoryList;
-import com.lorainelab.igb.preferences.model.PluginRepository;
+import org.lorainelab.igb.igb.plugins.repos.PluginRepositoryList;
+import org.lorainelab.igb.igb.preferences.model.PluginRepository;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.Point;

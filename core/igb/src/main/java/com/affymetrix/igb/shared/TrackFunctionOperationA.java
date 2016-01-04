@@ -24,7 +24,7 @@ import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.StyledGlyph;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

@@ -5,7 +5,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.lorainelab.igb.services.window.HtmlHelpProvider;
+import org.lorainelab.igb.igb.services.window.HtmlHelpProvider;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

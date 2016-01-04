@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.logging.console;
+package org.lorainelab.igb.logging.console;
 
 import com.google.common.base.Charsets;
 import java.io.IOException;

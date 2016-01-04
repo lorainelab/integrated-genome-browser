@@ -1,4 +1,4 @@
-package com.lorainelab.logging.console;
+package org.lorainelab.igb.logging.console;
 
 import aQute.bnd.annotation.component.Component;
 import ch.qos.logback.classic.LoggerContext;

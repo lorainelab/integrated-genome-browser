@@ -1,7 +1,7 @@
-package com.lorainelab.synonymlookup.test;
+package org.lorainelab.igb.synonymlookup.test;
 
-import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
-import com.lorainelab.synonymlookup.services.impl.SynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.SynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;

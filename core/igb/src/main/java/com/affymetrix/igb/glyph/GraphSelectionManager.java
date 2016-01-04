@@ -9,7 +9,7 @@
  */
 package com.affymetrix.igb.glyph;
 
-import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.GraphGlyph;
 import com.affymetrix.genometry.style.GraphState;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphDragger;
@@ -24,7 +24,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidget;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyphUtils;
+import org.lorainelab.igb.igb.genoviz.extensions.GraphGlyphUtils;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Component;

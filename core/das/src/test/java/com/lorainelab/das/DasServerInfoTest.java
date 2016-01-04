@@ -1,14 +1,14 @@
-package com.lorainelab.das;
+package org.lorainelab.igb.das;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
-import com.lorainelab.das.model.dsn.DasDsn;
-import com.lorainelab.das.model.ep.DasEp;
-import com.lorainelab.das.model.gff.DasGff;
-import com.lorainelab.das.model.gff.Segment;
-import com.lorainelab.das.model.types.DasTypes;
-import com.lorainelab.das.utils.DasServerUtils;
-import static com.lorainelab.das.utils.DasServerUtils.retrieveDsnResponse;
+import org.lorainelab.igb.das.model.dsn.DasDsn;
+import org.lorainelab.igb.das.model.ep.DasEp;
+import org.lorainelab.igb.das.model.gff.DasGff;
+import org.lorainelab.igb.das.model.gff.Segment;
+import org.lorainelab.igb.das.model.types.DasTypes;
+import org.lorainelab.igb.das.utils.DasServerUtils;
+import static org.lorainelab.igb.das.utils.DasServerUtils.retrieveDsnResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Optional;

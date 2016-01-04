@@ -1,11 +1,11 @@
-package com.lorainelab.igb.plugins;
+package org.lorainelab.igb.igb.plugins;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.APP_MANAGER_TAB;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.APP_MANAGER_TAB;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 import javafx.application.Platform;

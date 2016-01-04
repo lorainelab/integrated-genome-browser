@@ -1,4 +1,4 @@
-package com.lorainelab.igb.plugins.repos.events;
+package org.lorainelab.igb.igb.plugins.repos.events;
 
 import aQute.bnd.annotation.component.Component;
 import com.google.common.eventbus.EventBus;

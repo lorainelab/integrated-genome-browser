@@ -7,7 +7,7 @@
         <version>8.6.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>com.lorainelab</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>weblinks</artifactId>
     <packaging>bundle</packaging>
 
@@ -47,7 +47,7 @@
         </dependency>
         <!--End of logging dependencies-->
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-preferences</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -62,17 +62,17 @@
             <scope>provided</scope>           
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>     
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>synonym-lookup</artifactId>
             <scope>provided</scope>
         </dependency>
          <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>context-menu-api</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -134,7 +134,7 @@
                 </configuration>
             </plugin>  
             <plugin>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>bundle-markdown-encoder</artifactId>
                 <executions>
                     <execution>

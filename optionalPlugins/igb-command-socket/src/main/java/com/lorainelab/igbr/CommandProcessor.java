@@ -1,4 +1,4 @@
-package com.lorainelab.igbr;
+package org.lorainelab.igb.igbr;
 
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.swing.script.ScriptManager;

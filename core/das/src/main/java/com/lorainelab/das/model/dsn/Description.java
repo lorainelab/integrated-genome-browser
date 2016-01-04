@@ -6,7 +6,7 @@
 //
 
 
-package com.lorainelab.das.model.dsn;
+package org.lorainelab.igb.das.model.dsn;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

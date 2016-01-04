@@ -1,9 +1,9 @@
-package com.lorainelab.quickload.utils;
+package org.lorainelab.igb.quickload.utils;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.google.common.base.Strings;
-import com.lorainelab.quickload.QuickloadDataProvider;
-import com.lorainelab.synonymlookup.services.SpeciesInfo;
+import org.lorainelab.igb.quickload.QuickloadDataProvider;
+import org.lorainelab.igb.synonymlookup.services.SpeciesInfo;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;

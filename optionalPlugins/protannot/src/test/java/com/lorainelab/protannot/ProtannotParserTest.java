@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

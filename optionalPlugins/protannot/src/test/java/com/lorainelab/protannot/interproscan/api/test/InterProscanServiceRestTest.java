@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.interproscan.api.test;
+package org.lorainelab.igb.protannot.interproscan.api.test;
 
 import java.util.Optional;
 import junit.framework.Assert;
-import com.lorainelab.protannot.interproscan.InterProscanServiceRest;
-import com.lorainelab.protannot.interproscan.api.InterProscanService;
+import org.lorainelab.igb.protannot.interproscan.InterProscanServiceRest;
+import org.lorainelab.igb.protannot.interproscan.api.InterProscanService;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

@@ -11,7 +11,7 @@ import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BlockCompressedStreamPosition;
-import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
 import java.net.URI;
 import java.util.AbstractMap;
 import java.util.ArrayList;

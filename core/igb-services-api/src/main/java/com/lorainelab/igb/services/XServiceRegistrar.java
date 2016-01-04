@@ -1,4 +1,4 @@
-package com.lorainelab.igb.services;
+package org.lorainelab.igb.igb.services;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

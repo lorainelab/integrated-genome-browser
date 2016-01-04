@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.model;
+package org.lorainelab.igb.protannot.model;
 
-import com.lorainelab.protannot.ProtAnnotEventService;
-import com.lorainelab.protannot.event.InterProScanModelUpdateEvent;
-import com.lorainelab.protannot.interproscan.api.InterProscanService.Status;
-import com.lorainelab.protannot.interproscan.api.Job;
+import org.lorainelab.igb.protannot.ProtAnnotEventService;
+import org.lorainelab.igb.protannot.event.InterProScanModelUpdateEvent;
+import org.lorainelab.igb.protannot.interproscan.api.InterProscanService.Status;
+import org.lorainelab.igb.protannot.interproscan.api.Job;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;

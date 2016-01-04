@@ -5,12 +5,12 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.igb.window.service.IWindowService;
-import com.lorainelab.context.menu.service.AnnotationContextMenuRegistryI;
-import com.lorainelab.igb.frame.api.FrameManagerService;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
-import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
-import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
+import org.lorainelab.igb.context.menu.service.AnnotationContextMenuRegistryI;
+import org.lorainelab.igb.igb.frame.api.FrameManagerService;
+import org.lorainelab.igb.igb.services.window.menus.IgbMenuItemProvider;
+import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

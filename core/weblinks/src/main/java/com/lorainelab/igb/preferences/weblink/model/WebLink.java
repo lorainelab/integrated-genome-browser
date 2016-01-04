@@ -1,11 +1,11 @@
-package com.lorainelab.igb.preferences.weblink.model;
+package org.lorainelab.igb.igb.preferences.weblink.model;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.google.common.base.Strings;
-import com.lorainelab.igb.preferences.model.AnnotationUrl;
+import org.lorainelab.igb.igb.preferences.model.AnnotationUrl;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.logging.Level;

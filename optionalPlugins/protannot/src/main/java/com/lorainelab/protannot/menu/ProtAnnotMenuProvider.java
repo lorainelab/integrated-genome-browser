@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.menu;
+package org.lorainelab.igb.protannot.menu;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
-import com.lorainelab.protannot.ProtAnnotAction;
+import org.lorainelab.igb.igb.services.window.menus.IgbMenuItemProvider;
+import org.lorainelab.igb.igb.services.window.menus.IgbToolBarParentMenu;
+import org.lorainelab.igb.protannot.ProtAnnotAction;
 import java.awt.event.ActionEvent;
 import java.util.Hashtable;
 import org.osgi.service.component.ComponentFactory;

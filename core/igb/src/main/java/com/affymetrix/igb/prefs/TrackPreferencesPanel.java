@@ -10,7 +10,7 @@ import com.affymetrix.genometry.event.GroupSelectionListener;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.view.SeqMapView;
-import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import org.lorainelab.igb.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.JButton;

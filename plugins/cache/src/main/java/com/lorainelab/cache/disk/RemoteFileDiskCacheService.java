@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.cache.disk;
+package org.lorainelab.igb.cache.disk;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -17,11 +17,11 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
-import com.lorainelab.cache.api.CacheStatus;
-import com.lorainelab.cache.api.ChangeEvent;
-import com.lorainelab.cache.api.RemoteFileCacheService;
-import com.lorainelab.cache.configuration.panel.CacheConfigurationPanel;
-import com.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.cache.api.CacheStatus;
+import org.lorainelab.igb.cache.api.ChangeEvent;
+import org.lorainelab.igb.cache.api.RemoteFileCacheService;
+import org.lorainelab.igb.cache.configuration.panel.CacheConfigurationPanel;
+import org.lorainelab.igb.igb.services.IgbService;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;

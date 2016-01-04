@@ -4,7 +4,7 @@
 // Any modifications to this file will be lost upon recompilation of the source schema.
 // Generated on: 2015.05.29 at 10:28:20 AM EDT
 //
-package com.lorainelab.das2.model.sources;
+package org.lorainelab.igb.das2.model.sources;
 
 import java.util.ArrayList;
 import java.util.List;

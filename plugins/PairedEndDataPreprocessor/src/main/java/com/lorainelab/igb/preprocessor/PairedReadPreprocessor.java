@@ -1,4 +1,4 @@
-package com.lorainelab.igb.preprocessor;
+package org.lorainelab.igb.igb.preprocessor;
 
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.BioSeq;
@@ -14,8 +14,8 @@ import com.affymetrix.genometry.util.SeqUtils;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import com.lorainelab.igb.services.visualization.SeqSymmetryPreprocessorI;
+import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewExtendedI;
+import org.lorainelab.igb.igb.services.visualization.SeqSymmetryPreprocessorI;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;

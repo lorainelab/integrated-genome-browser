@@ -3,7 +3,7 @@ package com.affymetrix.igb.bookmarks.action;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.bookmarks.BookmarkEditor;
 import static com.affymetrix.igb.bookmarks.BookmarkManagerView.BUNDLE;
-import com.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.igb.services.IgbService;
 import java.awt.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

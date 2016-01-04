@@ -1,4 +1,4 @@
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.event;
+package org.lorainelab.igb.protannot.event;
 
-import com.lorainelab.protannot.view.StatusBar;
+import org.lorainelab.igb.protannot.view.StatusBar;
 
 /**
  *

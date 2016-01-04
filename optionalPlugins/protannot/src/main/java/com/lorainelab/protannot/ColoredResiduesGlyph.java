@@ -1,4 +1,4 @@
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import com.affymetrix.genometry.AminoAcid;
 import com.affymetrix.genometry.util.ImprovedStringCharIter;

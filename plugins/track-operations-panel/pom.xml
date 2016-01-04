@@ -7,7 +7,7 @@
         <version>8.6.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>com.lorainelab</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>track-operations-panel</artifactId>
     <packaging>bundle</packaging>
 
@@ -47,7 +47,7 @@
         </dependency>
         <!--End of logging dependencies-->
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -78,8 +78,8 @@
                     <instructions>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Import-Package>!com.lorainelab.igb.track.operations, !com.lorainelab.igb.track.operations.api,*</Import-Package>
-                        <Export-Package>com.lorainelab.igb.track.operations.api</Export-Package>
+                        <Import-Package>!org.lorainelab.igb.igb.track.operations, !org.lorainelab.igb.igb.track.operations.api,*</Import-Package>
+                        <Export-Package>org.lorainelab.igb.igb.track.operations.api</Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

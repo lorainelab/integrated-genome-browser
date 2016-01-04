@@ -1,4 +1,4 @@
-package com.lorainelab.feedback;
+package org.lorainelab.igb.feedback;
 
 import com.google.common.io.CharStreams;
 import java.io.IOException;

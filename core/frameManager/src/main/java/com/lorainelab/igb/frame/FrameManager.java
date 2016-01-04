@@ -1,10 +1,10 @@
-package com.lorainelab.igb.frame;
+package org.lorainelab.igb.igb.frame;
 
 import aQute.bnd.annotation.component.Component;
 import static com.affymetrix.common.CommonUtils.APP_NAME;
 import static com.affymetrix.common.CommonUtils.APP_VERSION;
 import com.affymetrix.common.PreferenceUtils;
-import com.lorainelab.igb.frame.api.FrameManagerService;
+import org.lorainelab.igb.igb.frame.api.FrameManagerService;
 import java.awt.Rectangle;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;

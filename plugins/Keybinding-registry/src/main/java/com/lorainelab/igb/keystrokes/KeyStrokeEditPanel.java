@@ -7,7 +7,7 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.lorainelab.igb.keystrokes;
+package org.lorainelab.igb.igb.keystrokes;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.igb.services.IgbService;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;

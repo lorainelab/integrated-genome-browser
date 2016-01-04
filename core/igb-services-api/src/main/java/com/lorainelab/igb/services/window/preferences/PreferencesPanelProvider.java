@@ -1,4 +1,4 @@
-package com.lorainelab.igb.services.window.preferences;
+package org.lorainelab.igb.igb.services.window.preferences;
 
 import com.affymetrix.igb.swing.JRPJPanel;
 

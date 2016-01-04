@@ -1,4 +1,4 @@
-package com.lorainelab.igb.genoviz.extensions.glyph;
+package org.lorainelab.igb.igb.genoviz.extensions.glyph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;

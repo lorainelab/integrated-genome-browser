@@ -3,7 +3,7 @@ package com.affymetrix.igb.searchmodeidorprops;
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.search.SearchUtils;
-import com.lorainelab.igb.services.search.ISearchHints;
+import org.lorainelab.igb.igb.services.search.ISearchHints;
 import java.util.Set;
 import java.util.regex.Pattern;
 

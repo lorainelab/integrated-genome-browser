@@ -7,7 +7,7 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.lorainelab.igb.keystrokes;
+package org.lorainelab.igb.igb.keystrokes;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -19,10 +19,10 @@ import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.HtmlHelpProvider;
-import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import org.lorainelab.igb.igb.keystrokes.model.KeyStrokeViewTableModel;
+import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.igb.services.window.HtmlHelpProvider;
+import org.lorainelab.igb.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;

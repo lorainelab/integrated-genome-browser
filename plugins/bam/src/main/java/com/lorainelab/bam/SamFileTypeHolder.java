@@ -1,4 +1,4 @@
-package com.lorainelab.bam;
+package org.lorainelab.igb.bam;
 
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.GenomeVersion;

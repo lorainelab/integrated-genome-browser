@@ -4,16 +4,16 @@
  *
  * Created on October 6, 2006, 3:19 PM
  */
-package com.lorainelab.das;
+package org.lorainelab.igb.das;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.lorainelab.das.parser.DASFeatureParser;
-import com.lorainelab.das.parser.DASSymmetry;
-import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
-import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
-import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
+import org.lorainelab.igb.das.parser.DASFeatureParser;
+import org.lorainelab.igb.das.parser.DASSymmetry;
+import org.lorainelab.igb.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;

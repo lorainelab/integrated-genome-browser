@@ -10,7 +10,7 @@
  * The license is also available at
  * http://www.opensource.org/licenses/cpl.php
  */
-package com.lorainelab.das2.parser;
+package org.lorainelab.igb.das2.parser;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
@@ -26,7 +26,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.lorainelab.das2.SimpleDas2Feature;
+import org.lorainelab.igb.das2.SimpleDas2Feature;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;

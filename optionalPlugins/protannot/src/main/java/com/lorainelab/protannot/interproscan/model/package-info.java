@@ -6,4 +6,4 @@
 //
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://www.ebi.ac.uk/interpro/resources/schemas/interproscan5", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package com.lorainelab.protannot.interproscan.model;
+package org.lorainelab.igb.protannot.interproscan.model;

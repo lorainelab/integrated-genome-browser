@@ -9,11 +9,11 @@ import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.annotSyms;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
-import com.lorainelab.igb.services.IgbService;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.ANNOTATION_TRACK_PANEL_TAB;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import com.lorainelab.igb.track.operations.api.OperationsPanel;
-import com.lorainelab.igb.track.operations.api.OperationsPanelService;
+import org.lorainelab.igb.igb.services.IgbService;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.ANNOTATION_TRACK_PANEL_TAB;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanelI;
+import org.lorainelab.igb.igb.track.operations.api.OperationsPanel;
+import org.lorainelab.igb.igb.track.operations.api.OperationsPanelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

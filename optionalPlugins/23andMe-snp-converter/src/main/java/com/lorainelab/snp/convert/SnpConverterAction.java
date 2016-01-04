@@ -1,9 +1,9 @@
-package com.lorainelab.snp.convert;
+package org.lorainelab.igb.snp.convert;
 
 import com.google.common.base.Splitter;
-import com.lorainelab.snp.convert.beans.Bed;
-import com.lorainelab.snp.convert.beans.Snp;
-import com.lorainelab.snp.convert.mapmaker.MapMaker;
+import org.lorainelab.igb.snp.convert.beans.Bed;
+import org.lorainelab.igb.snp.convert.beans.Snp;
+import org.lorainelab.igb.snp.convert.mapmaker.MapMaker;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;

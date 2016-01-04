@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.context.menu.model;
+package org.lorainelab.igb.context.menu.model;
 
 import com.google.common.io.BaseEncoding;
 import java.io.InputStream;

@@ -1,6 +1,6 @@
 package com.affymetrix.igb.window.service.def;
 
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel;
 
 /**
  * interface for setting tab state

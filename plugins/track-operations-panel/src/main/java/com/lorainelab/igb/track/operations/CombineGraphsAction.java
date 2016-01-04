@@ -1,4 +1,4 @@
-package com.lorainelab.igb.track.operations;
+package org.lorainelab.igb.igb.track.operations;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -13,7 +13,7 @@ import com.affymetrix.genometry.style.SimpleTrackStyle;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.ThreadUtils;
-import com.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.igb.services.IgbService;
 
 import static com.affymetrix.igb.shared.Selections.*;
 

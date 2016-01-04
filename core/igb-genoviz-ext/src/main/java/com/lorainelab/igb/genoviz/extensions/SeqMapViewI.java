@@ -1,4 +1,4 @@
-package com.lorainelab.igb.genoviz.extensions;
+package org.lorainelab.igb.igb.genoviz.extensions;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;

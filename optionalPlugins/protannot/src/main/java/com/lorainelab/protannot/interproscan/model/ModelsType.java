@@ -6,7 +6,7 @@
 //
 
 
-package com.lorainelab.protannot.interproscan.model;
+package org.lorainelab.igb.protannot.interproscan.model;
 
 import java.util.ArrayList;
 import java.util.List;

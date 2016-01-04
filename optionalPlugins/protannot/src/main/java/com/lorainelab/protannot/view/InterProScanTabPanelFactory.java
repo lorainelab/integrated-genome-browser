@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.view;
+package org.lorainelab.igb.protannot.view;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.protannot.InterProScanResultSheet;
-import com.lorainelab.protannot.ProtAnnotEventService;
-import com.lorainelab.protannot.ProtAnnotService;
-import com.lorainelab.protannot.event.StartInterProScanEvent;
+import org.lorainelab.igb.protannot.InterProScanResultSheet;
+import org.lorainelab.igb.protannot.ProtAnnotEventService;
+import org.lorainelab.igb.protannot.ProtAnnotService;
+import org.lorainelab.igb.protannot.event.StartInterProScanEvent;
 import java.awt.event.ActionEvent;
 import java.util.Map;
 import java.util.Properties;

@@ -9,7 +9,7 @@ import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
-import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.StyledGlyph;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

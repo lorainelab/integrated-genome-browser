@@ -6,7 +6,7 @@
 //
 
 
-package com.lorainelab.das.model.dsn;
+package org.lorainelab.igb.das.model.dsn;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
-package com.lorainelab.igb.preferences.weblink;
+package org.lorainelab.igb.igb.preferences.weblink;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
+import org.lorainelab.igb.igb.services.window.WindowServiceLifecycleHook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

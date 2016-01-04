@@ -1,7 +1,7 @@
-package com.lorainelab.igb.track.operations;
+package org.lorainelab.igb.igb.track.operations;
 
-import com.lorainelab.igb.track.operations.api.OperationsPanel;
-import com.lorainelab.igb.track.operations.api.OperationsPanelService;
+import org.lorainelab.igb.igb.track.operations.api.OperationsPanel;
+import org.lorainelab.igb.igb.track.operations.api.OperationsPanelService;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import org.slf4j.Logger;

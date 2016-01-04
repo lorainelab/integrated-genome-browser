@@ -1,4 +1,4 @@
-package com.lorainelab.igb.services.search;
+package org.lorainelab.igb.igb.services.search;
 
 /**
  *

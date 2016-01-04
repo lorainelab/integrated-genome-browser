@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.context.menu.service.impl;
+package org.lorainelab.igb.context.menu.service.impl;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.google.common.collect.Sets;
-import com.lorainelab.context.menu.AnnotationContextMenuProvider;
-import com.lorainelab.context.menu.service.AnnotationContextMenuRegistryI;
+import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
+import org.lorainelab.igb.context.menu.service.AnnotationContextMenuRegistryI;
 import java.util.Set;
 
 /**

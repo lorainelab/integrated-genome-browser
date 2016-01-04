@@ -2,7 +2,7 @@ package apollo.analysis;
 
 import apollo.util.GuiUtil;
 import com.affymetrix.igb.swing.JRPJPanel;
-import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import org.lorainelab.igb.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;

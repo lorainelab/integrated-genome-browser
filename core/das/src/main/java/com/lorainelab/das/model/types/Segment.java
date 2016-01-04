@@ -6,7 +6,7 @@
 //
 
 
-package com.lorainelab.das.model.types;
+package org.lorainelab.igb.das.model.types;
 
 import java.util.ArrayList;
 import java.util.List;

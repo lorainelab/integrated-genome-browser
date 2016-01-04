@@ -1,4 +1,4 @@
-package com.lorainelab.igb.plugins.repos;
+package org.lorainelab.igb.igb.plugins.repos;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -9,11 +9,11 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import com.lorainelab.igb.plugins.RepositoryInfoManager;
-import com.lorainelab.igb.plugins.repos.view.BundleRepositoryTableModel;
-import com.lorainelab.igb.preferences.IgbPreferencesService;
-import com.lorainelab.igb.preferences.model.IgbPreferences;
-import com.lorainelab.igb.preferences.model.PluginRepository;
+import org.lorainelab.igb.igb.plugins.RepositoryInfoManager;
+import org.lorainelab.igb.igb.plugins.repos.view.BundleRepositoryTableModel;
+import org.lorainelab.igb.igb.preferences.IgbPreferencesService;
+import org.lorainelab.igb.igb.preferences.model.IgbPreferences;
+import org.lorainelab.igb.igb.preferences.model.PluginRepository;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;

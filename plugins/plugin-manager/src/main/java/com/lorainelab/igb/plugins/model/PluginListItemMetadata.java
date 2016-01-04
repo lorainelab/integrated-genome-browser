@@ -1,4 +1,4 @@
-package com.lorainelab.igb.plugins.model;
+package org.lorainelab.igb.igb.plugins.model;
 
 import java.util.Base64;
 import java.util.Objects;

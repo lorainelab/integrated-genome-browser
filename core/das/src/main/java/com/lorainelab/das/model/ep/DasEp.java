@@ -6,7 +6,7 @@
 //
 
 
-package com.lorainelab.das.model.ep;
+package org.lorainelab.igb.das.model.ep;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

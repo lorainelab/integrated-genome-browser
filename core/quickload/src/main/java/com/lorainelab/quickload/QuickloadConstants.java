@@ -1,4 +1,4 @@
-package com.lorainelab.quickload;
+package org.lorainelab.igb.quickload;
 
 /**
  *

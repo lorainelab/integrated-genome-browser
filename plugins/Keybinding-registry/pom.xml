@@ -8,7 +8,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <groupId>com.lorainelab</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>keybinding-registry</artifactId>
     <packaging>bundle</packaging>
 

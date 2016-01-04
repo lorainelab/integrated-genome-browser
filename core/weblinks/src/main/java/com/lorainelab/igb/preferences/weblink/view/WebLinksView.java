@@ -1,4 +1,4 @@
-package com.lorainelab.igb.preferences.weblink.view;
+package org.lorainelab.igb.igb.preferences.weblink.view;
 
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
@@ -8,9 +8,9 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.jidesoft.grid.JideTable;
-import com.lorainelab.igb.preferences.weblink.WebLinkUtils;
-import com.lorainelab.igb.preferences.weblink.model.WebLink;
-import com.lorainelab.igb.preferences.weblink.model.WebLink.RegexType;
+import org.lorainelab.igb.igb.preferences.weblink.WebLinkUtils;
+import org.lorainelab.igb.igb.preferences.weblink.model.WebLink;
+import org.lorainelab.igb.igb.preferences.weblink.model.WebLink.RegexType;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;

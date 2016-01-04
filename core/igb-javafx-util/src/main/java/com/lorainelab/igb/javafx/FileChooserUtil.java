@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.javafx;
+package org.lorainelab.igb.igb.javafx;
 
 import com.google.common.collect.Lists;
 import java.io.File;

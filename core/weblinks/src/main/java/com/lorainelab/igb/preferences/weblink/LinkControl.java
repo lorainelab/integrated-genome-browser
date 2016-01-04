@@ -1,4 +1,4 @@
-package com.lorainelab.igb.preferences.weblink;
+package org.lorainelab.igb.igb.preferences.weblink;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -8,12 +8,12 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import com.lorainelab.context.menu.AnnotationContextMenuProvider;
-import com.lorainelab.context.menu.model.AnnotationContextEvent;
-import com.lorainelab.context.menu.model.ContextMenuItem;
-import com.lorainelab.context.menu.model.MenuIcon;
-import com.lorainelab.igb.preferences.weblink.model.WebLink;
-import com.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
+import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
+import org.lorainelab.igb.context.menu.model.ContextMenuItem;
+import org.lorainelab.igb.context.menu.model.MenuIcon;
+import org.lorainelab.igb.igb.preferences.weblink.model.WebLink;
+import org.lorainelab.igb.igb.services.IgbService;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;

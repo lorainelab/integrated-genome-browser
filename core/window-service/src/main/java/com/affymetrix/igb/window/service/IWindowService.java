@@ -1,9 +1,9 @@
 package com.affymetrix.igb.window.service;
 
 import com.affymetrix.igb.swing.JRPMenuBar;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel.TabState;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanelI;
 import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JPanel;

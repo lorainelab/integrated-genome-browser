@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.frame.api;
+package org.lorainelab.igb.igb.frame.api;
 
 import javax.swing.JFrame;
 

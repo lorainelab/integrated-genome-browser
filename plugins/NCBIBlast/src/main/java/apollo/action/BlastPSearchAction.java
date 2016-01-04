@@ -9,7 +9,7 @@ import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewI;
 import java.util.List;
 
 /**

@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.plugins;
+package org.lorainelab.igb.igb.plugins;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
-import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
+import org.lorainelab.igb.igb.plugins.model.PluginListItemMetadata;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStreamReader;

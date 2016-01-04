@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.narrowpeak;
+package org.lorainelab.igb.narrowpeak;
 
 import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.GenomeVersion;

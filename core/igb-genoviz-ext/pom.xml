@@ -8,7 +8,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <groupId>com.lorainelab</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>igb-genoviz-extensions</artifactId>
     <packaging>bundle</packaging>
 
@@ -46,8 +46,8 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Export-Package>
-                            com.lorainelab.igb.genoviz.extensions,
-                            com.lorainelab.igb.genoviz.extensions.glyph
+                            org.lorainelab.igb.igb.genoviz.extensions,
+                            org.lorainelab.igb.igb.genoviz.extensions.glyph
                         </Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>

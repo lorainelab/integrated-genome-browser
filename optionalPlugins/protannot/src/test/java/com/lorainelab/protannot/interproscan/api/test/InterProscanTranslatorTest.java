@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.interproscan.api.test;
+package org.lorainelab.igb.protannot.interproscan.api.test;
 
-import com.lorainelab.protannot.model.Dnaseq;
-import com.lorainelab.protannot.model.Dnaseq.Aaseq;
-import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch;
-import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch.Simhit;
+import org.lorainelab.igb.protannot.model.Dnaseq;
+import org.lorainelab.igb.protannot.model.Dnaseq.Aaseq;
+import org.lorainelab.igb.protannot.model.Dnaseq.Aaseq.Simsearch;
+import org.lorainelab.igb.protannot.model.Dnaseq.Aaseq.Simsearch.Simhit;
 import org.slf4j.LoggerFactory;
 
 /**

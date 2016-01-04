@@ -10,7 +10,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.google.common.collect.Sets;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanelI;
 import java.util.Set;
 
 /**

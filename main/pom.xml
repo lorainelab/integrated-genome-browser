@@ -66,57 +66,57 @@
             <scope>runtime</scope>          
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>console-gui</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>session-manager</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>keybinding-registry</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-preferences</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>weblinks</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>synonym-lookup</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>quickload</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>das</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>das2</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>frameManager</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-javafx-util</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -178,7 +178,7 @@
 
         <!--Start of plugin module dependencies-->
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>image-exporter</artifactId>
             <scope>runtime</scope>          
         </dependency>
@@ -286,12 +286,12 @@
             <scope>runtime</scope>
         </dependency> 
         <dependency> 
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>paired-data-preprocessor</artifactId>
             <scope>runtime</scope>       
         </dependency> 
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>track-operations-panel</artifactId>
             <scope>runtime</scope>       
         </dependency>
@@ -306,32 +306,32 @@
             <scope>runtime</scope>  
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>cache-api</artifactId>
             <scope>runtime</scope>  
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>cache</artifactId>
             <scope>runtime</scope>  
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>feedback</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>narrowpeak</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>bed</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>bam</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -358,12 +358,12 @@
             <scope>runtime</scope>             
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>logging-config</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency> 
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -373,7 +373,7 @@
             <scope>runtime</scope>
         </dependency>
         <dependency> 
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>external-sort</artifactId>
             <scope>runtime</scope>
         </dependency>

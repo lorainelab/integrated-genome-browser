@@ -8,7 +8,7 @@ import com.affymetrix.common.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.lorainelab.igb.services.window.HtmlHelpProvider;
+import org.lorainelab.igb.igb.services.window.HtmlHelpProvider;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -85,7 +85,7 @@ public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
     public String getHelpHtml() {
         String htmlText = null;
         try {
-            htmlText = Resources.toString(AboutIGBAction.class.getResource("/help/com.lorainelab.igb.AboutIGB.html"), Charsets.UTF_8);
+            htmlText = Resources.toString(AboutIGBAction.class.getResource("/help/org.lorainelab.igb.igb.AboutIGB.html"), Charsets.UTF_8);
         } catch (IOException ex) {
             logger.error("Help file not found ", ex);
         }

@@ -2,9 +2,9 @@ package com.affymetrix.genometry.parsers;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
-import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
-import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;

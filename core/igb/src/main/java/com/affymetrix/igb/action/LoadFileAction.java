@@ -19,7 +19,7 @@ import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import com.lorainelab.igb.javafx.FileChooserUtil;
+import org.lorainelab.igb.igb.javafx.FileChooserUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;

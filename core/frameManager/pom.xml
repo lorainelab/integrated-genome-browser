@@ -7,7 +7,7 @@
         <version>8.6.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>com.lorainelab</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>frameManager</artifactId>
     <packaging>bundle</packaging>
 
@@ -59,7 +59,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
-                        <Export-Package>com.lorainelab.igb.frame.api</Export-Package>
+                        <Export-Package>org.lorainelab.igb.igb.frame.api</Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

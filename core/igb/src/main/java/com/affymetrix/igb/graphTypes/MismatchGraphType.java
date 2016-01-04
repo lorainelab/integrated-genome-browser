@@ -2,7 +2,7 @@ package com.affymetrix.igb.graphTypes;
 
 import com.affymetrix.genometry.style.GraphType;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.GraphGlyph;
 
 /**
  *

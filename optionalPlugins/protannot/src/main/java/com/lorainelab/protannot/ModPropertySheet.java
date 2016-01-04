@@ -1,7 +1,7 @@
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
-import com.lorainelab.protannot.model.ProtannotParser;
+import org.lorainelab.igb.protannot.model.ProtannotParser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FontMetrics;

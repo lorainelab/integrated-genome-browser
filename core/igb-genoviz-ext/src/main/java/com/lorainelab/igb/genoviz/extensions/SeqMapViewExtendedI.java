@@ -1,8 +1,8 @@
-package com.lorainelab.igb.genoviz.extensions;
+package org.lorainelab.igb.igb.genoviz.extensions;
 
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import com.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
-import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.StyledGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
 
 /**
  *

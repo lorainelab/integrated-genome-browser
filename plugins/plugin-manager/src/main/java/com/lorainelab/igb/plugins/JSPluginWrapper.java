@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.plugins;
+package org.lorainelab.igb.igb.plugins;
 
-import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
+import org.lorainelab.igb.igb.plugins.model.PluginListItemMetadata;
 import javafx.scene.control.ListView;
 
 /**

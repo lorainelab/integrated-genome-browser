@@ -1,8 +1,8 @@
-package com.lorainelab.quickload.util;
+package org.lorainelab.igb.quickload.util;
 
 import com.google.common.collect.Lists;
-import com.lorainelab.quickload.model.annots.AnnotsRootElement;
-import com.lorainelab.quickload.model.annots.QuickloadFile;
+import org.lorainelab.igb.quickload.model.annots.AnnotsRootElement;
+import org.lorainelab.igb.quickload.model.annots.QuickloadFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;

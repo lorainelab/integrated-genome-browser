@@ -5,7 +5,7 @@ import cern.colt.list.DoubleArrayList;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 

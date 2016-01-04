@@ -1,4 +1,4 @@
-package com.lorainelab.das2;
+package org.lorainelab.igb.das2;
 
 import java.util.List;
 import java.util.Map;

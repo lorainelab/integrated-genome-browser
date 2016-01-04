@@ -4,7 +4,7 @@
 // Any modifications to this file will be lost upon recompilation of the source schema.
 // Generated on: 2015.04.06 at 11:25:31 AM EDT
 //
-package com.lorainelab.quickload.model.annots;
+package org.lorainelab.igb.quickload.model.annots;
 
 import java.util.ArrayList;
 import java.util.List;

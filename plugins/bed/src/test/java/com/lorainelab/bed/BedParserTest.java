@@ -1,4 +1,4 @@
-package com.lorainelab.bed;
+package org.lorainelab.igb.bed;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
@@ -12,9 +12,9 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
 import com.google.code.externalsorting.ExternalMergeSort;
-import com.lorainelab.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
-import com.lorainelab.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
-import com.lorainelab.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

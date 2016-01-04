@@ -15,7 +15,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
-import com.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BoundedRangeModel;

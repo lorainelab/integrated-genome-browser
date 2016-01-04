@@ -7,7 +7,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symloader.LineProcessor;
 import com.affymetrix.genometry.symmetry.impl.MisMatchPileupGraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyphUtils;
+import org.lorainelab.igb.igb.genoviz.extensions.GraphGlyphUtils;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;

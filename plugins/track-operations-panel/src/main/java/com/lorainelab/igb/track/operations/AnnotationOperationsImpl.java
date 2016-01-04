@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.track.operations;
+package org.lorainelab.igb.igb.track.operations;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.track.operations.api.OperationsPanel;
+import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.igb.track.operations.api.OperationsPanel;
 import java.util.ArrayList;
 import java.util.List;
 

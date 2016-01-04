@@ -1,4 +1,4 @@
-package com.lorainelab.narrowpeak;
+package org.lorainelab.igb.narrowpeak;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;

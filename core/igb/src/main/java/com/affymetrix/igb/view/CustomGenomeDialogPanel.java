@@ -8,7 +8,7 @@ import static com.affymetrix.igb.shared.OpenURIAction.UNKNOWN_GENOME_PREFIX;
 import static com.affymetrix.igb.shared.OpenURIAction.UNKNOWN_SPECIES_PREFIX;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.lorainelab.igb.javafx.FileChooserUtil;
+import org.lorainelab.igb.igb.javafx.FileChooserUtil;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Window;

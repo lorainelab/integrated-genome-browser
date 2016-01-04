@@ -1,4 +1,4 @@
-package com.lorainelab.das2;
+package org.lorainelab.igb.das2;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.data.BaseDataProvider;
@@ -12,15 +12,15 @@ import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotRespondi
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.lorainelab.das2.model.segments.Segments;
-import com.lorainelab.das2.model.sources.Capability;
-import com.lorainelab.das2.model.sources.Sources;
-import com.lorainelab.das2.model.sources.Version;
-import com.lorainelab.das2.model.types.Types;
-import com.lorainelab.das2.model.types.Types.TYPE;
-import com.lorainelab.das2.utils.Das2ServerUtils;
-import static com.lorainelab.das2.utils.Das2ServerUtils.SEGMENTS;
-import static com.lorainelab.das2.utils.Das2ServerUtils.retrieveSegmentsResponse;
+import org.lorainelab.igb.das2.model.segments.Segments;
+import org.lorainelab.igb.das2.model.sources.Capability;
+import org.lorainelab.igb.das2.model.sources.Sources;
+import org.lorainelab.igb.das2.model.sources.Version;
+import org.lorainelab.igb.das2.model.types.Types;
+import org.lorainelab.igb.das2.model.types.Types.TYPE;
+import org.lorainelab.igb.das2.utils.Das2ServerUtils;
+import static org.lorainelab.igb.das2.utils.Das2ServerUtils.SEGMENTS;
+import static org.lorainelab.igb.das2.utils.Das2ServerUtils.retrieveSegmentsResponse;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedHashSet;

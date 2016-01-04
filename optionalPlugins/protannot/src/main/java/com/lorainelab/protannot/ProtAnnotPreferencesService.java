@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -12,7 +12,7 @@ import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.AminoAcid;
 import com.affymetrix.igb.shared.ResidueColorService;
 import com.google.common.eventbus.EventBus;
-import com.lorainelab.protannot.event.PreferenceChangeEvent;
+import org.lorainelab.igb.protannot.event.PreferenceChangeEvent;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;

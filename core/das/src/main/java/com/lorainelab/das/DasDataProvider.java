@@ -1,4 +1,4 @@
-package com.lorainelab.das;
+package org.lorainelab.igb.das;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
@@ -14,10 +14,10 @@ import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.NotRespondi
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.lorainelab.das.model.dsn.DasDsn;
-import com.lorainelab.das.model.types.DasTypes;
-import com.lorainelab.das.model.types.Type;
-import com.lorainelab.das.utils.DasServerUtils;
+import org.lorainelab.igb.das.model.dsn.DasDsn;
+import org.lorainelab.igb.das.model.types.DasTypes;
+import org.lorainelab.igb.das.model.types.Type;
+import org.lorainelab.igb.das.utils.DasServerUtils;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;

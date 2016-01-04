@@ -6,7 +6,7 @@ import com.affymetrix.genometry.parsers.FileTypeCategory;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.lorainelab.igb.services.visualization.SeqSymmetryPreprocessorI;
+import org.lorainelab.igb.igb.services.visualization.SeqSymmetryPreprocessorI;
 import java.util.Collection;
 import java.util.Collections;
 

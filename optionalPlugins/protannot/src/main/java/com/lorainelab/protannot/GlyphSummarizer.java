@@ -1,4 +1,4 @@
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;

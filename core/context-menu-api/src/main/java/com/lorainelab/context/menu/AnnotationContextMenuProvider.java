@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.context.menu;
+package org.lorainelab.igb.context.menu;
 
-import com.lorainelab.context.menu.model.AnnotationContextEvent;
-import com.lorainelab.context.menu.model.ContextMenuItem;
+import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
+import org.lorainelab.igb.context.menu.model.ContextMenuItem;
 import java.util.Optional;
 
 

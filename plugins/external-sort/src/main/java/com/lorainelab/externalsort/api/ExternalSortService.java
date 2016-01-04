@@ -1,4 +1,4 @@
-package com.lorainelab.externalsort.api;
+package org.lorainelab.igb.externalsort.api;
 
 import java.io.File;
 import java.util.Optional;

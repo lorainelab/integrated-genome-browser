@@ -193,7 +193,7 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>external-sort</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
@@ -235,62 +235,62 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>igb-preferences</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>weblinks</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>synonym-lookup</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>quickload</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>das</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>das2</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>frameManager</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>igb-javafx-util</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>context-menu-api</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>context-menu-service</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
@@ -311,7 +311,7 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>track-operations-panel</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
@@ -430,90 +430,90 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>logging-config</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency> 
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>igb-genoviz-extensions</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>paired-data-preprocessor</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>igb-command-socket</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>23andMe-snp-converter</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>console-gui</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>image-exporter</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>session-manager</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>keybinding-registry</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>cache</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>cache-api</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>protannot</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>feedback</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>narrowpeak</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>bed</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.lorainelab</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>bam</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
@@ -993,7 +993,7 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>com.lorainelab</groupId>
+                    <groupId>org.lorainelab.igb</groupId>
                     <artifactId>bundle-markdown-encoder</artifactId>
                     <version>0.0.1</version>
                 </plugin>

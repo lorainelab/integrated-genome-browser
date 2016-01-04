@@ -1,15 +1,15 @@
-package com.lorainelab.quickload.util;
+package org.lorainelab.igb.quickload.util;
 
 import com.affymetrix.genometry.util.ModalUtils;
 import static com.affymetrix.genometry.util.UriUtils.getInputStream;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.lorainelab.quickload.QuickloadConstants;
-import static com.lorainelab.quickload.QuickloadConstants.ANNOTS_XML;
-import com.lorainelab.quickload.model.annots.QuickloadFile;
-import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
-import com.lorainelab.synonymlookup.services.SpeciesInfo;
+import org.lorainelab.igb.quickload.QuickloadConstants;
+import static org.lorainelab.igb.quickload.QuickloadConstants.ANNOTS_XML;
+import org.lorainelab.igb.quickload.model.annots.QuickloadFile;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.SpeciesInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

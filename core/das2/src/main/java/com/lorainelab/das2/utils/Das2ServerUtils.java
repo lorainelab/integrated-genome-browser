@@ -1,11 +1,11 @@
-package com.lorainelab.das2.utils;
+package org.lorainelab.igb.das2.utils;
 
 import com.github.kevinsawicki.http.HttpRequest;
 import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
-import com.lorainelab.das2.model.segments.Segments;
-import com.lorainelab.das2.model.sources.Sources;
-import com.lorainelab.das2.model.types.Types;
-import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.lorainelab.igb.das2.model.segments.Segments;
+import org.lorainelab.igb.das2.model.sources.Sources;
+import org.lorainelab.igb.das2.model.types.Types;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.Set;

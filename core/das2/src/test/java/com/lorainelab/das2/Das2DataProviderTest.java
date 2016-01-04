@@ -1,4 +1,4 @@
-package com.lorainelab.das2;
+package org.lorainelab.igb.das2;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.data.DataProvider;

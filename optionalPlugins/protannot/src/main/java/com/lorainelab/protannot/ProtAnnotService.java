@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
@@ -15,22 +15,22 @@ import com.affymetrix.genometry.util.FileTracker;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
-import com.lorainelab.igb.javafx.FileChooserUtil;
-import com.lorainelab.image.exporter.service.ImageExportService;
-import com.lorainelab.protannot.event.StartInterProScanEvent;
-import com.lorainelab.protannot.event.StatusSetEvent;
-import com.lorainelab.protannot.event.StatusStartEvent;
-import com.lorainelab.protannot.event.StatusTerminateEvent;
-import com.lorainelab.protannot.interproscan.InterProscanTranslator;
-import com.lorainelab.protannot.interproscan.api.InterProscanService;
-import com.lorainelab.protannot.interproscan.api.InterProscanService.Status;
-import com.lorainelab.protannot.interproscan.api.Job;
-import com.lorainelab.protannot.interproscan.api.JobRequest;
-import com.lorainelab.protannot.interproscan.api.JobSequence;
-import com.lorainelab.protannot.interproscan.appl.model.ParameterType;
-import com.lorainelab.protannot.interproscan.appl.model.ValueType;
-import com.lorainelab.protannot.model.Dnaseq;
-import com.lorainelab.protannot.view.StatusBar;
+import org.lorainelab.igb.igb.javafx.FileChooserUtil;
+import org.lorainelab.igb.image.exporter.service.ImageExportService;
+import org.lorainelab.igb.protannot.event.StartInterProScanEvent;
+import org.lorainelab.igb.protannot.event.StatusSetEvent;
+import org.lorainelab.igb.protannot.event.StatusStartEvent;
+import org.lorainelab.igb.protannot.event.StatusTerminateEvent;
+import org.lorainelab.igb.protannot.interproscan.InterProscanTranslator;
+import org.lorainelab.igb.protannot.interproscan.api.InterProscanService;
+import org.lorainelab.igb.protannot.interproscan.api.InterProscanService.Status;
+import org.lorainelab.igb.protannot.interproscan.api.Job;
+import org.lorainelab.igb.protannot.interproscan.api.JobRequest;
+import org.lorainelab.igb.protannot.interproscan.api.JobSequence;
+import org.lorainelab.igb.protannot.interproscan.appl.model.ParameterType;
+import org.lorainelab.igb.protannot.interproscan.appl.model.ValueType;
+import org.lorainelab.igb.protannot.model.Dnaseq;
+import org.lorainelab.igb.protannot.view.StatusBar;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;

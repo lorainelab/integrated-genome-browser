@@ -1,9 +1,9 @@
-package com.lorainelab.igb.services.search;
+package org.lorainelab.igb.igb.services.search;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import com.lorainelab.igb.services.search.SearchResults;
+import org.lorainelab.igb.igb.services.search.SearchResults;
 import java.util.List;
 
 public interface ISearchModeSym extends ISearchMode {

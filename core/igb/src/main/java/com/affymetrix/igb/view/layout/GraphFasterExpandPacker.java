@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view.layout;
 
 import com.affymetrix.igb.view.layout.FasterExpandPacker;
-import com.lorainelab.igb.genoviz.extensions.GraphGlyphPosComparator;
+import org.lorainelab.igb.igb.genoviz.extensions.GraphGlyphPosComparator;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.Rectangle;

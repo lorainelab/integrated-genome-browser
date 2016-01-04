@@ -1,7 +1,7 @@
-package com.lorainelab.igb.preferences;
+package org.lorainelab.igb.igb.preferences;
 
-import com.lorainelab.igb.preferences.model.IgbPreferences;
-import com.lorainelab.igb.preferences.model.JsonWrapper;
+import org.lorainelab.igb.igb.preferences.model.IgbPreferences;
+import org.lorainelab.igb.igb.preferences.model.JsonWrapper;
 import java.io.Reader;
 import java.net.URL;
 import java.util.Optional;

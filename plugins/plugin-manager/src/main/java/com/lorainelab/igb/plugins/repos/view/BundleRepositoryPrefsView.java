@@ -1,4 +1,4 @@
-package com.lorainelab.igb.plugins.repos.view;
+package org.lorainelab.igb.igb.plugins.repos.view;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -12,12 +12,12 @@ import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.google.common.base.Charsets;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.io.Resources;
-import com.lorainelab.igb.plugins.repos.PluginRepositoryList;
-import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
-import com.lorainelab.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.HtmlHelpProvider;
-import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import org.lorainelab.igb.igb.plugins.repos.PluginRepositoryList;
+import org.lorainelab.igb.igb.plugins.repos.events.PluginRepositoryEventPublisher;
+import org.lorainelab.igb.igb.plugins.repos.events.ShowBundleRepositoryPanelEvent;
+import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.igb.services.window.HtmlHelpProvider;
+import org.lorainelab.igb.igb.services.window.preferences.PreferencesPanelProvider;
 import java.io.IOException;
 import java.util.Enumeration;
 import javax.swing.Icon;

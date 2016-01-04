@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.lorainelab.protannot.model.InterProScanTableModel;
+import org.lorainelab.igb.protannot.model.InterProScanTableModel;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;

@@ -1,4 +1,4 @@
-package com.lorainelab.igb.track.operations;
+package org.lorainelab.igb.igb.track.operations;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
@@ -6,8 +6,8 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import static com.affymetrix.igb.shared.Selections.graphGlyphs;
 import static com.affymetrix.igb.shared.Selections.isAnyJoined;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.track.operations.api.OperationsPanel;
+import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.igb.track.operations.api.OperationsPanel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 

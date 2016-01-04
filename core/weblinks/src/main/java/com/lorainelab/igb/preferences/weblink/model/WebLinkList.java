@@ -1,4 +1,4 @@
-package com.lorainelab.igb.preferences.weblink.model;
+package org.lorainelab.igb.igb.preferences.weblink.model;
 
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.GenometryModel;
@@ -9,7 +9,7 @@ import com.affymetrix.genometry.symmetry.impl.CdsSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.google.common.base.Strings;
-import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
+import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;

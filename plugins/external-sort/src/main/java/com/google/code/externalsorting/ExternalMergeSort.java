@@ -2,10 +2,10 @@ package com.google.code.externalsorting;
 
 import aQute.bnd.annotation.component.Component;
 import com.google.common.base.Strings;
-import com.lorainelab.externalsort.api.ComparatorInstance;
-import com.lorainelab.externalsort.api.ComparatorMetadata;
-import com.lorainelab.externalsort.api.ExternalSortConfiguration;
-import com.lorainelab.externalsort.api.ExternalSortService;
+import org.lorainelab.igb.externalsort.api.ComparatorInstance;
+import org.lorainelab.igb.externalsort.api.ComparatorMetadata;
+import org.lorainelab.igb.externalsort.api.ExternalSortConfiguration;
+import org.lorainelab.igb.externalsort.api.ExternalSortService;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.EOFException;

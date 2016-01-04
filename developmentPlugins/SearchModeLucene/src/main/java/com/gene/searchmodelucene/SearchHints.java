@@ -4,7 +4,7 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.DESCRIPTION;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
-import com.lorainelab.igb.services.search.ISearchHints;
+import org.lorainelab.igb.igb.services.search.ISearchHints;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.lucene.document.Document;

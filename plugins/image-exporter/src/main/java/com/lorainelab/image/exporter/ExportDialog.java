@@ -1,4 +1,4 @@
-package com.lorainelab.image.exporter;
+package org.lorainelab.igb.image.exporter;
 
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.util.DisplayUtils;
@@ -6,9 +6,9 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.collect.ImmutableMap;
-import com.lorainelab.igb.javafx.FileChooserUtil;
-import static com.lorainelab.image.exporter.ExportDialogGui.UNIT;
-import com.lorainelab.image.exporter.service.ImageExportService;
+import org.lorainelab.igb.igb.javafx.FileChooserUtil;
+import static org.lorainelab.igb.image.exporter.ExportDialogGui.UNIT;
+import org.lorainelab.igb.image.exporter.service.ImageExportService;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FileDialog;

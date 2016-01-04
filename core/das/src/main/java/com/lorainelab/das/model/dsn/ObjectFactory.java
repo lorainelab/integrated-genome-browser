@@ -4,14 +4,14 @@
 // Any modifications to this file will be lost upon recompilation of the source schema.
 // Generated on: 2015.05.21 at 04:44:39 PM EDT
 //
-package com.lorainelab.das.model.dsn;
+package org.lorainelab.igb.das.model.dsn;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
 /**
  * This object contains factory methods for each
  * Java content interface and Java element interface
- * generated in the com.lorainelab.das.model.dsn package.
+ * generated in the org.lorainelab.igb.das.model.dsn package.
  * <p>
  * An ObjectFactory allows you to programatically
  * construct new instances of the Java representation
@@ -28,7 +28,7 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package:
-     * com.lorainelab.das.model.dsn
+     * org.lorainelab.igb.das.model.dsn
      *
      */
     public ObjectFactory() {

@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.cache.configuration.panel;
+package org.lorainelab.igb.cache.configuration.panel;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.cache.api.CacheStatus;
-import com.lorainelab.cache.api.RemoteFileCacheService;
+import org.lorainelab.igb.cache.api.CacheStatus;
+import org.lorainelab.igb.cache.api.RemoteFileCacheService;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -3,24 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.frame;
+package org.lorainelab.igb.igb.frame;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.igb.services.IgbService;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.ALT_SPLICE_VIEW_TAB;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.ANNOTATION_TRACK_PANEL_TAB;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.APP_MANAGER_TAB;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.BOOKMARK_TAB;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.DATA_MANAGEMENT_TAB;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.EXTERNAL_VIEWER_TAB;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.GRAPH_TRACK_PANEL_TAB;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.RESTRICTIONS_TAB;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.SEARCH_VIEW_TAB;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.SELECTION_INFO_TAB;
-import static com.lorainelab.igb.services.ServiceComponentNameReference.SEQ_GROUP_TAB;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import org.lorainelab.igb.igb.services.IgbService;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.ALT_SPLICE_VIEW_TAB;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.ANNOTATION_TRACK_PANEL_TAB;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.APP_MANAGER_TAB;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.BOOKMARK_TAB;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.DATA_MANAGEMENT_TAB;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.EXTERNAL_VIEWER_TAB;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.GRAPH_TRACK_PANEL_TAB;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.RESTRICTIONS_TAB;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.SEARCH_VIEW_TAB;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.SELECTION_INFO_TAB;
+import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.SEQ_GROUP_TAB;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;

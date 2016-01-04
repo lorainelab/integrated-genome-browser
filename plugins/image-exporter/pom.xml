@@ -7,7 +7,7 @@
         <version>8.6.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>com.lorainelab</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>image-exporter</artifactId>
     <packaging>bundle</packaging>
 
@@ -20,7 +20,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -87,7 +87,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-javafx-util</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -109,7 +109,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
-                        <Export-Package>com.lorainelab.image.exporter.service</Export-Package>
+                        <Export-Package>org.lorainelab.igb.image.exporter.service</Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

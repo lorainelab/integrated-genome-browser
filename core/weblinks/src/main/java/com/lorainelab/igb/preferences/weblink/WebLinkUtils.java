@@ -1,16 +1,16 @@
-package com.lorainelab.igb.preferences.weblink;
+package org.lorainelab.igb.igb.preferences.weblink;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
-import com.lorainelab.igb.preferences.IgbPreferencesService;
-import com.lorainelab.igb.preferences.model.AnnotationUrl;
-import com.lorainelab.igb.preferences.model.IgbPreferences;
-import com.lorainelab.igb.preferences.model.JsonWrapper;
-import com.lorainelab.igb.preferences.weblink.model.WebLink;
-import com.lorainelab.igb.preferences.weblink.model.WebLinkList;
-import com.lorainelab.synonymlookup.services.SpeciesSynonymsLookup;
+import org.lorainelab.igb.igb.preferences.IgbPreferencesService;
+import org.lorainelab.igb.igb.preferences.model.AnnotationUrl;
+import org.lorainelab.igb.igb.preferences.model.IgbPreferences;
+import org.lorainelab.igb.igb.preferences.model.JsonWrapper;
+import org.lorainelab.igb.igb.preferences.weblink.model.WebLink;
+import org.lorainelab.igb.igb.preferences.weblink.model.WebLinkList;
+import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;

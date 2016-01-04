@@ -1,4 +1,4 @@
-package com.lorainelab.image.exporter;
+package org.lorainelab.igb.image.exporter;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;

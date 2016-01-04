@@ -47,7 +47,7 @@
             <scope>provided</scope> 
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope> 
         </dependency>
@@ -79,7 +79,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>
-                            com.lorainelab.igb.services.*                            
+                            org.lorainelab.igb.igb.services.*                            
                         </Export-Package>
                         <Import-Package>*</Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

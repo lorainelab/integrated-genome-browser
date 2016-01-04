@@ -1,12 +1,12 @@
-package com.lorainelab.logging.console;
+package org.lorainelab.igb.logging.console;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
+import org.lorainelab.igb.igb.services.window.menus.IgbMenuItemProvider;
+import org.lorainelab.igb.igb.services.window.menus.IgbToolBarParentMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;

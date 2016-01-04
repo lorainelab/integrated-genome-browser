@@ -1,13 +1,13 @@
-package com.lorainelab.image.exporter;
+package org.lorainelab.igb.image.exporter;
 
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
-import com.lorainelab.image.exporter.service.ImageExportService;
+import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.igb.services.window.menus.IgbMenuItemProvider;
+import org.lorainelab.igb.igb.services.window.menus.IgbToolBarParentMenu;
+import org.lorainelab.igb.image.exporter.service.ImageExportService;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

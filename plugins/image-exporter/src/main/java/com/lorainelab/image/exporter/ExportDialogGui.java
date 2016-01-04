@@ -1,4 +1,4 @@
-package com.lorainelab.image.exporter;
+package org.lorainelab.igb.image.exporter;
 
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.igb.swing.JRPRadioButton;

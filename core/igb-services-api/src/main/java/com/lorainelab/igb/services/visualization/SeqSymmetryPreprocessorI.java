@@ -1,10 +1,10 @@
-package com.lorainelab.igb.services.visualization;
+package org.lorainelab.igb.igb.services.visualization;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
+import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewExtendedI;
 
 /**
  *

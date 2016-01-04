@@ -1,12 +1,12 @@
-package com.lorainelab.igb.preferences;
+package org.lorainelab.igb.igb.preferences;
 
 import aQute.bnd.annotation.component.Component;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.lorainelab.igb.preferences.model.IgbPreferences;
-import com.lorainelab.igb.preferences.model.JsonWrapper;
+import org.lorainelab.igb.igb.preferences.model.IgbPreferences;
+import org.lorainelab.igb.igb.preferences.model.JsonWrapper;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;

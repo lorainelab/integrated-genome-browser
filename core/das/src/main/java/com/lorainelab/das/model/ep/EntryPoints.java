@@ -6,7 +6,7 @@
 //
 
 
-package com.lorainelab.das.model.ep;
+package org.lorainelab.igb.das.model.ep;
 
 import java.util.ArrayList;
 import java.util.List;

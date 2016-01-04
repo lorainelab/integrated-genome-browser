@@ -7,7 +7,7 @@
         <version>8.6.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>com.lorainelab</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>context-menu-service</artifactId>
     <packaging>bundle</packaging>
 
@@ -47,7 +47,7 @@
             <scope>provided</scope>           
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>context-menu-api</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -70,7 +70,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
-                        <Export-Package>com.lorainelab.context.menu.service</Export-Package>
+                        <Export-Package>org.lorainelab.igb.context.menu.service</Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

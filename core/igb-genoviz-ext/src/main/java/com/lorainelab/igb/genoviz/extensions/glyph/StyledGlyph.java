@@ -1,4 +1,4 @@
-package com.lorainelab.igb.genoviz.extensions.glyph;
+package org.lorainelab.igb.igb.genoviz.extensions.glyph;
 
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;

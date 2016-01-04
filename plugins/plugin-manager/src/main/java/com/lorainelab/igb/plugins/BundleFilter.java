@@ -1,4 +1,4 @@
-package com.lorainelab.igb.plugins;
+package org.lorainelab.igb.igb.plugins;
 
 import org.osgi.framework.Bundle;
 

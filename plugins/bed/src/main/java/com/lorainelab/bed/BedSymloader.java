@@ -1,4 +1,4 @@
-package com.lorainelab.bed;
+package org.lorainelab.igb.bed;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;

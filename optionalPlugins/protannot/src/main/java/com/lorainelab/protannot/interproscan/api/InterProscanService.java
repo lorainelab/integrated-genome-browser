@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.interproscan.api;
+package org.lorainelab.igb.protannot.interproscan.api;
 
-import com.lorainelab.protannot.interproscan.appl.model.ParameterType;
+import org.lorainelab.igb.protannot.interproscan.appl.model.ParameterType;
 import java.util.List;
 import java.util.Optional;
 import org.w3c.dom.Document;

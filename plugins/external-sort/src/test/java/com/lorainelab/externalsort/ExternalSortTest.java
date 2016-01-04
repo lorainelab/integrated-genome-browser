@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.externalsort;
+package org.lorainelab.igb.externalsort;
 
 import com.google.code.externalsorting.ExternalMergeSort;
 import com.google.common.base.Stopwatch;
-import com.lorainelab.externalsort.api.ComparatorMetadata;
-import com.lorainelab.externalsort.api.ExternalSortConfiguration;
-import com.lorainelab.externalsort.api.ExternalSortService;
+import org.lorainelab.igb.externalsort.api.ComparatorMetadata;
+import org.lorainelab.igb.externalsort.api.ExternalSortConfiguration;
+import org.lorainelab.igb.externalsort.api.ExternalSortService;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

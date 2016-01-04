@@ -1,4 +1,4 @@
-package com.lorainelab.das2;
+package org.lorainelab.igb.das2;
 
 /**
  * FormatPriorities is intended to help the IGB DAS/2 client figure out

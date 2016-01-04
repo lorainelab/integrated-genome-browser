@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.plugins;
+package org.lorainelab.igb.igb.plugins;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.igb.plugins.model.PluginListItemMetadata;
-import com.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.igb.plugins.model.PluginListItemMetadata;
+import org.lorainelab.igb.igb.services.IgbService;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Optional;

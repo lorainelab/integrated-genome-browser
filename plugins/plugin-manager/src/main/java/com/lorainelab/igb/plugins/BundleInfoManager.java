@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.plugins;
+package org.lorainelab.igb.igb.plugins;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
-import com.lorainelab.igb.plugins.repos.events.PluginRepositoryEventPublisher;
+import org.lorainelab.igb.igb.plugins.repos.events.PluginRepositoryEventPublisher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

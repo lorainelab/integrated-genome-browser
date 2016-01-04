@@ -1,4 +1,4 @@
-package com.lorainelab.das;
+package org.lorainelab.igb.das;
 
 import com.affymetrix.genometry.GenomeVersion;
 import junit.framework.Assert;

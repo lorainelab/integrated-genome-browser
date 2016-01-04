@@ -1,4 +1,4 @@
-package com.lorainelab.das2;
+package org.lorainelab.igb.das2;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
@@ -12,7 +12,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.common.collect.Lists;
-import com.lorainelab.das2.utils.Das2ServerUtils;
+import org.lorainelab.igb.das2.utils.Das2ServerUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.net.URI;

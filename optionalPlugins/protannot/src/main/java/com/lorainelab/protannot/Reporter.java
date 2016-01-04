@@ -1,4 +1,4 @@
-package com.lorainelab.protannot;
+package org.lorainelab.igb.protannot;
 
 import javax.swing.JOptionPane;
 import org.slf4j.Logger;

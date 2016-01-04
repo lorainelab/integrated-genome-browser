@@ -1,4 +1,4 @@
-package com.lorainelab.quickload.model.annots;
+package org.lorainelab.igb.quickload.model.annots;
 
 import com.google.common.base.Strings;
 import java.util.HashMap;

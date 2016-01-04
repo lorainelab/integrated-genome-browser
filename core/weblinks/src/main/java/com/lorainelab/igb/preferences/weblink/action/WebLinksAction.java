@@ -1,12 +1,12 @@
-package com.lorainelab.igb.preferences.weblink.action;
+package org.lorainelab.igb.igb.preferences.weblink.action;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPMenuItem;
-import com.lorainelab.igb.preferences.weblink.view.WebLinkDisplayProvider;
-import com.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import com.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
+import org.lorainelab.igb.igb.preferences.weblink.view.WebLinkDisplayProvider;
+import org.lorainelab.igb.igb.services.window.menus.IgbMenuItemProvider;
+import org.lorainelab.igb.igb.services.window.menus.IgbToolBarParentMenu;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 import javax.swing.Action;

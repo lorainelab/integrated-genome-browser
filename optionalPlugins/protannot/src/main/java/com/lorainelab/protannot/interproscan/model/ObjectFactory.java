@@ -6,7 +6,7 @@
 //
 
 
-package com.lorainelab.protannot.interproscan.model;
+package org.lorainelab.igb.protannot.interproscan.model;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;

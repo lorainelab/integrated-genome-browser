@@ -1,4 +1,4 @@
-package com.lorainelab.igb.track.operations.api;
+package org.lorainelab.igb.igb.track.operations.api;
 
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.operator.Operator;
@@ -16,8 +16,8 @@ import com.affymetrix.igb.shared.TrackOperationAction;
 import com.affymetrix.igb.shared.TrackTransformAction;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
-import com.lorainelab.igb.services.IgbService;
-import com.lorainelab.igb.track.operations.OperationsPanelGui;
+import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.igb.track.operations.OperationsPanelGui;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

@@ -47,7 +47,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.lorainelab</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>frameManager</artifactId> 
             <scope>provided</scope>
         </dependency>

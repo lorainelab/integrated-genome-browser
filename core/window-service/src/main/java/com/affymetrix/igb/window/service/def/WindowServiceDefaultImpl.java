@@ -13,13 +13,13 @@ import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
 import com.google.common.collect.Sets;
-import static com.lorainelab.igb.frame.FrameManager.MAIN_WINDOW_PREF_KEY;
-import com.lorainelab.igb.frame.api.FrameManagerService;
-import com.lorainelab.igb.services.window.WindowServiceLifecycleHook;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
-import com.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import com.lorainelab.igb.services.window.tabs.TabHolder;
+import static org.lorainelab.igb.igb.frame.FrameManager.MAIN_WINDOW_PREF_KEY;
+import org.lorainelab.igb.igb.frame.api.FrameManagerService;
+import org.lorainelab.igb.igb.services.window.WindowServiceLifecycleHook;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel.TabState;
+import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanelI;
+import org.lorainelab.igb.igb.services.window.tabs.TabHolder;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -175,7 +175,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         // Save the main window location
         PreferenceUtils.saveWindowLocation(frame, MAIN_WINDOW_PREF_KEY);
 
-        tabHolders.values().forEach(com.lorainelab.igb.services.window.tabs.TabHolder::close);
+        tabHolders.values().forEach(org.lorainelab.igb.igb.services.window.tabs.TabHolder::close);
         for (IgbTabPanel comp : tabHolders.get(TabState.COMPONENT_STATE_WINDOW).getIGBTabPanels()) {
             PreferenceUtils.saveWindowLocation(comp.getFrame(), comp.getName());
         }

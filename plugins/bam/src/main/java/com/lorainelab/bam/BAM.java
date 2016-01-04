@@ -1,4 +1,4 @@
-package com.lorainelab.bam;
+package org.lorainelab.igb.bam;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
@@ -16,7 +16,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.SeekableFTPStream;
-import com.lorainelab.cache.api.CacheStatus;
+import org.lorainelab.igb.cache.api.CacheStatus;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;

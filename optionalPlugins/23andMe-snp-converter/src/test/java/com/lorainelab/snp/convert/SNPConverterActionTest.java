@@ -1,4 +1,4 @@
-package com.lorainelab.snp.convert;
+package org.lorainelab.igb.snp.convert;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.lorainelab.quickload.utils;
+package org.lorainelab.igb.quickload.utils;
 
 import static com.affymetrix.genometry.util.UriUtils.getInputStream;
 import com.google.common.io.CharStreams;

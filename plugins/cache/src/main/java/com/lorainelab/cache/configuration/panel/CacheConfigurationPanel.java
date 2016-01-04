@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.cache.configuration.panel;
+package org.lorainelab.igb.cache.configuration.panel;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Reference;
@@ -12,9 +12,9 @@ import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.google.common.eventbus.Subscribe;
-import com.lorainelab.cache.api.ChangeEvent;
-import com.lorainelab.cache.api.RemoteFileCacheService;
-import com.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import org.lorainelab.igb.cache.api.ChangeEvent;
+import org.lorainelab.igb.cache.api.RemoteFileCacheService;
+import org.lorainelab.igb.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;

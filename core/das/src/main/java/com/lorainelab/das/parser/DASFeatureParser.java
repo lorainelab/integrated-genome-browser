@@ -1,4 +1,4 @@
-package com.lorainelab.das.parser;
+package org.lorainelab.igb.das.parser;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;

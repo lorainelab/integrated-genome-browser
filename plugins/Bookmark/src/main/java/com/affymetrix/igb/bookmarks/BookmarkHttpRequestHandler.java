@@ -15,7 +15,7 @@ import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME_OLD;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.google.common.collect.ListMultimap;
-import com.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.igb.services.IgbService;
 import fi.iki.elonen.NanoHTTPD;
 import java.net.HttpURLConnection;
 import java.net.URL;

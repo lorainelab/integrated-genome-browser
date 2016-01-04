@@ -1,6 +1,6 @@
-package com.lorainelab.quickload.utils;
+package org.lorainelab.igb.quickload.utils;
 
-import com.lorainelab.quickload.util.AnnotsParser;
+import org.lorainelab.igb.quickload.util.AnnotsParser;
 import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;

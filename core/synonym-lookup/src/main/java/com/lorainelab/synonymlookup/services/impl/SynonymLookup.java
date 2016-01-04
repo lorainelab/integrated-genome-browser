@@ -1,11 +1,11 @@
-package com.lorainelab.synonymlookup.services.impl;
+package org.lorainelab.igb.synonymlookup.services.impl;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import com.lorainelab.synonymlookup.services.SynonymLookupService;
+import org.lorainelab.igb.synonymlookup.services.SynonymLookupService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

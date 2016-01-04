@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.protannot.interproscan;
+package org.lorainelab.igb.protannot.interproscan;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.lorainelab.protannot.interproscan.api.InterProscanService;
-import com.lorainelab.protannot.model.Dnaseq;
-import com.lorainelab.protannot.model.Dnaseq.Aaseq;
-import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch;
-import com.lorainelab.protannot.model.Dnaseq.Aaseq.Simsearch.Simhit;
-import com.lorainelab.protannot.model.Dnaseq.Descriptor;
+import org.lorainelab.igb.protannot.interproscan.api.InterProscanService;
+import org.lorainelab.igb.protannot.model.Dnaseq;
+import org.lorainelab.igb.protannot.model.Dnaseq.Aaseq;
+import org.lorainelab.igb.protannot.model.Dnaseq.Aaseq.Simsearch;
+import org.lorainelab.igb.protannot.model.Dnaseq.Aaseq.Simsearch.Simhit;
+import org.lorainelab.igb.protannot.model.Dnaseq.Descriptor;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;

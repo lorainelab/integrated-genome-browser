@@ -17,7 +17,7 @@ import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.ScoredContainerSym;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.google.common.collect.ImmutableSet;
-import com.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
+import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewExtendedI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.lorainelab.igb.plugins.model;
+package org.lorainelab.igb.igb.plugins.model;
 
 import java.lang.reflect.Field;
 import javafx.beans.InvalidationListener;

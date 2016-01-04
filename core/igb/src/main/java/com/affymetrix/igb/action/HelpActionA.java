@@ -4,7 +4,7 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.common.PreferenceUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.swing.JRPButton;
-import com.lorainelab.igb.services.window.HtmlHelpProvider;
+import org.lorainelab.igb.igb.services.window.HtmlHelpProvider;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;

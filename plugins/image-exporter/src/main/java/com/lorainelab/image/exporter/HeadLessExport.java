@@ -1,7 +1,7 @@
-package com.lorainelab.image.exporter;
+package org.lorainelab.igb.image.exporter;
 
 import com.affymetrix.common.PreferenceUtils;
-import static com.lorainelab.image.exporter.ExportImageInfo.DEFAULT_RESOLUTION;
+import static org.lorainelab.igb.image.exporter.ExportImageInfo.DEFAULT_RESOLUTION;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;

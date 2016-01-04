@@ -7,7 +7,7 @@
         <version>8.6.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>com.lorainelab</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>igb-preferences</artifactId>
     <packaging>bundle</packaging>
 
@@ -75,8 +75,8 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
                         <Export-Package>
-                            com.lorainelab.igb.preferences.model, 
-                            com.lorainelab.igb.preferences
+                            org.lorainelab.igb.igb.preferences.model, 
+                            org.lorainelab.igb.igb.preferences
                         </Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>

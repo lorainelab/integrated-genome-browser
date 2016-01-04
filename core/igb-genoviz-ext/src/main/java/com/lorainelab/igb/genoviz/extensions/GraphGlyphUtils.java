@@ -7,12 +7,12 @@
  *
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
-package com.lorainelab.igb.genoviz.extensions;
+package org.lorainelab.igb.igb.genoviz.extensions;
 
 import com.affymetrix.genometry.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FloaterGlyph;
-import com.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.igb.genoviz.extensions.glyph.GraphGlyph;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Arrays;

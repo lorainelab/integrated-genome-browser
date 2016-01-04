@@ -993,7 +993,7 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.lorainelab.igb</groupId>
+                    <groupId>com.lorainelab</groupId>
                     <artifactId>bundle-markdown-encoder</artifactId>
                     <version>0.0.1</version>
                 </plugin>

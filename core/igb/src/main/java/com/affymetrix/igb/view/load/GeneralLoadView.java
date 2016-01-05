@@ -48,9 +48,9 @@ import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREF
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import org.lorainelab.igb.cache.api.RemoteFileCacheService;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.StyledGlyph;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;

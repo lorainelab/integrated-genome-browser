@@ -16,9 +16,9 @@ import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeE
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
-import org.lorainelab.igb.igb.preferences.IgbPreferencesService;
-import org.lorainelab.igb.igb.preferences.model.DataProviderConfig;
-import org.lorainelab.igb.igb.preferences.model.IgbPreferences;
+import org.lorainelab.igb.preferences.IgbPreferencesService;
+import org.lorainelab.igb.preferences.model.DataProviderConfig;
+import org.lorainelab.igb.preferences.model.IgbPreferences;
 import java.awt.event.ActionEvent;
 import java.net.URLDecoder;
 import java.util.Arrays;

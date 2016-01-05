@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.tiers.TierLabelManager;

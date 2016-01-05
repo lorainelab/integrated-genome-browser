@@ -75,8 +75,8 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
                         <Export-Package>
-                            org.lorainelab.igb.igb.preferences.model, 
-                            org.lorainelab.igb.igb.preferences
+                            org.lorainelab.igb.preferences.model, 
+                            org.lorainelab.igb.preferences
                         </Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>

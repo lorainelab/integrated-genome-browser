@@ -31,7 +31,7 @@ import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.google.common.eventbus.Subscribe;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import java.awt.Component;

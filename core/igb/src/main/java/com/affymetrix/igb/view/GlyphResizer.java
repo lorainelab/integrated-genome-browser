@@ -15,7 +15,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;

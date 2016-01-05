@@ -6,7 +6,7 @@ import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.MisMatchPileupGraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.util.ResidueColorHelper;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;

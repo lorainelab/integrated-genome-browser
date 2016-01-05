@@ -10,7 +10,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.google.common.collect.Lists;
-import org.lorainelab.igb.igb.preferences.model.PluginRepository;
+import org.lorainelab.igb.preferences.model.PluginRepository;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;

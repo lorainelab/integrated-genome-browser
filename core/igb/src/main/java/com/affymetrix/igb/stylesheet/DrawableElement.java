@@ -14,7 +14,7 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewExtendedI;
+import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 
 interface DrawableElement extends Cloneable, XmlAppender {
 

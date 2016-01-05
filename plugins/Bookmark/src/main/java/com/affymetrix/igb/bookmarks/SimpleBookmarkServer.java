@@ -10,7 +10,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.DEFAULT_SERVER_PORT;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.MissingResourceException;

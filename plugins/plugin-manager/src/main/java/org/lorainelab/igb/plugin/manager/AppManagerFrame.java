@@ -11,7 +11,7 @@ import aQute.bnd.annotation.component.Reference;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 
 /**
  *

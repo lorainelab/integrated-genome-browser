@@ -8,8 +8,8 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.tiers.CoordinateStyle;
-import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewExtendedI;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.StyledGlyph;
+import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
+import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import java.util.Set;
 
 /**

@@ -5,7 +5,7 @@ import com.affymetrix.genometry.symmetry.impl.BAMSym;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;

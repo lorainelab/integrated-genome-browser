@@ -14,7 +14,7 @@ import com.affymetrix.igb.action.SeqMapViewActionA;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;

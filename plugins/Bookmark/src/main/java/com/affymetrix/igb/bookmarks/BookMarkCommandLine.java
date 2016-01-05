@@ -2,7 +2,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;

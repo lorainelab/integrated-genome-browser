@@ -98,7 +98,7 @@
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
                         <Export-Package/>
-                        <Bundle-Activator>org.lorainelab.igb.igbr.Activator</Bundle-Activator>
+                        <Bundle-Activator>org.lorainelab.igbr.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Description>${bundleDescription}</Bundle-Description>
                     </instructions>

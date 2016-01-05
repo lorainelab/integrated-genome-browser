@@ -1,7 +1,7 @@
 package com.affymetrix.igb.external;
 
 import com.affymetrix.igb.swing.JRPButton;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Image;

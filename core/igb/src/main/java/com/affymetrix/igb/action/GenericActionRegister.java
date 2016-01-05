@@ -8,7 +8,7 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
 import com.google.common.collect.Sets;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import java.util.Set;
 import javax.swing.Action;
 import javax.swing.KeyStroke;

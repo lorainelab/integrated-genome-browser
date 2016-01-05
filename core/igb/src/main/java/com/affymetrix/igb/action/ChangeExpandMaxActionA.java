@@ -3,7 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.genometry.event.ParameteredAction;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.tiers.MaxSlotsChooser;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import java.util.List;

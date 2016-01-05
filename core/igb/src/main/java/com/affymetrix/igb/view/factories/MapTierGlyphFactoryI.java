@@ -14,7 +14,7 @@ import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewExtendedI;
+import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import java.util.Set;
 
 /**

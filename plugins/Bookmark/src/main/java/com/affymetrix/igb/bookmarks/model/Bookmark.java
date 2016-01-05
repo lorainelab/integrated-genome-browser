@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
-import static org.lorainelab.igb.igb.services.IgbService.UTF8;
+import static org.lorainelab.igb.services.IgbService.UTF8;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;

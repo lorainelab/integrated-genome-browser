@@ -1,7 +1,7 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.igb.swing.JRPMenu;
-import org.lorainelab.igb.igb.services.window.menus.IgbToolBarParentMenu;
+import org.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 
 /**
  *

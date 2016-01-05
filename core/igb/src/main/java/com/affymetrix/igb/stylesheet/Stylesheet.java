@@ -17,7 +17,7 @@ import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewExtendedI;
+import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

@@ -3,7 +3,7 @@ package com.affymetrix.igb.graphTypes;
 import com.affymetrix.genometry.style.GraphType;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;

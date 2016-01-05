@@ -14,7 +14,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.google.common.base.Strings;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.image.exporter.service.ImageExportService;
 import java.awt.Component;
 import java.io.File;

@@ -8,7 +8,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 
 import java.util.List;
 import java.util.Map;

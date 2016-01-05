@@ -3,13 +3,13 @@ package com.gene.findannotations;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import org.lorainelab.igb.igb.services.IgbService;
-import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanelI;
+import org.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
-import org.lorainelab.igb.igb.services.search.IStatus;
+import org.lorainelab.igb.services.search.IStatus;
 
 @Component(name = FindAnnotationsView.COMPONENT_NAME, provide = IgbTabPanelI.class, immediate = true)
 public class FindAnnotationsView extends FindAnnotationsGUI {

@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
-import org.lorainelab.igb.igb.preferences.model.DataProviderConfig;
+import org.lorainelab.igb.preferences.model.DataProviderConfig;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import java.net.MalformedURLException;

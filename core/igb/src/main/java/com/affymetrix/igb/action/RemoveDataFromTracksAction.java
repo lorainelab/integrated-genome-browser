@@ -10,7 +10,7 @@ import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import static com.affymetrix.igb.shared.Selections.allStyles;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;

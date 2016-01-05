@@ -79,7 +79,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>
-                            org.lorainelab.igb.igb.services.*                            
+                            org.lorainelab.igb.services.*                            
                         </Export-Package>
                         <Import-Package>*</Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

@@ -9,7 +9,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import org.lorainelab.igb.plugin.manager.model.PluginListItemMetadata;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Optional;

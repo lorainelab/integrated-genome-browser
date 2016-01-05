@@ -13,7 +13,7 @@ import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPSlider;
 import com.affymetrix.igb.swing.JRPTextField;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;

@@ -2,7 +2,7 @@ package com.affymetrix.igb.action;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import org.lorainelab.igb.igb.services.window.HtmlHelpProvider;
+import org.lorainelab.igb.services.window.HtmlHelpProvider;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;

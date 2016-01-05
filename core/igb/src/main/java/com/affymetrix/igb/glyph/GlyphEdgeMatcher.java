@@ -15,7 +15,7 @@ import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;

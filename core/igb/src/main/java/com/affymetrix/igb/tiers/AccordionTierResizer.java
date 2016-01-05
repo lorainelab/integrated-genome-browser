@@ -6,7 +6,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.widget.NeoWidget;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.util.List;

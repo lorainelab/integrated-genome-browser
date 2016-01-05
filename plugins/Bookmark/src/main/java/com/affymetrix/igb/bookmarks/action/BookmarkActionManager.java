@@ -18,7 +18,7 @@ import com.affymetrix.igb.bookmarks.BookmarkMenuItem;
 import com.affymetrix.igb.bookmarks.BookmarksParser;
 import com.affymetrix.igb.bookmarks.Separator;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;

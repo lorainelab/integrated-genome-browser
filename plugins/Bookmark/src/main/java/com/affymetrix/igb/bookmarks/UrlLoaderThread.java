@@ -20,7 +20,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;

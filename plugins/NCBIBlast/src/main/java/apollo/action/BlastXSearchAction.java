@@ -8,7 +8,7 @@ import com.affymetrix.genometry.symmetry.impl.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
-import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewI;
+import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import java.util.List;
 
 /**

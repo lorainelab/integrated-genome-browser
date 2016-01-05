@@ -3,7 +3,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.tiers.TierLabelGlyph;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.event.ActionEvent;

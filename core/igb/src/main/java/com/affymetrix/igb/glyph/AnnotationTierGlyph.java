@@ -10,7 +10,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;

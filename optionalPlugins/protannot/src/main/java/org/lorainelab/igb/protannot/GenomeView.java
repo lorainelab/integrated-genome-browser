@@ -37,7 +37,7 @@ import com.affymetrix.igb.swing.JRPToggleButton;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.AxisGlyphWithSelection;
+import org.lorainelab.igb.genoviz.extensions.glyph.AxisGlyphWithSelection;
 import org.lorainelab.igb.protannot.ProtAnnotPreferencesService.Panel;
 import org.lorainelab.igb.protannot.event.InterProScanModelUpdateEvent;
 import org.lorainelab.igb.protannot.event.PreferenceChangeEvent;

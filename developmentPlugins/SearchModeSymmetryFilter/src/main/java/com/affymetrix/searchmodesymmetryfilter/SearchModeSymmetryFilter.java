@@ -9,11 +9,11 @@ import com.affymetrix.genometry.filter.SymmetryFilter;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import org.lorainelab.igb.igb.services.IgbService;
-import org.lorainelab.igb.igb.services.search.ISearchModeSym;
-import org.lorainelab.igb.igb.services.search.IStatus;
-import org.lorainelab.igb.igb.services.search.SearchResults;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.services.search.ISearchModeSym;
+import org.lorainelab.igb.services.search.IStatus;
+import org.lorainelab.igb.services.search.SearchResults;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 
 public class SearchModeSymmetryFilter implements ISearchModeSym {
 

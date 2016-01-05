@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;

@@ -78,8 +78,8 @@
                     <instructions>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Import-Package>!org.lorainelab.igb.igb.track.operations, !org.lorainelab.igb.igb.track.operations.api,*</Import-Package>
-                        <Export-Package>org.lorainelab.igb.igb.track.operations.api</Export-Package>
+                        <Import-Package>!org.lorainelab.igb.track.operations, !org.lorainelab.igb.track.operations.api,*</Import-Package>
+                        <Export-Package>org.lorainelab.igb.track.operations.api</Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

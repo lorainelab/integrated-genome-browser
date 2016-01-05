@@ -6,7 +6,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.shared.SequenceLoader;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.image.exporter.service.ImageExportService;
 
 public class DefaultSequenceViewer extends AbstractSequenceViewer {

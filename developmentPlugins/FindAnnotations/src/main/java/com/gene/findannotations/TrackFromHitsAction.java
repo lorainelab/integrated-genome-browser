@@ -5,7 +5,7 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import javax.swing.JTextField;

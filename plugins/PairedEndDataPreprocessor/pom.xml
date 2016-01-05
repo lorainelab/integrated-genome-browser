@@ -104,7 +104,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>
-                            !org.lorainelab.igb.igb.preprocessor,
+                            !org.lorainelab.igb.preprocessor,
                             *
                         </Import-Package>
                         <Export-Package/>

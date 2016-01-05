@@ -10,11 +10,11 @@ import com.affymetrix.igb.shared.Selections;
 import static com.affymetrix.igb.shared.Selections.graphSyms;
 import com.affymetrix.igb.shared.StylePanelImpl;
 import com.affymetrix.igb.shared.TrackViewPanel;
-import org.lorainelab.igb.igb.services.IgbService;
-import static org.lorainelab.igb.igb.services.ServiceComponentNameReference.GRAPH_TRACK_PANEL_TAB;
-import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanelI;
-import org.lorainelab.igb.igb.track.operations.api.OperationsPanel;
-import org.lorainelab.igb.igb.track.operations.api.OperationsPanelService;
+import org.lorainelab.igb.services.IgbService;
+import static org.lorainelab.igb.services.ServiceComponentNameReference.GRAPH_TRACK_PANEL_TAB;
+import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import org.lorainelab.igb.track.operations.api.OperationsPanel;
+import org.lorainelab.igb.track.operations.api.OperationsPanelService;
 
 /**
  *

@@ -1,8 +1,9 @@
-package org.lorainelab.igb.igb.preferences;
+package org.lorainelab.igb.preferences;
 
-import org.lorainelab.igb.igb.preferences.model.DataProviderConfig;
-import org.lorainelab.igb.igb.preferences.model.IgbPreferences;
-import org.lorainelab.igb.igb.preferences.model.JsonWrapper;
+import org.lorainelab.igb.preferences.IgbPreferencesParser;
+import org.lorainelab.igb.preferences.model.DataProviderConfig;
+import org.lorainelab.igb.preferences.model.IgbPreferences;
+import org.lorainelab.igb.preferences.model.JsonWrapper;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;

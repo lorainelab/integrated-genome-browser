@@ -46,8 +46,8 @@
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Export-Package>
-                            org.lorainelab.igb.igb.genoviz.extensions,
-                            org.lorainelab.igb.igb.genoviz.extensions.glyph
+                            org.lorainelab.igb.genoviz.extensions,
+                            org.lorainelab.igb.genoviz.extensions.glyph
                         </Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>

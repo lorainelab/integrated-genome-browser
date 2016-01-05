@@ -1,8 +1,8 @@
 package com.affymetrix.igb.window.service.def;
 
 import com.affymetrix.igb.swing.MenuUtil;
-import org.lorainelab.igb.igb.frame.api.FrameManagerService;
-import org.lorainelab.igb.igb.services.window.tabs.IgbTabPanel.TabState;
+import org.lorainelab.igb.frame.api.FrameManagerService;
+import org.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;

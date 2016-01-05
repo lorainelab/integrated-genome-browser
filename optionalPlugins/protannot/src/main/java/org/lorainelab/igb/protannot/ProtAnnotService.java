@@ -15,7 +15,7 @@ import com.affymetrix.genometry.util.FileTracker;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
-import org.lorainelab.igb.igb.javafx.FileChooserUtil;
+import org.lorainelab.igb.javafx.FileChooserUtil;
 import org.lorainelab.igb.image.exporter.service.ImageExportService;
 import org.lorainelab.igb.protannot.event.StartInterProScanEvent;
 import org.lorainelab.igb.protannot.event.StatusSetEvent;

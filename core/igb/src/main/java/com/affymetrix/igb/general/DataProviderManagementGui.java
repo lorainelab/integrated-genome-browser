@@ -19,7 +19,7 @@ import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.util.IGBAuthenticator;
-import org.lorainelab.igb.igb.services.window.preferences.PreferencesPanelProvider;
+import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;

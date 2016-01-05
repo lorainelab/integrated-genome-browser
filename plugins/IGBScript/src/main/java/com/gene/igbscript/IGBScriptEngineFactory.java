@@ -3,7 +3,7 @@ package com.gene.igbscript;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.image.exporter.service.ImageExportService;
 import java.util.Arrays;
 import java.util.Collections;

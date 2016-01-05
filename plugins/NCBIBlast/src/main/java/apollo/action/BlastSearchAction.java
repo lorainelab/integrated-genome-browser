@@ -13,7 +13,7 @@ import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.shared.SequenceLoader;
-import org.lorainelab.igb.igb.genoviz.extensions.SeqMapViewI;
+import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;

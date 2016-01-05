@@ -957,7 +957,7 @@ fb600000-100000000 ---p 00000000 00:00 0
 7f8904be1000-7f8904be2000 rw-p 00016000 fd:01 4467790                    /opt/java/jdk1.8.0_40/jre/lib/amd64/libnet.so
 7f8904be2000-7f8904be3000 r--s 00000000 fd:02 6297591                    /home/dcnorris/.m2/repository/org/codehaus/mojo/animal-sniffer-annotations/1.9/animal-sniffer-annotations-1.9.jar
 7f8904be3000-7f8904be8000 r--s 0003d000 fd:02 6554004                    /home/dcnorris/.m2/repository/org/apache/felix/org.apache.felix.scr/1.8.2/org.apache.felix.scr-1.8.2.jar
-7f8904be8000-7f8904bea000 r--s 00009000 fd:02 7083539                    /home/dcnorris/.m2/repository/org.lorainelab.igb/igb-genoviz-extensions/8.4.0/igb-genoviz-extensions-8.4.0.jar
+7f8904be8000-7f8904bea000 r--s 00009000 fd:02 7083539                    /home/dcnorris/.m2/repository/org.lorainelab.igb-genoviz-extensions/8.4.0/igb-genoviz-extensions-8.4.0.jar
 7f8904bea000-7f8904beb000 r--s 00000000 fd:02 7476077                    /home/dcnorris/.m2/repository/org.lorainelab.igb/logging-config/8.4.0/logging-config-8.4.0.jar
 7f8904beb000-7f8904bf1000 r--s 0003d000 fd:02 5245169                    /home/dcnorris/.m2/repository/ch/qos/logback/logback-classic/1.1.2/logback-classic-1.1.2.jar
 7f8904bf1000-7f8904bfb000 r--s 0005f000 fd:02 5245199                    /home/dcnorris/.m2/repository/ch/qos/logback/logback-core/1.1.2/logback-core-1.1.2.jar
@@ -1014,7 +1014,7 @@ fb600000-100000000 ---p 00000000 00:00 0
 7f8904d44000-7f8904d49000 r--s 0002f000 fd:02 5508605                    /home/dcnorris/.m2/repository/com/google/code/gson/gson/2.3.1/gson-2.3.1.jar
 7f8904d49000-7f8904d74000 r--s 001f5000 fd:02 5246264                    /home/dcnorris/.m2/repository/com/google/guava/guava/16.0.1/guava-16.0.1.jar
 7f8904d74000-7f8904d76000 r--s 0000c000 fd:02 8131119                    /home/dcnorris/.m2/repository/org.lorainelab.igb/weblinks/8.4.0/weblinks-8.4.0.jar
-7f8904d76000-7f8904d77000 r--s 00003000 fd:02 6949705                    /home/dcnorris/.m2/repository/org.lorainelab.igb/igb-preferences/8.4.0/igb-preferences-8.4.0.jar
+7f8904d76000-7f8904d77000 r--s 00003000 fd:02 6949705                    /home/dcnorris/.m2/repository/org.lorainelab.igb-preferences/8.4.0/igb-preferences-8.4.0.jar
 7f8904d77000-7f8904d79000 r--s 00006000 fd:02 6165081                    /home/dcnorris/.m2/repository/org.lorainelab.igb/keybinding-registry/8.4.0/keybinding-registry-8.4.0.jar
 7f8904d79000-7f8904d7a000 r--s 00002000 fd:02 8782114                    /home/dcnorris/.m2/repository/org.lorainelab.igb/session-manager/8.4.0/session-manager-8.4.0.jar
 7f8904d7a000-7f8904d7b000 r--s 00002000 fd:02 7213694                    /home/dcnorris/.m2/repository/org.lorainelab.igb/console-gui/8.4.0/console-gui-8.4.0.jar

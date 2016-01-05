@@ -7,7 +7,7 @@ import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
 import static com.affymetrix.igb.shared.Selections.isAnyLocked;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.TierGlyph.TierType;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph.TierType;
 
 /**
  *

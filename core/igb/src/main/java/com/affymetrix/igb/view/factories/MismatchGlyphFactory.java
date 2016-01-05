@@ -7,7 +7,7 @@ import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.MisMatchPileupGraphSym;
 import com.affymetrix.igb.graphTypes.MismatchGraphType;
 import com.affymetrix.igb.graphTypes.MismatchPileupType;
-import org.lorainelab.igb.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 

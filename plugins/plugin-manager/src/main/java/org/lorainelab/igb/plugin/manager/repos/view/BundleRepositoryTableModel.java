@@ -1,7 +1,7 @@
 package org.lorainelab.igb.plugin.manager.repos.view;
 
 import org.lorainelab.igb.plugin.manager.repos.PluginRepositoryList;
-import org.lorainelab.igb.igb.preferences.model.PluginRepository;
+import org.lorainelab.igb.preferences.model.PluginRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

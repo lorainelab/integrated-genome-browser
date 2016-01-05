@@ -5,7 +5,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.google.common.base.Optional;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 
 /**
  *

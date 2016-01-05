@@ -4,7 +4,7 @@ import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.jidesoft.combobox.ColorComboBox;
-import org.lorainelab.igb.igb.services.IgbService;
+import org.lorainelab.igb.services.IgbService;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.List;

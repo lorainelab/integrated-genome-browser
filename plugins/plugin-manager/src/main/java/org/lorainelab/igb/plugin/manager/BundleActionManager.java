@@ -120,6 +120,7 @@ public class BundleActionManager {
         resolver.add(resource);
         if (resolver.resolve()) {
             resolver.deploy(Resolver.START);
+            logger.info("Installed app: " + bundle.getSymbolicName() + "," + bundle.getVersion());
             igbService.setStatus(MessageFormat.format(BUNDLE.getString("bundleInstalled"), bundle.getSymbolicName(), bundle.getVersion()));
         } else {
             String msg = MessageFormat.format(BUNDLE.getString("bundleInstallError"), bundle.getSymbolicName(), bundle.getVersion());
@@ -145,6 +146,7 @@ public class BundleActionManager {
                     if (b.getSymbolicName().equals(bundle.getSymbolicName())) {
                         if (b.getState() == Bundle.ACTIVE) {
                             b.uninstall();
+                            logger.info("Uninstalled app: " + b.getSymbolicName() + "," + b.getVersion());
                         }
                     }
                 }

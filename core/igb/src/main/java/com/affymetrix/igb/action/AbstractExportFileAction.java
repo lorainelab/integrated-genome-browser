@@ -121,29 +121,36 @@ public abstract class AbstractExportFileAction
 //                FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
 //            }
             File savedDir = FileTracker.DATA_DIR_TRACKER.getFile();
-            List<String> filters = Lists.newArrayList();
+            List<FileChooser.ExtensionFilter> filters = Lists.newArrayList();
             Set<UniFileFilter> keySet = filter2writers.get().keySet();
             keySet.stream().forEach((filter) -> {
-                filters.addAll(filter.getExtensions());
+                filter.getExtensions().forEach(filterName -> {
+                    FileChooser.ExtensionFilter extensionFilter
+                            = new FileChooser.ExtensionFilter(filterName, filterName);
+                    filters.add(extensionFilter);
+                });
+
             });
-            FileChooser.ExtensionFilter extensionFilter
-                    = new FileChooser.ExtensionFilter("test", filters);
-            Optional<File> file = FileChooserUtil.build()
-                    .setFileExtensionFilter(extensionFilter)
-                    .setContext(savedDir).saveFilesFromFxChooser();
+
+             FileChooserUtil fcUtil = FileChooserUtil.build()
+                    .setFileExtensionFilters(filters)
+                    .setContext(savedDir);
+             
+             Optional<File> file = fcUtil.saveFilesFromFxChooser();
 
             if (file.isPresent()) {
                 File selectedFile = file.get();
                 Optional<BioSeq> aseq = gmodel.getSelectedSeq();
 
                 try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(selectedFile)))) {
-//                    UniFileFilter selectedFilter = (UniFileFilter) chooser.getFileFilter();
-//                    preferredFilters.put(rootSym.getCategory(), selectedFilter);
-                    exportFile(filter2writers.get().get(selectedFilter), dos, aseq.orElse(null), atier);
+                    FileChooser.ExtensionFilter selectedFilter = fcUtil.getSelectedFileExtensionFilter();
+                    UniFileFilter swingSelectedFilter = new UniFileFilter("bed");
+                    preferredFilters.put(rootSym.getCategory(), swingSelectedFilter);
+                    exportFile(filter2writers.get().get(swingSelectedFilter), dos, aseq.orElse(null), atier);
                 } catch (Exception ex) {
                     ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
                 }
-                FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
+                FileTracker.DATA_DIR_TRACKER.setFile(selectedFile);
             }
         } else {
             ErrorHandler.errorPanel("not supported yet", "cannot export files of type "

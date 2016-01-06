@@ -8,6 +8,7 @@ import static com.affymetrix.igb.shared.OpenURIAction.UNKNOWN_GENOME_PREFIX;
 import static com.affymetrix.igb.shared.OpenURIAction.UNKNOWN_SPECIES_PREFIX;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import org.lorainelab.igb.javafx.FileChooserUtil;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -96,7 +97,7 @@ public class CustomGenomeDialogPanel extends JPanel {
         Optional<File> selectedRefSeqFile = FileChooserUtil.build()
                 .setContext(fileTracker.getFile())
                 .setTitle("Choose Reference Sequence File")
-                .setFileExtensionFilter(extensionFilter)
+                .setFileExtensionFilters(Lists.newArrayList(extensionFilter))
                 .retrieveFileFromFxChooser();
         if (selectedRefSeqFile.isPresent()) {
             fileTracker.setFile(selectedRefSeqFile.get().getParentFile());

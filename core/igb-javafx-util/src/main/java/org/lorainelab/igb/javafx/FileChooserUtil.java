@@ -24,13 +24,13 @@ public class FileChooserUtil {
     private Optional<String> title;
     private Optional<String> defaultFileName;
     private Optional<File> context;
-    private Optional<ExtensionFilter> extensionFilter;
+    private Optional<List<ExtensionFilter>> extensionFilters;
 
     private FileChooserUtil() {
         title = Optional.empty();
         defaultFileName = Optional.empty();
         context = Optional.empty();
-        extensionFilter = Optional.empty();
+        extensionFilters = Optional.empty();
     }
 
     public static FileChooserUtil build() {
@@ -58,9 +58,13 @@ public class FileChooserUtil {
         return this;
     }
 
-    public FileChooserUtil setFileExtensionFilter(ExtensionFilter extensionFilter) {
-        this.extensionFilter = Optional.ofNullable(extensionFilter);
+    public FileChooserUtil setFileExtensionFilters(List<ExtensionFilter> extensionFilters) {
+        this.extensionFilters = Optional.ofNullable(extensionFilters);
         return this;
+    }
+    
+    public FileChooser.ExtensionFilter getSelectedFileExtensionFilter() {
+        return this.getFileChooser().getSelectedExtensionFilter();
     }
 
     public final Optional<File> retrieveFileFromFxChooser() {
@@ -103,8 +107,8 @@ public class FileChooserUtil {
         if (context.isPresent()) {
             fileChooser.setInitialDirectory(context.get());
         }
-        if (extensionFilter.isPresent()) {
-            fileChooser.getExtensionFilters().add(extensionFilter.get());
+        if (extensionFilters.isPresent()) {
+            fileChooser.getExtensionFilters().addAll(extensionFilters.get());
         }
         return fileChooser;
     }

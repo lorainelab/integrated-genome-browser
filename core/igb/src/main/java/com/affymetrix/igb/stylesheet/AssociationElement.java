@@ -12,12 +12,9 @@
  */
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.view.factories.MapTierGlyphFactoryI;
-import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 
-public final class AssociationElement implements DrawableElement {
+public final class AssociationElement {
     /*
      Element name can be "METHOD_ASSOCIATION", "METHOD_REGEX_ASSOCIATION",
      or "TYPE_ASSOCIATION"
@@ -93,27 +90,6 @@ public final class AssociationElement implements DrawableElement {
             clone.propertyMap = (PropertyMap) this.propertyMap.clone();
         }
         return clone;
-    }
-
-    public GlyphI symToGlyph(SeqMapViewExtendedI gviewer, SeqSymmetry sym, GlyphI container,
-            Stylesheet stylesheet, PropertyMap context) {
-        GlyphI glyph = null;
-
-        PropertyMap oldContext = propertyMap.getContext();
-        this.propertyMap.setContext(context);
-
-        if (factory == null) {
-            StyleElement se = stylesheet.getStyleByName(styleName);
-            if (se == null) {
-                se = stylesheet.getDefaultStyleElement();
-            }
-            glyph = se.symToGlyph(gviewer, sym, container, stylesheet, propertyMap);
-        } else {
-            glyph = null; // TODO: maybe change the MapViewGlyphFactoryI interface to return a GlyphI ?
-        }
-
-        this.propertyMap.setContext(oldContext);
-        return glyph;
     }
 
     public StringBuffer appendXML(String indent, StringBuffer sb) {

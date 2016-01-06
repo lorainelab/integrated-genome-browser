@@ -12,15 +12,11 @@
  */
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.view.layout.ExpandPacker;
-import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 
 final class ChildrenElement implements Cloneable, XmlAppender {
 
@@ -72,71 +68,6 @@ final class ChildrenElement implements Cloneable, XmlAppender {
 
     ChildrenElement() {
         this.propertyMap = new PropertyMap();
-    }
-
-    /**
-     * Draws the children symmetries as glyphs.
-     *
-     * @param insym the parent sym
-     * @param gl the glyph corresponding to the parent sym. By default, children
-     * symmetries are drawn as glyphs inside this parent glyph, but that can
-     * change depending on the setting of {@link #childContainer}.
-     */
-    void childSymsToGlyphs(SeqMapViewExtendedI gviewer, SeqSymmetry insym, GlyphI gl,
-            Stylesheet stylesheet, PropertyMap context) {
-
-        int childCount = insym.getChildCount();
-        if (childCount > 0) {
-            for (int i = 0; i < childCount; i++) {
-                SeqSymmetry childsym = insym.getChild(i);
-                this.childSymToGlyph(gviewer, childsym, gl, stylesheet, context);
-            }
-        }
-
-        // packing will be handled in the containing <GLYPH> element
-    }
-
-    /**
-     * Draws a single child from the <CHILDREN> element. Generally called
-     * only from inside this class.
-     */
-    private GlyphI childSymToGlyph(SeqMapViewExtendedI gviewer, SeqSymmetry childsym,
-            GlyphI container_glyph, Stylesheet stylesheet, PropertyMap context) {
-        GlyphI result = null;
-
-        PropertyMap oldContext = propertyMap.getContext();
-        this.propertyMap.setContext(context);
-
-        if (matchElements != null && !matchElements.isEmpty()) {
-            Iterator<MatchElement> iter = matchElements.iterator();
-            while (iter.hasNext() && result == null) {
-                MatchElement matchElement = iter.next();
-
-                // If the match element matches, it will return a glyph, otherwise will return null
-                GlyphI match_glyph = matchElement.symToGlyph(gviewer, childsym,
-                        container_glyph, stylesheet, propertyMap);
-                if (match_glyph != null) {
-                    result = match_glyph;
-                }
-            }
-        } // If there were no match elements matched, use the given <STYLE> element
-        else {
-            DrawableElement drawable = styleElement;
-            if (drawable == null) {
-                // NOTE: The current DTD requires that a <STYLE> or <USE_STYLE> be specified,
-                // but I've experimented with the possibility of leaving it blank, in which case
-                // ask the stylesheet for an appropriate style.
-                drawable = stylesheet.getDrawableForSym(childsym);
-            }
-            if (drawable != null) {
-                result = drawable.symToGlyph(gviewer, childsym, container_glyph, stylesheet, propertyMap);
-            } else {
-                SeqUtils.printSymmetry(childsym);
-            }
-        }
-
-        this.propertyMap.setContext(oldContext);
-        return result;
     }
 
     static GlyphI findContainer(GlyphI gl, String container) {

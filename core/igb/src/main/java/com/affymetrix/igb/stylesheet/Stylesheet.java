@@ -12,12 +12,6 @@
  */
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.symmetry.SymWithProps;
-import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.util.BioSeqUtils;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -86,45 +80,6 @@ public final class Stylesheet implements Cloneable, XmlAppender {
         stylename2styleElement.putAll(stylesheet.stylename2styleElement);
     }
 
-    /**
-     * Tries to find a styleElement for the given seq symmetry.
-     * First looks for a styleElement stored in
-     * sym.getProperty(SYM_TO_STYLE_PROPERTY_KEY).
-     * Second looks for a match by feature type (such as an ontology term).
-     * Third looks for a match by feature "method" (i.e. the tier name).
-     */
-    DrawableElement getDrawableForSym(SeqSymmetry sym) {
-        DrawableElement drawable = null;
-        if (sym instanceof SymWithProps) {
-            SymWithProps proper = (SymWithProps) sym;
-            Object o = proper.getProperty(SYM_TO_STYLE_PROPERTY_KEY);
-            if (o instanceof DrawableElement) {
-                drawable = (DrawableElement) o;
-            }
-        }
-        if (drawable == null) {
-            // TODO: not certain of the purpose in this.  Does removing this have any effect?
-			/*if (sym instanceof Das2FeatureRequestSym) {
-             Das2FeatureRequestSym d2r = (Das2FeatureRequestSym) sym;
-             String type = d2r.getType();
-             drawable = getAssociationForType(type);
-             } else
-             */
-            if (sym instanceof GFF3Sym) {
-                GFF3Sym gff = (GFF3Sym) sym;
-                String type = gff.getFeatureType();
-                drawable = getAssociationForType(type);
-            }
-        }
-        if (drawable == null) {
-            drawable = getAssociationForMethod(BioSeqUtils.determineMethod(sym));
-        }
-        if (drawable == null) {
-            drawable = getDefaultStyleElement();
-        }
-        return drawable;
-    }
-
     public AssociationElement getAssociationForFileType(String file_type) {
         if (file_type == null) {
             return null;
@@ -170,10 +125,6 @@ public final class Stylesheet implements Cloneable, XmlAppender {
             // Create a default style that is just boxes inside boxes...
             default_style = new StyleElement();
             default_style.name = "<system-default-style>";
-            default_style.glyphElement = new GlyphElement();
-            default_style.glyphElement.setType(GlyphElement.TYPE_BOX);
-            default_style.glyphElement.childrenElement = new ChildrenElement();
-            default_style.glyphElement.childrenElement.styleElement = default_style;
         }
         return default_style;
     }
@@ -237,16 +188,6 @@ public final class Stylesheet implements Cloneable, XmlAppender {
                 se = ss.getDefaultStyleElement();
             }
             return se;
-        }
-
-        @Override
-        public GlyphI symToGlyph(SeqMapViewExtendedI gviewer, SeqSymmetry sym, GlyphI container,
-                Stylesheet stylesheet, PropertyMap context) {
-            StyleElement referredStyle = getReferredStyle(stylesheet);
-
-            GlyphI containerGlyph = ChildrenElement.findContainer(container, this.childContainer);
-
-            return referredStyle.symToGlyph(gviewer, sym, containerGlyph, stylesheet, context);
         }
 
         @Override

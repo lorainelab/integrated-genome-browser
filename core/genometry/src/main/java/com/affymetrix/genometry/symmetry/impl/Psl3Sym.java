@@ -10,7 +10,6 @@
 package com.affymetrix.genometry.symmetry.impl;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
@@ -85,32 +84,6 @@ public final class Psl3Sym extends UcscPslSym {
             return span;
         } else {
             return super.getSpan(bs);
-        }
-    }
-
-    public boolean getSpan(BioSeq bs, MutableSeqSpan span) {
-        if (bs.equals(otherseq)) {
-            if (same_other_orientation) {
-                span.set(omin, omax, otherseq);
-            } else {
-                span.set(omax, omin, otherseq);
-            }
-            return true;
-        } else {
-            return super.getSpan(bs, span);
-        }
-    }
-
-    public boolean getSpan(int index, MutableSeqSpan span) {
-        if (index == OTHER_INDEX) {
-            if (same_other_orientation) {
-                span.set(omin, omax, otherseq);
-            } else {
-                span.set(omax, omin, otherseq);
-            }
-            return true;
-        } else {
-            return super.getSpan(index, span);
         }
     }
 

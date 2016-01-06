@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantLock;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
@@ -61,10 +62,6 @@ public class FileChooserUtil {
     public FileChooserUtil setFileExtensionFilters(List<ExtensionFilter> extensionFilters) {
         this.extensionFilters = Optional.ofNullable(extensionFilters);
         return this;
-    }
-    
-    public FileChooser.ExtensionFilter getSelectedFileExtensionFilter() {
-        return this.getFileChooser().getSelectedExtensionFilter();
     }
 
     public final Optional<File> retrieveFileFromFxChooser() {

@@ -15,6 +15,7 @@ import com.affymetrix.genometry.util.GFileChooser;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IgbServiceImpl;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
@@ -24,6 +25,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -84,6 +86,19 @@ public abstract class AbstractExportFileAction
         }
     }
 
+    private boolean containsFilter(FileChooser.ExtensionFilter filter, List<FileChooser.ExtensionFilter> filters) {
+        for (FileChooser.ExtensionFilter f : filters) {
+            for (String ext : f.getExtensions()) {
+                if (!Strings.isNullOrEmpty(filter.getExtensions().get(0))
+                        && ext.equals(filter.getExtensions().get(0))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+
     private void saveAsFile(TierGlyph atier) {
         RootSeqSymmetry rootSym = (RootSeqSymmetry) atier.getInfo();
 
@@ -126,25 +141,44 @@ public abstract class AbstractExportFileAction
             keySet.stream().forEach((filter) -> {
                 filter.getExtensions().forEach(filterName -> {
                     FileChooser.ExtensionFilter extensionFilter
-                            = new FileChooser.ExtensionFilter(filterName, filterName);
-                    filters.add(extensionFilter);
+                            = new FileChooser.ExtensionFilter("*." + filterName, "*." + filterName);
+                    if(!containsFilter(extensionFilter, filters)) {
+                        filters.add(extensionFilter);
+                    }
                 });
 
             });
 
-             FileChooserUtil fcUtil = FileChooserUtil.build()
+            FileChooserUtil fcUtil = FileChooserUtil.build()
                     .setFileExtensionFilters(filters)
                     .setContext(savedDir);
-             
-             Optional<File> file = fcUtil.saveFilesFromFxChooser();
+
+            Optional<File> file = fcUtil.saveFilesFromFxChooser();
 
             if (file.isPresent()) {
                 File selectedFile = file.get();
                 Optional<BioSeq> aseq = gmodel.getSelectedSeq();
 
                 try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(selectedFile)))) {
-                    FileChooser.ExtensionFilter selectedFilter = fcUtil.getSelectedFileExtensionFilter();
-                    UniFileFilter swingSelectedFilter = new UniFileFilter("bed");
+
+                    UniFileFilter swingSelectedFilter = null;
+
+                    String selectedFileName = file.get().getName();
+                    String extension = selectedFileName.substring(selectedFileName.lastIndexOf(".") + 1);
+                    boolean isFound = false;
+                    for (UniFileFilter key : filter2writers.get().keySet()) {
+                        for (String ext : key.getExtensions()) {
+                            if (ext.equals(extension)) {
+                                swingSelectedFilter = key;
+                                isFound = true;
+                                break;
+                            }
+                        }
+                        if (isFound) {
+                            break;
+                        }
+                    }
+
                     preferredFilters.put(rootSym.getCategory(), swingSelectedFilter);
                     exportFile(filter2writers.get().get(swingSelectedFilter), dos, aseq.orElse(null), atier);
                 } catch (Exception ex) {

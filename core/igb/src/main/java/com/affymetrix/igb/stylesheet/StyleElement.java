@@ -12,16 +12,12 @@
  */
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-class StyleElement implements DrawableElement {
+class StyleElement {
     /*
      <!ELEMENT STYLE (PROPERTY*, ((MATCH+,ELSE?) | GLYPH))>
      <!ATTLIST STYLE
@@ -40,8 +36,6 @@ class StyleElement implements DrawableElement {
     String childContainer = ".";
     PropertyMap propertyMap;
     List<MatchElement> matchElements;
-    GlyphElement glyphElement;
-
     String name;
 
     StyleElement() {
@@ -56,9 +50,6 @@ class StyleElement implements DrawableElement {
         if (propertyMap != null) {
             clone.propertyMap = (PropertyMap) this.propertyMap.clone();
         }
-        if (glyphElement != null) {
-            clone.glyphElement = (GlyphElement) this.glyphElement.clone();
-        }
         if (matchElements != null) {
             clone.matchElements = new ArrayList<>(matchElements.size());
             for (MatchElement me : matchElements) {
@@ -69,49 +60,8 @@ class StyleElement implements DrawableElement {
         return clone;
     }
 
-    public GlyphI symToGlyph(SeqMapViewExtendedI gviewer, SeqSymmetry sym, GlyphI container,
-            Stylesheet stylesheet, PropertyMap context) {
-        GlyphI glyph = null;
-
-        PropertyMap oldContext = propertyMap.getContext();
-        this.propertyMap.setContext(context);
-
-        if (matchElements != null && !matchElements.isEmpty()) {
-            Iterator<MatchElement> iter = matchElements.iterator();
-            while (iter.hasNext() && glyph == null) {
-                MatchElement matchElement = iter.next();
-
-                // If the match element matches, it will return a glyph, otherwise will return null
-                GlyphI match_glyph = matchElement.symToGlyph(gviewer, sym,
-                        container, stylesheet, propertyMap);
-                if (match_glyph != null) {
-                    glyph = match_glyph;
-                }
-            }
-        } // This test is partially redundant because it is invalid to specify
-        // some match elements and also specify a glyph element, or to omit
-        // the match elements and also omit the glyphElement
-        else if (glyphElement != null) {
-            try {
-                container = ChildrenElement.findContainer(container, childContainer);
-
-                glyph = glyphElement.symToGlyph(gviewer, sym, container, stylesheet, this.propertyMap);
-            } catch (RuntimeException re) {
-                re.printStackTrace();
-                System.out.println("Exception in style: " + name + "  for " + sym);
-            }
-        }
-
-        this.propertyMap.setContext(oldContext);
-        return glyph;
-    }
-
     final String getName() {
         return this.name;
-    }
-
-    void setGlyphElement(GlyphElement glyphElement) {
-        this.glyphElement = glyphElement;
     }
 
     void addMatchElement(MatchElement me) {
@@ -135,9 +85,6 @@ class StyleElement implements DrawableElement {
             for (MatchElement kid : matchElements) {
                 kid.appendXML(indent + "  ", sb);
             }
-        }
-        if (glyphElement != null) {
-            this.glyphElement.appendXML(indent + "  ", sb);
         }
         sb.append(indent).append("</").append(NAME).append(">\n");
         return sb;

@@ -9,8 +9,8 @@
  */
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.common.PreferenceUtils;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.XMLUtils;
 import java.io.File;
 import java.io.FileInputStream;
@@ -362,10 +362,7 @@ public final class XmlStylesheetParser {
             if (child instanceof Element) {
                 Element el = (Element) child;
 
-                if (name.equalsIgnoreCase(GlyphElement.NAME)) {
-                    GlyphElement ge2 = processGlyph(el);
-                    se.setGlyphElement(ge2);
-                } else if (name.equalsIgnoreCase(PropertyMap.PROP_ELEMENT_NAME)) {
+                if (name.equalsIgnoreCase(PropertyMap.PROP_ELEMENT_NAME)) {
                     processProperty(el, se.propertyMap);
                 } else if (name.equalsIgnoreCase(MatchElement.NAME) || name.equalsIgnoreCase(ElseElement.NAME)) {
                     MatchElement me = processMatchElement(el);
@@ -377,44 +374,6 @@ public final class XmlStylesheetParser {
         }
 
         return se;
-    }
-
-    private GlyphElement processGlyph(Element glyphel) throws IOException {
-        GlyphElement ge = new GlyphElement();
-
-        String type = glyphel.getAttribute(GlyphElement.ATT_TYPE);
-        if (GlyphElement.knownGlyphType(type)) {
-            ge.setType(type);
-        } else {
-            logger.warn("<GLYPH type='" + type + "'> not understood");
-            ge.setType(GlyphElement.TYPE_BOX);
-        }
-
-        String position = glyphel.getAttribute(GlyphElement.ATT_POSITION);
-        ge.setPosition(position);
-
-        NodeList children = glyphel.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            String name = child.getNodeName();
-            if (child instanceof Element) {
-                Element el = (Element) child;
-
-                if (name.equalsIgnoreCase(GlyphElement.NAME)) {
-                    GlyphElement ge2 = processGlyph(el);
-                    ge.addGlyphElement(ge2);
-                } else if (name.equalsIgnoreCase(ChildrenElement.NAME)) {
-                    ChildrenElement ce = processChildrenElement(el);
-                    ge.setChildrenElement(ce);
-                } else if (name.equalsIgnoreCase(PropertyMap.PROP_ELEMENT_NAME)) {
-                    processProperty(el, ge.propertyMap);
-                } else {
-                    cantParse(el);
-                }
-            }
-        }
-
-        return ge;
     }
 
     private ChildrenElement processChildrenElement(Element childel) throws IOException {

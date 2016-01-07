@@ -52,11 +52,6 @@ public interface SeqSymmetry {
     /**
      * maybe this method should be called copySpan() ?
      */
-    public boolean getSpan(BioSeq seq, MutableSeqSpan span);
-
-    /**
-     * maybe this method should be called copySpan() ?
-     */
     public boolean getSpan(int index, MutableSeqSpan span);
 
     /**

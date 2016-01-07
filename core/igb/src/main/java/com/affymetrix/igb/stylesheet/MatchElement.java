@@ -12,13 +12,11 @@ package com.affymetrix.igb.stylesheet;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.BioSeqUtils;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-class MatchElement implements DrawableElement {
+class MatchElement {
 
 //<!ELEMENT MATCH (PROPERTY*, ((MATCH+,ELSE?) | (STYLE|USE_STYLE)))>
 //<!ATTLIST MATCH
@@ -69,37 +67,6 @@ class MatchElement implements DrawableElement {
 
     MatchElement() {
         this.propertyMap = new PropertyMap();
-    }
-
-    /**
-     * NOT IMPLEMENTED. If this MatchElement, or one of its children, matcheds
-     * the given symmetry, then a glyph will be created and returned. Otherwise,
-     * will return null.
-     */
-    public GlyphI symToGlyph(SeqMapViewExtendedI gviewer, SeqSymmetry sym, GlyphI gl,
-            Stylesheet stylesheet, PropertyMap context) {
-        PropertyMap oldContext = propertyMap.getContext();
-        propertyMap.setContext(context);
-
-        // If a sub_matcher matches, use it to make the glyph,
-        // otherwise if this matches, make it ourselves,
-        // otherwise, if no match, return null
-        GlyphI result = null;
-
-        if (subMatchList != null) {
-            for (MatchElement me : subMatchList) {
-                result = me.symToGlyph(gviewer, sym, gl, stylesheet, propertyMap);
-            }
-        } // If none of the sub-matches matched, then check whether this matches,
-        // and if so, draw it ourselves
-        else if (styleElement != null) {
-            if (matches(sym)) {
-                result = styleElement.symToGlyph(gviewer, sym, gl, stylesheet, propertyMap);
-            }
-        }
-
-        propertyMap.setContext(oldContext);
-        return result;
     }
 
     static boolean knownTestType(String type) {

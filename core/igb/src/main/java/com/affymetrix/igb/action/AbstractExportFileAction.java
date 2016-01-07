@@ -86,65 +86,19 @@ public abstract class AbstractExportFileAction
         }
     }
 
-    private boolean containsFilter(FileChooser.ExtensionFilter filter, List<FileChooser.ExtensionFilter> filters) {
-        for (FileChooser.ExtensionFilter f : filters) {
-            for (String ext : f.getExtensions()) {
-                if (!Strings.isNullOrEmpty(filter.getExtensions().get(0))
-                        && ext.equals(filter.getExtensions().get(0))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-
     private void saveAsFile(TierGlyph atier) {
         RootSeqSymmetry rootSym = (RootSeqSymmetry) atier.getInfo();
 
         Optional<Map<UniFileFilter, AnnotationWriter>> filter2writers = model.getFilterToWriters(rootSym.getCategory());
         if (filter2writers.isPresent() && !filter2writers.get().isEmpty()) {
-//            JFileChooser chooser = new GFileChooser();
-//            chooser.setAcceptAllFileFilterUsed(false);
-//            chooser.setMultiSelectionEnabled(false);
-//            chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-//            filter2writers.get().keySet().forEach(chooser::addChoosableFileFilter);
-//            UniFileFilter preferredFilter = preferredFilters.get(rootSym.getCategory());
-//            if (preferredFilter == null) {
-//                chooser.setFileFilter(chooser.getChoosableFileFilters()[0]);
-//            } else {
-//                for (FileFilter filter : chooser.getChoosableFileFilters()) {
-//                    if (filter.getDescription().equals(preferredFilter.getDescription())) {
-//                        chooser.setFileFilter(filter);
-//                        break;
-//                    }
-//                }
-//            }
-//
-//            int option = chooser.showSaveDialog(null);
-//            if (option == JFileChooser.APPROVE_OPTION) {
-//                
-//                Optional<BioSeq> aseq = gmodel.getSelectedSeq();
-//                File fil = chooser.getSelectedFile();
-//                try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)))) {
-//                    UniFileFilter selectedFilter = (UniFileFilter) chooser.getFileFilter();
-//                    preferredFilters.put(rootSym.getCategory(), selectedFilter);
-//                    exportFile(filter2writers.get().get(selectedFilter), dos, aseq.orElse(null), atier);
-//                } catch (Exception ex) {
-//                    ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
-//                }
-//                FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-//            }
             File savedDir = FileTracker.DATA_DIR_TRACKER.getFile();
             List<FileChooser.ExtensionFilter> filters = Lists.newArrayList();
             Set<UniFileFilter> keySet = filter2writers.get().keySet();
             keySet.stream().forEach((filter) -> {
                 filter.getExtensions().forEach(filterName -> {
                     FileChooser.ExtensionFilter extensionFilter
-                            = new FileChooser.ExtensionFilter("*." + filterName, "*." + filterName);
-                    if(!containsFilter(extensionFilter, filters)) {
-                        filters.add(extensionFilter);
-                    }
+                            = new FileChooser.ExtensionFilter(filter.getDescription(), "*." + filterName);
+                    filters.add(extensionFilter);
                 });
 
             });

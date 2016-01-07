@@ -122,6 +122,7 @@
         <module>plugins/Keybinding-registry</module>
         <module>plugins/cache</module>
         <module>plugins/cache-api</module>
+        <module>plugins/org.lorainelab.igb.error.reporter.api</module>
         <module>plugins/feedback</module>
         <module>plugins/external-sort</module>
         <module>plugins/narrowpeak</module>
@@ -489,6 +490,11 @@
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>cache-api</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lorainelab.igb</groupId>
+                <artifactId>org.lorainelab.igb.error.reporter.api</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>

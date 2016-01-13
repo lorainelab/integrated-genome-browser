@@ -17,7 +17,6 @@ import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import org.lorainelab.igb.cache.api.CacheStatus;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +40,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.broad.tribble.readers.LineReader;
 import org.broad.tribble.readers.TabixIteratorLineReader;
 import org.broad.tribble.readers.TabixReader;
+import org.lorainelab.igb.cache.api.CacheStatus;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -280,8 +280,13 @@ public class SymLoaderTabix extends SymLoader {
     public static SymLoader getSymLoader(SymLoader sym) {
         try {
             URI uri = new URI(sym.uri.toString() + ".tbi");
-            if (sym instanceof LineProcessor && LocalUrlCacher.isValidRequest(uri)) {
-                return new SymLoaderTabix(sym.uri, Optional.ofNullable(sym.getIndexUri()), sym.featureName, sym.genomeVersion, (LineProcessor) sym);
+            if (sym instanceof LineProcessor) {
+                Optional<URI> indexUri = Optional.ofNullable(sym.getIndexUri());
+                if (indexUri.isPresent() && LocalUrlCacher.isValidRequest(indexUri.get())) {
+                    return new SymLoaderTabix(sym.uri, indexUri, sym.featureName, sym.genomeVersion, (LineProcessor) sym);
+                } else if (LocalUrlCacher.isValidRequest(uri)) {
+                    return new SymLoaderTabix(sym.uri, Optional.ofNullable(uri), sym.featureName, sym.genomeVersion, (LineProcessor) sym);
+                }
             }
         } catch (URISyntaxException ex) {
             Logger.getLogger(SymLoaderTabix.class.getName()).log(Level.SEVERE, null, ex);
@@ -319,7 +324,7 @@ public class SymLoaderTabix extends SymLoader {
                     try {
                         fileIs = remoteFileCacheService.getFilebyUrl(fileUrl, true);
                         if (indexUri != null) {
-                            
+
                         } else {
                             indexUri = new URI(fileUrl.toString() + ".tbi");
                         }

@@ -58,7 +58,6 @@
             <groupId>com.affymetrix</groupId>
             <artifactId>igbSwingExt</artifactId>  
             <scope>runtime</scope>     
- 
         </dependency>   
         <dependency>
             <groupId>com.affymetrix</groupId>
@@ -266,19 +265,16 @@
             <groupId>com.affymetrix</groupId>
             <artifactId>thresholding</artifactId>
             <scope>runtime</scope>
-        
         </dependency>
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>tutorial</artifactId>
             <scope>runtime</scope>
-      
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
             <artifactId>update</artifactId>
             <scope>runtime</scope>
-
         </dependency> 
         <dependency> 
             <groupId>com.affymetrix</groupId>
@@ -290,11 +286,6 @@
             <artifactId>paired-data-preprocessor</artifactId>
             <scope>runtime</scope>       
         </dependency> 
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>track-operations-panel</artifactId>
-            <scope>runtime</scope>       
-        </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
@@ -375,6 +366,71 @@
         <dependency> 
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>external-sort</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>context-menu-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>track-operations-panel</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.dependencymanager</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.http.servlet-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.http.jetty</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.remoteserviceadmin</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>org.lorainelab.igb.remote.services.commons</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>org.lorainelab.igb.remote.services.discovery.provider.configured</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>org.lorainelab.igb.remote.services.topology.manager</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>org.lorainelab.igb.remote.services.distribution.provider.http</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

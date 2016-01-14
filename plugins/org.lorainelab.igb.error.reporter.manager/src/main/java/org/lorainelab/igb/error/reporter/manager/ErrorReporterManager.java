@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 @Component(immediate = true)
 public class ErrorReporterManager {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ErrorReporterManager.class);
     private final LoggerContext loggerContext;
     private ErrorReportingAppender errorReportingAppender;
@@ -31,28 +31,28 @@ public class ErrorReporterManager {
     private final ch.qos.logback.classic.Logger rootLogger;
     private ErrorReporter errorReporter;
     private BundleContext bundleContext;
-    
+
     public ErrorReporterManager() {
         rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         loggerContext = rootLogger.getLoggerContext();
     }
-    
+
     @Activate
     void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
         setupErrorReporterLogging();
     }
-    
+
     @Deactivate
     void deactivate() {
         tearDownErrorReporterLogging();
     }
-    
+
     @Reference
     public void setErrorReporter(ErrorReporter errorReporter) {
         this.errorReporter = errorReporter;
     }
-    
+
     private void setupErrorReporterLogging() {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(stream);
@@ -62,10 +62,17 @@ public class ErrorReporterManager {
             protected void append(ILoggingEvent eventObject) {
                 super.append(eventObject);
                 if (eventObject.getLevel().equals(Level.ERROR)) {
-                    errorReportingAppender.recordErrorLogMessage(eventObject.getFormattedMessage());
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(eventObject.getFormattedMessage());
+                    sb.append("\n");
+                    for (StackTraceElement element : eventObject.getCallerData()) {
+                        sb.append(element.toString());
+                        sb.append("\n");
+                    }
+                    errorReportingAppender.recordErrorLogMessage(sb.toString());
                 }
             }
-            
+
         };
         outputStreamAppender.setName("Remote Error Appender");
         outputStreamAppender.setContext(loggerContext);
@@ -82,10 +89,10 @@ public class ErrorReporterManager {
         rootLogger.addAppender(outputStreamAppender);
 
     }
-    
+
     private void tearDownErrorReporterLogging() {
         rootLogger.detachAppender(outputStreamAppender);
         outputStreamAppender.stop();
     }
-    
+
 }

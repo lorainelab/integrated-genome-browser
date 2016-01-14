@@ -35,7 +35,7 @@ public final class ErrorReportingAppender {
     private final ScheduledExecutorService scheduler;
 
     public void initializeScheduledErrorReports() {
-        final Runnable beeper = () -> {
+        final Runnable errorReportAction = () -> {
             if (!errorInfo.isEmpty()) {
                 if (rateLimiter.tryAcquire()) {
                     errorReporter.report(errorInfo, clientInfo);
@@ -43,7 +43,7 @@ public final class ErrorReportingAppender {
                 }
             }
         };
-        final ScheduledFuture<?> errorReportScheduler = scheduler.scheduleAtFixedRate(beeper, 15, 15, SECONDS);
+        final ScheduledFuture<?> errorReportScheduler = scheduler.scheduleAtFixedRate(errorReportAction, 15, 15, SECONDS);
         scheduler.schedule(() -> {
             errorReportScheduler.cancel(true);
         }, Integer.MAX_VALUE, TimeUnit.DAYS);

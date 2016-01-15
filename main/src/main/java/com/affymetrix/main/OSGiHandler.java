@@ -160,12 +160,6 @@ public class OSGiHandler {
             configProps.put(FRAMEWORK_STORAGE, getCacheDir());
             CONFIG_BUNDLE.keySet().stream().forEach((key) -> configProps.put(key, CONFIG_BUNDLE.getString(key)));
             if (isDevelopmentMode()) {
-                configProps.put("org.osgi.service.http.port", "8888");
-                //TODO configProps.put("obr.repository.url", "localurl");
-                configProps.put("felix.webconsole.manager.root", "/system/console");
-                configProps.put("org.apache.felix.http.jettyEnabled", "true");
-                configProps.put("felix.webconsole.username", "igbdev");
-                configProps.put("felix.webconsole.password", "igbdev");
                 //File Install Properties
                 configProps.put("felix.fileinstall.dir", "../bundles/dynamic");
             }

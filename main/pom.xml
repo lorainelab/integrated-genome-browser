@@ -375,7 +375,17 @@
         </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
+            <artifactId>context-menu-service</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>track-operations-panel</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.configadmin</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -431,6 +441,21 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.http.bundle</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>org.lorainelab.igb.error.reporter.api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>org.lorainelab.igb.error.reporter.manager</artifactId>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

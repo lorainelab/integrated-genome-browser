@@ -16,6 +16,8 @@ import java.util.Set;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A way of mapping synonyms to each other.
@@ -23,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
  * @version $Id: SynonymLookup.java 9461 2011-11-17 21:19:39Z jfvillal $
  */
 public abstract class SynonymLookup implements SynonymLookupService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SynonymLookup.class);
 
     /**
      * Default behaviour of case sensitivity for synonym lookups. If true, searches will be cases sensitive. The default
@@ -79,6 +83,8 @@ public abstract class SynonymLookup implements SynonymLookupService {
                     addSynonyms(row);
                 }
             }
+        } catch (Throwable t) {
+            LOG.error(t.getMessage(), t);
         }
     }
 

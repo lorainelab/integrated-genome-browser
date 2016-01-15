@@ -1,6 +1,5 @@
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -8,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -44,47 +42,6 @@ public class FastaParserTest {
         for (int i = 0; i < expected_result.length; i++) {
             assertEquals((char) expected_result[i], (char) result[i]);
         }
-    }
-
-    @Test
-    public void testParseAll() throws Exception {
-        String filename_1 = "data/fasta/FASTA_chrQ.fasta";
-        filename_1 = FastaParserTest.class.getClassLoader().getResource(filename_1).getFile();
-        assertTrue(new File(filename_1).exists());
-        InputStream istr_1 = new FileInputStream(filename_1);
-        assertNotNull(istr_1);
-
-        String filename_2 = "data/fasta/FASTA_small_genome.fasta";
-        filename_2 = FastaParserTest.class.getClassLoader().getResource(filename_2).getFile();
-        assertTrue(new File(filename_2).exists());
-        InputStream istr_2 = new FileInputStream(filename_2);
-        assertNotNull(istr_2);
-
-        GenomeVersion seq_group = new GenomeVersion("test");
-
-        //FastaParser instance = new FastaParser();
-        List<BioSeq> seqs = FastaParser.parseAll(istr_1, seq_group);
-
-        assertEquals(1, seqs.size());
-        assertEquals(1, seq_group.getSeqCount());
-
-        BioSeq seq = seqs.get(0);
-        assertEquals("chrQ", seq.getId());
-
-        seqs = FastaParser.parseAll(istr_2, seq_group);
-
-        assertEquals(3, seqs.size());
-        assertEquals(4, seq_group.getSeqCount());
-
-        seq = seqs.get(0);
-        assertEquals("gi|5524211|gb|AAD44166.1| cytochrome b [Elephas maximus maximus]", seq.getId());
-
-        seq = seqs.get(1);
-        assertEquals("SEQUENCE_1", seq.getId());
-
-        seq = seqs.get(2);
-        assertEquals("SEQUENCE_2", seq.getId());
-        assertEquals("SATV", seq.getResidues(0, 4));
     }
 
     @Test

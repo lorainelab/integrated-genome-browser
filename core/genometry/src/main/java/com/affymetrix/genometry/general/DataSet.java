@@ -195,11 +195,22 @@ public final class DataSet {
     }
 
     public Optional<URI> getIndex() {
-        if (this.getProperties() != null && getProperties().containsKey("index")) {
-            String fileIndex = getProperties().get("index");
-            File file = new File(fileIndex);
-            URI indexUri = file.toURI();
-            return Optional.ofNullable(indexUri);
+        try {
+            if (this.getProperties() != null && getProperties().containsKey("index")) {
+                String fileIndex = getProperties().get("index");
+                URI fileIndexUri = null;
+                if (fileIndex.startsWith("file")) {
+                    File file = new File(fileIndex);
+                    fileIndexUri = file.toURI();
+                } else {
+                    fileIndex = fileIndex.replace(" ", "%20");
+                    fileIndexUri = new URI(fileIndex);
+                }
+
+                return Optional.ofNullable(fileIndexUri);
+            }
+        } catch (Exception ex) {
+            return Optional.empty();
         }
         return Optional.empty();
     }
@@ -287,8 +298,8 @@ public final class DataSet {
     }
 
     /**
-     * Split the requested span into spans that still need to be loaded. Note we can't filter inside spans (in general)
-     * until after the data is returned.
+     * Split the requested span into spans that still need to be loaded. Note we
+     * can't filter inside spans (in general) until after the data is returned.
      */
     public synchronized SeqSymmetry optimizeRequest(SeqSpan span) {
         MutableSeqSymmetry query_sym = new SimpleMutableSeqSymmetry();

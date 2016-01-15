@@ -5,7 +5,6 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import org.lorainelab.igb.synonymlookup.services.SynonymLookupService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,6 +15,9 @@ import java.util.Set;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.lorainelab.igb.synonymlookup.services.SynonymLookupService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A way of mapping synonyms to each other.
@@ -23,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
  * @version $Id: SynonymLookup.java 9461 2011-11-17 21:19:39Z jfvillal $
  */
 public abstract class SynonymLookup implements SynonymLookupService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SynonymLookup.class);
 
     /**
      * Default behaviour of case sensitivity for synonym lookups. If true, searches will be cases sensitive. The default
@@ -79,6 +83,8 @@ public abstract class SynonymLookup implements SynonymLookupService {
                     addSynonyms(row);
                 }
             }
+        } catch (Throwable t) {
+            LOG.error(t.getMessage(), t);
         }
     }
 

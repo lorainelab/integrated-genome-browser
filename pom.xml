@@ -73,6 +73,14 @@
             <url>http://eos.transvar.org/nexus/content/groups/public</url>
         </pluginRepository>
     </pluginRepositories>
+    
+    <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <name>eos nexus</name>
+            <url>http://eos.transvar.org/nexus/content/repositories/thirdparty/</url>
+        </repository>
+    </distributionManagement>
 
 
     <modules>

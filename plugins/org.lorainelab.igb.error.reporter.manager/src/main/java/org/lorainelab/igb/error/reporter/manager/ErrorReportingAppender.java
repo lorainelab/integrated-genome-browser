@@ -20,10 +20,13 @@ import org.lorainelab.igb.error.reporter.api.model.EnvironmentInfo;
 import org.lorainelab.igb.error.reporter.api.model.ErrorInfo;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ErrorReportingAppender {
 
-    private static final double TPS = 1.0 / 5;
+    private static final Logger LOG = LoggerFactory.getLogger(ErrorReportingAppender.class);
+    private static final double TPS = 1.0 / 5; //TODO change to 1.0/60 before release
     private final ErrorReporter errorReporter;
     private final Set<BundleInfo> runtimeBundleInfo;
     private EnvironmentInfo environmentInfo;
@@ -38,7 +41,11 @@ public final class ErrorReportingAppender {
         final Runnable errorReportAction = () -> {
             if (!errorInfo.isEmpty()) {
                 if (rateLimiter.tryAcquire()) {
-                    errorReporter.report(errorInfo, clientInfo);
+                    try {
+                        errorReporter.report(errorInfo, clientInfo);
+                    } catch (Throwable t) {
+                        LOG.debug(t.getMessage(), t);
+                    }
                     errorInfo.clear();
                 }
             }

@@ -16,6 +16,15 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import static org.lorainelab.igb.quickload.QuickloadConstants.GENOME_TXT;
 import org.lorainelab.igb.quickload.model.annots.QuickloadFile;
 import org.lorainelab.igb.quickload.util.QuickloadUtils;
@@ -27,15 +36,6 @@ import static org.lorainelab.igb.quickload.util.QuickloadUtils.loadSupportedGeno
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.toExternalForm;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.SpeciesInfo;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -126,7 +126,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
                 useMirror = true;
                 initialize();
             } else {
-                logger.error("Missing required quickload file, or could not reach source. This quickloak source will be disabled for this session.");
+                logger.warn("Missing required quickload file, or could not reach source. This quickloak source will be disabled for this session.");
                 status = ResourceStatus.NotResponding;
                 useMirror = false; //reset to default url since mirror may have been tried
             }

@@ -19,7 +19,6 @@ import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import org.lorainelab.igb.javafx.FileChooserUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -30,6 +29,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
+import org.lorainelab.igb.javafx.FileChooserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class LoadFileAction extends OpenURIAction {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoadFileAction.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoadFileAction.class);
 
     private static final long serialVersionUID = 1L;
     private static final LoadFileAction ACTION = new LoadFileAction();
@@ -85,7 +85,7 @@ public final class LoadFileAction extends OpenURIAction {
                 }
                 openURIOrRunScript(new URI(url.trim()), loadGroup, url, all_known_types);
             } catch (URISyntaxException ex) {
-                ex.printStackTrace();
+                LOG.error(ex.getMessage(), ex);
                 ErrorHandler.errorPanel("INVALID URL", url + "\n Url provided is not valid: ", Level.SEVERE);
             }
         }

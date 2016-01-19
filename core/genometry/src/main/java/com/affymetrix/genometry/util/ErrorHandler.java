@@ -13,8 +13,6 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.OKAction;
 import com.affymetrix.genometry.event.ReportBugAction;
 import java.awt.Component;
-import java.awt.Toolkit;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,15 +21,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Simple routines for bringing-up an error message panel and also logging the
- * error to standard output.
+ * Simple routines for bringing-up an error message panel and also logging the error to standard output.
  *
  * @author ed
  */
 public abstract class ErrorHandler implements DisplaysError {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErrorHandler.class);
 
     private static DisplaysError displayHandler;
 
@@ -80,6 +80,7 @@ public abstract class ErrorHandler implements DisplaysError {
         errorPanel(title, message, new ArrayList<>(), actions, level);
     }
 
+    @Override
     public void showError(final String title, final String message, final List<GenericAction> actions, Level level) {
         final Component scroll_pane = makeScrollPane(message);
 
@@ -95,18 +96,10 @@ public abstract class ErrorHandler implements DisplaysError {
         final JDialog dialog = pane.createDialog(null, title);
         dialog.setResizable(true);
 
-        if (SwingUtilities.isEventDispatchThread()) {
+        SwingUtilities.invokeLater(() -> {
             processDialog(pane, dialog, actions);
-        } else {
-            SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-                @Override
-                protected Void doInBackground() throws Exception {
-                    processDialog(pane, dialog, actions);
-                    return null;
-                }
-            };
-            sw.execute();
-        }
+        });
+
     }
 
     private static void errorPanel(String title, String message, Throwable e, Level level) {
@@ -118,50 +111,14 @@ public abstract class ErrorHandler implements DisplaysError {
     }
 
     /**
-     * Opens a JOptionPane.ERROR_MESSAGE panel with the given frame as its
-     * parent. This is designed to probably be safe from the EventDispatchThread
-     * or from any other thread.
+     * Opens a JOptionPane.ERROR_MESSAGE panel with the given frame as its parent. This is designed to probably be safe
+     * from the EventDispatchThread or from any other thread.
      */
-    private static void errorPanel(final String title, String message,
-            final List<Throwable> errs, final List<GenericAction> actions,
+    private static void errorPanel(final String title, String message, final List<Throwable> errs,
+            final List<GenericAction> actions,
             Level level) {
-        // logging the error to standard out is redundant, but preserves
-        // the past behavior.  The flush() methods make sure that
-        // messages from system.out and system.err don't get out-of-synch
-        System.out.flush();
-        System.err.flush();
-        System.err.println();
-        System.err.println("-------------------------------------------------------");
-
-        if (!errs.isEmpty()) {
-            for (Throwable e : errs) {
-                String error_message = e.toString();
-                message = message + "\n" + error_message;
-                Throwable cause = e.getCause();
-                while (cause != null) {
-                    message += "\n\nCaused by:\n" + cause.toString();
-                    cause = cause.getCause();
-                }
-            }
-        }
-
-        System.err.println(title + ": " + message);
-        if (!errs.isEmpty()) {
-            for (Throwable e : errs) {
-                if (e instanceof FileNotFoundException) {
-                    // do nothing.  Error already printed above, stack trace not usually useful
-                    //System.err.println("FileNotFoundException: " + e.getMessage());
-                } else {
-                    message += "\nSee console output for more details about this error.";
-                    e.printStackTrace(System.err);
-                }
-            }
-        }
-
-        System.err.println("-------------------------------------------------------");
-        System.err.println();
-        System.err.flush();
-        Toolkit.getDefaultToolkit().beep();
+        LOG.warn("Cannot open file: Could not load index file for file:/home/dcnorris/Downloads/cold_control.mm.bam. An index file is required for BAM files.");
+        errs.stream().forEach(error -> LOG.warn(error.getMessage(), error));
         displayHandler.showError(title, message, actions, level);
     }
 

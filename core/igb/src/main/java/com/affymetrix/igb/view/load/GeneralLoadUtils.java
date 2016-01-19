@@ -63,6 +63,7 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.lorainelab.synonymlookup.services.ChromosomeSynonymLookup;
 import com.lorainelab.synonymlookup.services.GenomeVersionSynonymLookup;
+import com.lorainelab.synonymlookup.services.impl.SynonymLookup;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1142,7 +1143,6 @@ public final class GeneralLoadUtils {
                     String errorMessage = MessageFormat.format(IGBConstants.BUNDLE.getString("bamIndexNotFound"), uri);
                     ErrorHandler.errorPanel("Cannot open file", errorMessage, Level.WARNING);
                     version = null;
-
                 }
                 break;
             case USEQ_EXT:

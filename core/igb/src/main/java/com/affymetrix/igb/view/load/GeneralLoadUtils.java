@@ -61,8 +61,6 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
-import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -87,6 +85,8 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.zip.ZipInputStream;
 import javax.swing.JLabel;
+import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1142,7 +1142,6 @@ public final class GeneralLoadUtils {
                     String errorMessage = MessageFormat.format(IGBConstants.BUNDLE.getString("bamIndexNotFound"), uri);
                     ErrorHandler.errorPanel("Cannot open file", errorMessage, Level.WARNING);
                     version = null;
-
                 }
                 break;
             case USEQ_EXT:

@@ -32,7 +32,8 @@ public class AppManagerMenuProvider extends GenericAction implements IgbMenuItem
     private AppManagerFrame frame;
 
     public AppManagerMenuProvider() {
-        super("Open App Manager", null, null);
+        super("Open App Manager", "16x16/actions/fa-circle.png",
+                "22x22/actions/fa-circle.png");
         menuItem = new JRPMenuItem("App Manager", this, MENU_ITEM_WEIGHT);
     }
 

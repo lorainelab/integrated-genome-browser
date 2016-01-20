@@ -6,7 +6,6 @@ import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.event.AxisPopupListener;
-import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.event.GenericActionListener;
@@ -73,6 +72,12 @@ import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.window.service.IWindowService;
+import java.net.Authenticator;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+import javax.swing.Timer;
 import org.lorainelab.igb.services.IgbService;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.ALT_SPLICE_VIEW_TAB;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.COMPONENT_NAME;
@@ -82,12 +87,6 @@ import org.lorainelab.igb.services.search.ISearchModeSym;
 import org.lorainelab.igb.services.search.SearchListener;
 import org.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import java.net.Authenticator;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import javax.swing.Action;
-import javax.swing.KeyStroke;
-import javax.swing.Timer;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -184,7 +183,6 @@ public class Activator implements BundleActivator {
         ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchModeSym.class);
         ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ISearchHints.class);
 
-        addPopupListener(bundleContext);
         addAxisPopupListener(bundleContext);
         addScriptListener(bundleContext);
         initSeqMapViewActions();
@@ -361,23 +359,6 @@ public class Activator implements BundleActivator {
                 /* Do Nothing */ }
         },
                 null
-        );
-    }
-
-    private void addPopupListener(final BundleContext bundleContext) {
-        ExtensionPointHandler<ContextualPopupListener> popupExtensionPoint = ExtensionPointHandler.getOrCreateExtensionPoint(bundleContext, ContextualPopupListener.class);
-        popupExtensionPoint.addListener(
-                new ExtensionPointListener<ContextualPopupListener>() {
-                    @Override
-                    public void addService(ContextualPopupListener listener) {
-                        IGB.getInstance().getMapView().addPopupListener(listener);
-                    }
-
-            @Override
-            public void removeService(ContextualPopupListener listener) {
-                IGB.getInstance().getMapView().removePopupListener(listener);
-            }
-        }
         );
     }
 

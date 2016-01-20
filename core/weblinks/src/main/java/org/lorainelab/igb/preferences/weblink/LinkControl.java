@@ -7,18 +7,19 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
-import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
-import org.lorainelab.igb.context.menu.model.ContextMenuItem;
-import org.lorainelab.igb.context.menu.model.MenuIcon;
-import org.lorainelab.igb.preferences.weblink.model.WebLink;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.swing.JPopupMenu;
+import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
 import org.lorainelab.igb.context.menu.MenuSection;
+import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
+import org.lorainelab.igb.context.menu.model.ContextMenuItem;
+import org.lorainelab.igb.context.menu.model.MenuIcon;
+import org.lorainelab.igb.preferences.weblink.model.WebLink;
 import org.slf4j.LoggerFactory;
 
 @Component(immediate = true)
@@ -35,7 +36,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
     }
 
     @Override
-    public Optional<ContextMenuItem> buildMenuItem(AnnotationContextEvent event) {
+    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event) {
         if (event.getSelectedItems().isEmpty()) {
             return Optional.empty();
         }
@@ -46,11 +47,6 @@ public class LinkControl implements AnnotationContextMenuProvider {
         return buildContextMenuItem(primarySym);
     }
 
-    @Override
-    public MenuSection getMenuSection() {
-        return MenuSection.INFORMATION;
-    }
-
     public void popupNotify(JPopupMenu popup, SeqSymmetry primarySym) {
         if (primarySym == null) {
             return;
@@ -58,7 +54,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
 
     }
 
-    private Optional<ContextMenuItem> buildContextMenuItem(SeqSymmetry primarySym) {
+    private Optional<List<ContextMenuItem>> buildContextMenuItem(SeqSymmetry primarySym) {
         List<WebLink> results = new ArrayList<>();
         results.addAll(WebLinkUtils.getServerList().getWebLinks(primarySym));
         results.addAll(WebLinkUtils.getLocalList().getWebLinks(primarySym));
@@ -79,12 +75,13 @@ public class LinkControl implements AnnotationContextMenuProvider {
                     GeneralUtils.browse(url);
                     return t;
                 });
+                contextMenuItem.setMenuSection(MenuSection.INFORMATION);
                 try (InputStream resourceAsStream = LinkControl.class.getClassLoader().getResourceAsStream(SEARCH_WEB_ICONPATH)) {
                     contextMenuItem.setMenuIcon(new MenuIcon(resourceAsStream));
                 } catch (Exception ex) {
                     logger.error(ex.getMessage(), ex);
                 }
-                return Optional.of(contextMenuItem);
+                return Optional.of(Arrays.asList(contextMenuItem));
 
             }
         } else {
@@ -101,6 +98,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
                     GeneralUtils.browse(url);
                     return t;
                 });
+                childContextMenu.setMenuSection(MenuSection.INFORMATION);
                 if (!Strings.isNullOrEmpty(webLink.getImageIconPath())) {
                     try (InputStream resourceAsStream = LinkControl.class.getClassLoader().getResourceAsStream(webLink.getImageIconPath())) {
                         childContextMenu.setMenuIcon(new MenuIcon(resourceAsStream));
@@ -112,13 +110,14 @@ public class LinkControl implements AnnotationContextMenuProvider {
             }
             name = "Search Web";
             ContextMenuItem parentContextMenu = new ContextMenuItem(name, childMenuItems);
+            parentContextMenu.setMenuSection(MenuSection.INFORMATION);
             try (InputStream resourceAsStream = LinkControl.class.getClassLoader().getResourceAsStream(SEARCH_WEB_ICONPATH)) {
                 parentContextMenu.setMenuIcon(new MenuIcon(resourceAsStream));
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
             }
 
-            return Optional.ofNullable(parentContextMenu);
+            return Optional.ofNullable(Arrays.asList(parentContextMenu));
         }
         return Optional.empty();
     }

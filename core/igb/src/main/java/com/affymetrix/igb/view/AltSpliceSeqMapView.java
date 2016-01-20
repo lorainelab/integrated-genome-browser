@@ -14,19 +14,17 @@ import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.swing.JRPPopupMenu;
 import com.affymetrix.igb.swing.RPAdjustableJSlider;
 import com.affymetrix.igb.tiers.TrackStyle;
-import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.Adjustable;
 import java.awt.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SwingWorker;
+import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 
 final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
 
@@ -393,11 +391,6 @@ final class AltSpliceSeqMapView extends SeqMapView implements SeqMapRefreshed {
     @Override
     protected void addZoomOutYButton(String id) {
         // Do nothing
-    }
-
-    @Override
-    protected void preparePopup(JRPPopupMenu popup, NeoMouseEvent nevt) {
-        // No right click menu in slice view
     }
 
 }

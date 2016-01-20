@@ -5,6 +5,7 @@
  */
 package org.lorainelab.igb.context.menu;
 
+import java.util.List;
 import java.util.Optional;
 import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
 import org.lorainelab.igb.context.menu.model.ContextMenuItem;
@@ -16,8 +17,6 @@ import org.lorainelab.igb.context.menu.model.ContextMenuItem;
  */
 public interface AnnotationContextMenuProvider {
 
-    public Optional<ContextMenuItem> buildMenuItem(AnnotationContextEvent event);
-
-    public MenuSection getMenuSection();
+    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event);
 
 }

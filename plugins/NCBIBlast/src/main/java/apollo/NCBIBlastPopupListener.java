@@ -4,22 +4,34 @@ import apollo.action.BlastPSearchAction;
 import apollo.action.BlastSearchAction;
 import apollo.action.BlastXSearchAction;
 import com.affymetrix.genometry.event.AxisPopupListener;
-import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JMenuItem;
+import java.util.Optional;
 import javax.swing.JPopupMenu;
+import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
+import org.lorainelab.igb.context.menu.MenuSection;
+import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
+import org.lorainelab.igb.context.menu.model.ContextMenuItem;
+import org.lorainelab.igb.context.menu.model.MenuIcon;
+import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author hiralv
  */
-public class NCBIBlastPopupListener implements ContextualPopupListener, AxisPopupListener {
+public class NCBIBlastPopupListener implements AnnotationContextMenuProvider, AxisPopupListener {
 
+    private static final Logger LOG = LoggerFactory.getLogger(NCBIBlastPopupListener.class);
+    private static final String BLASTP_NR_PROTEIN_DATABASE = "BLASTP nr protein database";
+    private static final String BLASTX_NR_PROTEIN_DATABASE = "BLASTX nr protein database";
     private final SeqMapViewI smv;
     private final BlastSearchAction blastXAction, blastPAction;
+    private static final String NCBI_ICONPATH = "ncbi.png";
 
     public NCBIBlastPopupListener(SeqMapViewI smv) {
         this.smv = smv;
@@ -28,22 +40,45 @@ public class NCBIBlastPopupListener implements ContextualPopupListener, AxisPopu
     }
 
     @Override
-    public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_items, SeqSymmetry primary_sym) {
-        if (!selected_items.isEmpty() && !(selected_items.get(0) instanceof GraphSym)) {
-            JMenuItem remote_ncbi_blast_action = new JMenuItem(blastXAction);
-            remote_ncbi_blast_action.setEnabled(blastXAction.isEnabled());
-            popup.add(remote_ncbi_blast_action, 14);
-
-            JMenuItem remote_ncbi_blastp_action = new JMenuItem(blastPAction);
-            remote_ncbi_blastp_action.setEnabled(blastPAction.isEnabled());
-            popup.add(remote_ncbi_blastp_action, 16);
-
-        }
-    }
-
-    @Override
     public void addPopup(JPopupMenu popup) {
         popup.add(blastXAction);
         popup.add(blastPAction);
     }
+
+    @Override
+    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event) {
+        List<SeqSymmetry> selectedItems = event.getSelectedItems();
+        if (!selectedItems.isEmpty() && !(selectedItems.get(0) instanceof GraphSym)) {
+            ContextMenuItem blastXMenuItem = new ContextMenuItem(BLASTX_NR_PROTEIN_DATABASE, (Void t) -> {
+                blastXAction.actionPerformed(null);
+                return t;
+            });
+            ContextMenuItem blastPMenuItem = new ContextMenuItem(BLASTP_NR_PROTEIN_DATABASE, (Void t) -> {
+                blastPAction.actionPerformed(null);
+                return t;
+            });
+            List<ContextMenuItem> contextMenuItems = new ArrayList<>();
+            if (blastXAction.isEnabled()) {
+                blastXMenuItem.setMenuSection(MenuSection.APP);
+                try (InputStream resourceAsStream = NCBIBlastPopupListener.class.getClassLoader().getResourceAsStream(NCBI_ICONPATH)) {
+                    blastXMenuItem.setMenuIcon(new MenuIcon(resourceAsStream));
+                } catch (Exception ex) {
+                    LOG.error(ex.getMessage(), ex);
+                }
+                contextMenuItems.add(blastXMenuItem);
+            }
+            if (blastPAction.isEnabled()) {
+                blastPMenuItem.setMenuSection(MenuSection.APP);
+                try (InputStream resourceAsStream = NCBIBlastPopupListener.class.getClassLoader().getResourceAsStream(NCBI_ICONPATH)) {
+                    blastPMenuItem.setMenuIcon(new MenuIcon(resourceAsStream));
+                } catch (Exception ex) {
+                    LOG.error(ex.getMessage(), ex);
+                }
+                contextMenuItems.add(blastPMenuItem);
+            }
+            return Optional.of(contextMenuItems);
+        }
+        return Optional.empty();
+    }
+
 }

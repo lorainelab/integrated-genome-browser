@@ -8,7 +8,6 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
 import com.affymetrix.genometry.event.AxisPopupListener;
-import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenomeVersionSelectionEvent;
 import com.affymetrix.genometry.event.GroupSelectionListener;
@@ -90,7 +89,6 @@ import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphSelectionManager;
 import com.affymetrix.igb.glyph.TriangleInsertionSeqGlyph;
 import com.affymetrix.igb.services.registry.MapTierTypeHolder;
-import com.affymetrix.igb.swing.JRPPopupMenu;
 import com.affymetrix.igb.swing.JRPWidget;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -112,15 +110,8 @@ import com.affymetrix.igb.view.factories.GraphGlyphFactory;
 import com.affymetrix.igb.view.factories.MapTierGlyphFactoryI;
 import com.affymetrix.igb.view.load.AutoLoadThresholdHandler;
 import com.google.common.base.Strings;
-import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
-import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
-import org.lorainelab.igb.context.menu.model.ContextMenuItem;
-import org.lorainelab.igb.context.menu.model.MenuIcon;
-import org.lorainelab.igb.context.menu.service.AnnotationContextMenuRegistryI;
-import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
-import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
-import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.TreeMultimap;
 import java.awt.AWTEvent;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -154,7 +145,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
 import java.util.prefs.PreferenceChangeListener;
@@ -172,10 +162,20 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
+import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
+import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
+import org.lorainelab.igb.context.menu.model.ContextMenuItem;
+import org.lorainelab.igb.context.menu.model.MenuIcon;
+import org.lorainelab.igb.context.menu.service.AnnotationContextMenuRegistryI;
+import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
+import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -395,7 +395,6 @@ public class SeqMapView extends JPanel
     private MapMode mapMode;
     private com.affymetrix.igb.swing.JRPToggleButton select_mode_button;
     private com.affymetrix.igb.swing.JRPToggleButton scroll_mode_button;
-    private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<>();
     private final Set<AxisPopupListener> axisPopupListeners = new CopyOnWriteArraySet<>();
     private String id;
     private boolean shrinkWrapMapBounds = false;
@@ -408,7 +407,7 @@ public class SeqMapView extends JPanel
     private final FloaterGlyph pixel_floater_glyph = new CoordFloaterGlyph();
     private final AutoScroll autoScroll = new AutoScroll();
     private final GlyphEdgeMatcher edge_matcher;
-    private JRPPopupMenu sym_popup = null;
+    private JPopupMenu sym_popup = null;
     private SeqSymmetry toolTipSym;
     JMenuItem slicendiceMI = empty_menu_item;
     JMenuItem seqViewerOptions = empty_menu_item;
@@ -1688,17 +1687,9 @@ public class SeqMapView extends JPanel
         return id;
     }
 
-    private JRPPopupMenu getOrganizedPopups(JRPPopupMenu sym_popup) {
-        TreeMap<Integer, Component> popups = sym_popup.getPopupsMap();
-        for (Map.Entry<Integer, Component> mapEntry : popups.entrySet()) {
-            sym_popup.add(mapEntry.getValue());
-        }
-        return sym_popup;
-    }
-
     void showPopup(NeoMouseEvent nevt) {
         if (sym_popup == null) {
-            sym_popup = new JRPPopupMenu();
+            sym_popup = new JPopupMenu();
         }
         sym_popup.setVisible(false); // in case already showing
         sym_popup.removeAll();
@@ -1728,7 +1719,6 @@ public class SeqMapView extends JPanel
         }
 
         preparePopup(sym_popup, nevt);
-        sym_popup = getOrganizedPopups(sym_popup);
 
         if (sym_popup.getComponentCount()
                 == 0) {
@@ -1775,9 +1765,8 @@ public class SeqMapView extends JPanel
      * Prepares the given popup menu to be shown. The popup menu should have items added to it by this method. Display
      * of the popup menu will be handled by showPopup(), which calls this method.
      */
-    protected void preparePopup(JRPPopupMenu popup, NeoMouseEvent nevt) {
+    protected void preparePopup(JPopupMenu popup, NeoMouseEvent nevt) {
         final List<GlyphI> selected_glyphs = seqmap.getSelected();
-
         Border emptyBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         if (selected_glyphs.size() == 1) {
             Border colorBorder = BorderFactory.createLineBorder(selected_glyphs.get(0).getColor());
@@ -1786,53 +1775,90 @@ public class SeqMapView extends JPanel
             Border colorBorder = BorderFactory.createLineBorder(Color.BLACK);
             popup.setBorder(BorderFactory.createCompoundBorder(colorBorder, emptyBorder));
         }
+        TreeMultimap<Integer, JMenuItem> appGroup = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
+        TreeMultimap<Integer, JMenuItem> infoGroup = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
+        TreeMultimap<Integer, JMenuItem> sequenceGroup = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
+        TreeMultimap<Integer, JMenuItem> uiActionGroup = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
 
-        JMenuItem select_parent_action = new JMenuItem(SelectParentAction.getAction());
-        select_parent_action.setIcon(null);
-        JMenuItem zoom_on_selected = new JMenuItem(ZoomOnSelectedSymsAction.getAction());
-        JMenuItem load_partial_sequence = new JMenuItem(LoadPartialSequenceAction.getAction());
-        load_partial_sequence.setIcon(null);
-        JMenuItem copy_residues_action = new JMenuItem(CopyResiduesAction.getAction());
-        copy_residues_action.setIcon(null);
+        JMenuItem selectParentAction = new JMenuItem(SelectParentAction.getAction());
+        JMenuItem zoomOnSelected = new JMenuItem(ZoomOnSelectedSymsAction.getAction());
+        JMenuItem loadPartialSequence = new JMenuItem(LoadPartialSequenceAction.getAction());
+        JMenuItem copyResiduesMenuItem = new JMenuItem(CopyResiduesAction.getAction());
+        JMenuItem getInfoMenuItem = new JMenuItem(SelectionRuleAction.getAction());
 
-        JMenuItem select_rule_action = new JMenuItem(SelectionRuleAction.getAction());
-
+        infoGroup.put(0, getInfoMenuItem);
+        uiActionGroup.put(0, selectParentAction);
+        uiActionGroup.put(1, zoomOnSelected);
         final List<SeqSymmetry> selected_syms = getSelectedSyms();
 
         if (!selected_syms.isEmpty() && !(selected_syms.get(0) instanceof GraphSym)) {
-            for (ContextualPopupListener listener : popup_listeners) {
-                listener.popupNotify(popup, selected_syms, sym_used_for_title);
-            }
+            JSeparator afterInfoGroup = new JSeparator();
+            JSeparator afterSequenceGroup = new JSeparator();
+            JSeparator afterAppGroup = new JSeparator();
             for (AnnotationContextMenuProvider contextMenuProvider : annotationContextMenuRegistry.getAnnotationContextMenuItems()) {
-                Optional<ContextMenuItem> buildMenuItem = contextMenuProvider.buildMenuItem(new AnnotationContextEvent(selected_syms));
+                Optional<List<ContextMenuItem>> buildMenuItem = contextMenuProvider.buildMenuItem(new AnnotationContextEvent(selected_syms));
                 if (buildMenuItem.isPresent()) {
-                    ContextMenuItem menuItem = buildMenuItem.get();
-                    if (menuItem.getSubMenuItems().isEmpty()) {
-                        JMenuItem jMenuItem = convertContextMenuItemToJMenuItem(menuItem);
-                        popup.add(jMenuItem);
-                    } else {
-                        JMenu jMenu = new JMenu();
-                        jMenu.setText(menuItem.getMenuLabel());
-                        menuItem.getSubMenuItems()
-                                .stream()
-                                .map(contextMenuItem -> convertContextMenuItemToJMenuItem(contextMenuItem))
-                                .forEach(jMenuItem -> {
-                                    jMenu.add(jMenuItem);
-                                });
-                        popup.add(jMenu);
+                    List<ContextMenuItem> menuItems = buildMenuItem.get();
+                    for (ContextMenuItem menuItem : menuItems) {
+                        if (menuItem.getSubMenuItems().isEmpty()) {
+                            JMenuItem jMenuItem = convertContextMenuItemToJMenuItem(menuItem);
+                            switch (menuItem.getMenuSection()) {
+                                case INFORMATION:
+                                    infoGroup.put(menuItem.getWeight(), jMenuItem);
+                                    break;
+                                case SEQUENCE:
+                                    sequenceGroup.put(menuItem.getWeight(), jMenuItem);
+                                    break;
+                                case APP:
+                                    appGroup.put(menuItem.getWeight(), jMenuItem);
+                                    break;
+                                case UI_ACTION:
+                                    uiActionGroup.put(menuItem.getWeight(), jMenuItem);
+                                    break;
+                            }
+                        } else {
+                            JMenu jMenu = new JMenu();
+                            jMenu.setText(menuItem.getMenuLabel());
+                            menuItem.getSubMenuItems()
+                                    .stream()
+                                    .map(contextMenuItem -> convertContextMenuItemToJMenuItem(contextMenuItem))
+                                    .forEach(jMenuItem -> {
+                                        jMenu.add(jMenuItem);
+                                    });
+                            switch (menuItem.getMenuSection()) {
+                                case INFORMATION:
+                                    infoGroup.put(menuItem.getWeight(), jMenu);
+                                    break;
+                                case SEQUENCE:
+                                    sequenceGroup.put(menuItem.getWeight(), jMenu);
+                                    break;
+                                case APP:
+                                    appGroup.put(menuItem.getWeight(), jMenu);
+                                    break;
+                                case UI_ACTION:
+                                    uiActionGroup.put(menuItem.getWeight(), jMenu);
+                                    break;
+                            }
+                        }
                     }
                 }
             }
-            JSeparator afterGetInfoSep = new JSeparator();
-            JSeparator afterViewReadSep = new JSeparator();
-            JSeparator afterPrimerBalstSep = new JSeparator();
-            popup.add(select_rule_action, 4);
-            popup.add(afterGetInfoSep, 6);
-            popup.add(afterViewReadSep, 12);
-            popup.add(afterPrimerBalstSep, 20);
-            popup.add(select_parent_action, 22);
-            popup.add(zoom_on_selected, 24);
 
+            infoGroup.keySet().stream().forEach(key -> {
+                infoGroup.get(key).forEach(popup::add);
+            });
+            popup.add(afterInfoGroup);
+            sequenceGroup.keySet().stream().forEach(key -> {
+                sequenceGroup.get(key).forEach(popup::add);
+            });
+            popup.add(afterSequenceGroup);
+            appGroup.keySet().stream().forEach(key -> {
+                appGroup.get(key).forEach(popup::add);
+            });
+            popup.add(afterAppGroup);
+            uiActionGroup.keySet().stream().forEach(key -> {
+                uiActionGroup.get(key).forEach(popup::add);
+            });
         }
 
         TierGlyph tglyph = tierLabelManager.getTierGlyph(nevt);
@@ -1846,12 +1872,12 @@ public class SeqMapView extends JPanel
                     final Optional<BioSeq> selectedSeq = gmodel.getSelectedSeq();
                     if (selectedSeq.isPresent()) {
                         if (selected_syms.isEmpty() && !selectedSeq.get().isAvailable(visible.getMin(), visible.getMax())) {
-                            popup.add(load_partial_sequence);
+                            popup.add(loadPartialSequence);
                         }
                     }
 
                     if (seq_selected_sym != null && aseq.isAvailable(seq_selected_sym.getSpan(aseq))) {
-                        popup.add(copy_residues_action);
+                        popup.add(copyResiduesMenuItem);
                         for (AxisPopupListener listener : axisPopupListeners) {
                             listener.addPopup(popup);
                         }
@@ -1884,16 +1910,6 @@ public class SeqMapView extends JPanel
     @Override
     public void removeAxisPopupListener(AxisPopupListener listener) {
         axisPopupListeners.remove(listener);
-    }
-
-    @Override
-    public void addPopupListener(ContextualPopupListener listener) {
-        popup_listeners.add(listener);
-    }
-
-    @Override
-    public void removePopupListener(ContextualPopupListener listener) {
-        popup_listeners.remove(listener);
     }
 
     private boolean matchesCategory(RootSeqSymmetry rootSeqSymmetry, FileTypeCategory... categories) {

@@ -72,6 +72,11 @@
             <artifactId>affymetrix-common</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>context-menu-api</artifactId>
+              <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

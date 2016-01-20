@@ -4,7 +4,6 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.AxisPopupListener;
-import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.event.PropertyHandler;
 import com.affymetrix.genometry.event.SeqMapRefreshed;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
@@ -117,10 +116,6 @@ public interface SeqMapViewI {
     public void setPropertyHandler(PropertyHandler propertyHandler);
 
     public Object getMouseListener();
-
-    public void addPopupListener(ContextualPopupListener listener);
-
-    public void removePopupListener(ContextualPopupListener listener);
 
     public void addAxisPopupListener(AxisPopupListener listener);
 

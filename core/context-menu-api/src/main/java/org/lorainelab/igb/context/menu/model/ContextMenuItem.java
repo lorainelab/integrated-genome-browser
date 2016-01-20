@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import org.lorainelab.igb.context.menu.MenuSection;
 
 /**
  *
@@ -28,6 +29,7 @@ public class ContextMenuItem {
     private Set<ContextMenuItem> subMenuItems;
 
     private int weight = 0;
+    private MenuSection menuSection = MenuSection.APP;
 
     public ContextMenuItem(String menuLabel, Set<ContextMenuItem> subMenuItems) {
         checkNotNull(menuLabel);
@@ -59,6 +61,10 @@ public class ContextMenuItem {
         return subMenuItems;
     }
 
+    public int getWeight() {
+        return weight;
+    }
+
     public void setWeight(int weight) {
         this.weight = weight;
     }
@@ -71,6 +77,12 @@ public class ContextMenuItem {
         return Optional.ofNullable(menuIcon);
     }
 
+    public void setMenuSection(MenuSection menuSection) {
+        this.menuSection = menuSection;
+    }
 
+    public MenuSection getMenuSection() {
+        return menuSection;
+    }
 
 }

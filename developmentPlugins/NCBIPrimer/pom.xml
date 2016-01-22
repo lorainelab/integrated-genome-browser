@@ -51,6 +51,11 @@
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>context-menu-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

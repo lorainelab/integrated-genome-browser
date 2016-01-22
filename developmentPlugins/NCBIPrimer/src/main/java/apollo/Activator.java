@@ -1,7 +1,7 @@
 package apollo;
 
 import apollo.analysis.NCBIPrimerBlastPane;
-import com.affymetrix.genometry.event.ContextualPopupListener;
+import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.services.XServiceRegistrar;
 import org.osgi.framework.BundleActivator;
@@ -23,7 +23,7 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
         NCBIPrimerBlastPane ncbiPrimerBlastPane = new NCBIPrimerBlastPane();
 
         return new ServiceRegistration[]{
-            bundleContext.registerService(ContextualPopupListener.class, new NCBIPrimerPopupListener(igbService.getSeqMapView(), ncbiPrimerBlastPane), null), //			bundleContext.registerService(IPrefEditorComponent.class, ncbiPrimerBlastPane, null)
+            bundleContext.registerService(AnnotationContextMenuProvider.class, new NCBIPrimerPopupListener(igbService.getSeqMapView(), ncbiPrimerBlastPane), null), //			bundleContext.registerService(IPrefEditorComponent.class, ncbiPrimerBlastPane, null)
         };
     }
 

@@ -2,20 +2,26 @@ package apollo;
 
 import apollo.action.PrimerSearchAction;
 import apollo.analysis.NCBIPrimerBlastOpts;
-import com.affymetrix.genometry.event.ContextualPopupListener;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import java.util.Optional;
+import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
+import org.lorainelab.igb.context.menu.MenuSection;
+import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
+import org.lorainelab.igb.context.menu.model.ContextMenuItem;
+import org.lorainelab.igb.context.menu.model.MenuIcon;
+import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 
 /**
  *
  * @author hiralv
  */
-public class NCBIPrimerPopupListener implements ContextualPopupListener {
+public class NCBIPrimerPopupListener implements AnnotationContextMenuProvider {
 
+    private static final String NCBI_ICONPATH = "ncbi.png";
     private final SeqMapViewI smv;
     private final NCBIPrimerBlastOpts ncbiPrimerBlastOpts;
 
@@ -25,11 +31,24 @@ public class NCBIPrimerPopupListener implements ContextualPopupListener {
     }
 
     @Override
-    public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_items, SeqSymmetry primary_sym) {
-        if (!selected_items.isEmpty() && !(selected_items.get(0) instanceof GraphSym)) {
-            JMenuItem remote_ncbi_primer_action = new JMenuItem(new PrimerSearchAction(smv, ncbiPrimerBlastOpts));
-            popup.add(remote_ncbi_primer_action, 18);
-
+    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event) {
+        ContextMenuItem primerSearchActionMenuItem = null;
+        List<SeqSymmetry> selectedItems = event.getSelectedItems();
+        if (!selectedItems.isEmpty() && !(selectedItems.get(0) instanceof GraphSym)) {
+            PrimerSearchAction primerSearchAction = new PrimerSearchAction(smv, ncbiPrimerBlastOpts);
+            primerSearchActionMenuItem = new ContextMenuItem(PRIMER_MENU_ITEM_TITLE, (Void t) -> {
+                primerSearchAction.actionPerformed(null);
+                return t;
+            });
+            primerSearchActionMenuItem.setWeight(MENU_WEIGHT);
+            primerSearchActionMenuItem.setMenuSection(MenuSection.APP);
+            try (InputStream resourceAsStream = NCBIPrimerPopupListener.class.getClassLoader().getResourceAsStream(NCBI_ICONPATH)) {
+                primerSearchActionMenuItem.setMenuIcon(new MenuIcon(resourceAsStream));
+            } catch (Exception ex) {
+            }
         }
+        return Optional.ofNullable(Arrays.asList(primerSearchActionMenuItem));
     }
+    private static final String PRIMER_MENU_ITEM_TITLE = "Primer Blast Refseq mRNA (refseq_rna)";
+    private static final int MENU_WEIGHT = 18;
 }

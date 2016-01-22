@@ -1,5 +1,6 @@
 package com.affymetrix.igb.general;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
@@ -46,6 +47,11 @@ public class SynonymsControlPanel {
     private ChromosomeSynonymLookup chrSynLookup;
 
     public SynonymsControlPanel() {
+
+    }
+
+    @Activate
+    public void activate() {
         panel = initSynonymsPanel();
     }
 
@@ -161,7 +167,8 @@ public class SynonymsControlPanel {
             synonymFile.setText(file.getCanonicalPath());
             fis = new FileInputStream(file);
             lookup.loadSynonyms(fis);
-        } catch (IOException ex) {
+        } catch (Throwable ex) {
+            logger.warn(ex.getMessage(), ex);
             return false;
         } finally {
             GeneralUtils.safeClose(fis);

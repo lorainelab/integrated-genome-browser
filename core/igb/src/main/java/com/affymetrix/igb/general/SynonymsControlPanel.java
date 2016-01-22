@@ -1,5 +1,6 @@
 package com.affymetrix.igb.general;
 
+import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
@@ -8,9 +9,6 @@ import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
-import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
-import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
-import org.lorainelab.igb.synonymlookup.services.SynonymLookupService;
 import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -27,6 +25,9 @@ import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.SynonymLookupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,11 @@ public class SynonymsControlPanel {
     private ChromosomeSynonymLookup chrSynLookup;
 
     public SynonymsControlPanel() {
+
+    }
+
+    @Activate
+    public void activate() {
         panel = initSynonymsPanel();
     }
 
@@ -161,7 +167,8 @@ public class SynonymsControlPanel {
             synonymFile.setText(file.getCanonicalPath());
             fis = new FileInputStream(file);
             lookup.loadSynonyms(fis);
-        } catch (IOException ex) {
+        } catch (Throwable ex) {
+            logger.warn(ex.getMessage(), ex);
             return false;
         } finally {
             GeneralUtils.safeClose(fis);

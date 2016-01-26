@@ -19,10 +19,6 @@ import com.affymetrix.igb.swing.JRPJPanel;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import org.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
-import org.lorainelab.igb.services.IgbService;
-import org.lorainelab.igb.services.window.HtmlHelpProvider;
-import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
@@ -40,6 +36,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import net.miginfocom.swing.MigLayout;
+import org.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
+import org.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.services.window.HtmlHelpProvider;
+import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -162,7 +162,7 @@ public final class KeyStrokesView implements PreferencesPanelProvider, HtmlHelpP
         try {
             htmlText = Resources.toString(KeyStrokesView.class.getResource("/help/keyStrokesViewGUI.html"), Charsets.UTF_8);
         } catch (IOException ex) {
-            logger.error("Help file not found " , ex);
+            logger.warn("Help file not found ", ex);
         }
         return htmlText;
     }

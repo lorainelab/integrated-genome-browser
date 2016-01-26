@@ -9,8 +9,11 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import java.util.List;
 
 /**
- *
+ * ## AnnotationContextEvent
+ * A class containing contextual information about the event right
+ * click event (e.g. selection information).
  * @author dcnorris
+ * @module.info context-menu-api
  */
 public class AnnotationContextEvent {
 
@@ -20,6 +23,10 @@ public class AnnotationContextEvent {
         this.selectedItems = selectedItems;
     }
 
+    /**
+     *
+     * @return list of currently selected SeqSymmetry objects
+     */
     public List<SeqSymmetry> getSelectedItems() {
         return selectedItems;
     }

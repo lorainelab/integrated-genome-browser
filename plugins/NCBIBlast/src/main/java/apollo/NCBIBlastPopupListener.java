@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.swing.JPopupMenu;
 import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
-import org.lorainelab.igb.context.menu.MenuSection;
+import org.lorainelab.igb.context.menu.model.MenuSection;
 import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
 import org.lorainelab.igb.context.menu.model.ContextMenuItem;
 import org.lorainelab.igb.context.menu.model.MenuIcon;

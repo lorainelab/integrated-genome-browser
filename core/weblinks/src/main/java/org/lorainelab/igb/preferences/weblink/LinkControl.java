@@ -15,10 +15,10 @@ import java.util.Optional;
 import java.util.Set;
 import javax.swing.JPopupMenu;
 import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
-import org.lorainelab.igb.context.menu.MenuSection;
 import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
 import org.lorainelab.igb.context.menu.model.ContextMenuItem;
 import org.lorainelab.igb.context.menu.model.MenuIcon;
+import org.lorainelab.igb.context.menu.model.MenuSection;
 import org.lorainelab.igb.preferences.weblink.model.WebLink;
 import org.slf4j.LoggerFactory;
 

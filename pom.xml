@@ -84,6 +84,7 @@
 
 
     <modules>
+        <module>core/taglets</module>
         <module>core/heatmap-editor</module>
         <module>core/common</module>
         <module>core/genometry</module>
@@ -1105,7 +1106,30 @@
                     <artifactId>bundle-markdown-encoder</artifactId>
                     <version>1.0.0</version>
                 </plugin>
-                
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.3</version>
+                    <configuration>
+                        <doclet>ch.raffael.doclets.pegdown.PegdownDoclet</doclet>
+                        <docletArtifact>
+                            <groupId>ch.raffael.pegdown-doclet</groupId>
+                            <artifactId>pegdown-doclet</artifactId>
+                            <version>1.2.1</version>
+                        </docletArtifact>
+                        <useStandardDocletOptions>true</useStandardDocletOptions>
+                        <docfilessubdirs>true</docfilessubdirs>
+                        <taglets>
+                            <taglet>
+                                <tagletClass>org.lorainelab.igb.taglets.ModuleInfoTaglet</tagletClass>
+                                <tagletArtifact>
+                                    <groupId>org.lorainelab.igb</groupId>
+                                    <artifactId>org.lorainelab.igb.taglets</artifactId>
+                                    <version>${project.version}</version>
+                                </tagletArtifact>
+                            </taglet>
+                        </taglets>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>

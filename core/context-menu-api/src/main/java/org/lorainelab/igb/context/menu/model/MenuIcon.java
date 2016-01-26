@@ -12,8 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * ## MenuIcon
+ * A class to allow the association of an icon with a
+ * {@see ContextMenuItem}
  * @author dcnorris
+ * @module.info context-menu-api
  */
 public class MenuIcon {
 

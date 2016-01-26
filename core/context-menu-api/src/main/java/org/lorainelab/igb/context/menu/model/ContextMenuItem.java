@@ -12,11 +12,11 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import org.lorainelab.igb.context.menu.MenuSection;
 
 /**
  *
  * @author dcnorris
+ * @module.info context-menu-api
  */
 public class ContextMenuItem {
 
@@ -61,6 +61,14 @@ public class ContextMenuItem {
         return subMenuItems;
     }
 
+    /**
+     * Weight
+     * =====
+     *
+     * The weight property specifies the sorting of ContextMenuItems.
+     * A greater weight is always below of an element with a lower weight.
+     *
+     */
     public int getWeight() {
         return weight;
     }
@@ -73,6 +81,14 @@ public class ContextMenuItem {
         this.menuIcon = menuIcon;
     }
 
+    /**
+     * MenuIcon
+     * =====
+     *
+     * The weight property specifies the sorting of ContextMenuItems.
+     * A greater weight is always below of an element with a lower weight.
+     *
+     */
     public Optional<MenuIcon> getMenuIcon() {
         return Optional.ofNullable(menuIcon);
     }

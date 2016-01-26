@@ -604,7 +604,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             String featureName = dataSet.getDataSetName();
             String featureText = dataSet.getDataSetName().substring(featureName.lastIndexOf(FeatureTreeView.path_separator) + 1);
             featureText = "<html>" + featureText;
-            if (!Strings.isNullOrEmpty(dataSet.getDataContainer().getDataProvider().getUrl())) {
+            if (dataSet.getDataContainer().getDataProvider().getDataSetLinkoutUrl(dataSet).isPresent()) {
                 featureText += " <img src='" + infoIcon + "' width=13' height='13'/>";
             }
 

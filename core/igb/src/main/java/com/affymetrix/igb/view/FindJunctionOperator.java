@@ -69,7 +69,7 @@ import java.util.Map.Entry;
 public class FindJunctionOperator extends AbstractAnnotationTransformer implements Operator, IParameters, Style {
 
     public static final String COMPONENT_NAME = "FindJunctionOperator";
-    public static final String THRESHOLD = "threshold";
+    public static final String FLANK = "flank";
 
     /**
      * TopHat style flanking makes the junction flanks as long as the largest
@@ -93,7 +93,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
         super(FileTypeCategory.Alignment);
         threshold = default_threshold;
         properties = new HashMap<>();
-        properties.put(THRESHOLD, Integer.class);
+        properties.put(FLANK, Integer.class);
         style = new HashMap<>();
         style.put(PropertyConstants.PROP_LABEL_FIELD, "score");
     }
@@ -170,7 +170,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
     }
 
     private void applyFilters(BioSeq bioseq, SeqSymmetry sym, HashMap<String, SeqSymmetry> map) {
-        if (noIntronFilter.filterSymmetry(bioseq, sym) && uniqueLocationFilter.filterSymmetry(bioseq, sym)) {
+        if (noIntronFilter.filterSymmetry(bioseq, sym)) {
             updateIntronHashMap(sym, bioseq, map);
         }
     }
@@ -199,7 +199,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
             return null;
         }
 
-        if (key.equalsIgnoreCase(THRESHOLD)) {
+        if (key.equalsIgnoreCase(FLANK)) {
             return threshold;
         }
         return null;
@@ -212,7 +212,7 @@ public class FindJunctionOperator extends AbstractAnnotationTransformer implemen
 
     @Override
     public boolean setParameterValue(String key, Object value) {
-        if (key.equalsIgnoreCase(THRESHOLD)) {
+        if (key.equalsIgnoreCase(FLANK)) {
             threshold = Integer.valueOf(value.toString());
             return true;
         }

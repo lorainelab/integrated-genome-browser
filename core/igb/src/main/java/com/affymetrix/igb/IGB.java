@@ -54,9 +54,6 @@ import com.boxysystems.jgoogleanalytics.FocusPoint;
 import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
 import com.boxysystems.jgoogleanalytics.LoggingAdapter;
 import com.jidesoft.plaf.LookAndFeelFactory;
-import org.lorainelab.igb.frame.api.FrameManagerService;
-import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
-import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -86,6 +83,9 @@ import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import org.lorainelab.igb.frame.api.FrameManagerService;
+import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
@@ -506,11 +506,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
             }
         }
         String message = getClass().getName() + ".getView() failed for \"" + viewName + "\"";
-        try {
-            logger.error(message);
-        } catch (Exception x) {
-            System.err.println(message);
-        }
+        logger.error(message);
         return null;
     }
 
@@ -541,7 +537,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
                 im.remove(ks);
                 Action existingAction = am.get(existingObject);
                 if (existingAction != null) {
-                    logger.error("Trying to add set keystroke for action {}."
+                    logger.warn("Trying to add set keystroke for action {}."
                             + " But action {} exists with same keystroke \"{}\"."
                             + "\nUsing keystroke with latest action.",
                             theAction.getId(), existingAction.getClass(), ks);

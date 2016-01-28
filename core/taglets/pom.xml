@@ -5,6 +5,7 @@
         <groupId>com.affymetrix</groupId>
         <artifactId>igb-project</artifactId>
         <version>9.0.0</version>
+         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>org.lorainelab.igb.taglets</artifactId>

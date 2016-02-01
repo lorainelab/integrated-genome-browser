@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.event.ListSelectionListener;
 import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
@@ -240,4 +241,7 @@ public interface IgbService {
     public void deleteAllTracks();
 
     public void deleteTrack(URI uri);
+
+    @Deprecated
+    public void addParentMenuBarEntry(JMenu parentMenu, int weight);
 }

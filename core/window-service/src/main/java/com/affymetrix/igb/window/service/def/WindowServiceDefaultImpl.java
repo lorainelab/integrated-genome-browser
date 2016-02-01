@@ -38,6 +38,7 @@ import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
 import static org.lorainelab.igb.frame.FrameManager.MAIN_WINDOW_PREF_KEY;
 import org.lorainelab.igb.frame.api.FrameManagerService;
+import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.services.window.WindowServiceLifecycleHook;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
@@ -72,6 +73,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         tabHolders.put(TabState.COMPONENT_STATE_HIDDEN, new HiddenTabs());
         tabMenus = new ConcurrentHashMap<>();
         tabMenuPositions = new HashMap<>();
+        tabsMenu = new JMenu(BUNDLE.getString("tabsMenu"));
     }
 
     @Activate
@@ -89,6 +91,14 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     @Override
     public void setTopComponent1(JComponent topComponent1) {
         innerPanel.add(topComponent1, "north");
+    }
+
+    @Reference(optional = true, dynamic = true, multiple = false, unbind = "unsetIgbService")
+    public void setIgbService(IgbService igbService) {
+        igbService.addParentMenuBarEntry(tabsMenu, 12);
+    }
+
+    private void unsetIgbService(IgbService igbService) {
     }
 
     @Override
@@ -125,7 +135,6 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     @Override
     public void setTabsMenu(JRPMenuBar mbar) {
         int menuItemCounter = 0;
-        this.tabsMenu = new JMenu(BUNDLE.getString("tabsMenu"));
         for (final TabState tabState : TabState.values()) {
             if (tabState.isTab()) {
                 JRPMenuItem change_tab_state_item = new JRPMenuItem(

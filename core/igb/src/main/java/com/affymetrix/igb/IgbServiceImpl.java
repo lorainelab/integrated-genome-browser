@@ -34,6 +34,7 @@ import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackConstants;
+import com.affymetrix.igb.util.MenuBarManager;
 import com.affymetrix.igb.util.ServiceUtils;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.SeqGroupView;
@@ -41,6 +42,8 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.TreeMultimap;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -56,12 +59,17 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.event.ListSelectionListener;
 import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * implementation of the IgbService, using the IGB instance for all of the
@@ -77,8 +85,13 @@ public class IgbServiceImpl implements IgbService {
         return instance;
     }
 
+    private MenuBarManager menuBarManager;
+    private TreeMultimap<Integer, JMenu> parentMenuEntries;
+
     private IgbServiceImpl() {
         super();
+        parentMenuEntries = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
+        initializeMenuBarManagerServiceTracker();
     }
 
     @Override
@@ -485,4 +498,32 @@ public class IgbServiceImpl implements IgbService {
                 });
     }
 
+    @Override
+    public void addParentMenuBarEntry(JMenu parentMenu, int weight) {
+        if (menuBarManager == null) {
+            parentMenuEntries.put(weight, parentMenu);
+        } else {
+            menuBarManager.addParentMenuEntry(parentMenu, weight);
+        }
+    }
+
+    private void initializeMenuBarManagerServiceTracker() {
+        BundleContext bundleContext = FrameworkUtil.getBundle(IgbServiceImpl.class).getBundleContext();
+        ServiceTracker<MenuBarManager, Object> dependencyTracker;
+        dependencyTracker = new ServiceTracker<MenuBarManager, Object>(bundleContext, MenuBarManager.class, null) {
+
+            @Override
+            public Object addingService(ServiceReference<MenuBarManager> serviceReference) {
+                menuBarManager = bundleContext.getService(serviceReference);
+                parentMenuEntries.keySet().stream().forEach(key -> {
+                    parentMenuEntries.get(key).forEach(entry -> {
+                        menuBarManager.addParentMenuEntry(entry, key);
+                    });
+                });
+                return super.addingService(serviceReference);
+            }
+
+        };
+        dependencyTracker.open();
+    }
 }

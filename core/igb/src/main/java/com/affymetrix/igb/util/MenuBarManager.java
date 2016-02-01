@@ -49,6 +49,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 import org.lorainelab.igb.menu.api.MenuItemEventService;
 import org.lorainelab.igb.menu.api.model.MenuBarMenuItemEvent;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
@@ -56,9 +57,8 @@ import org.lorainelab.igb.menu.api.model.MenuItem;
 import static org.lorainelab.igb.menu.api.util.MenuUtils.convertContextMenuItemToJMenuItem;
 import org.lorainelab.igb.services.IgbService;
 import org.slf4j.LoggerFactory;
-import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
-@Component(immediate = true)
+@Component(immediate = true, provide = MenuBarManager.class)
 public class MenuBarManager {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MenuBarManager.class);
@@ -81,6 +81,7 @@ public class MenuBarManager {
     private JMenu toolsMenu;
     private JMenu helpMenu;
     private MenuItemEventService menuItemEventService;
+    private TreeMultimap<Integer, JComponent> parentMenuEntries;
 
     public MenuBarManager() {
         componentActivated = false;
@@ -91,6 +92,7 @@ public class MenuBarManager {
         toolsMenuEntries = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
         viewMenuEntries = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
         helpMenuEntries = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
+        parentMenuEntries = TreeMultimap.create(Ordering.natural(), Ordering.arbitrary());
         menuBarMenuContainer = new EnumMap<>(MenuBarParentMenu.class);
         menuBarMenuContainer.put(MenuBarParentMenu.FILE, fileMenuEntries);
         menuBarMenuContainer.put(MenuBarParentMenu.EDIT, editMenuEntries);
@@ -98,8 +100,9 @@ public class MenuBarManager {
         menuBarMenuContainer.put(MenuBarParentMenu.VIEW, viewMenuEntries);
         menuBarMenuContainer.put(MenuBarParentMenu.HELP, helpMenuEntries);
         parentMenuReference = new EnumMap<>(MenuBarParentMenu.class);
-        initializeToolbarMenus();
+        initializeMenus();
         initializeParentMenuReference();
+        initializeParentMenuEntries();
     }
 
     @Activate
@@ -126,7 +129,7 @@ public class MenuBarManager {
         aMenuItemQueue.stream().forEach(aMenuItem -> addAMenuItem(aMenuItem));
     }
 
-    private void initializeToolbarMenus() {
+    private void initializeMenus() {
         initFileMenu();
         initEditMenu();
         initViewMenu();
@@ -281,8 +284,12 @@ public class MenuBarManager {
         rebuildMenus();
     }
 
+    public void addParentMenuEntry(JMenu jMenu, int weight) {
+        parentMenuEntries.put(weight, jMenu);
+        rebuildMenus();
+    }
+
     private void rebuildMenus() {
-        menuBar.removeAll();
         rebuildFileMenu();
         rebuildEditMenu();
         rebuildViewMenu();
@@ -292,11 +299,10 @@ public class MenuBarManager {
     }
 
     private void rebuildParentMenus() {
-        menuBar.add(fileMenu);
-        menuBar.add(editMenu);
-        menuBar.add(viewMenu);
-        menuBar.add(toolsMenu);
-        menuBar.add(helpMenu);
+        menuBar.removeAll();
+        parentMenuEntries.keySet().stream().forEach(key -> {
+            parentMenuEntries.get(key).forEach(menuBar::add);
+        });
     }
 
     private void rebuildHelpMenu() {
@@ -385,6 +391,14 @@ public class MenuBarManager {
                 .filter(jMenuItem -> jMenuItem.getText().equals(menuItemEvent.getMenuItem().getMenuLabel()))
                 .findFirst();
 
+    }
+
+    private void initializeParentMenuEntries() {
+        parentMenuEntries.put(0, fileMenu);
+        parentMenuEntries.put(1, editMenu);
+        parentMenuEntries.put(5, viewMenu);
+        parentMenuEntries.put(10, toolsMenu);
+        parentMenuEntries.put(100, helpMenu);
     }
 
 }

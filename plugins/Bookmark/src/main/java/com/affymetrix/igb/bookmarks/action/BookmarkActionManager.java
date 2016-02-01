@@ -18,6 +18,7 @@ import com.affymetrix.igb.bookmarks.BookmarkMenuItem;
 import com.affymetrix.igb.bookmarks.BookmarksParser;
 import com.affymetrix.igb.bookmarks.Separator;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
+import org.lorainelab.igb.services.IgbService;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -34,21 +35,22 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
-import org.lorainelab.igb.services.IgbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class BookmarkActionManager implements ActionListener, TreeModelListener {
 
+    private final static boolean DEBUG = false;
     private final Map<Object, Component> componentHash = new HashMap<>();
+    private final JMenu main_bm_menu;
     private final BookmarkList main_bookmark_list;
     private IgbService igbService;
     private static BookmarkActionManager instance;
     private static final Logger logger = LoggerFactory.getLogger(BookmarkActionManager.class);
 
-    public static void init(IgbService _igbService, BookmarkList main_bookmark_list) {
+    public static void init(IgbService _igbService, JMenu bm_menu, BookmarkList main_bookmark_list) {
         if (instance == null) {
-            instance = new BookmarkActionManager(_igbService, main_bookmark_list);
+            instance = new BookmarkActionManager(_igbService, bm_menu, main_bookmark_list);
         }
     }
 
@@ -56,8 +58,9 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
         return instance;
     }
 
-    public BookmarkActionManager(IgbService _igbService, BookmarkList main_bm_list) {
+    public BookmarkActionManager(IgbService _igbService, JMenu bm_menu, BookmarkList main_bm_list) {
         igbService = _igbService;
+        main_bm_menu = bm_menu;
         main_bookmark_list = main_bm_list;
         componentHash.put(main_bookmark_list, main_bm_menu);
 

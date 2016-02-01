@@ -37,6 +37,7 @@ import javax.swing.tree.MutableTreeNode;
  */
 public final class BookmarkList extends DefaultMutableTreeNode {
 
+    private static final long serialVersionUID = 1L;
     public static final String NETSCAPE_BOOKMARKS_DOCTYPE = "<!DOCTYPE NETSCAPE-Bookmark-file-1>";
     private String COMMENT;
 

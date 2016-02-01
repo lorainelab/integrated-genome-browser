@@ -29,7 +29,6 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.LoadResidueAction;
 import com.affymetrix.igb.shared.TrackUtils;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
-import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -42,11 +41,6 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.collect.ImmutableList;
-import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
-import org.lorainelab.igb.services.IgbService;
-import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
-import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -63,6 +57,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.event.ListSelectionListener;
+import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 
 /**
  * implementation of the IgbService, using the IGB instance for all of the
@@ -110,12 +109,6 @@ public class IgbServiceImpl implements IgbService {
     @Override
     public ImageIcon getIcon(String name) {
         return CommonUtils.getInstance().getIcon("images/" + name);
-    }
-
-    @Override
-    public JRPMenu addTopMenu(String id, String text, int index) {
-        IGB igb = IGB.getInstance();
-        return igb.addTopMenu(id, text, index);
     }
 
     @Override
@@ -491,7 +484,5 @@ public class IgbServiceImpl implements IgbService {
                     GeneralLoadView.getLoadView().removeDataSet(featureToRemove, true);
                 });
     }
-    
-    
 
 }

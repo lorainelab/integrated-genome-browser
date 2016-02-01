@@ -13,6 +13,11 @@
     <packaging>bundle</packaging>
 
     <name>sequenceViewer</name>
+    
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -74,8 +79,8 @@
         </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
-            <artifactId>context-menu-api</artifactId>
-              <scope>provided</scope>
+            <artifactId>org.lorainelab.igb.menu.api</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

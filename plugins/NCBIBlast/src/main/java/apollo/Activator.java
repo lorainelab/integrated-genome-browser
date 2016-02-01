@@ -1,7 +1,7 @@
 package apollo;
 
 import com.affymetrix.genometry.event.AxisPopupListener;
-import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
+import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.services.XServiceRegistrar;
 import org.osgi.framework.BundleActivator;

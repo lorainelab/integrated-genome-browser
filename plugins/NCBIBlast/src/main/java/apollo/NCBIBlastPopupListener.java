@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.swing.JPopupMenu;
-import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
-import org.lorainelab.igb.context.menu.model.MenuSection;
-import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
-import org.lorainelab.igb.context.menu.model.ContextMenuItem;
-import org.lorainelab.igb.context.menu.model.MenuIcon;
 import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
+import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
+import org.lorainelab.igb.menu.api.model.ContextMenuItem;
+import org.lorainelab.igb.menu.api.model.MenuIcon;
+import org.lorainelab.igb.menu.api.model.MenuItem;
+import org.lorainelab.igb.menu.api.model.MenuSection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class NCBIBlastPopupListener implements AnnotationContextMenuProvider, Ax
     }
 
     @Override
-    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event) {
+    public Optional<List<MenuItem>> buildMenuItem(AnnotationContextEvent event) {
         List<SeqSymmetry> selectedItems = event.getSelectedItems();
         if (!selectedItems.isEmpty() && !(selectedItems.get(0) instanceof GraphSym)) {
             ContextMenuItem blastXMenuItem = new ContextMenuItem(BLASTX_NR_PROTEIN_DATABASE, (Void t) -> {
@@ -57,7 +58,7 @@ public class NCBIBlastPopupListener implements AnnotationContextMenuProvider, Ax
                 blastPAction.actionPerformed(null);
                 return t;
             });
-            List<ContextMenuItem> contextMenuItems = new ArrayList<>();
+            List<MenuItem> contextMenuItems = new ArrayList<>();
             if (blastXAction.isEnabled()) {
                 blastXMenuItem.setMenuSection(MenuSection.APP);
                 try (InputStream resourceAsStream = NCBIBlastPopupListener.class.getClassLoader().getResourceAsStream(NCBI_ICONPATH)) {

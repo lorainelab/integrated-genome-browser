@@ -23,7 +23,6 @@ import javax.swing.KeyStroke;
 
 public abstract class MenuUtil {
 
-//  private static JMenuBar main_menu_bar = new JMenuBar();
     private static Map<String, KeyStroke> accelerators = new HashMap<>();
 
     public static void setAccelerators(Map<String, KeyStroke> _accelerators) {
@@ -56,9 +55,6 @@ public abstract class MenuUtil {
         return ks;
     }
 
-//  public static final JMenuBar getMainMenuBar() {
-//    return main_menu_bar;
-//  }
     private static JMenu findMenu(JMenuBar main_menu_bar, String name) {
         int num_menus = main_menu_bar.getMenuCount();
         for (int i = 0; i < num_menus; i++) {
@@ -71,19 +67,6 @@ public abstract class MenuUtil {
         return null;
     }
 
-    private static void addMenu(JRPMenuBar main_menu_bar, JMenu new_menu, int weight) {
-        try {
-            main_menu_bar.add(new_menu, weight);
-        } catch (IllegalArgumentException ex) {
-            addMenu(main_menu_bar, new_menu);
-        }
-    }
-
-    private static void addMenu(JMenuBar main_menu_bar, JMenu new_menu) {
-        main_menu_bar.add(new_menu);
-
-    }
-
     public static JMenu getMenu(JMenuBar main_menu_bar, String name) {
         JMenu new_menu = findMenu(main_menu_bar, name);
         if (new_menu != null) {
@@ -91,29 +74,7 @@ public abstract class MenuUtil {
         }
         new_menu = new JMenu(name);
         new_menu.setName(name); // JMenu.getName() and JMenu.getText() aren't automatically equal
-        addMenu(main_menu_bar, new_menu);
-        return new_menu;
-    }
-
-    public static JRPMenu getRPMenu(JRPMenuBar menuBar, String id, String name, int index) {
-        JRPMenu new_menu = (JRPMenu) findMenu(menuBar, name);
-        if (new_menu != null) {
-            return new_menu;
-        }
-        new_menu = new JRPMenu(id, name, index);
-        new_menu.setName(name); // JMenu.getName() and JMenu.getText() aren't automatically equal
-        addMenu(menuBar, new_menu, index);
-        return new_menu;
-    }
-
-    public static JRPMenu getRPMenu(JMenuBar menuBar, String id, String name) {
-        JRPMenu new_menu = (JRPMenu) findMenu(menuBar, name);
-        if (new_menu != null) {
-            return new_menu;
-        }
-        new_menu = new JRPMenu(id, name);
-        new_menu.setName(name); // JMenu.getName() and JMenu.getText() aren't automatically equal
-        addMenu(menuBar, new_menu);
+        main_menu_bar.add(new_menu);
         return new_menu;
     }
 
@@ -142,10 +103,6 @@ public abstract class MenuUtil {
             addAccelerator(item, action.getClass().getName());
         } // duplicates GenericAction.getId()
         return menu.add(item);
-    }
-
-    public static void removeFromMenu(JMenu menu, JMenuItem item) {
-        menu.remove(item);
     }
 
     public static ImageIcon getIcon(String resource_name) {

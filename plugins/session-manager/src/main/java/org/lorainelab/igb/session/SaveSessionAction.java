@@ -8,30 +8,38 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
-import com.affymetrix.igb.swing.JRPMenuItem;
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
-import org.lorainelab.igb.services.IgbService;
-import org.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import org.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
+import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
+import org.lorainelab.igb.menu.api.model.MenuIcon;
+import org.lorainelab.igb.menu.api.model.MenuItem;
+import org.lorainelab.igb.services.IgbService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
-@Component(name = SaveSessionAction.COMPONENT_NAME, immediate = true, provide = {IgbMenuItemProvider.class, GenericAction.class})
-public class SaveSessionAction extends GenericAction implements IgbMenuItemProvider {
+@Component(name = SaveSessionAction.COMPONENT_NAME, immediate = true, provide = {MenuBarEntryProvider.class, GenericAction.class})
+public class SaveSessionAction extends GenericAction implements MenuBarEntryProvider {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SaveSessionAction.class);
     public static final String COMPONENT_NAME = "SaveSessionAction";
+    private static final String SAVE_SESSION_ICON = "save_session.png";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private static final long serialVersionUID = 1L;
     private IgbService igbService;
@@ -39,8 +47,7 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     private final int TOOLBAR_INDEX = 1;
     final public static boolean IS_MAC
             = System.getProperty("os.name").toLowerCase().contains("mac");
-    private static final int MENU_POSITION = 12;
-
+    private static final int MENU_POSITION = 50;
     FilenameFilter fileNameFilter = (dir, name) -> name.endsWith(".xml");
 
     public SaveSessionAction() {
@@ -138,22 +145,22 @@ public class SaveSessionAction extends GenericAction implements IgbMenuItemProvi
     }
 
     @Override
-    public IgbToolBarParentMenu getParentMenu() {
-        return IgbToolBarParentMenu.FILE;
+    public java.util.Optional<List<MenuItem>> getMenuItems() {
+        MenuItem menuItem = new MenuItem(BUNDLE.getString("saveSession"), (Void t) -> {
+            actionPerformed(null);
+            return t;
+        });
+        try (InputStream resourceAsStream = SaveSessionAction.class.getClassLoader().getResourceAsStream(SAVE_SESSION_ICON)) {
+            menuItem.setMenuIcon(new MenuIcon(resourceAsStream));
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+        menuItem.setWeight(MENU_POSITION);
+        return java.util.Optional.of(Arrays.asList(menuItem));
     }
 
     @Override
-    public JRPMenuItem getMenuItem() {
-        return new JRPMenuItem("Bookmark_saveSession", this, getMenuItemWeight());
-    }
-
-    @Override
-    public int getMenuItemWeight() {
-        return MENU_POSITION;
-    }
-
-    @Override
-    public int getToolbarIndex() {
-        return TOOLBAR_INDEX;
+    public MenuBarParentMenu getMenuExtensionParent() {
+        return MenuBarParentMenu.FILE;
     }
 }

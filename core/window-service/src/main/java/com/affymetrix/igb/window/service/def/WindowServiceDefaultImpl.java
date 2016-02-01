@@ -13,13 +13,6 @@ import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
 import com.google.common.collect.Sets;
-import static org.lorainelab.igb.frame.FrameManager.MAIN_WINDOW_PREF_KEY;
-import org.lorainelab.igb.frame.api.FrameManagerService;
-import org.lorainelab.igb.services.window.WindowServiceLifecycleHook;
-import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
-import org.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
-import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import org.lorainelab.igb.services.window.tabs.TabHolder;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,6 +36,13 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import net.miginfocom.swing.MigLayout;
+import static org.lorainelab.igb.frame.FrameManager.MAIN_WINDOW_PREF_KEY;
+import org.lorainelab.igb.frame.api.FrameManagerService;
+import org.lorainelab.igb.services.window.WindowServiceLifecycleHook;
+import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
+import org.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
+import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import org.lorainelab.igb.services.window.tabs.TabHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private final Map<TabState, JRPMenuItem> move_tab_to_window_items;
     private final Map<TabState, JRPMenuItem> move_tabbed_panel_to_window_items;
-    private JRPMenu tabsMenu;
+    private JMenu tabsMenu;
     private JFrame frame;
     private final Map<TabState, TabHolder> tabHolders;
     private final Map<IgbTabPanel, JMenu> tabMenus;
@@ -125,7 +125,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     @Override
     public void setTabsMenu(JRPMenuBar mbar) {
         int menuItemCounter = 0;
-        this.tabsMenu = MenuUtil.getRPMenu(mbar, "IGB_main_tabsMenu", BUNDLE.getString("tabsMenu"), 5);
+        this.tabsMenu = new JMenu(BUNDLE.getString("tabsMenu"));
         for (final TabState tabState : TabState.values()) {
             if (tabState.isTab()) {
                 JRPMenuItem change_tab_state_item = new JRPMenuItem(

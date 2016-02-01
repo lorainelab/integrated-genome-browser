@@ -155,7 +155,6 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -167,15 +166,16 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
-import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
-import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
-import org.lorainelab.igb.context.menu.model.ContextMenuItem;
-import org.lorainelab.igb.context.menu.model.MenuIcon;
 import org.lorainelab.igb.context.menu.service.AnnotationContextMenuRegistryI;
 import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
+import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
+import org.lorainelab.igb.menu.api.model.ContextMenuItem;
+import org.lorainelab.igb.menu.api.model.MenuItem;
+import static org.lorainelab.igb.menu.api.util.MenuUtils.convertContextMenuItemToJMenuItem;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -1796,51 +1796,53 @@ public class SeqMapView extends JPanel
             JSeparator afterSequenceGroup = new JSeparator();
             JSeparator afterAppGroup = new JSeparator();
             for (AnnotationContextMenuProvider contextMenuProvider : annotationContextMenuRegistry.getAnnotationContextMenuItems()) {
-                Optional<List<ContextMenuItem>> buildMenuItem = contextMenuProvider.buildMenuItem(new AnnotationContextEvent(selected_syms));
+                Optional<List<MenuItem>> buildMenuItem = contextMenuProvider.buildMenuItem(new AnnotationContextEvent(selected_syms));
                 if (buildMenuItem.isPresent()) {
-                    List<ContextMenuItem> menuItems = buildMenuItem.get();
-                    for (ContextMenuItem menuItem : menuItems) {
-                        if (menuItem.getSubMenuItems().isEmpty()) {
-                            JMenuItem jMenuItem = convertContextMenuItemToJMenuItem(menuItem);
-                            switch (menuItem.getMenuSection()) {
-                                case INFORMATION:
-                                    infoGroup.put(menuItem.getWeight(), jMenuItem);
-                                    break;
-                                case SEQUENCE:
-                                    sequenceGroup.put(menuItem.getWeight(), jMenuItem);
-                                    break;
-                                case APP:
-                                    appGroup.put(menuItem.getWeight(), jMenuItem);
-                                    break;
-                                case UI_ACTION:
-                                    uiActionGroup.put(menuItem.getWeight(), jMenuItem);
-                                    break;
-                            }
-                        } else {
-                            JMenu jMenu = new JMenu();
-                            jMenu.setText(menuItem.getMenuLabel());
-                            menuItem.getSubMenuItems()
-                                    .stream()
-                                    .map(contextMenuItem -> convertContextMenuItemToJMenuItem(contextMenuItem))
-                                    .forEach(jMenuItem -> {
-                                        jMenu.add(jMenuItem);
-                                    });
-                            switch (menuItem.getMenuSection()) {
-                                case INFORMATION:
-                                    infoGroup.put(menuItem.getWeight(), jMenu);
-                                    break;
-                                case SEQUENCE:
-                                    sequenceGroup.put(menuItem.getWeight(), jMenu);
-                                    break;
-                                case APP:
-                                    appGroup.put(menuItem.getWeight(), jMenu);
-                                    break;
-                                case UI_ACTION:
-                                    uiActionGroup.put(menuItem.getWeight(), jMenu);
-                                    break;
-                            }
-                        }
-                    }
+                    buildMenuItem.get().stream()
+                            .filter(menuItem -> menuItem instanceof ContextMenuItem)
+                            .map(menuItem -> ContextMenuItem.class.cast(menuItem))
+                            .forEach(menuItem -> {
+                                if (menuItem.getSubMenuItems().isEmpty()) {
+                                    JMenuItem jMenuItem = convertContextMenuItemToJMenuItem(menuItem);
+                                    switch (menuItem.getMenuSection()) {
+                                        case INFORMATION:
+                                            infoGroup.put(menuItem.getWeight(), jMenuItem);
+                                            break;
+                                        case SEQUENCE:
+                                            sequenceGroup.put(menuItem.getWeight(), jMenuItem);
+                                            break;
+                                        case APP:
+                                            appGroup.put(menuItem.getWeight(), jMenuItem);
+                                            break;
+                                        case UI_ACTION:
+                                            uiActionGroup.put(menuItem.getWeight(), jMenuItem);
+                                            break;
+                                    }
+                                } else {
+                                    JMenu jMenu = new JMenu();
+                                    jMenu.setText(menuItem.getMenuLabel());
+                                    menuItem.getSubMenuItems()
+                                            .stream()
+                                            .map(contextMenuItem -> convertContextMenuItemToJMenuItem(contextMenuItem))
+                                            .forEach(jMenuItem -> {
+                                                jMenu.add(jMenuItem);
+                                            });
+                                    switch (menuItem.getMenuSection()) {
+                                        case INFORMATION:
+                                            infoGroup.put(menuItem.getWeight(), jMenu);
+                                            break;
+                                        case SEQUENCE:
+                                            sequenceGroup.put(menuItem.getWeight(), jMenu);
+                                            break;
+                                        case APP:
+                                            appGroup.put(menuItem.getWeight(), jMenu);
+                                            break;
+                                        case UI_ACTION:
+                                            uiActionGroup.put(menuItem.getWeight(), jMenu);
+                                            break;
+                                    }
+                                }
+                            });
                 }
             }
 
@@ -1885,21 +1887,6 @@ public class SeqMapView extends JPanel
                 }
             }
         }
-    }
-
-    private JMenuItem convertContextMenuItemToJMenuItem(ContextMenuItem menuItem) {
-        JMenuItem jMenuItem = new JMenuItem(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                menuItem.getAction().apply(null);
-            }
-        });
-        jMenuItem.setText(menuItem.getMenuLabel());
-        Optional<MenuIcon> menuItemIcon = menuItem.getMenuIcon();
-        if (menuItemIcon.isPresent()) {
-            jMenuItem.setIcon(new ImageIcon(menuItemIcon.get().getEncodedImage()));
-        }
-        return jMenuItem;
     }
 
     @Override

@@ -3,36 +3,41 @@ package org.lorainelab.igb.image.exporter;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.ErrorHandler;
-import com.affymetrix.igb.swing.JRPMenuItem;
-import org.lorainelab.igb.services.IgbService;
-import org.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import org.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
-import org.lorainelab.igb.image.exporter.service.ImageExportService;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import org.lorainelab.igb.image.exporter.service.ImageExportService;
+import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
+import org.lorainelab.igb.menu.api.model.MenuIcon;
+import org.lorainelab.igb.menu.api.model.MenuItem;
+import org.lorainelab.igb.services.IgbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
 /**
  *
  * @author nick
  */
-@aQute.bnd.annotation.component.Component(name = SaveImageAction.COMPONENT_NAME, immediate = true, provide = {IgbMenuItemProvider.class, GenericAction.class})
-public class SaveImageAction extends GenericAction implements IgbMenuItemProvider {
+@aQute.bnd.annotation.component.Component(name = SaveImageAction.COMPONENT_NAME, immediate = true, provide = {MenuBarEntryProvider.class, GenericAction.class})
+public class SaveImageAction extends GenericAction implements MenuBarEntryProvider {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SaveImageAction.class);
     public static final String COMPONENT_NAME = "SaveImageAction";
     private static final Logger logger = LoggerFactory.getLogger(SaveImageAction.class);
     private static final long serialVersionUID = 1L;
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private ImageExportService imageExportService;
     private final int TOOLBAR_INDEX = 4;
-    private static final int MENU_POSITION = 5;
+    private static final int MENU_POSITION = 17;
     private IgbService igbService;
 
     public SaveImageAction() {
@@ -81,18 +86,24 @@ public class SaveImageAction extends GenericAction implements IgbMenuItemProvide
     }
 
     @Override
-    public IgbToolBarParentMenu getParentMenu() {
-        return IgbToolBarParentMenu.FILE;
+    public Optional<List<MenuItem>> getMenuItems() {
+        MenuItem menuItem = new MenuItem(BUNDLE.getString("saveImage"), (Void t) -> {
+            actionPerformed(null);
+            return t;
+        });
+        try (InputStream resourceAsStream = SaveImageAction.class.getClassLoader().getResourceAsStream(SAVE_IMAGE_MENU_ICON)) {
+            menuItem.setMenuIcon(new MenuIcon(resourceAsStream));
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+        menuItem.setWeight(MENU_POSITION);
+        return Optional.of(Arrays.asList(menuItem));
     }
+    private static final String SAVE_IMAGE_MENU_ICON = "camera_toolbar.png";
 
     @Override
-    public JRPMenuItem getMenuItem() {
-        return new JRPMenuItem(BUNDLE.getString("saveImage"), this, getMenuItemWeight());
-    }
-
-    @Override
-    public int getMenuItemWeight() {
-        return MENU_POSITION;
+    public MenuBarParentMenu getMenuExtensionParent() {
+        return MenuBarParentMenu.FILE;
     }
 
     @Override

@@ -5,7 +5,7 @@
  */
 package org.lorainelab.igb.context.menu.service;
 
-import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
+import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
 import java.util.Set;
 
 /**

@@ -8,7 +8,7 @@ package org.lorainelab.igb.context.menu.service.impl;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.google.common.collect.Sets;
-import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
+import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
 import org.lorainelab.igb.context.menu.service.AnnotationContextMenuRegistryI;
 import java.util.Set;
 

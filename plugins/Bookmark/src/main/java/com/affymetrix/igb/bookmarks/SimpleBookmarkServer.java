@@ -9,13 +9,12 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import aQute.bnd.annotation.component.Component;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.DEFAULT_SERVER_PORT;
-import org.lorainelab.igb.services.IgbService;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import javax.swing.SwingUtilities;
+import org.lorainelab.igb.services.IgbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,30 +23,24 @@ import org.slf4j.LoggerFactory;
  * requests. The server reads only the single "GET" line from the header,
  * ignores all other input, returns no output, and closes the connection.
  */
+@Component(immediate = true)
 public final class SimpleBookmarkServer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleBookmarkServer.class);
     private static final int NO_PORT = -1;
     private static final int PORTS_TO_TRY = 1;
-    private static int server_port = NO_PORT;
-    private static final Logger logger = LoggerFactory.getLogger(SimpleBookmarkServer.class);
-
-    static {
-        try {
-            setServerPort(ResourceBundle.getBundle("sockets").getString("server_port"));
-        } catch (MissingResourceException x) {
-        }
-    }
+    private static int SERVER_PORT = NO_PORT;
 
     public static void setServerPort(String portString) {
         try {
             int port = Integer.parseInt(portString);
             if (port > 0 && port <= 65535) {
-                server_port = port;
+                SERVER_PORT = port;
             } else {
-                logger.error("Invalid port number {}, must be between 0 and 65535", Integer.toString(port));
+                LOG.error("Invalid port number {}, must be between 0 and 65535", Integer.toString(port));
             }
         } catch (NumberFormatException x) {
-            logger.error("Invalid number {} for server_port", portString);
+            LOG.error("Invalid number {} for server_port", portString);
         }
     }
 
@@ -57,8 +50,8 @@ public final class SimpleBookmarkServer {
     // but starting it won't cause the GUI to hang.
     public static void init(final IgbService igbService) {
         startServerSocket(igbService, DEFAULT_SERVER_PORT);
-        if (server_port != NO_PORT) {
-            startServerSocket(igbService, server_port);
+        if (SERVER_PORT != NO_PORT) {
+            startServerSocket(igbService, SERVER_PORT);
         }
     }
 
@@ -67,7 +60,7 @@ public final class SimpleBookmarkServer {
             final int serverPort = findAvailablePort(startPort);
 
             if (serverPort == NO_PORT) {
-                logger.error(
+                LOG.error(
                         "Couldn't find an available port for IGB to listen to control requests on port {}!\nTurning off IGB's URL-based control features", Integer.toString(startPort));
             } else {
 
@@ -76,7 +69,7 @@ public final class SimpleBookmarkServer {
                     try {
                         handler.start();
                     } catch (IOException ex) {
-                        logger.error("Could not start bookmark server, turning off IGB's URL-based control features.");
+                        LOG.error("Could not start bookmark server, turning off IGB's URL-based control features.");
                     }
                 };
 
@@ -86,7 +79,7 @@ public final class SimpleBookmarkServer {
             }
 
         } catch (Exception ex) {
-            logger.error("I/O Problem", ex);
+            LOG.error("I/O Problem", ex);
         }
     }
 
@@ -113,13 +106,14 @@ public final class SimpleBookmarkServer {
      * @return boolean
      */
     private static boolean isPortAvailable(int port) {
-        logger.debug("Testing port {}", Integer.toString(port));
+        LOG.debug("Testing port {}", Integer.toString(port));
         try (Socket s = new Socket("localhost", port);) {
-            logger.debug("Port {} is not available", Integer.toString(port));
+            LOG.debug("Port {} is not available", Integer.toString(port));
             return false;
         } catch (IOException e) {
-            logger.debug("Port {} is available", Integer.toString(port));
+            LOG.debug("Port {} is available", Integer.toString(port));
             return true;
         }
     }
+
 }

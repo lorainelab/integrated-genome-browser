@@ -65,7 +65,6 @@ public abstract class PreferenceUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(PreferenceUtils.class);
     public static final String PREFS_MAIN = "/com/affymetrix";
-    public static final String MENU_NODE_NAME = "main_menu";
     /**
      * The name of a boolean preference. Setting to true to be sure to save
      * bookmarks.

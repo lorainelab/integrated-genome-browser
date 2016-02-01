@@ -11,14 +11,16 @@ import java.util.List;
 import java.util.Optional;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
-import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
-import org.lorainelab.igb.context.menu.model.ContextMenuItem;
-import org.lorainelab.igb.context.menu.model.MenuIcon;
-import org.lorainelab.igb.context.menu.model.MenuSection;
-import org.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
+import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
+import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
+import org.lorainelab.igb.menu.api.model.ContextMenuItem;
+import org.lorainelab.igb.menu.api.model.MenuIcon;
+import org.lorainelab.igb.menu.api.model.MenuItem;
+import org.lorainelab.igb.menu.api.model.MenuSection;
+import org.lorainelab.igb.menu.api.util.MenuUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
 /**
  *
@@ -40,20 +42,30 @@ public class PopupListener implements AnnotationContextMenuProvider, AxisPopupLi
     }
 
     @Reference(optional = false, target = "(&(component.name=ViewGenomicSequenceInSeqViewerAction))")
-    public void setGenomicSequenceViewer(IgbMenuItemProvider genomicSequenceViewer) {
-        this.genomicSequenceViewer = genomicSequenceViewer.getMenuItem();
+    public void setGenomicSequenceViewer(MenuBarEntryProvider genomicSequenceViewer) {
+        if (genomicSequenceViewer.getMenuItems().isPresent()) {
+            Optional<MenuItem> menuItem = genomicSequenceViewer.getMenuItems().get().stream().findFirst();
+            if (menuItem.isPresent()) {
+                this.genomicSequenceViewer = MenuUtils.convertContextMenuItemToJMenuItem(menuItem.get());
+            }
+        }
     }
 
     @Reference(optional = false, target = "(&(component.name=ViewReadSequenceInSeqViewerAction))")
-    public void setReadSequenceViewer(IgbMenuItemProvider readSequenceViewer) {
-        this.readSequenceViewer = readSequenceViewer.getMenuItem();
+    public void setReadSequenceViewer(MenuBarEntryProvider readSequenceViewer) {
+        if (readSequenceViewer.getMenuItems().isPresent()) {
+            Optional<MenuItem> menuItem = readSequenceViewer.getMenuItems().get().stream().findFirst();
+            if (menuItem.isPresent()) {
+                this.readSequenceViewer = MenuUtils.convertContextMenuItemToJMenuItem(menuItem.get());
+            }
+        }
     }
 
     @Override
-    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event) {
+    public Optional<List<MenuItem>> buildMenuItem(AnnotationContextEvent event) {
         List<SeqSymmetry> selectedItems = event.getSelectedItems();
         if (!selectedItems.isEmpty() && !(selectedItems.get(0) instanceof GraphSym)) {
-            List<ContextMenuItem> contextMenuItems = Lists.newArrayList();
+            List<MenuItem> contextMenuItems = Lists.newArrayList();
             if (genomicSequenceViewer.getAction().isEnabled()) {
                 ContextMenuItem genomicSequenceMenuItem = getGenomicSequenceMenuItem();
                 contextMenuItems.add(genomicSequenceMenuItem);

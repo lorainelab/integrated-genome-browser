@@ -97,11 +97,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>shared-lib-wrapper</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>
@@ -129,6 +124,16 @@
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-javafx-util</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>org.lorainelab.igb.menu.api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

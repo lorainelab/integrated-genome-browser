@@ -228,11 +228,6 @@
                                     <artifactId>org.apache.felix.configadmin</artifactId>
                                     <version>${felix-configadmin-version}</version>
                                 </artifactItem>
-<!--                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.metatype</artifactId>
-                                    <version>${felix-metatype-version}</version>
-                                </artifactItem>-->
                                 <artifactItem>
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.fileinstall</artifactId>

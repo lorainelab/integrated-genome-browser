@@ -7,28 +7,36 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.DataContainer;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.OpenURIAction;
-import com.affymetrix.igb.swing.JRPMenuItem;
 import com.affymetrix.igb.view.CustomGenomeDialogPanel;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.google.common.base.Strings;
-import org.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import org.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
-import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
-import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import javax.swing.JOptionPane;
+import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
+import org.lorainelab.igb.menu.api.model.MenuIcon;
+import org.lorainelab.igb.menu.api.model.MenuItem;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
 /**
  *
  * @author hiralv
  */
-@Component(name = NewGenomeAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, IgbMenuItemProvider.class})
-public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvider {
+@Component(name = NewGenomeAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, MenuBarEntryProvider.class})
+public class NewGenomeAction extends OpenURIAction implements MenuBarEntryProvider {
 
+    private static final Logger LOG = LoggerFactory.getLogger(NewGenomeAction.class);
     public static final String COMPONENT_NAME = "NewGenomeAction";
-    private static final int FILE_MENU_INDEX = 3;
+    private static final int FILE_MENU_INDEX = 6;
     private static final long serialVersionUID = 1L;
     private final int TOOLBAR_INDEX = 3;
 
@@ -108,23 +116,6 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
         return TOOLBAR_INDEX;
     }
 
-    @Override
-    public IgbToolBarParentMenu getParentMenu() {
-        return IgbToolBarParentMenu.FILE;
-    }
-
-    @Override
-    public JRPMenuItem getMenuItem() {
-        JRPMenuItem consoleMenuItem = new JRPMenuItem("showConsole", this, FILE_MENU_INDEX);
-        consoleMenuItem.setText(BUNDLE.getString("addNewSpecies"));
-        return consoleMenuItem;
-    }
-
-    @Override
-    public int getMenuItemWeight() {
-        return FILE_MENU_INDEX;
-    }
-
     @Reference
     public void setGenomeVersionSynonymLookup(GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         this.genomeVersionSynonymLookup = genomeVersionSynonymLookup;
@@ -133,6 +124,27 @@ public class NewGenomeAction extends OpenURIAction implements IgbMenuItemProvide
     @Reference
     public void setSpeciesSynLookup(SpeciesSynonymsLookup speciesSynLookup) {
         this.speciesSynLookup = speciesSynLookup;
+    }
+
+    @Override
+    public Optional<List<MenuItem>> getMenuItems() {
+        MenuItem newGenomeMenuItem = new MenuItem(BUNDLE.getString("addNewSpecies"), (Void t) -> {
+            actionPerformed(null);
+            return t;
+        });
+        try (InputStream resourceAsStream = NewGenomeAction.class.getClassLoader().getResourceAsStream(NEW_GENOME_ACTION_ICON)) {
+            newGenomeMenuItem.setMenuIcon(new MenuIcon(resourceAsStream));
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+        newGenomeMenuItem.setWeight(FILE_MENU_INDEX);
+        return Optional.of(Arrays.asList(newGenomeMenuItem));
+    }
+    private static final String NEW_GENOME_ACTION_ICON = "new_genome.png";
+
+    @Override
+    public MenuBarParentMenu getMenuExtensionParent() {
+        return MenuBarParentMenu.FILE;
     }
 
 }

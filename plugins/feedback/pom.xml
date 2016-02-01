@@ -76,6 +76,11 @@
             <artifactId>igbSwingExt</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>org.lorainelab.igb.menu.api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

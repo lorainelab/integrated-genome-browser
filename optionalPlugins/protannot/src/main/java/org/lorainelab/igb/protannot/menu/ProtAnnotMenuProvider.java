@@ -7,62 +7,49 @@ package org.lorainelab.igb.protannot.menu;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.igb.swing.JRPMenuItem;
-import org.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import org.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
-import org.lorainelab.igb.protannot.ProtAnnotAction;
-import java.awt.event.ActionEvent;
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Optional;
+import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
+import org.lorainelab.igb.menu.api.model.MenuItem;
+import org.lorainelab.igb.protannot.ProtAnnotAction;
 import org.osgi.service.component.ComponentFactory;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
 /**
  *
  * @author jeckstei
  */
 @Component(immediate = true)
-public class ProtAnnotMenuProvider extends GenericAction implements IgbMenuItemProvider {
-    
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ProtAnnotMenuProvider.class);
-    
+public class ProtAnnotMenuProvider implements MenuBarEntryProvider {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProtAnnotMenuProvider.class);
+    private static final String PROTANNOT_MENU_ITEM_LABEL = "Start ProtAnnot";
     private static final int MENU_ITEM_WEIGHT = 8;
-    
     private ComponentFactory protannotFactory;
-    
-    private final JRPMenuItem menuItem;
-    
-    public ProtAnnotMenuProvider() {
-        super("Start ProtAnnot", null, null);
-        menuItem = new JRPMenuItem("Protannot", this, MENU_ITEM_WEIGHT);
-    }
 
-    @Override
-    public com.affymetrix.igb.swing.JRPMenuItem getMenuItem() {
-        return menuItem;
-    }
-
-    @Override
-    public int getMenuItemWeight() {
-        return MENU_ITEM_WEIGHT;
-    }
-
-    @Override
-    public IgbToolBarParentMenu getParentMenu() {
-        return IgbToolBarParentMenu.TOOLS;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        final Hashtable<String, ?> props = new Hashtable<>();
-        ProtAnnotAction instance = (ProtAnnotAction) protannotFactory.newInstance(props).getInstance();
-        instance.actionPerformed(null);
-    }
-    
     @Reference(target = "(component.factory=protannot.factory.provider)")
     public void setProtannotFactory(final ComponentFactory protannotFactory) {
         this.protannotFactory = protannotFactory;
     }
-    
-    
+
+    @Override
+    public Optional<List<MenuItem>> getMenuItems() {
+        MenuItem newGenomeMenuItem = new MenuItem(PROTANNOT_MENU_ITEM_LABEL, (Void t) -> {
+            final Hashtable<String, ?> props = new Hashtable<>();
+            ProtAnnotAction instance = (ProtAnnotAction) protannotFactory.newInstance(props).getInstance();
+            instance.actionPerformed(null);
+            return t;
+        });
+        newGenomeMenuItem.setWeight(MENU_ITEM_WEIGHT);
+        return Optional.of(Arrays.asList(newGenomeMenuItem));
+    }
+
+    @Override
+    public MenuBarParentMenu getMenuExtensionParent() {
+        return MenuBarParentMenu.FILE;
+    }
 }

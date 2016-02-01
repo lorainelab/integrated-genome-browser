@@ -103,7 +103,7 @@
         <module>core/frameManager</module>
         <module>core/synonym-lookup</module>
         <module>core/igb-javafx-util</module>
-        <module>core/context-menu-api</module>
+        <module>core/menu-api</module>
         <module>core/context-menu-service</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
@@ -123,7 +123,6 @@
         <module>plugins/SequenceViewer</module>
         <module>plugins/Survey</module>
         <module>plugins/Thresholding</module>
-        <module>plugins/Tutorial</module>
         <module>plugins/Update</module>
         <module>plugins/plugin-manager</module>
         <module>plugins/PairedEndDataPreprocessor</module>        
@@ -158,7 +157,6 @@
             </activation>
             <modules>
                 <module>optionalPlugins/merge-annotation-operator</module>
-                <module>optionalPlugins/tutorial-helper</module>
                 <module>optionalPlugins/geometric-mean</module>
                 <module>optionalPlugins/igb-command-socket</module> 
                 <module>optionalPlugins/23andMe-snp-converter</module>
@@ -183,7 +181,6 @@
             </activation>
             <modules>
                 <module>optionalPlugins/merge-annotation-operator</module>
-                <module>optionalPlugins/tutorial-helper</module>
                 <module>optionalPlugins/geometric-mean</module>
                 <module>optionalPlugins/igb-command-socket</module>
                 <module>optionalPlugins/23andMe-snp-converter</module>
@@ -297,7 +294,7 @@
             </dependency>
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
-                <artifactId>context-menu-api</artifactId>
+                <artifactId>org.lorainelab.igb.menu.api</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -414,12 +411,6 @@
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>thresholding</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.affymetrix</groupId>
-                <artifactId>tutorial</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -599,12 +590,6 @@
             <dependency>
                 <groupId>com.affymetrix</groupId>
                 <artifactId>transcriptIsoForm</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency> 
-            <dependency>
-                <groupId>com.affymetrix</groupId>
-                <artifactId>tutorial-helper</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
@@ -994,14 +979,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.19</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <configuration>
-                        <additionalparam>-Xdoclint:none</additionalparam>
-                        <aggregate>true</aggregate>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

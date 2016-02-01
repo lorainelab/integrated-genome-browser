@@ -11,11 +11,6 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.swing.JRPMenu;
-import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
-import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
-import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -30,6 +25,10 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.event.ListSelectionListener;
+import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 
 /**
  * OSGi Service to allow bundles indirect access to IGB internals.
@@ -78,8 +77,6 @@ public interface IgbService {
      * @return the specified icon
      */
     public ImageIcon getIcon(String name);
-
-    public JRPMenu addTopMenu(String id, String text, int index);
 
     public void loadAndDisplayAnnotations(DataSet gFeature);
 

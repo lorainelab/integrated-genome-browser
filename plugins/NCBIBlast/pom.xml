@@ -70,7 +70,7 @@
         </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
-            <artifactId>context-menu-api</artifactId>
+            <artifactId>org.lorainelab.igb.menu.api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

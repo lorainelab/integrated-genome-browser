@@ -37,7 +37,6 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.StatusAlert;
 import static com.affymetrix.igb.IGBConstants.GOOGLE_ANALYTICS_ID;
 import com.affymetrix.igb.general.Persistence;
-import com.affymetrix.igb.swing.JRPMenu;
 import com.affymetrix.igb.swing.JRPMenuBar;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.script.ScriptManager;
@@ -422,10 +421,6 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         this.windowService = windowService;
         windowService.setMainPanel(MainWorkspaceManager.getWorkspaceManager());
         windowService.setTabsMenu(mbar);
-    }
-
-    public JRPMenu addTopMenu(String id, String text, int index) {
-        return MenuUtil.getRPMenu(mbar, id, text, index);
     }
 
     public int addToolbarAction(GenericAction genericAction) {

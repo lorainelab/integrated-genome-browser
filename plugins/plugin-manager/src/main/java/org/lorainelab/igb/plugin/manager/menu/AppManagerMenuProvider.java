@@ -7,60 +7,57 @@ package org.lorainelab.igb.plugin.manager.menu;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.igb.swing.JRPMenuItem;
-import java.awt.event.ActionEvent;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import javafx.application.Platform;
+import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
+import org.lorainelab.igb.menu.api.model.MenuIcon;
+import org.lorainelab.igb.menu.api.model.MenuItem;
 import org.lorainelab.igb.plugin.manager.AppManagerFrame;
-import org.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import org.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
 /**
  *
  * @author jeckstei
  */
 @Component(immediate = true)
-public class AppManagerMenuProvider extends GenericAction implements IgbMenuItemProvider {
+public class AppManagerMenuProvider implements MenuBarEntryProvider {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(AppManagerMenuProvider.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger(AppManagerMenuProvider.class);
     private static final int MENU_ITEM_WEIGHT = 8;
 
-    private final JRPMenuItem menuItem;
-
     private AppManagerFrame frame;
-
-    public AppManagerMenuProvider() {
-        super("Open App Manager", "16x16/actions/fa-circle.png",
-                "22x22/actions/fa-circle.png");
-        menuItem = new JRPMenuItem("App Manager", this, MENU_ITEM_WEIGHT);
-    }
-
-    @Override
-    public IgbToolBarParentMenu getParentMenu() {
-        return IgbToolBarParentMenu.TOOLS;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Platform.runLater(() -> {
-            frame.setVisible(true);
-        });
-    }
-
-    @Override
-    public com.affymetrix.igb.swing.JRPMenuItem getMenuItem() {
-        return menuItem;
-    }
-
-    @Override
-    public int getMenuItemWeight() {
-        return MENU_ITEM_WEIGHT;
-    }
 
     @Reference
     public void setFxPanel(AppManagerFrame frame) {
         this.frame = frame;
+    }
+
+    @Override
+    public Optional<List<MenuItem>> getMenuItems() {
+        MenuItem menuItem = new MenuItem(APP_MANAGER_MENU_LABEL, (Void t) -> {
+            Platform.runLater(() -> {
+                frame.setVisible(true);
+            });
+            return t;
+        });
+        try (InputStream resourceAsStream = AppManagerMenuProvider.class.getClassLoader().getResourceAsStream(APP_MANAGER_MENU_ICON)) {
+            menuItem.setMenuIcon(new MenuIcon(resourceAsStream));
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+        menuItem.setWeight(MENU_ITEM_WEIGHT);
+        return Optional.of(Arrays.asList(menuItem));
+    }
+    private static final String APP_MANAGER_MENU_LABEL = "Open App Manager";
+    private static final String APP_MANAGER_MENU_ICON = "fa-circle.png";
+
+    @Override
+    public MenuBarParentMenu getMenuExtensionParent() {
+        return MenuBarParentMenu.TOOLS;
     }
 }

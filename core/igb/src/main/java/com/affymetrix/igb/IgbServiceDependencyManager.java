@@ -7,12 +7,12 @@ import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.igb.window.service.IWindowService;
 import org.lorainelab.igb.context.menu.service.AnnotationContextMenuRegistryI;
 import org.lorainelab.igb.frame.api.FrameManagerService;
-import org.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
 import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
 /**
  *
@@ -34,7 +34,7 @@ public class IgbServiceDependencyManager {
     }
 
     @Reference(target = "(&(component.name=ShowConsoleAction))")
-    public void trackConsoleService(IgbMenuItemProvider consoleService) {
+    public void trackConsoleService(MenuBarEntryProvider consoleService) {
         logger.info("Console Service now available.");
     }
 

@@ -2,39 +2,45 @@ package org.lorainelab.igb.session;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import static com.affymetrix.common.CommonUtils.IS_MAC;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
-import com.affymetrix.igb.swing.JRPMenuItem;
 import com.google.common.base.Charsets;
-import org.lorainelab.igb.services.IgbService;
-import org.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import org.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.InputStream;
 import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.InvalidPreferencesFormatException;
 import javax.swing.JFileChooser;
+import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
+import org.lorainelab.igb.menu.api.model.MenuIcon;
+import org.lorainelab.igb.menu.api.model.MenuItem;
+import org.lorainelab.igb.services.IgbService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
-@Component(name = LoadSessionAction.COMPONENT_NAME, immediate = true, provide = {IgbMenuItemProvider.class, GenericAction.class})
-public class LoadSessionAction extends GenericAction implements IgbMenuItemProvider {
+@Component(name = LoadSessionAction.COMPONENT_NAME, immediate = true, provide = {MenuBarEntryProvider.class, GenericAction.class})
+public class LoadSessionAction extends GenericAction implements MenuBarEntryProvider {
 
+    private static final Logger LOG = LoggerFactory.getLogger(LoadSessionAction.class);
     public static final String COMPONENT_NAME = "LoadSessionAction";
+    private static final String LOAD_SESSION_ICON = "load_session.png";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
-    private static final int MENU_POSITION = 11;
-    private static final long serialVersionUID = 1L;
+    private static final int MENU_POSITION = 45;
     private IgbService igbService;
     private BookmarkService bookmarkService;
     private final int TOOLBAR_INDEX = 2;
-
-    final public static boolean IS_MAC
-            = System.getProperty("os.name").toLowerCase().contains("mac");
 
     public LoadSessionAction() {
         super(BUNDLE.getString("loadSession"), BUNDLE.getString("openSessionTooltip"),
@@ -116,22 +122,22 @@ public class LoadSessionAction extends GenericAction implements IgbMenuItemProvi
     }
 
     @Override
-    public IgbToolBarParentMenu getParentMenu() {
-        return IgbToolBarParentMenu.FILE;
+    public Optional<List<MenuItem>> getMenuItems() {
+        MenuItem menuItem = new MenuItem(BUNDLE.getString("loadSession"), (Void t) -> {
+            actionPerformed(null);
+            return t;
+        });
+        try (InputStream resourceAsStream = LoadSessionAction.class.getClassLoader().getResourceAsStream(LOAD_SESSION_ICON)) {
+            menuItem.setMenuIcon(new MenuIcon(resourceAsStream));
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+        menuItem.setWeight(MENU_POSITION);
+        return Optional.of(Arrays.asList(menuItem));
     }
 
     @Override
-    public JRPMenuItem getMenuItem() {
-        return new JRPMenuItem("Bookmark_loadSession", this, getMenuItemWeight());
-    }
-
-    @Override
-    public int getMenuItemWeight() {
-        return MENU_POSITION;
-    }
-
-    @Override
-    public int getToolbarIndex() {
-        return TOOLBAR_INDEX;
+    public MenuBarParentMenu getMenuExtensionParent() {
+        return MenuBarParentMenu.FILE;
     }
 }

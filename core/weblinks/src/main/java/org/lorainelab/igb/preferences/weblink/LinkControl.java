@@ -14,11 +14,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.swing.JPopupMenu;
-import org.lorainelab.igb.context.menu.AnnotationContextMenuProvider;
-import org.lorainelab.igb.context.menu.model.AnnotationContextEvent;
-import org.lorainelab.igb.context.menu.model.ContextMenuItem;
-import org.lorainelab.igb.context.menu.model.MenuIcon;
-import org.lorainelab.igb.context.menu.model.MenuSection;
+import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
+import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
+import org.lorainelab.igb.menu.api.model.ContextMenuItem;
+import org.lorainelab.igb.menu.api.model.MenuIcon;
+import org.lorainelab.igb.menu.api.model.MenuItem;
+import org.lorainelab.igb.menu.api.model.MenuSection;
 import org.lorainelab.igb.preferences.weblink.model.WebLink;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
     }
 
     @Override
-    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event) {
+    public Optional<List<MenuItem>> buildMenuItem(AnnotationContextEvent event) {
         if (event.getSelectedItems().isEmpty()) {
             return Optional.empty();
         }
@@ -54,7 +55,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
 
     }
 
-    private Optional<List<ContextMenuItem>> buildContextMenuItem(SeqSymmetry primarySym) {
+    private Optional<List<MenuItem>> buildContextMenuItem(SeqSymmetry primarySym) {
         List<WebLink> results = new ArrayList<>();
         results.addAll(WebLinkUtils.getServerList().getWebLinks(primarySym));
         results.addAll(WebLinkUtils.getLocalList().getWebLinks(primarySym));
@@ -85,7 +86,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
 
             }
         } else {
-            Set<ContextMenuItem> childMenuItems = Sets.newHashSet();
+            Set<MenuItem> childMenuItems = Sets.newHashSet();
 
             for (WebLink webLink : results) {
                 name = webLink.getName();

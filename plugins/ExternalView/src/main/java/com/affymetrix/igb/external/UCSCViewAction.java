@@ -17,37 +17,51 @@ import com.affymetrix.genometry.event.SeqSelectionListener;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
-import com.affymetrix.igb.swing.JRPMenuItem;
-import org.lorainelab.igb.services.IgbService;
-import org.lorainelab.igb.services.window.menus.IgbMenuItemProvider;
-import org.lorainelab.igb.services.window.menus.IgbToolBarParentMenu;
-import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.awt.event.ActionEvent;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.lorainelab.igb.menu.api.MenuItemEventService;
+import org.lorainelab.igb.menu.api.model.MenuBarMenuItemEvent;
+import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
+import org.lorainelab.igb.menu.api.model.MenuIcon;
+import org.lorainelab.igb.menu.api.model.MenuItem;
+import org.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
 /**
  *
  * @author sgblanch
  * @version $Id: UCSCViewAction.java 7258 2010-12-17 21:40:02Z lfrohman $
  */
-@Component(name = UCSCViewAction.COMPONENT_NAME, provide = {UCSCViewAction.class, IgbMenuItemProvider.class}, immediate = true)
-public class UCSCViewAction extends GenericAction implements SeqSelectionListener, IgbMenuItemProvider {
+@Component(name = UCSCViewAction.COMPONENT_NAME, provide = {UCSCViewAction.class, MenuBarEntryProvider.class}, immediate = true)
+public class UCSCViewAction extends GenericAction implements SeqSelectionListener, MenuBarEntryProvider {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UCSCViewAction.class);
     public static final String COMPONENT_NAME = "UCSCViewAction";
-    private static final int VIEW_MENU_POS = 3;
+    private static final int MENU_WEIGHT = 65;
     private static final long serialVersionUID = 1L;
     private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/";
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
     private static final Set<String> UCSCSources = Collections.synchronizedSet(new HashSet<>());
     private IgbService igbService;
     private GenomeVersionSynonymLookup genomeVersionSynonymLookup;
+    private MenuItemEventService menuItemEventService;
 
     public UCSCViewAction() {
         super(BUNDLE.getString("viewRegionInUCSCBrowser"), "16x16/actions/system-search.png", "22x22/actions/system-search.png");
         setKeyStrokeBinding("ctrl U");
+        menuItem = new MenuItem(BUNDLE.getString("viewRegionInUCSCBrowser"), (Void t) -> {
+            actionPerformed(null);
+            return t;
+        });
     }
 
     @Activate
@@ -61,6 +75,11 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     @Reference(optional = false)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
+    }
+
+    @Reference
+    public void setMenuItemEventService(MenuItemEventService menuItemEventService) {
+        this.menuItemEventService = menuItemEventService;
     }
 
     @Override
@@ -77,9 +96,12 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
 
     @Override
     public void seqSelectionChanged(SeqSelectionEvent evt) {
-        boolean enableThis = evt.getSelectedSeq() != null;
+        boolean isSeqSelected = evt.getSelectedSeq() != null;
         // don't do the enabling tests, because it will contact the UCSC server when it's not truly necessary.
-        this.setEnabled(enableThis);
+        this.setEnabled(isSeqSelected);
+        menuItem.setEnabled(isSeqSelected);
+        MenuBarMenuItemEvent menuItemEvent = new MenuBarMenuItemEvent(menuItem, MenuBarParentMenu.VIEW);
+        menuItemEventService.getEventBus().post(menuItemEvent);
     }
 
     /**
@@ -141,19 +163,21 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     }
 
     @Override
-    public IgbToolBarParentMenu getParentMenu() {
-        return IgbToolBarParentMenu.VIEW;
+    public Optional<List<MenuItem>> getMenuItems() {
+        try (InputStream resourceAsStream = UCSCViewAction.class.getClassLoader().getResourceAsStream(UCSC_VIEW_ACTION_ICON)) {
+            menuItem.setMenuIcon(new MenuIcon(resourceAsStream));
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+        menuItem.setWeight(MENU_WEIGHT);
+        return Optional.of(Arrays.asList(menuItem));
     }
+    private MenuItem menuItem;
+    private static final String UCSC_VIEW_ACTION_ICON = "system-search.png";
 
     @Override
-    public JRPMenuItem getMenuItem() {
-        JRPMenuItem menuItem = new JRPMenuItem("ExternalViewer_ucscView", this);
-        return menuItem;
-    }
-
-    @Override
-    public int getMenuItemWeight() {
-        return VIEW_MENU_POS;
+    public MenuBarParentMenu getMenuExtensionParent() {
+        return MenuBarParentMenu.VIEW;
     }
 
     @Reference

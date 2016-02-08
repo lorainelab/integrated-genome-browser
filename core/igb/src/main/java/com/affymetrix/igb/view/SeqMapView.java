@@ -88,7 +88,7 @@ import com.affymetrix.igb.glyph.CharSeqGlyph;
 import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
 import com.affymetrix.igb.glyph.GraphSelectionManager;
 import com.affymetrix.igb.glyph.TriangleInsertionSeqGlyph;
-import com.affymetrix.igb.services.registry.MapTierTypeHolder;
+import com.affymetrix.igb.services.registry.MapTierTypeRegistry;
 import com.affymetrix.igb.swing.JRPWidget;
 import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
@@ -957,7 +957,7 @@ public class SeqMapView extends JPanel
 
         // Since axis has to added only one, add it here instead of annotation track.
         axis_tier = this.getTrack(CoordinateStyle.coordinate_annot_style, StyledGlyph.Direction.AXIS);
-        MapTierGlyphFactoryI factory = MapTierTypeHolder.getDefaultFactoryFor(FileTypeCategory.Axis);
+        MapTierGlyphFactoryI factory = MapTierTypeRegistry.getDefaultFactoryFor(FileTypeCategory.Axis);
         factory.createGlyphs(null, CoordinateStyle.coordinate_annot_style, this, aseq);
 
         addAnnotationTracks();

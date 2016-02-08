@@ -5,7 +5,7 @@ import com.affymetrix.genometry.event.SymSelectionEvent;
 import com.affymetrix.genometry.event.SymSelectionListener;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.igb.services.registry.MapTierTypeHolder;
+import com.affymetrix.igb.services.registry.MapTierTypeRegistry;
 import com.affymetrix.igb.tiers.TrackStylePropertyListener;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.igb.view.SeqMapView;
@@ -72,7 +72,7 @@ public abstract class ShowStrandActionA extends SeqMapViewActionA implements Sym
                 if (tg.getTierType() != TierGlyph.TierType.GRAPH) {
                     Optional<FileTypeCategory> category = tg.getFileTypeCategory();
                     if (category.isPresent()) {
-                        if (MapTierTypeHolder.supportsTwoTrack(category.get())) {
+                        if (MapTierTypeRegistry.supportsTwoTrack(category.get())) {
                             boolean separate = tg.getAnnotStyle().getSeparate();
                             hasSeparate |= separate;
                             hasMixed |= !separate;

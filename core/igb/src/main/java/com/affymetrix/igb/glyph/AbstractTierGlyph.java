@@ -24,7 +24,7 @@ import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.services.registry.MapTierTypeHolder;
+import com.affymetrix.igb.services.registry.MapTierTypeRegistry;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.util.ColorUtils;
 import com.affymetrix.igb.view.layout.CollapsePacker;
@@ -63,7 +63,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
     protected StyledGlyph.Direction direction = StyledGlyph.Direction.NONE;
     private static final int handle_width = 10;  // width of handle in pixels
     private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
-    private MapTierTypeHolder mapTierTypeHolder;
+    private MapTierTypeRegistry mapTierTypeHolder;
 
     /**
      * glyphs to be drawn in the "middleground" -- in front of the solid
@@ -457,7 +457,7 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
             try {
                 Optional<FileTypeCategory> fileTypeCategory = getFileTypeCategory();
                 if (fileTypeCategory.isPresent()) {
-                    MapTierGlyphFactoryI factory = MapTierTypeHolder.getDefaultFactoryFor(fileTypeCategory.get());
+                    MapTierGlyphFactoryI factory = MapTierTypeRegistry.getDefaultFactoryFor(fileTypeCategory.get());
                     if (factory != null) {
                         loadAndDisplayRegion(smv, factory);
                     }
@@ -791,12 +791,12 @@ public abstract class AbstractTierGlyph extends SolidGlyph implements TierGlyph 
         glyph.setInfo(datamodel);
     }
 
-    public MapTierTypeHolder getMapTierTypeHolder() {
+    public MapTierTypeRegistry getMapTierTypeHolder() {
         return mapTierTypeHolder;
     }
 
     @Reference
-    public void setMapTierTypeHolder(MapTierTypeHolder mapTierTypeHolder) {
+    public void setMapTierTypeHolder(MapTierTypeRegistry mapTierTypeHolder) {
         this.mapTierTypeHolder = mapTierTypeHolder;
     }
 

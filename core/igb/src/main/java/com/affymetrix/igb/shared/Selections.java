@@ -14,7 +14,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
-import com.affymetrix.igb.services.registry.MapTierTypeHolder;
+import com.affymetrix.igb.services.registry.MapTierTypeRegistry;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TrackConstants;
 import com.affymetrix.igb.tiers.TrackStylePropertyListener;
@@ -214,7 +214,7 @@ public class Selections {
         for (StyledGlyph glyph : allGlyphs) {
             Optional<FileTypeCategory> fileTypeCategory = glyph.getFileTypeCategory();
             if (fileTypeCategory.isPresent()) {
-                if (!MapTierTypeHolder.supportsTwoTrack(fileTypeCategory.get())) {
+                if (!MapTierTypeRegistry.supportsTwoTrack(fileTypeCategory.get())) {
                     return false;
                 }
             }

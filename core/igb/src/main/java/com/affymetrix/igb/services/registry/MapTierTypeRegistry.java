@@ -12,19 +12,12 @@ import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * All implementation of map view mode are stored here.
- *
- * @author hiralv
- */
-@Component(name = MapTierTypeHolder.COMPONENT_NAME, immediate = true)
-public class MapTierTypeHolder {
-
-    public static final String COMPONENT_NAME = "MapTierTypeHolder";
+@Component(immediate = true)
+public class MapTierTypeRegistry {
 
     private static final Table<String, FileTypeCategory, MapTierGlyphFactoryI> mapTierTypeReferenceTable = HashBasedTable.create();
 
-    private static final Logger logger = LoggerFactory.getLogger(MapTierTypeHolder.class);
+    private static final Logger logger = LoggerFactory.getLogger(MapTierTypeRegistry.class);
 
     public static Collection<MapTierGlyphFactoryI> getPreprocessorsForType(FileTypeCategory category) {
         checkNotNull(category);

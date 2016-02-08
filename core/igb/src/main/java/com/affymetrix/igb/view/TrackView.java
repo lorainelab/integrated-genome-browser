@@ -17,7 +17,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.igb.glyph.CytobandGlyph;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
-import com.affymetrix.igb.services.registry.MapTierTypeHolder;
+import com.affymetrix.igb.services.registry.MapTierTypeRegistry;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.factories.AbstractTierGlyph;
 import com.affymetrix.igb.view.factories.MapTierGlyphFactoryI;
@@ -160,7 +160,7 @@ public class TrackView {
         // Map symmetry subclass or method type to a factory, and call factory to make glyphs
         String meth = BioSeqUtils.determineMethod(annotSym);
         if (meth != null) {
-            MapTierGlyphFactoryI factory = MapTierTypeHolder.getDefaultFactoryFor(annotSym.getCategory());
+            MapTierGlyphFactoryI factory = MapTierTypeRegistry.getDefaultFactoryFor(annotSym.getCategory());
             ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
             factory.createGlyphs(annotSym, style, smv, seq);
         }

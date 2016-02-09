@@ -255,7 +255,9 @@ public class MenuBarManager {
         } else {
             menuBarExtensionsQueue.add(menuBarExtension);
         }
-        rebuildMenus();
+        if (componentActivated) {
+            rebuildMenus();
+        }
     }
 
     public void removeMenuBarExtension(MenuBarEntryProvider menuBarExtension) {

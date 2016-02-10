@@ -14,7 +14,7 @@ import java.util.function.Function;
  */
 public class ContextMenuItem extends MenuItem {
 
-    private MenuSection menuSection = MenuSection.APP;
+    private ContextMenuSection menuSection = ContextMenuSection.APP;
 
     public ContextMenuItem(String menuLabel, Set<MenuItem> subMenuItems) {
         super(menuLabel, subMenuItems);
@@ -24,11 +24,11 @@ public class ContextMenuItem extends MenuItem {
         super(menuLabel, action);
     }
 
-    public void setMenuSection(MenuSection menuSection) {
+    public void setMenuSection(ContextMenuSection menuSection) {
         this.menuSection = menuSection;
     }
 
-    public MenuSection getMenuSection() {
+    public ContextMenuSection getMenuSection() {
         return menuSection;
     }
 

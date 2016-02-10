@@ -264,26 +264,48 @@ public class MenuBarManager {
         Optional<List<MenuItem>> menuItems = menuBarExtension.getMenuItems();
         if (menuItems.isPresent()) {
             menuItems.get().stream().forEach(menuItem -> {
+                final JMenuItem menuItemComponent = convertContextMenuItemToJMenuItem(menuItem);
                 switch (menuBarExtension.getMenuExtensionParent()) {
                     case FILE:
-                        fileMenuEntries.remove(menuItem.getWeight(), convertContextMenuItemToJMenuItem(menuItem));
+                        removeMenuEntry(fileMenuEntries, menuItem);
                         break;
                     case EDIT:
-                        editMenuEntries.remove(menuItem.getWeight(), convertContextMenuItemToJMenuItem(menuItem));
+                        removeMenuEntry(editMenuEntries, menuItem);
                         break;
                     case TOOLS:
-                        toolsMenuEntries.remove(menuItem.getWeight(), convertContextMenuItemToJMenuItem(menuItem));
+                        removeMenuEntry(toolsMenuEntries, menuItem);
                         break;
                     case VIEW:
-                        viewMenuEntries.remove(menuItem.getWeight(), convertContextMenuItemToJMenuItem(menuItem));
+                        removeMenuEntry(viewMenuEntries, menuItem);
                         break;
                     case HELP:
-                        helpMenuEntries.remove(menuItem.getWeight(), convertContextMenuItemToJMenuItem(menuItem));
+                        removeMenuEntry(helpMenuEntries, menuItem);
                         break;
                 }
             });
         }
-        rebuildMenus();
+        if (componentActivated) {
+            rebuildMenus();
+        }
+    }
+
+    private void removeMenuEntry(TreeMultimap<Integer, JComponent> menuEntryHolder, MenuItem menuItem) {
+        Optional<JMenuItem> toRemove = findMenuToRemove(menuEntryHolder, menuItem);
+        if (toRemove.isPresent()) {
+            menuEntryHolder.remove(menuItem.getWeight(), toRemove.get());
+        }
+    }
+
+    private Optional<JMenuItem> findMenuToRemove(TreeMultimap<Integer, JComponent> menuEntryHolder, MenuItem menuItem) {
+        Optional<JMenuItem> toRemove = menuEntryHolder.keySet().stream()
+                .filter(key -> key.equals(menuItem.getWeight()))
+                .map(key -> menuEntryHolder.get(key))
+                .flatMap(comps -> comps.stream())
+                .filter(comp -> comp instanceof JMenuItem)
+                .map(comp -> JMenuItem.class.cast(comp))
+                .filter(jmenuItem -> jmenuItem.getText().equalsIgnoreCase(menuItem.getMenuLabel()))
+                .findFirst();
+        return toRemove;
     }
 
     public void addParentMenuEntry(JMenu jMenu, int weight) {

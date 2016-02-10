@@ -12,15 +12,15 @@ import java.util.Optional;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
 import org.lorainelab.igb.menu.api.model.ContextMenuItem;
+import org.lorainelab.igb.menu.api.model.ContextMenuSection;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
-import org.lorainelab.igb.menu.api.model.MenuSection;
 import org.lorainelab.igb.menu.api.util.MenuUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
 /**
  *
@@ -62,10 +62,10 @@ public class PopupListener implements AnnotationContextMenuProvider, AxisPopupLi
     }
 
     @Override
-    public Optional<List<MenuItem>> buildMenuItem(AnnotationContextEvent event) {
+    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event) {
         List<SeqSymmetry> selectedItems = event.getSelectedItems();
         if (!selectedItems.isEmpty() && !(selectedItems.get(0) instanceof GraphSym)) {
-            List<MenuItem> contextMenuItems = Lists.newArrayList();
+            List<ContextMenuItem> contextMenuItems = Lists.newArrayList();
             if (genomicSequenceViewer.getAction().isEnabled()) {
                 ContextMenuItem genomicSequenceMenuItem = getGenomicSequenceMenuItem();
                 contextMenuItems.add(genomicSequenceMenuItem);
@@ -89,7 +89,7 @@ public class PopupListener implements AnnotationContextMenuProvider, AxisPopupLi
         } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
         }
-        readSequenceMenuItem.setMenuSection(MenuSection.SEQUENCE);
+        readSequenceMenuItem.setMenuSection(ContextMenuSection.SEQUENCE);
         return readSequenceMenuItem;
     }
 
@@ -103,7 +103,7 @@ public class PopupListener implements AnnotationContextMenuProvider, AxisPopupLi
         } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
         }
-        genomicSequenceMenuItem.setMenuSection(MenuSection.SEQUENCE);
+        genomicSequenceMenuItem.setMenuSection(ContextMenuSection.SEQUENCE);
         return genomicSequenceMenuItem;
     }
 

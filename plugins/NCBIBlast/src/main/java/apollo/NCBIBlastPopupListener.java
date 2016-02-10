@@ -15,9 +15,8 @@ import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
 import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
 import org.lorainelab.igb.menu.api.model.ContextMenuItem;
+import org.lorainelab.igb.menu.api.model.ContextMenuSection;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
-import org.lorainelab.igb.menu.api.model.MenuItem;
-import org.lorainelab.igb.menu.api.model.MenuSection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,7 @@ public class NCBIBlastPopupListener implements AnnotationContextMenuProvider, Ax
     }
 
     @Override
-    public Optional<List<MenuItem>> buildMenuItem(AnnotationContextEvent event) {
+    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event) {
         List<SeqSymmetry> selectedItems = event.getSelectedItems();
         if (!selectedItems.isEmpty() && !(selectedItems.get(0) instanceof GraphSym)) {
             ContextMenuItem blastXMenuItem = new ContextMenuItem(BLASTX_NR_PROTEIN_DATABASE, (Void t) -> {
@@ -58,9 +57,9 @@ public class NCBIBlastPopupListener implements AnnotationContextMenuProvider, Ax
                 blastPAction.actionPerformed(null);
                 return t;
             });
-            List<MenuItem> contextMenuItems = new ArrayList<>();
+            List<ContextMenuItem> contextMenuItems = new ArrayList<>();
             if (blastXAction.isEnabled()) {
-                blastXMenuItem.setMenuSection(MenuSection.APP);
+                blastXMenuItem.setMenuSection(ContextMenuSection.APP);
                 try (InputStream resourceAsStream = NCBIBlastPopupListener.class.getClassLoader().getResourceAsStream(NCBI_ICONPATH)) {
                     blastXMenuItem.setMenuIcon(new MenuIcon(resourceAsStream));
                 } catch (Exception ex) {
@@ -69,7 +68,7 @@ public class NCBIBlastPopupListener implements AnnotationContextMenuProvider, Ax
                 contextMenuItems.add(blastXMenuItem);
             }
             if (blastPAction.isEnabled()) {
-                blastPMenuItem.setMenuSection(MenuSection.APP);
+                blastPMenuItem.setMenuSection(ContextMenuSection.APP);
                 try (InputStream resourceAsStream = NCBIBlastPopupListener.class.getClassLoader().getResourceAsStream(NCBI_ICONPATH)) {
                     blastPMenuItem.setMenuIcon(new MenuIcon(resourceAsStream));
                 } catch (Exception ex) {

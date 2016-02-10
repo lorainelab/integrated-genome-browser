@@ -12,9 +12,8 @@ import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
 import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
 import org.lorainelab.igb.menu.api.model.ContextMenuItem;
+import org.lorainelab.igb.menu.api.model.ContextMenuSection;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
-import org.lorainelab.igb.menu.api.model.MenuItem;
-import org.lorainelab.igb.menu.api.model.MenuSection;
 
 /**
  *
@@ -32,7 +31,7 @@ public class NCBIPrimerPopupListener implements AnnotationContextMenuProvider {
     }
 
     @Override
-    public Optional<List<MenuItem>> buildMenuItem(AnnotationContextEvent event) {
+    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event) {
         ContextMenuItem primerSearchActionMenuItem = null;
         List<SeqSymmetry> selectedItems = event.getSelectedItems();
         if (!selectedItems.isEmpty() && !(selectedItems.get(0) instanceof GraphSym)) {
@@ -42,7 +41,7 @@ public class NCBIPrimerPopupListener implements AnnotationContextMenuProvider {
                 return t;
             });
             primerSearchActionMenuItem.setWeight(MENU_WEIGHT);
-            primerSearchActionMenuItem.setMenuSection(MenuSection.APP);
+            primerSearchActionMenuItem.setMenuSection(ContextMenuSection.APP);
             try (InputStream resourceAsStream = NCBIPrimerPopupListener.class.getClassLoader().getResourceAsStream(NCBI_ICONPATH)) {
                 primerSearchActionMenuItem.setMenuIcon(new MenuIcon(resourceAsStream));
             } catch (Exception ex) {

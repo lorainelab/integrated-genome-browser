@@ -174,7 +174,6 @@ import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
 import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
 import org.lorainelab.igb.menu.api.model.ContextMenuItem;
-import org.lorainelab.igb.menu.api.model.MenuItem;
 import static org.lorainelab.igb.menu.api.util.MenuUtils.convertContextMenuItemToJMenuItem;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -1796,7 +1795,7 @@ public class SeqMapView extends JPanel
             JSeparator afterSequenceGroup = new JSeparator();
             JSeparator afterAppGroup = new JSeparator();
             for (AnnotationContextMenuProvider contextMenuProvider : annotationContextMenuRegistry.getAnnotationContextMenuItems()) {
-                Optional<List<MenuItem>> buildMenuItem = contextMenuProvider.buildMenuItem(new AnnotationContextEvent(selected_syms));
+                Optional<List<ContextMenuItem>> buildMenuItem = contextMenuProvider.buildMenuItem(new AnnotationContextEvent(selected_syms));
                 if (buildMenuItem.isPresent()) {
                     buildMenuItem.get().stream()
                             .filter(menuItem -> menuItem instanceof ContextMenuItem)

@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.lorainelab.igb.menu.api;
 
 import java.util.List;
 import java.util.Optional;
 import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
-import org.lorainelab.igb.menu.api.model.MenuItem;
+import org.lorainelab.igb.menu.api.model.ContextMenuItem;
 
 /**
  * @author dcnorris
@@ -28,6 +23,6 @@ public interface AnnotationContextMenuProvider {
      * return Optional.empty() or an empty list.
      *
      */
-    public Optional<List<MenuItem>> buildMenuItem(AnnotationContextEvent event);
+    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event);
 
 }

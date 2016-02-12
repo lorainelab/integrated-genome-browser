@@ -16,8 +16,7 @@ import javax.swing.JPopupMenu;
 import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
 import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
 import org.lorainelab.igb.menu.api.model.ContextMenuItem;
-import org.lorainelab.igb.menu.api.model.MenuItem;
-import org.lorainelab.igb.menu.api.model.MenuSection;
+import org.lorainelab.igb.menu.api.model.ContextMenuSection;
 
 /**
  *
@@ -35,7 +34,7 @@ public class ReadAlignmentView implements AnnotationContextMenuProvider {
     }
 
     @Override
-    public Optional<List<MenuItem>> buildMenuItem(AnnotationContextEvent event) {
+    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event) {
         final List<SeqSymmetry> selectedItems = event.getSelectedItems();
         if (!selectedItems.isEmpty() && selectedItems.get(0) instanceof SymWithProps) {
             SeqSymmetry selectedSym = selectedItems.get(0);
@@ -53,7 +52,7 @@ public class ReadAlignmentView implements AnnotationContextMenuProvider {
                         SeqSpan span = selectedSym.getSpan(seq);
                         if (seq.isComplete(span.getMin(), span.getMax())) {
                             contextMenuItem.setWeight(MENU_WEIGHT);
-                            contextMenuItem.setMenuSection(MenuSection.SEQUENCE);
+                            contextMenuItem.setMenuSection(ContextMenuSection.SEQUENCE);
                             return Optional.of(Arrays.asList(contextMenuItem));
                         }
 
@@ -64,7 +63,7 @@ public class ReadAlignmentView implements AnnotationContextMenuProvider {
                             return t;
                         });
                         contextMenuItem.setWeight(MENU_WEIGHT);
-                        contextMenuItem.setMenuSection(MenuSection.SEQUENCE);
+                        contextMenuItem.setMenuSection(ContextMenuSection.SEQUENCE);
                         return Optional.of(Arrays.asList(contextMenuItem));
                     }
                 } else {
@@ -79,9 +78,9 @@ public class ReadAlignmentView implements AnnotationContextMenuProvider {
                         return t;
                     });
                     readRestoreActionMenuItem.setWeight(MENU_WEIGHT);
-                    readRestoreActionMenuItem.setMenuSection(MenuSection.SEQUENCE);
+                    readRestoreActionMenuItem.setMenuSection(ContextMenuSection.SEQUENCE);
                     mismatchAligmentMenuItem.setWeight(MENU_WEIGHT);
-                    mismatchAligmentMenuItem.setMenuSection(MenuSection.SEQUENCE);
+                    mismatchAligmentMenuItem.setMenuSection(ContextMenuSection.SEQUENCE);
                     return Optional.of(Arrays.asList(readRestoreActionMenuItem, mismatchAligmentMenuItem));
                 }
             }

@@ -6,10 +6,10 @@
 package org.lorainelab.igb.menu.api.model;
 
 /**
- * ## MenuSection
- *
- * This enum represents the sections of the context menu that are available for
- * extension.
+ * ## ContextMenuSection
+
+ This enum represents the sections of the context menu that are available for
+ extension.
  *
  *
  * The order of the sections is as follows:
@@ -24,7 +24,7 @@ package org.lorainelab.igb.menu.api.model;
  * @author dcnorris
  * @module.info context-menu-api
  */
-public enum MenuSection {
+public enum ContextMenuSection {
 
     INFORMATION,
     SEQUENCE,

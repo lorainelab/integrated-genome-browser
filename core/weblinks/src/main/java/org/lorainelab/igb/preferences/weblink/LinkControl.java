@@ -17,9 +17,9 @@ import javax.swing.JPopupMenu;
 import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
 import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
 import org.lorainelab.igb.menu.api.model.ContextMenuItem;
+import org.lorainelab.igb.menu.api.model.ContextMenuSection;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
-import org.lorainelab.igb.menu.api.model.MenuSection;
 import org.lorainelab.igb.preferences.weblink.model.WebLink;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
     }
 
     @Override
-    public Optional<List<MenuItem>> buildMenuItem(AnnotationContextEvent event) {
+    public Optional<List<ContextMenuItem>> buildMenuItem(AnnotationContextEvent event) {
         if (event.getSelectedItems().isEmpty()) {
             return Optional.empty();
         }
@@ -55,7 +55,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
 
     }
 
-    private Optional<List<MenuItem>> buildContextMenuItem(SeqSymmetry primarySym) {
+    private Optional<List<ContextMenuItem>> buildContextMenuItem(SeqSymmetry primarySym) {
         List<WebLink> results = new ArrayList<>();
         results.addAll(WebLinkUtils.getServerList().getWebLinks(primarySym));
         results.addAll(WebLinkUtils.getLocalList().getWebLinks(primarySym));
@@ -76,7 +76,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
                     GeneralUtils.browse(url);
                     return t;
                 });
-                contextMenuItem.setMenuSection(MenuSection.INFORMATION);
+                contextMenuItem.setMenuSection(ContextMenuSection.INFORMATION);
                 try (InputStream resourceAsStream = LinkControl.class.getClassLoader().getResourceAsStream(SEARCH_WEB_ICONPATH)) {
                     contextMenuItem.setMenuIcon(new MenuIcon(resourceAsStream));
                 } catch (Exception ex) {
@@ -99,7 +99,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
                     GeneralUtils.browse(url);
                     return t;
                 });
-                childContextMenu.setMenuSection(MenuSection.INFORMATION);
+                childContextMenu.setMenuSection(ContextMenuSection.INFORMATION);
                 if (!Strings.isNullOrEmpty(webLink.getImageIconPath())) {
                     try (InputStream resourceAsStream = LinkControl.class.getClassLoader().getResourceAsStream(webLink.getImageIconPath())) {
                         childContextMenu.setMenuIcon(new MenuIcon(resourceAsStream));
@@ -111,7 +111,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
             }
             name = "Search Web";
             ContextMenuItem parentContextMenu = new ContextMenuItem(name, childMenuItems);
-            parentContextMenu.setMenuSection(MenuSection.INFORMATION);
+            parentContextMenu.setMenuSection(ContextMenuSection.INFORMATION);
             try (InputStream resourceAsStream = LinkControl.class.getClassLoader().getResourceAsStream(SEARCH_WEB_ICONPATH)) {
                 parentContextMenu.setMenuIcon(new MenuIcon(resourceAsStream));
             } catch (Exception ex) {

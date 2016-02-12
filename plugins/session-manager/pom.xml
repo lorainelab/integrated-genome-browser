@@ -77,6 +77,11 @@
             <artifactId>org.lorainelab.igb.menu.api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>igb-javafx-util</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

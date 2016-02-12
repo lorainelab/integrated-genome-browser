@@ -13,13 +13,12 @@ import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.genometry.util.UniFileFilter;
 import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.Lists;
 import org.lorainelab.igb.services.IgbService;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -32,9 +31,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javax.swing.Action;
@@ -57,7 +58,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -65,12 +65,15 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.undo.UndoManager;
 import org.apache.commons.lang3.StringUtils;
+import org.lorainelab.igb.javafx.FileChooserUtil;
+import javafx.stage.FileChooser;
 
 /**
  * A panel for viewing and re-arranging bookmarks in a hierarchy.
  */
 public final class BookmarkManagerView {
 
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
     private static JFileChooser static_chooser = null;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bookmark");
     public JTree tree;
@@ -86,8 +89,6 @@ public final class BookmarkManagerView {
     public JButton addFolderButton = new JButton();
     public JButton deleteBookmarkButton = new JButton();
     public List<TreePath> bookmark_history;
-    public FileFilter ff = new TextExportFileFilter(new UniFileFilter(ImmutableList.<String>of("txt"), "TEXT Files"));
-    public FileFilter ff1 = new HTMLExportFileFilter(new UniFileFilter(ImmutableList.<String>of("html", "htm", "xhtml"), "HTML Files"));
     public int history_pointer = -1;
     private final BookmarkTreeCellRenderer renderer;
     private static BookmarkManagerView singleton;
@@ -306,15 +307,17 @@ public final class BookmarkManagerView {
         BookmarkList bookmark_list = new BookmarkList("Import " + createdTime);
         bookmark_list.setComment("Created Time: " + createdTime);
 
-        JFileChooser chooser = getJFileChooser(false);
-        chooser.setDialogTitle("Import");
-        chooser.setCurrentDirectory(getLoadDirectory());
-        int option = chooser.showOpenDialog(null);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            setLoadDirectory(chooser.getCurrentDirectory());
+        File currDir = getLoadDirectory(); 
+        if (currDir == null) {
+            currDir = new File(System.getProperty("user.home"));
+        }
+
+        File file = null;
+        Optional<File> selectedFile = FileChooserUtil.build().setTitle("Import").setContext(currDir).retrieveFileFromFxChooser();
+        if (selectedFile.isPresent()) {
+            file = selectedFile.get();
             try {
-                File fil = chooser.getSelectedFile();
-                BookmarksParser.parse(bookmark_list, fil);
+                BookmarksParser.parse(bookmark_list, file);
                 insertImport(bookmark_list);
             } catch (IOException ex) {
                 ErrorHandler.errorPanel("Error importing bookmarks", ex, Level.SEVERE);
@@ -337,18 +340,37 @@ public final class BookmarkManagerView {
             ErrorHandler.errorPanel("No bookmarks to save", (Exception) null, Level.SEVERE);
             return;
         }
-        JFileChooser chooser = getJFileChooser(true);
-        chooser.setDialogTitle("Export");
-        chooser.setCurrentDirectory(getLoadDirectory());
-        int option = chooser.showSaveDialog(null);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            try {
-                ((ExportFileFilter) chooser.getFileFilter()).export(main_bookmark_list, chooser.getSelectedFile());
-                setLoadDirectory(chooser.getCurrentDirectory());
-            } catch (Exception ex) {
-                ErrorHandler.errorPanel("Error exporting bookmarks", ex, Level.SEVERE);
+
+        File currDir = getLoadDirectory();
+        if (currDir == null) {
+            currDir = new File(System.getProperty("user.home"));
+        }
+
+        File file = null;
+        Optional<File> selectedFile = null;
+        
+        FileChooser.ExtensionFilter htmlFilter = new FileChooser.ExtensionFilter("html ", Lists.newArrayList("html"));
+        FileChooser.ExtensionFilter textFilter = new FileChooser.ExtensionFilter("txt ", Lists.newArrayList("txt"));
+        LocalDate today = LocalDate.now();
+        
+        selectedFile = FileChooserUtil.build().setTitle("Export")
+                .setContext(currDir)
+                .setDefaultFileName("bookmarks-"+today.toString())
+                .setFileExtensionFilters(Lists.newArrayList(htmlFilter, textFilter))
+                .saveFilesFromFxChooser();
+        if (selectedFile.isPresent()) {
+            try{ 
+               file = selectedFile.get(); 
+               if(file.getName().endsWith("html")){
+                   BookmarkList.exportAsHTML(main_bookmark_list, file);
+               }else if(file.getName().endsWith("txt")){
+                   BookmarkList.exportAsTEXT(main_bookmark_list,file); 
+               }
+            } catch (Exception e) {
+                ErrorHandler.errorPanel("Error exporting bookmarks", e, Level.SEVERE);
             }
         }
+
     }
 
     public void deleteAction() {
@@ -472,59 +494,6 @@ public final class BookmarkManagerView {
 
     private void setLoadDirectory(File file) {
         FileTracker.DATA_DIR_TRACKER.setFile(file);
-    }
-
-    /**
-     * Gets a static re-usable file chooser that prefers "html" files.
-     */
-    private JFileChooser getJFileChooser(boolean export) {
-        if (static_chooser == null) {
-            static_chooser = new JFileChooser() {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void approveSelection() {
-                    File f = getSelectedFile();
-                    String path;
-                    if ((f.getAbsolutePath().indexOf('.')) < 0) {
-                        if (static_chooser.getFileFilter().equals(ff)) {
-                            path = f.getAbsolutePath() + ".txt";
-                        } else {
-                            path = f.getAbsolutePath() + ".html";
-                        }
-                        f = new File(path);
-                    }
-                    if (f.exists() && getDialogType() == SAVE_DIALOG) {
-                        int result = JOptionPane.showConfirmDialog(this,
-                                "The file exists, overwrite?", "Existing file",
-                                JOptionPane.YES_NO_OPTION);
-                        switch (result) {
-                            case JOptionPane.YES_OPTION:
-                                super.approveSelection();
-                                return;
-                            case JOptionPane.NO_OPTION:
-                                return;
-                        }
-                    }
-                    super.approveSelection();
-                }
-            };
-            ff1 = new HTMLExportFileFilter(new UniFileFilter(
-                    ImmutableList.<String>of("html", "htm", "xhtml"), "HTML Files"));
-            static_chooser.setAcceptAllFileFilterUsed(false);
-            static_chooser.setCurrentDirectory(getLoadDirectory());
-            static_chooser.addChoosableFileFilter(ff1);
-
-        }
-        if (export) {
-            static_chooser.addChoosableFileFilter(ff);
-        } else {
-            static_chooser.removeChoosableFileFilter(ff);
-        }
-        static_chooser.setFileFilter(ff1);
-        static_chooser.rescanCurrentDirectory();
-        return static_chooser;
     }
 
     /**
@@ -726,66 +695,6 @@ public final class BookmarkManagerView {
                 URL url = bm.getURL();
                 model.setValuesFromMap(Bookmark.parseParameters(url));
             }
-        }
-    }
-
-    private abstract class ExportFileFilter extends javax.swing.filechooser.FileFilter {
-
-        final UniFileFilter filter;
-
-        public ExportFileFilter(UniFileFilter filter) {
-            this.filter = filter;
-        }
-
-        @Override
-        public boolean accept(File f) {
-            return filter.accept(f);
-        }
-
-        @Override
-        public String getDescription() {
-            return filter.getDescription();
-        }
-
-        public void export(BookmarkList main_bookmark_list, File fil) throws Exception {
-            String full_path = fil.getCanonicalPath();
-            boolean extSet = false;
-            for (String ext : filter.getExtensions()) {
-                if (full_path.endsWith("." + ext)) {
-                    extSet = true;
-                    break;
-                }
-            }
-            if (!extSet) {
-                fil = new File(full_path + "." + filter.getExtensions().iterator().next());
-            }
-            write(main_bookmark_list, fil);
-        }
-
-        protected abstract void write(BookmarkList main_bookmark_list, File fil) throws Exception;
-    }
-
-    private class HTMLExportFileFilter extends ExportFileFilter {
-
-        public HTMLExportFileFilter(UniFileFilter filter) {
-            super(filter);
-        }
-
-        @Override
-        public void write(BookmarkList main_bookmark_list, File fil) throws Exception {
-            BookmarkList.exportAsHTML(main_bookmark_list, fil);
-        }
-    }
-
-    private class TextExportFileFilter extends ExportFileFilter {
-
-        public TextExportFileFilter(UniFileFilter filter) {
-            super(filter);
-        }
-
-        @Override
-        public void write(BookmarkList main_bookmark_list, File fil) throws Exception {
-            BookmarkList.exportAsTEXT(main_bookmark_list, fil);
         }
     }
 }

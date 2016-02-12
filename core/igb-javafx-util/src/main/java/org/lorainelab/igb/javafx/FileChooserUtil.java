@@ -7,6 +7,7 @@ package org.lorainelab.igb.javafx;
 
 import com.google.common.collect.Lists;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -41,7 +42,8 @@ public class FileChooserUtil {
         this.title = Optional.of(title);
         return this;
     }
-
+    
+    
     public FileChooserUtil setDefaultFileName(String defaultFileName) {
         this.defaultFileName = Optional.of(defaultFileName);
         return this;
@@ -102,12 +104,19 @@ public class FileChooserUtil {
         }
         if (context.isPresent()) {
             fileChooser.setInitialDirectory(context.get());
+            if (!context.get().isDirectory()) {
+                final String initialFileName = context.get().toPath().getName(context.get().toPath().getNameCount()).toString();
+                fileChooser.setInitialFileName(initialFileName);
+               
+            }
         }
         if (extensionFilters.isPresent()) {
             fileChooser.getExtensionFilters().addAll(extensionFilters.get());
         }
         return fileChooser;
     }
+    
+  
 
     public final Optional<File> saveFilesFromFxChooser() {
         synchronized (LOCK) {
@@ -119,6 +128,25 @@ public class FileChooserUtil {
                 synchronized (LOCK) {
                     final FileChooser fileChooser = getFileChooser();
                     selectedFile[0] = fileChooser.showSaveDialog(null);
+                    File originalSelection = selectedFile[0];
+                    if (fileChooser.getSelectedExtensionFilter() != null && !fileChooser.getSelectedExtensionFilter().getExtensions().isEmpty()) {
+                    List<String> selectedExtensionFilterExtensions = fileChooser.getSelectedExtensionFilter().getExtensions();
+                        if (selectedExtensionFilterExtensions.size() == 1) {
+                            String selectedExtension = selectedExtensionFilterExtensions.get(0);
+                            if (!selectedExtension.isEmpty()) {
+                                selectedExtension = selectedExtension.charAt(0) == '.' ? selectedExtension : "." + selectedExtension;
+                                try {
+                                    selectedFile[0] = new File(selectedFile[0].getAbsolutePath() + selectedExtension);
+                                } catch (Exception ex) {
+                                    selectedFile[0] = originalSelection;
+                                }
+                            }
+                        }
+                    }
+                    
+                    
+                    
+                    
                     keepWaiting[0] = false;
                     LOCK.notifyAll();
                 }

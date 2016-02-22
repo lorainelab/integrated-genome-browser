@@ -84,7 +84,7 @@
 
 
     <modules>
-        <module>core/taglets</module>
+<!--        <module>core/taglets</module>-->
         <module>core/heatmap-editor</module>
         <module>core/common</module>
         <module>core/genometry</module>

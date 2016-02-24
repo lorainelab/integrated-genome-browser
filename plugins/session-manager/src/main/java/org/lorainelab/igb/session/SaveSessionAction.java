@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import javafx.stage.FileChooser;
-import javax.swing.JFileChooser;
 import org.lorainelab.igb.javafx.FileChooserUtil;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;

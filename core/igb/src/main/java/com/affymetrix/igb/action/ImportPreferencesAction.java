@@ -7,12 +7,14 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.google.common.collect.Lists;
 import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.prefs.InvalidPreferencesFormatException;
 import javax.swing.JFileChooser;
+
 
 public class ImportPreferencesAction extends GenericAction {
 
@@ -37,7 +39,11 @@ public class ImportPreferencesAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent ae) {
         super.actionPerformed(ae);
+       
+        
         JFileChooser chooser = GeneralUtils.getJFileChooser();
+        
+        
         int option = chooser.showOpenDialog(PreferencesPanel.getSingleton());
         if (option == JFileChooser.APPROVE_OPTION) {
             File f = chooser.getSelectedFile();

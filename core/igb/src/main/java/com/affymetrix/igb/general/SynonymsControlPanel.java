@@ -9,7 +9,6 @@ import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
-import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,10 +17,8 @@ import java.util.logging.Level;
 import javax.swing.GroupLayout;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
-import javax.swing.JFileChooser;
-import static javax.swing.JFileChooser.APPROVE_OPTION;
-import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
-import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
+import org.lorainelab.igb.javafx.FileChooserUtil; 
+import java.util.Optional; 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
@@ -59,22 +56,6 @@ public class SynonymsControlPanel {
         return panel;
     }
 
-    protected static File fileChooser(int mode) throws HeadlessException {
-        JFileChooser chooser = new JFileChooser();
-
-        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        chooser.setFileSelectionMode(mode);
-        chooser.setDialogTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"));
-        chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
-        chooser.rescanCurrentDirectory();
-
-        if (chooser.showOpenDialog(null) != APPROVE_OPTION) {
-            return null;
-        }
-
-        return chooser.getSelectedFile();
-    }
-
     private JPanel initSynonymsPanel() {
         final JPanel synonymsPanel = new JPanel();
         final GroupLayout layout = new GroupLayout(synonymsPanel);
@@ -87,15 +68,23 @@ public class SynonymsControlPanel {
 
         final ActionListener vlistener = e -> {
             if (e.getSource() == vopenFile) {
-                File file = fileChooser(FILES_AND_DIRECTORIES);
-                try {
-                    if (file != null) {
-                        vsynonymFile.setText(file.getCanonicalPath());
-
+               
+                Optional<File> selectedFile = FileChooserUtil.build()
+                        .setTitle("Choose File")
+                        .setContext(FileTracker.DATA_DIR_TRACKER.getFile())
+                        .retrieveFileFromFxChooser(); 
+                
+                if(selectedFile.isPresent()){
+                    try {
+                        File file = selectedFile.get(); 
+                        if ( file != null) {
+                            vsynonymFile.setText(file.getCanonicalPath());
+                        }
+                    } catch (IOException ex) {
+                        logger.error(ex.getMessage(), ex);
                     }
-                } catch (IOException ex) {
-                    logger.error(ex.getMessage(), ex);
                 }
+
             }
 
             if (vsynonymFile.getText().isEmpty() || loadSynonymFile(genomeVersionSynonymLookup, vsynonymFile)) {
@@ -109,15 +98,22 @@ public class SynonymsControlPanel {
 
         final ActionListener clistener = e -> {
             if (e.getSource() == copenFile) {
-                File file = fileChooser(FILES_AND_DIRECTORIES);
-                try {
-                    if (file != null) {
-                        csynonymFile.setText(file.getCanonicalPath());
-
+                Optional<File> selectedFile = FileChooserUtil.build()
+                        .setTitle("Choose File")
+                        .setContext(FileTracker.DATA_DIR_TRACKER.getFile())
+                        .retrieveFileFromFxChooser(); 
+                
+                if(selectedFile.isPresent()){
+                    try {
+                        File file = selectedFile.get(); 
+                        if ( file != null) {
+                            csynonymFile.setText(file.getCanonicalPath());
+                        }
+                    } catch (IOException ex) {
+                        logger.error(ex.getMessage(), ex);
                     }
-                } catch (IOException ex) {
-                    logger.error(ex.getMessage(), ex);
-                }
+                }                
+
             }
 
             if (csynonymFile.getText().isEmpty() || loadSynonymFile(chrSynLookup, csynonymFile)) {

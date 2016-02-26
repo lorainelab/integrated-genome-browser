@@ -63,7 +63,7 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
         
         LocalDate today = LocalDate.now();
         
-        String defaultFileName = "igbSession-" + today.toString() + ".xml";  
+        String defaultFileName = "igbSession-" + today.toString();  
         showJFileChooser(defaultFileName);
 
     }

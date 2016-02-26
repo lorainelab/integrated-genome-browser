@@ -55,9 +55,9 @@ public class LoadSessionAction extends GenericAction implements MenuBarEntryProv
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        FileChooser.ExtensionFilter xmlFilter = new FileChooser.ExtensionFilter("xml", Lists.newArrayList("xml")); 
-        java.util.Optional<File> selectedFile = null;
-        selectedFile = FileChooserUtil.build()
+        FileChooser.ExtensionFilter xmlFilter = new FileChooser.ExtensionFilter("xml", Lists.newArrayList("*.xml")); 
+
+        java.util.Optional<File> selectedFile = FileChooserUtil.build()
                 .setTitle("Load Session")
                 .setContext(new File(System.getProperty("user.home")))
                 .setFileExtensionFilters(Lists.newArrayList(xmlFilter))

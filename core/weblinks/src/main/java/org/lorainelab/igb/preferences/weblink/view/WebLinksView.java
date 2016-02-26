@@ -334,7 +334,7 @@ public final class WebLinksView {
         
         File currDir = FileTracker.DATA_DIR_TRACKER.getFile(); 
         
-        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("json", Lists.newArrayList("json")); 
+        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("json", Lists.newArrayList("*.json")); 
         java.util.Optional<File> selectedFile = null;
         selectedFile = FileChooserUtil.build()
             .setTitle("Import")

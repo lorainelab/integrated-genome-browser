@@ -66,6 +66,7 @@ import javax.swing.tree.TreeSelectionModel;
 import javax.swing.undo.UndoManager;
 import org.apache.commons.lang3.StringUtils;
 import org.lorainelab.igb.javafx.FileChooserUtil;
+import javafx.stage.FileChooser.ExtensionFilter; 
 import javafx.stage.FileChooser;
 
 /**
@@ -313,7 +314,15 @@ public final class BookmarkManagerView {
         }
 
         File file = null;
-        Optional<File> selectedFile = FileChooserUtil.build().setTitle("Import").setContext(currDir).retrieveFileFromFxChooser();
+        FileChooser.ExtensionFilter htmlFilter = new FileChooser.ExtensionFilter("html", Lists.newArrayList("*.html"));
+        FileChooser.ExtensionFilter txtFilter = new FileChooser.ExtensionFilter("txt", Lists.newArrayList("*.txt"));
+        
+        Optional<File> selectedFile = FileChooserUtil.build().
+                setTitle("Import")
+                .setContext(currDir)
+                .setFileExtensionFilters(Lists.newArrayList(htmlFilter,txtFilter))
+                .retrieveFileFromFxChooser(); 
+
         if (selectedFile.isPresent()) {
             file = selectedFile.get();
             try {

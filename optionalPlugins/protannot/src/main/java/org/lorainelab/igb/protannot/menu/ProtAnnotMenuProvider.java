@@ -50,6 +50,6 @@ public class ProtAnnotMenuProvider implements MenuBarEntryProvider {
 
     @Override
     public MenuBarParentMenu getMenuExtensionParent() {
-        return MenuBarParentMenu.FILE;
+        return MenuBarParentMenu.TOOLS;
     }
 }

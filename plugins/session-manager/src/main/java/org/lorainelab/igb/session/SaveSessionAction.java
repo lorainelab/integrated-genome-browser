@@ -36,6 +36,7 @@ import org.lorainelab.igb.services.IgbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
+import com.affymetrix.genometry.util.FileTracker;
 
 @Component(name = SaveSessionAction.COMPONENT_NAME, immediate = true, provide = {MenuBarEntryProvider.class, GenericAction.class})
 public class SaveSessionAction extends GenericAction implements MenuBarEntryProvider {
@@ -69,17 +70,18 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
     }
 
     private void showJFileChooser(String defaultFileName) {
-        FileChooser.ExtensionFilter xmlFilter = new FileChooser.ExtensionFilter("xml", Lists.newArrayList("xml")); 
+        FileChooser.ExtensionFilter xmlFilter = new FileChooser.ExtensionFilter("XML File (.xml)", Lists.newArrayList("*.xml")); 
         java.util.Optional<File> selectedFile = null;
+        
+        
         selectedFile = FileChooserUtil.build()
                 .setTitle("Save Session")
-                .setContext(new File(System.getProperty("user.home")))
+                .setContext(getLoadDirectory())
                 .setDefaultFileName(defaultFileName)
-                .setFileExtensionFilters(Lists.newArrayList(xmlFilter)).saveFilesFromFxChooser(); 
+                .setFileExtensionFilters(Lists.newArrayList(xmlFilter)).saveFilesFromFxChooser();  
         
         if(selectedFile.isPresent()){
-            saveSession(selectedFile.get()); 
-            
+            saveSession(selectedFile.get());
         }
 
     }
@@ -152,5 +154,14 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
     @Override
     public MenuBarParentMenu getMenuExtensionParent() {
         return MenuBarParentMenu.FILE;
+    }
+    
+    private File getLoadDirectory(){
+        return FileTracker.DATA_DIR_TRACKER.getFile(); 
+  
+    }
+    
+    private void setLoadDirectory(File file){
+        FileTracker.DATA_DIR_TRACKER.setFile(file);       
     }
 }

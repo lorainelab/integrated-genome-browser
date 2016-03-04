@@ -108,6 +108,7 @@ public class SynonymsControlPanel {
                         File file = selectedFile.get(); 
                         if ( file != null) {
                             csynonymFile.setText(file.getCanonicalPath());
+                            FileTracker.DATA_DIR_TRACKER.setFile(file);
                         }
                     } catch (IOException ex) {
                         logger.error(ex.getMessage(), ex);

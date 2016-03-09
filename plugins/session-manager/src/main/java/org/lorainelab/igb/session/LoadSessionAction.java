@@ -4,6 +4,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
@@ -19,8 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.InvalidPreferencesFormatException;
-import javafx.stage.FileChooser;
-import org.lorainelab.igb.javafx.FileChooserUtil;
+import javafx.stage.FileChooser; 
+import org.lorainelab.igb.javafx.FileChooserUtil; 
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
@@ -55,17 +56,18 @@ public class LoadSessionAction extends GenericAction implements MenuBarEntryProv
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        FileChooser.ExtensionFilter xmlFilter = new FileChooser.ExtensionFilter("xml", Lists.newArrayList("xml")); 
-        java.util.Optional<File> selectedFile = null;
-        selectedFile = FileChooserUtil.build()
+        FileChooser.ExtensionFilter xmlFilter = new FileChooser.ExtensionFilter("XML FILE(.xml0", Lists.newArrayList("*.xml")); 
+
+        java.util.Optional<File> selectedFile = FileChooserUtil.build()
                 .setTitle("Load Session")
-                .setContext(new File(System.getProperty("user.home")))
+                .setContext(getLoadDirectory())
                 .setFileExtensionFilters(Lists.newArrayList(xmlFilter))
                 .retrieveFileFromFxChooser(); 
 
         if(selectedFile.isPresent()){
             try{
                 loadSession(selectedFile.get());
+                setLoadDirectory(selectedFile.get()); 
             }catch (InvalidPreferencesFormatException ipfe) {
                 ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n" + ipfe.getMessage()
                         + "\n\nYou can only load a session from a file that was created with save session.");
@@ -124,4 +126,13 @@ public class LoadSessionAction extends GenericAction implements MenuBarEntryProv
     public MenuBarParentMenu getMenuExtensionParent() {
         return MenuBarParentMenu.FILE;
     }
+        
+    private File getLoadDirectory(){
+        return FileTracker.DATA_DIR_TRACKER.getFile(); 
+    }
+    
+    private void setLoadDirectory(File file){
+        FileTracker.DATA_DIR_TRACKER.setFile(file);       
+    }
+    
 }

@@ -1,3 +1,4 @@
+*.log
 target
 main/sample_dnaseq.xml
 ./igb_exe.jar

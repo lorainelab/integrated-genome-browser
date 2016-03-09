@@ -6,26 +6,25 @@
 package org.lorainelab.igb.plugin.manager.repos.view;
 
 import com.affymetrix.common.PreferenceUtils;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.google.common.base.Strings;
 import org.lorainelab.igb.plugin.manager.repos.PluginRepositoryList;
 import org.lorainelab.igb.preferences.model.PluginRepository;
-import java.awt.Component;
-import java.awt.HeadlessException;
 import java.awt.Point;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.lorainelab.igb.javafx.DirectoryChooserUtil; 
+import java.util.Optional; 
 
 public class AddBundleRepositoryFrame extends JFrame {
 
@@ -196,14 +195,19 @@ public class AddBundleRepositoryFrame extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void openDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDirActionPerformed
-        File f = fileChooser(DIRECTORIES_ONLY, this);
-        if (f != null && f.isDirectory()) {
-            try {
-                urlText.setText(f.toURI().toURL().toString());
-            } catch (MalformedURLException ex) {
-                //
-            }
-        }
+            Optional<File> selectedFile = DirectoryChooserUtil.build()
+                    .setTitle("Add Plugin Repository")
+                    .setContext(FileTracker.DATA_DIR_TRACKER.getFile())
+                    .retrieveDirectoryFromFXChooser(); 
+            
+            if(selectedFile.isPresent()){
+                File file = selectedFile.get(); 
+                try{
+                    urlText.setText(file.toURI().toURL().toString());
+                }catch(MalformedURLException ex){
+                    
+                }
+            }    
 	}//GEN-LAST:event_openDirActionPerformed
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerButtonActionPerformed
@@ -235,22 +239,6 @@ public class AddBundleRepositoryFrame extends JFrame {
     private static javax.swing.JTextField urlText;
     // End of variables declaration//GEN-END:variables
 
-    protected static File fileChooser(int mode, Component parent) throws HeadlessException {
-        JFileChooser chooser = new JFileChooser();
-        File file;
-        // chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        chooser.setFileSelectionMode(mode);
-        chooser.setDialogTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"));
-        chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
-        chooser.rescanCurrentDirectory();
-
-        if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION) {
-            return null;
-        }
-        file = chooser.getSelectedFile();
-        // FileTracker.DATA_DIR_TRACKER.setFile(file.getParentFile());
-        return file;
-    }
 
     private void infoPanel(final String message, final String check, final boolean def_val) {
 

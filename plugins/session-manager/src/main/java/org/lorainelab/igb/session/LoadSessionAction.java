@@ -62,7 +62,7 @@ public class LoadSessionAction extends GenericAction implements MenuBarEntryProv
         if(IS_WINDOWS){
             xmlFilter = new FileChooser.ExtensionFilter("XML", Lists.newArrayList("*.xml"));
         }else{
-            xmlFilter = new FileChooser.ExtensionFilter("XML FILE(.xml)", Lists.newArrayList("*.xml"));
+            xmlFilter = new FileChooser.ExtensionFilter("XML (.xml)", Lists.newArrayList("*.xml"));
         }
          
         java.util.Optional<File> selectedFile = FileChooserUtil.build()

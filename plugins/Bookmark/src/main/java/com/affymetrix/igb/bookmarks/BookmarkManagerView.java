@@ -322,8 +322,8 @@ public final class BookmarkManagerView {
             htmlFilter = new FileChooser.ExtensionFilter("HTML", Lists.newArrayList("*.html"));
             txtFilter = new FileChooser.ExtensionFilter("TEXT", Lists.newArrayList("*.txt"));
         }else{
-            htmlFilter = new FileChooser.ExtensionFilter("HTML File (.html)", Lists.newArrayList("*.html"));
-            txtFilter = new FileChooser.ExtensionFilter("TEXT File (.txt)", Lists.newArrayList("*.txt"));
+            htmlFilter = new FileChooser.ExtensionFilter("HTML (.html)", Lists.newArrayList("*.html"));
+            txtFilter = new FileChooser.ExtensionFilter("TEXT (.txt)", Lists.newArrayList("*.txt"));
         }
         
 
@@ -371,8 +371,8 @@ public final class BookmarkManagerView {
             htmlFilter = new FileChooser.ExtensionFilter("HTML", Lists.newArrayList("*.html"));
             txtFilter = new FileChooser.ExtensionFilter("TEXT", Lists.newArrayList("*.txt"));
         }else{
-            htmlFilter = new FileChooser.ExtensionFilter("HTML File (.html)", Lists.newArrayList("*.html"));
-            txtFilter = new FileChooser.ExtensionFilter("TEXT File (.txt)", Lists.newArrayList("*.txt"));
+            htmlFilter = new FileChooser.ExtensionFilter("HTML (.html)", Lists.newArrayList("*.html"));
+            txtFilter = new FileChooser.ExtensionFilter("TEXT (.txt)", Lists.newArrayList("*.txt"));
         }
         
         LocalDate today = LocalDate.now();

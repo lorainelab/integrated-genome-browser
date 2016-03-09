@@ -8,6 +8,7 @@ import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
+import static com.affymetrix.common.CommonUtils.IS_WINDOWS; 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import java.awt.event.ActionEvent;
@@ -56,8 +57,14 @@ public class LoadSessionAction extends GenericAction implements MenuBarEntryProv
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        FileChooser.ExtensionFilter xmlFilter = new FileChooser.ExtensionFilter("XML FILE(.xml0", Lists.newArrayList("*.xml")); 
-
+        
+        FileChooser.ExtensionFilter xmlFilter = null; 
+        if(IS_WINDOWS){
+            xmlFilter = new FileChooser.ExtensionFilter("XML", Lists.newArrayList("*.xml"));
+        }else{
+            xmlFilter = new FileChooser.ExtensionFilter("XML FILE(.xml)", Lists.newArrayList("*.xml"));
+        }
+         
         java.util.Optional<File> selectedFile = FileChooserUtil.build()
                 .setTitle("Load Session")
                 .setContext(getLoadDirectory())

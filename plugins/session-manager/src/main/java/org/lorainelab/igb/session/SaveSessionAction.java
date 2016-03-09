@@ -8,6 +8,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
+import static com.affymetrix.common.CommonUtils.IS_WINDOWS; 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -70,7 +71,13 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
     }
 
     private void showJFileChooser(String defaultFileName) {
-        FileChooser.ExtensionFilter xmlFilter = new FileChooser.ExtensionFilter("XML File (.xml)", Lists.newArrayList("*.xml")); 
+        FileChooser.ExtensionFilter xmlFilter = null; 
+        if(IS_WINDOWS){
+            xmlFilter = new FileChooser.ExtensionFilter("XML", Lists.newArrayList("*.xml"));
+        }else{
+            xmlFilter = new FileChooser.ExtensionFilter("XML (.xml)", Lists.newArrayList("*.xml"));
+        }
+         
         java.util.Optional<File> selectedFile = null;
         
         
@@ -82,6 +89,7 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
         
         if(selectedFile.isPresent()){
             saveSession(selectedFile.get());
+            setLoadDirectory(selectedFile.get()); 
         }
 
     }

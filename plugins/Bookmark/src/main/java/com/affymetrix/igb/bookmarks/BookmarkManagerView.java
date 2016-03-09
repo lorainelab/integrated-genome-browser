@@ -13,6 +13,7 @@ import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
+import static com.affymetrix.common.CommonUtils.IS_WINDOWS; 
 import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
@@ -314,8 +315,18 @@ public final class BookmarkManagerView {
         }
 
         File file = null;
-        FileChooser.ExtensionFilter htmlFilter = new FileChooser.ExtensionFilter("HTML File (.html)", Lists.newArrayList("*.html"));
-        FileChooser.ExtensionFilter txtFilter = new FileChooser.ExtensionFilter("TEXT File (.txt)", Lists.newArrayList("*.txt"));
+        
+        FileChooser.ExtensionFilter htmlFilter = null; 
+        FileChooser.ExtensionFilter txtFilter = null; 
+        if(IS_WINDOWS){
+            htmlFilter = new FileChooser.ExtensionFilter("HTML", Lists.newArrayList("*.html"));
+            txtFilter = new FileChooser.ExtensionFilter("TEXT", Lists.newArrayList("*.txt"));
+        }else{
+            htmlFilter = new FileChooser.ExtensionFilter("HTML (.html)", Lists.newArrayList("*.html"));
+            txtFilter = new FileChooser.ExtensionFilter("TEXT (.txt)", Lists.newArrayList("*.txt"));
+        }
+        
+
 
         Optional<File> selectedFile = FileChooserUtil.build().
                 setTitle("Import")
@@ -354,14 +365,22 @@ public final class BookmarkManagerView {
         File file = null;
         Optional<File> selectedFile = null;
 
-        FileChooser.ExtensionFilter htmlFilter = new FileChooser.ExtensionFilter("HTML (.html)", Lists.newArrayList("*.html"));
-        FileChooser.ExtensionFilter textFilter = new FileChooser.ExtensionFilter("Text (.txt)", Lists.newArrayList("*.txt"));
+        FileChooser.ExtensionFilter htmlFilter = null; 
+        FileChooser.ExtensionFilter txtFilter = null; 
+        if(IS_WINDOWS){
+            htmlFilter = new FileChooser.ExtensionFilter("HTML", Lists.newArrayList("*.html"));
+            txtFilter = new FileChooser.ExtensionFilter("TEXT", Lists.newArrayList("*.txt"));
+        }else{
+            htmlFilter = new FileChooser.ExtensionFilter("HTML (.html)", Lists.newArrayList("*.html"));
+            txtFilter = new FileChooser.ExtensionFilter("TEXT (.txt)", Lists.newArrayList("*.txt"));
+        }
+        
         LocalDate today = LocalDate.now();
 
         selectedFile = FileChooserUtil.build().setTitle("Export")
                 .setContext(getLoadDirectory())
                 .setDefaultFileName("bookmarks-" + today.toString())
-                .setFileExtensionFilters(Lists.newArrayList(htmlFilter, textFilter))
+                .setFileExtensionFilters(Lists.newArrayList(htmlFilter, txtFilter))
                 .saveFilesFromFxChooser();
         if (selectedFile.isPresent()) {
             try {

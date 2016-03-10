@@ -11,6 +11,7 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.MAPQ;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.RESIDUES;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.SCORES;
 import com.affymetrix.genometry.util.SearchableCharIterator;
+import com.google.common.base.Strings;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -518,7 +519,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     }
 
     private int getAverageQuality(String qualityStr) {
-        if (qualityStr != null) {
+        if (!Strings.isNullOrEmpty(qualityStr)) {
             int quality = 0;
             byte[] quals = qualityStr.getBytes();
             for (byte qual : quals) {

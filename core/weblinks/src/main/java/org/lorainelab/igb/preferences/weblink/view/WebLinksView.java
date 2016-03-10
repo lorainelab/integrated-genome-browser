@@ -334,7 +334,7 @@ public final class WebLinksView {
         
         File currDir = FileTracker.DATA_DIR_TRACKER.getFile(); 
         
-        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("json", Lists.newArrayList("json")); 
+        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("json", Lists.newArrayList("*.json")); 
         java.util.Optional<File> selectedFile = null;
         selectedFile = FileChooserUtil.build()
             .setTitle("Import")
@@ -346,6 +346,7 @@ public final class WebLinksView {
             File file = selectedFile.get(); 
             try{
                 WebLinkUtils.importWebLinks(file); 
+                
             }catch (FileNotFoundException fe) {
                 ErrorHandler.errorPanel("Importing web links: File Not Found "
                         + file.getAbsolutePath(), fe, Level.SEVERE);
@@ -369,22 +370,23 @@ public final class WebLinksView {
         
         LocalDate today = LocalDate.now(); 
         
-        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("json", Lists.newArrayList("json")); 
+        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("JSON (.json)", Lists.newArrayList("*.json")); 
         java.util.Optional<File> selectedFile = null;
         selectedFile = FileChooserUtil.build()
                 .setTitle("Export")
-                .setContext(new File(System.getProperty("user.home")))
+                .setContext(getLoadDirectory())
                 .setDefaultFileName("weblinks-"+ today.toString()) 
                 .setFileExtensionFilters(Lists.newArrayList(jsonFilter)).saveFilesFromFxChooser(); 
         
         if(selectedFile.isPresent()){
             try{
                 WebLinkUtils.exportWebLinks(selectedFile.get());  
+                setLoadDirectory(selectedFile.get()); 
             }catch (Exception ex) {
                 ErrorHandler.errorPanel("Error exporting web links", ex, Level.SEVERE);
             }
         }
-        FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
+       
         
     }
 
@@ -608,5 +610,12 @@ public final class WebLinksView {
         } else if (link.getRegexType() == RegexType.ANNOTATION_ID) {
             idRadioButton.setSelected(true);
         }
+    }
+    private File getLoadDirectory(){
+        return FileTracker.DATA_DIR_TRACKER.getFile(); 
+    }
+    
+    private void setLoadDirectory(File file){
+        FileTracker.DATA_DIR_TRACKER.setFile(file);       
     }
 }

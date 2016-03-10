@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -42,8 +45,7 @@ public class FileChooserUtil {
         this.title = Optional.of(title);
         return this;
     }
-    
-    
+
     public FileChooserUtil setDefaultFileName(String defaultFileName) {
         this.defaultFileName = Optional.of(defaultFileName);
         return this;
@@ -99,24 +101,42 @@ public class FileChooserUtil {
         if (title.isPresent()) {
             fileChooser.setTitle(title.get());
         }
-        if (defaultFileName.isPresent()) {
-            fileChooser.setInitialFileName(defaultFileName.get());
-        }
         if (context.isPresent()) {
             fileChooser.setInitialDirectory(context.get());
             if (!context.get().isDirectory()) {
-                final String initialFileName = context.get().toPath().getName(context.get().toPath().getNameCount()).toString();
+                String initialFileName = context.get().toPath().getName(context.get().toPath().getNameCount()).toString();
                 fileChooser.setInitialFileName(initialFileName);
-               
+
             }
         }
         if (extensionFilters.isPresent()) {
             fileChooser.getExtensionFilters().addAll(extensionFilters.get());
+            fileChooser.setSelectedExtensionFilter(fileChooser.getExtensionFilters().get(0));
+        }
+
+        if (defaultFileName.isPresent()) {
+            if (extensionFilters.isPresent()) {
+                appendExtenstion(fileChooser);
+            }
+            fileChooser.setInitialFileName(defaultFileName.get());
+
         }
         return fileChooser;
     }
-    
-  
+
+    private void appendExtenstion(FileChooser fileChooser) {
+        if (!fileChooser.getSelectedExtensionFilter().getExtensions().isEmpty()) {
+            if (!containsValidExtension(fileChooser, defaultFileName.get())) {
+                String selectedExtension = fileChooser.getSelectedExtensionFilter().getExtensions().get(0);
+                if (!selectedExtension.isEmpty()) {
+                    selectedExtension = getExtensionSubString(selectedExtension);
+                    defaultFileName = Optional.of(defaultFileName.get()  + selectedExtension);
+                }
+
+            }
+
+        }
+    }
 
     public final Optional<File> saveFilesFromFxChooser() {
         synchronized (LOCK) {
@@ -124,31 +144,33 @@ public class FileChooserUtil {
             final boolean[] keepWaiting = new boolean[1];
             keepWaiting[0] = true;
 
-            Platform.runLater(() -> {
-                synchronized (LOCK) {
-                    final FileChooser fileChooser = getFileChooser();
-                    selectedFile[0] = fileChooser.showSaveDialog(null);
-                    File originalSelection = selectedFile[0];
-                    if (fileChooser.getSelectedExtensionFilter() != null && !fileChooser.getSelectedExtensionFilter().getExtensions().isEmpty()) {
-                    List<String> selectedExtensionFilterExtensions = fileChooser.getSelectedExtensionFilter().getExtensions();
-                        if (selectedExtensionFilterExtensions.size() == 1) {
-                            String selectedExtension = selectedExtensionFilterExtensions.get(0);
-                            if (!selectedExtension.isEmpty()) {
-                                selectedExtension = selectedExtension.charAt(0) == '.' ? selectedExtension : "." + selectedExtension;
-                                try {
-                                    selectedFile[0] = new File(selectedFile[0].getAbsolutePath() + selectedExtension);
-                                } catch (Exception ex) {
-                                    selectedFile[0] = originalSelection;
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (LOCK) {
+                        FileChooser fileChooser = getFileChooser();
+                        selectedFile[0] = fileChooser.showSaveDialog(null);
+                        File originalSelection = selectedFile[0];
+                        if (fileChooser.getSelectedExtensionFilter() != null && !fileChooser.getSelectedExtensionFilter().getExtensions().isEmpty()) {
+                            List<String> selectedExtensionFilterExtensions = fileChooser.getSelectedExtensionFilter().getExtensions();
+                            if (!selectedExtensionFilterExtensions.isEmpty()) {
+                                String selectedExtension = selectedExtensionFilterExtensions.get(0);
+                                if (!selectedExtension.isEmpty()) {
+                                    selectedExtension = getExtensionSubString(selectedExtension);
+                                    try {
+                                        if (!containsValidExtension(fileChooser, selectedFile[0].getAbsolutePath())) {
+                                            selectedFile[0] = new File(selectedFile[0].getAbsolutePath() + selectedExtension);
+                                        }
+                                    } catch (Exception ex) {
+                                        selectedFile[0] = originalSelection;
+                                    }
                                 }
                             }
                         }
+
+                        keepWaiting[0] = false;
+                        LOCK.notifyAll();
                     }
-                    
-                    
-                    
-                    
-                    keepWaiting[0] = false;
-                    LOCK.notifyAll();
                 }
             });
 
@@ -192,6 +214,24 @@ public class FileChooserUtil {
 
             return Optional.ofNullable(selectedFiles);
         }
+
+    }
+
+    private boolean containsValidExtension(FileChooser fileChooser, String fileName) {
+        if (fileName.lastIndexOf('.') >= 0) {
+            String ext = getExtensionSubString(fileName);
+            return fileChooser.getExtensionFilters().stream().flatMap(extFilter -> extFilter.getExtensions().stream()).map(filterExt -> {
+                return getExtensionSubString(filterExt);
+            }).anyMatch(filterExt -> filterExt.equalsIgnoreCase(ext));
+        }
+        return false;
+    }
+
+    private String getExtensionSubString(String fileName) {
+        if (fileName.lastIndexOf('.') >= 0) {
+            fileName = fileName.substring(fileName.lastIndexOf('.'), fileName.length());
+        }
+        return fileName;
 
     }
 

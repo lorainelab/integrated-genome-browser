@@ -13,6 +13,7 @@ import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
+import static com.affymetrix.common.CommonUtils.IS_WINDOWS; 
 import com.affymetrix.genoviz.swing.TreeTransferHandler;
 import com.affymetrix.igb.bookmarks.action.CopyBookmarkAction;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
@@ -66,6 +67,7 @@ import javax.swing.tree.TreeSelectionModel;
 import javax.swing.undo.UndoManager;
 import org.apache.commons.lang3.StringUtils;
 import org.lorainelab.igb.javafx.FileChooserUtil;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.FileChooser;
 
 /**
@@ -307,18 +309,37 @@ public final class BookmarkManagerView {
         BookmarkList bookmark_list = new BookmarkList("Import " + createdTime);
         bookmark_list.setComment("Created Time: " + createdTime);
 
-        File currDir = getLoadDirectory(); 
+        File currDir = getLoadDirectory();
         if (currDir == null) {
-            currDir = new File(System.getProperty("user.home"));
+            currDir = new File(System.getProperty("user.home")); 
         }
 
         File file = null;
-        Optional<File> selectedFile = FileChooserUtil.build().setTitle("Import").setContext(currDir).retrieveFileFromFxChooser();
+        
+        FileChooser.ExtensionFilter htmlFilter = null; 
+        FileChooser.ExtensionFilter txtFilter = null; 
+        if(IS_WINDOWS){
+            htmlFilter = new FileChooser.ExtensionFilter("HTML", Lists.newArrayList("*.html"));
+            txtFilter = new FileChooser.ExtensionFilter("TEXT", Lists.newArrayList("*.txt"));
+        }else{
+            htmlFilter = new FileChooser.ExtensionFilter("HTML (.html)", Lists.newArrayList("*.html"));
+            txtFilter = new FileChooser.ExtensionFilter("TEXT (.txt)", Lists.newArrayList("*.txt"));
+        }
+        
+
+
+        Optional<File> selectedFile = FileChooserUtil.build().
+                setTitle("Import")
+                .setContext(currDir)
+                .setFileExtensionFilters(Lists.newArrayList(htmlFilter, txtFilter))
+                .retrieveFileFromFxChooser();
+
         if (selectedFile.isPresent()) {
             file = selectedFile.get();
             try {
                 BookmarksParser.parse(bookmark_list, file);
                 insertImport(bookmark_list);
+                setLoadDirectory(file); 
             } catch (IOException ex) {
                 ErrorHandler.errorPanel("Error importing bookmarks", ex, Level.SEVERE);
             }
@@ -341,31 +362,36 @@ public final class BookmarkManagerView {
             return;
         }
 
-        File currDir = getLoadDirectory();
-        if (currDir == null) {
-            currDir = new File(System.getProperty("user.home"));
-        }
-
         File file = null;
         Optional<File> selectedFile = null;
+
+        FileChooser.ExtensionFilter htmlFilter = null; 
+        FileChooser.ExtensionFilter txtFilter = null; 
+        if(IS_WINDOWS){
+            htmlFilter = new FileChooser.ExtensionFilter("HTML", Lists.newArrayList("*.html"));
+            txtFilter = new FileChooser.ExtensionFilter("TEXT", Lists.newArrayList("*.txt"));
+        }else{
+            htmlFilter = new FileChooser.ExtensionFilter("HTML (.html)", Lists.newArrayList("*.html"));
+            txtFilter = new FileChooser.ExtensionFilter("TEXT (.txt)", Lists.newArrayList("*.txt"));
+        }
         
-        FileChooser.ExtensionFilter htmlFilter = new FileChooser.ExtensionFilter("html ", Lists.newArrayList("html"));
-        FileChooser.ExtensionFilter textFilter = new FileChooser.ExtensionFilter("txt ", Lists.newArrayList("txt"));
         LocalDate today = LocalDate.now();
-        
+
         selectedFile = FileChooserUtil.build().setTitle("Export")
-                .setContext(currDir)
-                .setDefaultFileName("bookmarks-"+today.toString())
-                .setFileExtensionFilters(Lists.newArrayList(htmlFilter, textFilter))
+                .setContext(getLoadDirectory())
+                .setDefaultFileName("bookmarks-" + today.toString())
+                .setFileExtensionFilters(Lists.newArrayList(htmlFilter, txtFilter))
                 .saveFilesFromFxChooser();
         if (selectedFile.isPresent()) {
-            try{ 
-               file = selectedFile.get(); 
-               if(file.getName().endsWith("html")){
-                   BookmarkList.exportAsHTML(main_bookmark_list, file);
-               }else if(file.getName().endsWith("txt")){
-                   BookmarkList.exportAsTEXT(main_bookmark_list,file); 
-               }
+            try {
+                file = selectedFile.get();
+                if (file.getName().endsWith("html")) {
+                    BookmarkList.exportAsHTML(main_bookmark_list, file);
+                    
+                } else if (file.getName().endsWith("txt")) {
+                    BookmarkList.exportAsTEXT(main_bookmark_list, file);
+                }
+                setLoadDirectory(file); 
             } catch (Exception e) {
                 ErrorHandler.errorPanel("Error exporting bookmarks", e, Level.SEVERE);
             }
@@ -489,7 +515,7 @@ public final class BookmarkManagerView {
     }
 
     private File getLoadDirectory() {
-        return FileTracker.DATA_DIR_TRACKER.getFile();
+        return FileTracker.DATA_DIR_TRACKER.getFile(); 
     }
 
     private void setLoadDirectory(File file) {
@@ -697,4 +723,6 @@ public final class BookmarkManagerView {
             }
         }
     }
+    
+    
 }

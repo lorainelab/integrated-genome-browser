@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.affymetrix</groupId>
         <artifactId>igb-project</artifactId>
-        <version>8.5.2</version>
+        <version>8.5.3</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 

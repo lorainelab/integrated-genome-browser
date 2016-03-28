@@ -49,7 +49,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author jeckstei
  */
-@aQute.bnd.annotation.component.Component(name = CacheConfigurationPanel.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
+
+//@aQute.bnd.annotation.component.Component(name = CacheConfigurationPanel.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
 public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPanelProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(CacheConfigurationPanel.class);
@@ -110,17 +111,17 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         return this;
     }
 
-    @Override
+    @Override //done
     public void refresh() {
         cacheTableModel.refresh();
         cacheTableModel.fireTableDataChanged();
-        initMaxCacheSizeValue();
+        initMaxCacheSizeValue(); 
         initMinFileSizeValue();
         initCacheEnableValue();
         initCacheSizeValue();
     }
 
-    @Activate
+    @Activate //done
     public void activate() {
         cachePanel = initilizeCacheSettingsPanel();
         cacheDataTable = getStyledJTable();
@@ -188,7 +189,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         btnPanel.add(clearAllBtn, "right");
         btnPanel.add(removeBtn, "right");
         btnPanel.add(refreshBtn, "right");
-        //
+        
         panel.add(sourcesScrollPane, "grow, wrap");
         panel.add(btnPanel, "right");
         return panel;
@@ -243,12 +244,12 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         minFileSizeLabel = new JLabel("Min File Size:");
         minFileSizeUnits = new JLabel("MB");
     }
-
+    
     private void initMinFileSizeValue() {
         minFileSize.setText(remoteFileCacheService.getMinFileSizeBytes().divide(new BigInteger("1000")).toString());
         minFileSize.setBackground(Color.WHITE);
     }
-
+    
     private void initCacheEnable() {
         cacheEnable = new JCheckBox("Enable Cache");
         initCacheEnableValue();
@@ -261,19 +262,19 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
             }
         });
     }
-
+    
     private void disableCacheSettings() {
         maxCacheSize.setEnabled(false);
         minFileSize.setEnabled(false);
         cacheSettingsApply.setEnabled(false);
     }
-
+    
     private void enableCacheSettings() {
         maxCacheSize.setEnabled(true);
         minFileSize.setEnabled(true);
         cacheSettingsApply.setEnabled(true);
     }
-
+    
     private void initCacheEnableValue() {
         boolean cacheEnabled = remoteFileCacheService.getCacheEnabled();
         cacheEnable.setSelected(cacheEnabled);
@@ -284,6 +285,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         }
     }
 
+    
     private void initResetCachePref() {
         cacheResetPref = new JButton("Reset Cache Preferences");
         cacheResetPref.addActionListener((ActionEvent e) -> {

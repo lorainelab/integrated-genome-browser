@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * @author dfreese
  */
 
-@aQute.bnd.annotation.component.Component(name = CacheConfigurationPanel.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
+@aQute.bnd.annotation.component.Component(name = CacheConfigurationController.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
 public class CacheConfigurationController extends JRPJPanel implements PreferencesPanelProvider {
     private static final Logger logger = LoggerFactory.getLogger(CacheConfigurationController.class);
 

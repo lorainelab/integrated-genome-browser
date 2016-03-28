@@ -20,7 +20,6 @@ import com.google.common.eventbus.EventBus;
 import org.lorainelab.igb.cache.api.CacheStatus;
 import org.lorainelab.igb.cache.api.ChangeEvent;
 import org.lorainelab.igb.cache.api.RemoteFileCacheService;
-import org.lorainelab.igb.cache.configuration.panel.CacheConfigurationPanel;
 import org.lorainelab.igb.services.IgbService;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -59,6 +58,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.lorainelab.igb.cache.configuration.panel.CacheConfigurationController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -225,7 +225,7 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
             case 3:
                 delayPrompt = true;
                 lastPrompt = new Date();
-                igbService.openPreferencesPanelTab(CacheConfigurationPanel.class);
+                igbService.openPreferencesPanelTab(CacheConfigurationController.class);
                 eventBus.post(new ChangeEvent());
                 return false;
             default:

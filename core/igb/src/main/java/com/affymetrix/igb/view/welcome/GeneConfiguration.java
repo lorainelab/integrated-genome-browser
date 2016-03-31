@@ -24,13 +24,12 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.LoggerFactory;
 
 /**
  * Loads pictures into the Cover Flow Welcome screen.
@@ -47,6 +46,8 @@ import org.osgi.framework.ServiceReference;
  * @author jfvillal
  */
 public class GeneConfiguration extends Configuration {
+
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GeneConfiguration.class);
 
 //	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 //	private static final GenometryModel gmodel = GenometryModel.getInstance();
@@ -75,16 +76,13 @@ public class GeneConfiguration extends Configuration {
         this.SlowSystem = false;
         this.highQuality = true;
         //}
-        BufferedReader stream = null;
-        try {
+
+        URL config_file_url = CommonUtils.class.getClassLoader().getResource("display_species.txt");
+        try (BufferedReader stream = new BufferedReader(new InputStreamReader(new DataInputStream(config_file_url.openStream())))) {
             //load the messge class from a configuration file.
             List<String> list = new ArrayList<>();
             //this is at $IGB_SRC/common/rerources and image paths are relative to $IGB_SRC/common/images/
-            URL config_file_url = CommonUtils.class.getClassLoader().getResource("display_species.txt");
-            stream = new BufferedReader(
-                    new InputStreamReader(
-                            new DataInputStream(
-                                    config_file_url.openStream())));
+
             String line = "";
             try {
                 while ((line = stream.readLine()) != null) {
@@ -168,17 +166,11 @@ public class GeneConfiguration extends Configuration {
                     shapes[i] = n;
 
                 } catch (IOException ex) {
-                    Logger.getLogger(GeneConfiguration.class.getName()).log(Level.SEVERE, null, ex);
+                    LOG.error(ex.getMessage(), ex);
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(GeneConfiguration.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException ex) {
-                Logger.getLogger(GeneConfiguration.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            LOG.error(ex.getMessage(), ex);
         }
     }
 

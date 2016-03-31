@@ -20,8 +20,8 @@ public final class AppManagerToolsMenuEntry extends GenericAction implements Igb
 
     public AppManagerToolsMenuEntry() {
         super("App Manager",
-                "16x16/categories/fa-circle.png",
-                "22x22/categories/applications-internet.png");
+                "16x16/actions/fa-circle.png",
+                "16x16/actions/fa-circle.png");
         appManagerToolsMenuEntry = new JRPMenuItem("App Manager", this, MENU_ITEM_WEIGHT);
     }
 

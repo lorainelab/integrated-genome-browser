@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dfreese
  */
-@Component(provide = CacheTableModelFx.class)
+//@Component(provide = CacheTableModelFx.class)
 public class CacheTableModelFx {
     private final static Logger logger = LoggerFactory.getLogger(CacheTableModelFx.class); 
     private RemoteFileCacheService remoteFileCacheService; 
@@ -57,7 +57,7 @@ public class CacheTableModelFx {
     public List<CacheStatus> getCacheEntries(){
         return cacheEntries; 
     }
-    
+
     public  Object getValueAt(int rowIndex, int columnIndex) {
         CacheStatus cacheStatus = cacheEntries.get(rowIndex);
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");

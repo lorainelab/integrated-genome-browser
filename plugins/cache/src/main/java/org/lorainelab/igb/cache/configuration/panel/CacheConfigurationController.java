@@ -16,6 +16,7 @@ import com.google.common.eventbus.Subscribe;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 
 import java.util.prefs.Preferences;
 
@@ -36,14 +37,21 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
 import java.net.URL;
+import java.util.Date;
+import java.util.List;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.When;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
+import org.lorainelab.igb.cache.api.CacheStatus;
 
 import org.lorainelab.igb.cache.api.ChangeEvent;
 import org.lorainelab.igb.cache.api.RemoteFileCacheService;
@@ -63,7 +71,13 @@ public class CacheConfigurationController extends JRPJPanel implements Preferenc
     public static final String COMPONENT_NAME = "CacheConfigurationPanel";
     private static final String TAB_NAME = "Cache";
     private static final int TAB_POSITION = 10;
-    JFXPanel fxPanel = new JFXPanel();
+    
+    private final Preferences cachePrefsNode;
+    private RemoteFileCacheService remoteFileCacheService;
+    
+    private JFXPanel fxPanel; 
+    private Pane pane;
+    private ListProperty<CacheEntry> cacheEntries;
 
     @FXML
     private Button clearBtn;
@@ -95,25 +109,15 @@ public class CacheConfigurationController extends JRPJPanel implements Preferenc
     private TableColumn<CacheEntry, String> lastAccessCol;
     @FXML
     private TableColumn<CacheEntry, String> sizeCol;
-    private Pane pane;
-    private Scene scene;
 
-    private RemoteFileCacheService remoteFileCacheService;
-    private CacheTableModelFx cacheTableModelFx;
-    private final Preferences cachePrefsNode;
-    
-    private ListProperty<CacheEntry> cacheEntries;
 
     public CacheConfigurationController() {
         super(COMPONENT_NAME);
+        fxPanel = new JFXPanel();
         cacheEntries = new SimpleListProperty<CacheEntry>(FXCollections.observableArrayList());
         setLayout(new MigLayout(new LC().fill().insetsAll("0")));
         cachePrefsNode = PreferenceUtils.getCachePrefsNode();
-
-        Platform.runLater(() -> {
-            init();
-        });
-
+        init();
     }
 
     @Activate
@@ -139,7 +143,6 @@ public class CacheConfigurationController extends JRPJPanel implements Preferenc
 
     @Override
     public void refresh() {
-        cacheTableModelFx.refresh();
         initMaxCacheSizeValue();
         initMinFileSizeValue();
         initCacheEnableValue();
@@ -157,7 +160,7 @@ public class CacheConfigurationController extends JRPJPanel implements Preferenc
     }
 
     private void initializeLayout() {
-        add(fxPanel, "grow, wrap");
+        add(fxPanel, "grow, wrap"); 
  
     }
 
@@ -173,13 +176,20 @@ public class CacheConfigurationController extends JRPJPanel implements Preferenc
         Platform.runLater(() -> {
             this.createScene();
             initializeTable();
-            clearBtn.disableProperty().setValue(cacheEntries.isEmpty());
-            removeBtn.disableProperty().setValue(cacheEntries.isEmpty());
-            cacheEntries.addListener((ObservableValue<? extends ObservableList<CacheEntry>> observable, ObservableList<CacheEntry> oldValue, ObservableList<CacheEntry> newValue) -> {
-                clearBtn.disableProperty().setValue(cacheEntries.isEmpty());
-                removeBtn.disableProperty().set(cacheEntries.isEmpty());
-            });
-        });
+            
+            ObservableValue<Boolean> cacheEntriesEmpty = cacheEntries.emptyProperty();             
+            clearBtn.disableProperty().bind(cacheEntriesEmpty);
+            removeBtn.disableProperty().bind(cacheEntriesEmpty);
+            
+            clearBtnAction(); 
+            enableCacheAction(); 
+            refreshBtnAction(); 
+            removeBtnAction(); 
+            applyAction();
+            resetCachePreferencesAction(); 
+
+
+        }); 
 
     }
 
@@ -187,75 +197,123 @@ public class CacheConfigurationController extends JRPJPanel implements Preferenc
         Scene scene = new Scene(pane);
         fxPanel.setScene(scene);
     }
+    
+   
 
-    @FXML
-    private void clearBtnAction(ActionEvent ae) {
-        remoteFileCacheService.clearAllCaches();
-        LocalUrlCacher.clearCache();
-        refresh();
-    }
-
-    @FXML
-    private void removeBtnAction(ActionEvent ae) {
-        ObservableList<CacheEntry> selectedRows = table.getSelectionModel().getSelectedItems();
-        for (int i = 0; i < selectedRows.size(); i++) {
-            cacheTableModelFx.removeRow(i);  
-        }
-        refresh();
-    }
-
-    @FXML
-    private void refreshBtnAction(ActionEvent ae) {
-        refresh(); 
-    }
-
-    @FXML
-    private void resetCachePreferencesBtnAction(ActionEvent ae) {
-        try {
-            cachePrefsNode.clear();
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-    }
-
-    @FXML
-    private void applyBtnAction(ActionEvent ae) {
-
-        try {
-            BigInteger maxCacheSizeValue = new BigInteger(maxCacheSize.getText());
-            BigInteger minFileSizeValue = new BigInteger(minFileSize.getText());
-            BigInteger currentCacheSize = remoteFileCacheService.getCacheSizeInMB();
-
-            if (currentCacheSize.compareTo(maxCacheSizeValue) > 0) {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Error Dialog");
-                alert.setHeaderText("The max cache size is less than the current cache size.");
-
-                alert.showAndWait();
-                return;
+    private void resetCachePreferencesAction() {
+        resetCachePreferencesBtn.setOnAction(event -> {
+            try {
+                cachePrefsNode.clear();
+            } catch (Exception ex) {
+                logger.error(ex.getMessage(), ex);
             }
-            remoteFileCacheService.setMaxCacheSizeMB(maxCacheSizeValue);
+        });
 
-            remoteFileCacheService.setMinFileSizeBytes(minFileSizeValue.multiply(new BigInteger("1000")));
-        } catch (Exception ex) {
-            //TODO: Add warning
-        }
-        initMaxCacheSizeValue();
-        initMinFileSizeValue();
     }
-
-    @FXML
-    private void enableCacheAction(ActionEvent ae) {
-        initCacheEnableValue();
+    
+    private void clearBtnAction() {
+        clearBtn.setOnAction((event) -> {
+            remoteFileCacheService.clearAllCaches();
+            LocalUrlCacher.clearCache();
+            refresh();
+        });
+    }
+    private void enableCacheAction() {
+        enableCache.setOnAction(event -> {
             remoteFileCacheService.setCacheEnabled(enableCache.isSelected());
-            if (enableCache.isSelected()) {
-                enableCacheSettings();
-            } else {
-                disableCacheSettings();
+            initCacheEnableValue();
+        });
+    }
+    
+    private void refreshBtnAction() {
+        refreshBtn.setOnAction(event -> {
+            refresh();
+        });
+    }
+    private void removeBtnAction() {
+        removeBtn.setOnAction(event -> {
+            ObservableList<CacheEntry> selectedRows = table.getSelectionModel().getSelectedItems();
+            selectedRows.stream().forEach(cacheEntry -> {
+                try {
+                    remoteFileCacheService.clearCacheByUrl(new URL(cacheEntry.getUrl()));
+                } catch (MalformedURLException ex) {
+                    logger.error(ex.getMessage(), ex);
+                }
+            });
+            refresh();
+        });
+    }
+    
+    private void applyAction() {
+        applyBtn.setOnAction(event -> {
+            try {
+                BigInteger maxCacheSizeValue = new BigInteger(maxCacheSize.getText());
+                BigInteger minFileSizeValue = new BigInteger(minFileSize.getText());
+                BigInteger currentCacheSize = remoteFileCacheService.getCacheSizeInMB();
+
+                if (currentCacheSize.compareTo(maxCacheSizeValue) > 0) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Dialog");
+                    alert.setHeaderText("The max cache size is less than the current cache size.");
+
+                    alert.showAndWait();
+                    return;
+                }
+                remoteFileCacheService.setMaxCacheSizeMB(maxCacheSizeValue);
+
+                remoteFileCacheService.setMinFileSizeBytes(minFileSizeValue.multiply(new BigInteger("1000")));
+            } catch (Exception ex) {
+                //TODO: Add warning
             }
+            initMaxCacheSizeValue(); 
+            initMinFileSizeValue(); 
+            
+        });
+        
 
     }
 
+    
+    private void createCacheEntriesList() {
+        List<CacheStatus> cacheStatusList = remoteFileCacheService.getCacheEntries();
+        for (CacheStatus cacheStatus : cacheStatusList) {
+            String url, lastModified, cacheUpdate, lastAccessed, cacheSize;
+            try {
+                url = cacheStatus.getUrl();
+            } catch (Exception ex) {
+                url = "";
+            }
+            try {
+                lastModified = new Date(cacheStatus.getLastModified()).toString();
+            } catch (Exception ex) {
+                lastModified = new Date().toString();
+            }
+            try {
+                cacheUpdate = new Date(cacheStatus.getCacheLastUpdate()).toString();
+            } catch (Exception ex) {
+                cacheUpdate = new Date().toString();
+            }
+            try {
+                lastAccessed = remoteFileCacheService.getLastRequestDate(new URL(cacheStatus.getUrl())).toString();
+            } catch (Exception ex) {
+                logger.error(ex.getMessage(), ex);
+                lastAccessed = new Date().toString();
+            }
+            try {
+                BigInteger size = cacheStatus.getSize();
+                if (size.compareTo(BigInteger.ZERO) <= 0) {
+                    cacheSize = "<1";
+                } else {
+                    cacheSize = cacheStatus.getSize().toString();
+                }
+            } catch (Exception ex) {
+                cacheSize = "0";
+            }
+            CacheEntry cacheEntry = new CacheEntry(url,lastModified,cacheUpdate,lastAccessed,cacheSize); 
+            cacheEntries.add(cacheEntry); 
+        }
+    }
+    
     private void initializeTable() {
         sourceCol.setCellValueFactory(cellData -> cellData.getValue().getUrlStringProperty());
         lastModifiedCol.setCellValueFactory(cellData -> cellData.getValue().getLastModifiedStringProperty());
@@ -270,26 +328,14 @@ public class CacheConfigurationController extends JRPJPanel implements Preferenc
 
     private void populateTable() {
         cacheEntries.clear();
-        cacheTableModelFx.refresh();
-        
-        CacheEntry cacheEntry;
-        int rowCount = cacheTableModelFx.getRowCount();
-        for (int i = 0; i < rowCount; i++) {
-            String url = cacheTableModelFx.getValueAt(i, 0).toString();
-            String lastModified = cacheTableModelFx.getValueAt(i, 1).toString();
-            String cacheUpdate = cacheTableModelFx.getValueAt(i, 2).toString();
-            String lastAccessed = cacheTableModelFx.getValueAt(i, 3).toString();
-            String cacheSize = cacheTableModelFx.getValueAt(i, 4).toString();
-            cacheEntry = new CacheEntry(url, lastModified, cacheUpdate, lastAccessed, cacheSize);
-            cacheEntries.add(cacheEntry);
-        }
-
+        createCacheEntriesList();
         table.setItems(cacheEntries);
 
     }
-
+    
     private void initMaxCacheSizeValue() {
         maxCacheSize.setText(remoteFileCacheService.getMaxCacheSizeMB().toString());
+
     }
 
     private void initMinFileSizeValue() {
@@ -331,10 +377,5 @@ public class CacheConfigurationController extends JRPJPanel implements Preferenc
         this.remoteFileCacheService = remoteFileCacheService;
     }
 
-    @Reference
-    public void setCacheTableModelFx(CacheTableModelFx cacheTableModel) {
-        this.cacheTableModelFx = cacheTableModel;
-    }
-
-    
+   
 }

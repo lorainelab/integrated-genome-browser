@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextField fx:id="maxCacheSize" layoutX="137.0" layoutY="285.0" prefHeight="26.0" prefWidth="61.0" />
+      <Label layoutX="208.0" layoutY="322.0" text="MB" />
+      <Label layoutX="208.0" layoutY="292.0" text="MB" />
+      <Label fx:id="CacheSizeLabel" layoutX="149.0" layoutY="203.0" prefHeight="26.0" prefWidth="68.0" />
+      <TextField fx:id="minFileSize" layoutX="137.0" layoutY="316.0" prefHeight="26.0" prefWidth="61.0" />
+      <Label layoutX="13.0" layoutY="183.0" text="Cache Settings" />
+      <Label layoutX="13.0" layoutY="204.0" text="Current Cache Size: " />
+      <CheckBox fx:id="enableCache" layoutX="14.0" layoutY="223.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="Enable Cache" />
+      <Button fx:id="resetCachePreferencesBtn" layoutX="13.0" layoutY="244.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="183.0" text="Reset Cache Preferences" />
+      <Label layoutX="13.0" layoutY="309.0" prefHeight="16.0" prefWidth="89.0" text="Min File Size:" />
+      <Button fx:id="applyBtn" layoutX="13.0" layoutY="341.0" mnemonicParsing="false" text="Apply" />
+      <Label layoutX="14.0" layoutY="288.0" text="Max Cache Size:" />
+      <Button fx:id="clearBtn" layoutX="371.0" layoutY="183.0" mnemonicParsing="false" text="Clear All" />
+      <Button fx:id="refreshBtn" layoutX="530.0" layoutY="183.0" mnemonicParsing="false" text="Refresh" />
+      <Button fx:id="removeBtn" layoutX="449.0" layoutY="183.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="77.0" text="Remove" />
+      <TableView fx:id="table" layoutX="4.0" layoutY="-2.0" prefHeight="183.0" prefWidth="594.0">
+        <columns>
+          <TableColumn fx:id="sourceCol" prefWidth="90.0" resizable="true" text="Source" />
+          <TableColumn fx:id="lastModifiedCol" prefWidth="128.0" resizable="true" text="Last Modified" />
+            <TableColumn fx:id="cacheCol" prefWidth="105.0" resizable="true" text="Cached On" />
+            <TableColumn fx:id="lastAccessCol" prefWidth="132.0" resizable="true" text="Last Accessed" />
+            <TableColumn fx:id="sizeCol" prefWidth="136.0" resizable="true" text="Size(MB)" />
+        </columns>
+      </TableView>
+   </children>
+</Pane>

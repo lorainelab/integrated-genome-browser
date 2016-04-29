@@ -5,13 +5,13 @@ import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.google.common.base.Strings;
-import org.lorainelab.igb.preferences.model.AnnotationUrl;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.lorainelab.igb.preferences.model.AnnotationUrl;
 
 /**
  *
@@ -165,8 +165,7 @@ public final class WebLink implements Comparable<WebLink> {
     }
 
     public boolean matches(String s) {
-        return (pattern == null
-                || pattern.matcher(s).matches());
+        return s !=null && (pattern == null || pattern.matcher(s).matches());
     }
 
     /**

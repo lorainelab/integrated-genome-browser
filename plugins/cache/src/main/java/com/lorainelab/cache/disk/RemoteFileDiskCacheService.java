@@ -47,6 +47,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -119,8 +120,20 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
+        cleanUpLockFiles();
         setCurrentCacheSize(getCacheSizeInMB());
         enforceEvictionPolicies();
+    }
+
+    private void cleanUpLockFiles() {
+        try {
+            java.nio.file.Files.walk(java.nio.file.Paths.get(DATA_DIR)).collect(Collectors.toSet()).stream().filter(file -> file.getFileName().toString().endsWith(".lock")).forEach(lockFile -> {
+                LOG.info("Removing lock file: " + lockFile.toString());
+                FileUtils.deleteQuietly(lockFile.toFile());
+            });
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
     }
 
     private void validateCacheInBackground(URL url) {

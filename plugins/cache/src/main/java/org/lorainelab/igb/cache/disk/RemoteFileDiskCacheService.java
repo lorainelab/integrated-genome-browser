@@ -17,10 +17,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
-import org.lorainelab.igb.cache.api.CacheStatus;
-import org.lorainelab.igb.cache.api.ChangeEvent;
-import org.lorainelab.igb.cache.api.RemoteFileCacheService;
-import org.lorainelab.igb.services.IgbService;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -46,6 +42,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -58,7 +55,11 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.lorainelab.igb.cache.api.CacheStatus;
+import org.lorainelab.igb.cache.api.ChangeEvent;
+import org.lorainelab.igb.cache.api.RemoteFileCacheService;
 import org.lorainelab.igb.cache.configuration.panel.CacheConfigurationController;
+import org.lorainelab.igb.services.IgbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,8 +120,20 @@ public class RemoteFileDiskCacheService implements RemoteFileCacheService {
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
+        cleanUpLockFiles();
         setCurrentCacheSize(getCacheSizeInMB());
         enforceEvictionPolicies();
+    }
+
+    private void cleanUpLockFiles() {
+        try {
+            java.nio.file.Files.walk(java.nio.file.Paths.get(DATA_DIR)).collect(Collectors.toSet()).stream().filter(file -> file.getFileName().toString().endsWith(".lock")).forEach(lockFile -> {
+                LOG.info("Removing lock file: " + lockFile.toString());
+                FileUtils.deleteQuietly(lockFile.toFile());
+            });
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
     }
 
     private void validateCacheInBackground(URL url) {

@@ -14,7 +14,7 @@ public class CacheStatus {
     private File data;
     private BigInteger size;
     private boolean isCorrupt = false;
-
+  
     public BigInteger getSize() {
         return size;
     }
@@ -86,5 +86,5 @@ public class CacheStatus {
     public void setIsCorrupt(boolean isCorrupt) {
         this.isCorrupt = isCorrupt;
     }
-
+   
 }

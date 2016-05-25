@@ -145,6 +145,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Predicate;
 import java.util.prefs.PreferenceChangeListener;
@@ -190,7 +191,7 @@ public class SeqMapView extends JPanel
         implements SeqMapViewExtendedI, SeqSelectionListener, GroupSelectionListener, TrackStylePropertyListener, PropertyHolder, JRPWidget {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(SeqMapView.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SeqMapView.class);
     public static final boolean default_auto_change_view = false;
     public static final boolean default_show_prop_tooltip = true;
     private static final boolean DEBUG_TIERS = false;
@@ -369,9 +370,9 @@ public class SeqMapView extends JPanel
                     .filter(isGraphTierGlyph)
                     .filter(hasChildren)
                     .forEach(agg -> {
-                agg.getChildren().stream()
-                        .filter(isGraphGlyph)
-                        .forEach(graphGlyph -> graphs.add((GraphGlyph) graphGlyph));
+                        agg.getChildren().stream()
+                                .filter(isGraphGlyph)
+                                .forEach(graphGlyph -> graphs.add((GraphGlyph) graphGlyph));
                     });
         });
     }
@@ -682,7 +683,7 @@ public class SeqMapView extends JPanel
                         null, //"22x22/actions/system-search.png",
                         KeyEvent.VK_UNDEFINED) {
 
-                    private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -2004,8 +2005,8 @@ public class SeqMapView extends JPanel
             current_group = aseq.getGenomeVersion();
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getName() : "null"));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getName() : "null"));
         }
 
         if ((new_group != current_group) && (current_group != null)) {
@@ -2015,8 +2016,8 @@ public class SeqMapView extends JPanel
 
     @Override
     public void seqSelectionChanged(SeqSelectionEvent evt) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
         }
 
         final BioSeq newseq = evt.getSelectedSeq();
@@ -2177,7 +2178,9 @@ public class SeqMapView extends JPanel
             final double middle = (start + end) / 2.0;
             setZoomSpotX(middle);
             if (autoload != null) {
-                autoload.loadData();
+                CompletableFuture.runAsync(() -> {
+                    autoload.loadData();
+                });
             }
         }
     }

@@ -32,13 +32,6 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.jidesoft.hints.ListDataIntelliHints;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
-import org.lorainelab.igb.services.search.ISearchHints;
-import org.lorainelab.igb.services.search.ISearchModeSym;
-import org.lorainelab.igb.services.search.IStatus;
-import org.lorainelab.igb.services.search.SearchListener;
-import org.lorainelab.igb.services.search.SearchModeRegistry;
-import org.lorainelab.igb.services.search.SearchResults;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,6 +51,13 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.services.search.ISearchHints;
+import org.lorainelab.igb.services.search.ISearchModeSym;
+import org.lorainelab.igb.services.search.IStatus;
+import org.lorainelab.igb.services.search.SearchListener;
+import org.lorainelab.igb.services.search.SearchModeRegistry;
+import org.lorainelab.igb.services.search.SearchResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -589,15 +589,6 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
         if (newSeq != GenometryModel.getInstance().getSelectedSeq().orElse(null)) {
             // set the chromosome, and sleep until it's set.
             GenometryModel.getInstance().setSelectedSeq(newSeq);
-            for (int i = 0; i < 100; i++) {
-                if (GenometryModel.getInstance().getSelectedSeq().orElse(null) != newSeq) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                        logger.error(ex.getMessage(), ex);
-                    }
-                }
-            }
         }
 
         gview.setRegion(start, end, newSeq);

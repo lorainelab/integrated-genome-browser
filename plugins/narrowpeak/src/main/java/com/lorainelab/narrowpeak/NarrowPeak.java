@@ -75,27 +75,27 @@ public class NarrowPeak extends SymLoader {
         try (final InputStream openStream = uri.toURL().openStream();
                 InputStream unzipedStream = GeneralUtils.unzipStream(openStream, uri.toString(), new StringBuffer());
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(unzipedStream))) {
-            bufferedReader.lines()                        .map(line -> line.trim())
-                        .filter(IS_PARSEABLE_LINE)
-                        .forEach(line -> {
-                            Iterable<String> splitLine = Splitter.on("\t").trimResults().split(line);
-                            final Iterator<String> iterator = splitLine.iterator();
-                            if (iterator.hasNext()) {
-                                String chromosome = iterator.next();
-                                BioSeq seq = genomeVersion.getSeq(chromosome);
-                                if (seq != null) {
-                                    if (!chromosomes.contains(seq)) {
-                                        chromosomes.add(seq);
-                                        chromosomeReference.put(chromosome, seq);
-                                    }
+            bufferedReader.lines().map(line -> line.trim())
+                    .filter(IS_PARSEABLE_LINE)
+                    .forEach(line -> {
+                        Iterable<String> splitLine = Splitter.on("\t").trimResults().split(line);
+                        final Iterator<String> iterator = splitLine.iterator();
+                        if (iterator.hasNext()) {
+                            String chromosome = iterator.next();
+                            BioSeq seq = genomeVersion.getSeq(chromosome);
+                            if (seq != null) {
+                                if (!chromosomes.contains(seq)) {
+                                    chromosomes.add(seq);
+                                    chromosomeReference.put(chromosome, seq);
                                 }
                             }
+                        }
 
-                        });
+                    });
             Collections.sort(chromosomes, new BioSeqComparator());
-            } catch (IOException ex) {
-                logger.error(ex.getMessage(), ex);
-            }
+        } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
     }
 
     @Override
@@ -126,8 +126,12 @@ public class NarrowPeak extends SymLoader {
             while (iterator.hasNext()) {
                 String line = iterator.next().trim();
                 if (IS_PARSEABLE_LINE.test(line)) {
-                    if (!parseLineToDataModel(line, requestMin, requestMax, dataModelContent)) {
-                        break;
+                    List<String> fields = Splitter.on("\t").trimResults().splitToList(line);
+                    String chrom = fields.get(0);
+                    if (chromosomeReference.get(chrom) == seq) {
+                        if (!parseLineToDataModel(fields, requestMin, requestMax, dataModelContent)) {
+                            break;
+                        }
                     }
                 }
             }
@@ -138,10 +142,9 @@ public class NarrowPeak extends SymLoader {
         return dataModelContent;
     }
 
-    private boolean parseLineToDataModel(String line, int requestMin, int requestMax, List<SeqSymmetry> dataModelContent) {
-        List<String> fields = Splitter.on("\t").trimResults().splitToList(line);
+    private boolean parseLineToDataModel(List<String> fields, int requestMin, int requestMax, List<SeqSymmetry> dataModelContent) {
         if (fields.size() < 3) {
-            logger.error("line in narrowpeak file could not be visualized, missing required columns: {}", line);
+            logger.error("line in narrowpeak file could not be visualized, missing required columns: {}", fields);
             return true;
         }
         String chrom = fields.get(0);

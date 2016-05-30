@@ -589,15 +589,6 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
         if (newSeq != GenometryModel.getInstance().getSelectedSeq().orElse(null)) {
             // set the chromosome, and sleep until it's set.
             GenometryModel.getInstance().setSelectedSeq(newSeq);
-            for (int i = 0; i < 100; i++) {
-                if (GenometryModel.getInstance().getSelectedSeq().orElse(null) != newSeq) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                        logger.error(ex.getMessage(), ex);
-                    }
-                }
-            }
         }
 
         gview.setRegion(start, end, newSeq);

@@ -96,7 +96,7 @@ public class CacheTableModel extends AbstractTableModel {
                 try {
                     BigInteger size = cacheStatus.getSize();
                     if (size.compareTo(BigInteger.ZERO) <= 0) {
-                        return "<1";
+                        return BigInteger.ONE;
                     } else {
                         return cacheStatus.getSize();
                     }

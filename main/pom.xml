@@ -3,12 +3,12 @@
 	
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.affymetrix</groupId>
+        <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
         <version>9.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>com.affymetrix</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>main</artifactId>
     <packaging>jar</packaging>
     
@@ -18,22 +18,22 @@
     
     <dependencies>
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>affymetrix-common</artifactId> 
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb</artifactId>
             <scope>runtime</scope> 
         </dependency>   
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-services</artifactId>
             <scope>runtime</scope>
         </dependency>       
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>shared-lib-wrapper</artifactId>
             <scope>runtime</scope>
         </dependency>     
@@ -45,22 +45,22 @@
  
         
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>heatmap-editor</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>genometry</artifactId>  
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igbSwingExt</artifactId>  
             <scope>runtime</scope>     
         </dependency>   
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>window-service</artifactId>
             <scope>runtime</scope>          
         </dependency>
@@ -182,97 +182,97 @@
             <scope>runtime</scope>          
         </dependency>
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>apollo-library</artifactId>
             <scope>runtime</scope>           
         </dependency>
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>annotation-tab</artifactId>
             <scope>runtime</scope>           
         </dependency>
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>bigBedHandler</artifactId>
             <scope>runtime</scope>           
         </dependency>   
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>bigWigHandler</artifactId>
             <scope>runtime</scope>           
         </dependency> 
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>bookmark</artifactId>
             <scope>runtime</scope>           
         </dependency>
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>externalView</artifactId>
             <scope>runtime</scope>            
         </dependency>  
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>graphTab</artifactId>
             <scope>runtime</scope>            
         </dependency> 
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igbScript</artifactId>
             <scope>runtime</scope>            
         </dependency> 
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>keyWordSearch</artifactId>
             <scope>runtime</scope>           
         </dependency> 
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>ncbiBlast</artifactId>
             <scope>runtime</scope>           
         </dependency> 
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>propertyView</artifactId>
             <scope>runtime</scope>           
         </dependency> 
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>restrictionSites</artifactId>
             <scope>runtime</scope>            
         </dependency> 
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>searchModelIdOrProps</artifactId>
             <scope>runtime</scope>            
         </dependency> 
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>searchView</artifactId>
             <scope>runtime</scope>          
         </dependency>
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>sequenceViewer</artifactId>
             <scope>runtime</scope>           
         </dependency>
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>survey</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>thresholding</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>update</artifactId>
             <scope>runtime</scope>
         </dependency> 
         <dependency> 
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>plugins-manager</artifactId>
             <scope>runtime</scope>
         </dependency> 

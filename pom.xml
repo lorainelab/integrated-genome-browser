@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.affymetrix</groupId>
+    <groupId>org.lorainelab.igb</groupId>
     <artifactId>igb-project</artifactId>
     <version>9.0.0</version>
     <packaging>pom</packaging>
@@ -196,7 +196,7 @@
             
             <!--Start of core module dependencies-->
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>heatmap-editor</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
@@ -208,37 +208,37 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>affymetrix-common</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>genometry</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>igb</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>igb-services</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>igbSwingExt</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>window-service</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
@@ -308,13 +308,13 @@
 
             <!--Start of plugin module dependencies-->
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>apollo-library</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>annotation-tab</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
@@ -325,109 +325,109 @@
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>bigBedHandler</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>bigWigHandler</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>bookmark</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>externalView</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>graphTab</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>igbScript</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>keyWordSearch</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>ncbiBlast</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>           
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>propertyView</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>restrictionSites</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>searchModelIdOrProps</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>searchView</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>sequenceViewer</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>survey</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>thresholding</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>update</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>plugins-manager</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>shared-lib-wrapper</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
@@ -534,67 +534,67 @@
             
             <!-- Start of development plugins -->
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>findAnnotations</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>geometric-mean</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>merge-annotation-operator</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>ncbiPrimer</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>overlapAnnotationOperator</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>parentOperators</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>sampleSelection</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>searchModeSymetryFilter</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>talleyHandler</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>transcriptIsoForm</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency> 
             <dependency>
-                <groupId>com.affymetrix</groupId>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>searchModeLucene</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>

@@ -2,13 +2,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.affymetrix</groupId>
+        <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
         <version>9.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     
-    <groupId>com.affymetrix</groupId>
     <artifactId>igb</artifactId>
     
     <packaging>bundle</packaging>
@@ -27,17 +26,17 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>window-service</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igbSwingExt</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-services</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -52,7 +51,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>affymetrix-common</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -62,7 +61,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>genometry</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -92,7 +91,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.affymetrix</groupId>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>heatmap-editor</artifactId>
             <scope>provided</scope>
         </dependency>

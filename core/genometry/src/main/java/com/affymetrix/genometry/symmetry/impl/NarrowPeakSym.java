@@ -11,6 +11,8 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
 import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SymSpanWithCds;
+import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 
 /**
  *
@@ -48,6 +50,11 @@ public class NarrowPeakSym extends BasicSeqSymmetry implements SupportsCdsSpan, 
     @Override
     public float getScore() {
         return bedSym.getScore();
+    }
+    
+     @Override
+    public Map<String, Object> getProperties() {
+        return ImmutableMap.copyOf(props);
     }
 
 }

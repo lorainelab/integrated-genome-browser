@@ -127,7 +127,7 @@ public class ToolTipConstants {
     public static final Map<String, List<String>> BED14_CIGAR_CATEGORY = ImmutableMap.of("Cigar", BED14_CIGAR_GRP);
 
     //NarrowPeak+BroadPeak
-    public static final List<String> NARROW_PEAK_INFO_GRP = Arrays.asList(TITLE, ID, SIGNAL_VALUE, P_VALUE, Q_VALUE, PEAK);
+    public static final List<String> NARROW_PEAK_INFO_GRP = Arrays.asList(TITLE, ID, SCORE, SIGNAL_VALUE, P_VALUE, Q_VALUE, PEAK);
     public static final List<String> NARROW_PEAK_LOC_GRP = Arrays.asList(START, END, LENGTH, STRAND, CHROMOSOME);
     public static final List<String> NARROW_PEAK_CIGAR_GRP = Arrays.asList(SCORES, RESIDUES, SHOW_MASK);
     public static final List<String> NARROW_PEAK_IGNORE_LIST = Arrays.asList(CL, NAME, CDS_START, CDS_END);

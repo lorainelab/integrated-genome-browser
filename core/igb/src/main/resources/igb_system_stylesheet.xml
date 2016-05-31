@@ -55,7 +55,7 @@ But in this case, we have a local copy of the DTD named "igb_stylesheet.dtd"
 		</FILE_TYPE_ASSOCIATION>
 		<FILE_TYPE_ASSOCIATION file_type="narrowpeak">
 			<PROPERTY key="direction_type" value="arrow"/>
-			<PROPERTY key="label_field" value="id"/>	  
+			<PROPERTY key="label_field" value="signalValue"/>	  
 			<PROPERTY key="color_by_rgb" value="true" />
 		</FILE_TYPE_ASSOCIATION>
 		<FILE_TYPE_ASSOCIATION file_type="broadpeak">

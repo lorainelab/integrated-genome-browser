@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -199,7 +200,9 @@ public class BioSeq implements SearchableCharIterator {
         return 0;
     }
 
-    public /*@Nullable*/ RootSeqSymmetry getAnnotation(int index) {
+    public /*
+             * @Nullable
+             */ RootSeqSymmetry getAnnotation(int index) {
         if (null != annots && index < annots.size()) {
             return annots.get(index);
         }
@@ -216,7 +219,14 @@ public class BioSeq implements SearchableCharIterator {
         if (type_id2sym == null) {
             return null;
         }
-        return type_id2sym.get(type);
+        RootSeqSymmetry rootSeqSym = type_id2sym.get(type);
+        if (rootSeqSym == null) {
+            Optional<String> match = type_id2sym.keySet().stream().filter(key -> key.equalsIgnoreCase(type)).findFirst();
+            if (match.isPresent()) {
+                return rootSeqSym = type_id2sym.get(match.get());
+            }
+        }
+        return rootSeqSym;
     }
 
     public List<RootSeqSymmetry> getAnnotations(Pattern regex) {
@@ -263,10 +273,8 @@ public class BioSeq implements SearchableCharIterator {
             }
             if (type_id2sym == null) {
                 type_id2sym = new LinkedHashMap<>();
-            } else {
-                if (type_id2sym.containsKey(symID) && sym.equals(type_id2sym.get(id))) {
-                    return;	// sym already in hash (and thus also annots list)
-                }
+            } else if (type_id2sym.containsKey(symID) && sym.equals(type_id2sym.get(id))) {
+                return;	// sym already in hash (and thus also annots list)
             }
             type_id2sym.put(symID, (RootSeqSymmetry) sym);
             if (annots == null) {

@@ -9,13 +9,16 @@ import com.affymetrix.genometry.symloader.BedUtils;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.NarrowPeakSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.PEAK;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.P_VALUE;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.Q_VALUE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SCORE;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.SIGNAL_VALUE;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.BufferedReader;
@@ -204,6 +207,12 @@ public class NarrowPeak extends SymLoader {
         int[] blockMaxs = new int[1];
         blockMaxs[0] = max;
         NarrowPeakSym narrowPeakSym = new NarrowPeakSym(uri.toString().toLowerCase(), chromosomeReference.get(chrom), min, max, name, score, isForwardStrand, peakStart, peakStop, blockMins, blockMaxs);
+        if (!Strings.isNullOrEmpty(name)) {
+            narrowPeakSym.setProperty(ID, name);
+        }
+        if (score != Float.NEGATIVE_INFINITY) {
+            narrowPeakSym.setProperty(SCORE, score);
+        }
         if (!signalValue.isEmpty()) {
             narrowPeakSym.setProperty(SIGNAL_VALUE, signalValue);
         }

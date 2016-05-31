@@ -12,15 +12,14 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometry.util.Timer;
 import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.File;
@@ -80,8 +79,6 @@ public final class LiftParser {
             throws IOException {
         Logger.getLogger(LiftParser.class.getName()).log(
                 Level.FINE, "parsing in lift file");
-        Timer tim = new Timer();
-        tim.start();
         int contig_count = 0;
         int chrom_count = 0;
         BufferedReader br = new BufferedReader(new InputStreamReader(istr));
@@ -147,12 +144,6 @@ public final class LiftParser {
                 comp.addSpan(chromspan);
             }
         }
-        Logger.getLogger(LiftParser.class.getName()).log(
-                Level.INFO, "chroms loaded, load time = {0}", tim.read() / 1000f);
-        Logger.getLogger(LiftParser.class.getName()).log(
-                Level.INFO, "contig count: {0}", contig_count);
-        Logger.getLogger(LiftParser.class.getName()).log(
-                Level.INFO, "chrom count: {0}", chrom_count);
         return !isEmpty;
     }
 

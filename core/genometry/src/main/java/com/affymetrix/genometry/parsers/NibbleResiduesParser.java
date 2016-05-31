@@ -19,7 +19,6 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.NibbleIterator;
 import com.affymetrix.genometry.util.SeekableBufferedStream;
-import com.affymetrix.genometry.util.Timer;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -64,9 +63,6 @@ public final class NibbleResiduesParser implements Parser {
         InputStream bis = null;
         DataInputStream dis = null;
         try {
-            Timer tim = new Timer();
-            tim.start();
-
             //If istr is instance of Seekablestream then use SeekableBufferedStream else use BufferedInputStream.
             if (istr instanceof SeekableStream) {
                 bis = new SeekableBufferedStream((SeekableStream) istr);

@@ -10,7 +10,6 @@ import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometry.util.Timer;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -273,8 +272,6 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser {
     }
 
     private static List<UcscPslSym> readPslFile(String file_name) {
-        Timer tim = new Timer();
-        tim.start();
 
         List<UcscPslSym> results = null;
         FileInputStream fis = null;
@@ -300,8 +297,6 @@ public final class BpsParser implements AnnotationWriter, IndexWriter, Parser {
             GeneralUtils.safeClose(bis);
             GeneralUtils.safeClose(fis);
         }
-        Logger.getLogger(BpsParser.class.getName()).log(
-                Level.INFO, "finished reading PSL file, time to read = {0}", (tim.read() / 1000f));
         return results;
     }
 

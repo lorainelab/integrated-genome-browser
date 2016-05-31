@@ -16,7 +16,6 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
-import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -30,10 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Parses a fasta-formatted file.
@@ -43,6 +45,7 @@ import org.osgi.framework.ServiceReference;
  */
 public final class FastaParser implements Parser {
 
+    private static final Logger LOG = LoggerFactory.getLogger(FastaParser.class);
     private static final Pattern header_regex = Pattern.compile("^\\s*>(.+)");
     public static final int LINELENGTH = 79;
     private static final boolean DEBUG = false;
@@ -254,8 +257,6 @@ public final class FastaParser implements Parser {
         System.out.println("using buffer directly: " + use_buffer_directly);
         System.out.println("using fixed length buffer: " + fixed_length_buffer);
 
-        com.affymetrix.genometry.util.Timer tim = new com.affymetrix.genometry.util.Timer();
-        tim.start();
         BioSeq seq = aseq;
         String seqid = "unknown";
         // maybe guesstimate size of buffer needed based on file size???
@@ -309,7 +310,7 @@ public final class FastaParser implements Parser {
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         } finally {
             GeneralUtils.safeClose(br);
             GeneralUtils.safeClose(istr);
@@ -352,21 +353,15 @@ public final class FastaParser implements Parser {
         } else {  // try to merge with existing seq
             Bundle bundle = FrameworkUtil.getBundle(FastaParser.class);
             GenomeVersionSynonymLookup genomeVersionSynonymLookup = null;
-            if(bundle != null) {
+            if (bundle != null) {
                 BundleContext bundleContext = bundle.getBundleContext();
                 ServiceReference<GenomeVersionSynonymLookup> serviceReference = bundleContext.getServiceReference(GenomeVersionSynonymLookup.class);
                 genomeVersionSynonymLookup = bundleContext.getService(serviceReference);
             }
             if (genomeVersionSynonymLookup != null && genomeVersionSynonymLookup.isSynonym(seq.getId(), seqid)) {
                 seq.setResidues(residues);
-            } else {
-                System.out.println("*****  ABORTING MERGE, sequence ids don't match: "
-                        + "old seq id = " + seq.getId() + ", new seq id = " + seqid);
             }
         }
-        System.out.println("time to execute: " + tim.read() / 1000f);
-        System.out.println("done loading fasta file");
-        System.out.println("length of sequence: " + residues.length());
         return seq;
     }
 
@@ -429,7 +424,7 @@ public final class FastaParser implements Parser {
                 System.out.println("skipped header past EOF");
                 return buf;
             }
-				// begin_sequence of 0 is first nucleotide.
+            // begin_sequence of 0 is first nucleotide.
 
             // Skip to location of begin_sequence.  Since there are (LINELENGTH + 1) characters per line, that should be:
             // floor(begin_sequence / LINELENGTH) * (LINELENGTH+1) + begin_sequence % LINELENGTH.

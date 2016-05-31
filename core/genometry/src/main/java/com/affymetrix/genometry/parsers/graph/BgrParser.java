@@ -17,7 +17,6 @@ import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.Timer;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -125,8 +124,6 @@ public final class BgrParser implements GraphParser {
 
     public static GraphSym parse(InputStream istr, String stream_name, GenomeVersion seq_group, boolean ensure_unique_id)
             throws IOException {
-        Timer tim = new Timer();
-        tim.start();
         int count = 0;
         BufferedInputStream bis = new BufferedInputStream(istr);
         DataInputStream dis = new DataInputStream(bis);
@@ -187,9 +184,7 @@ public final class BgrParser implements GraphParser {
         }
         GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
         graf.setProperties(props);
-        double load_time = tim.read() / 1000f;
         System.out.println("loaded graf, total points = " + count);
-        System.out.println("time to load graf from binary: " + load_time);
         return graf;
     }
 

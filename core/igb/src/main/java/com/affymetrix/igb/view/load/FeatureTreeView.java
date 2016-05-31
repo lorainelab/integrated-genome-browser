@@ -677,14 +677,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                     TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
                     if (tn.genericObject instanceof DataSet) {
                         DataSet dataSet = (DataSet) tn.genericObject;
-//                        if (feature.getDataContainer().getDataProvider() instanceof DataSetProvider) {
-//                            String extension = FileTypeHolder.getInstance().getExtensionForURI(feature.getSymL().uri.toString());
-////                            FileTypeHandler fth = FileTypeHolder.getInstance().getFileTypeHandler(extension);
-////                            if (fth == null) {
-////                                ErrorHandler.errorPanel("Load error", MessageFormat.format(GenometryConstants.BUNDLE.getString("noHandler"), extension), Level.SEVERE);
-////                                return;
-////                            }
-//                        }
                         String message;
                         if (checkbox.isSelected()) {
                             // check whether the selected feature url is reachable or not
@@ -696,7 +688,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
                             }
 
                             // prevent from adding duplicated features
-                            if (GeneralLoadUtils.getLoadedFeature(dataSet.getURI()) != null) {
+                            List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
+                            Optional<DataSet> loadedDataSet = GeneralLoadUtils.getLoadedDataSet(dataSet.getURI(),visibleFeatures);
+                            if (loadedDataSet.isPresent()) {
                                 message = "The feature " + dataSet.getURI() + " has already been added.";
                                 ErrorHandler.errorPanel("Cannot add same feature", message, Level.WARNING);
                                 tn.setChecked(false);

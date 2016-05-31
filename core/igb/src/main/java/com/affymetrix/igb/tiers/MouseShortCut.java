@@ -4,13 +4,13 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.SeqMapView.MapMode;
-import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 
 /**
  *
@@ -101,7 +101,7 @@ final public class MouseShortCut implements MouseListener {
             smv.zoomToGlyphs(glyphs);
             if (smv.getAutoLoadAction() != null) {
                 smv.getAutoLoadAction().loadData();
-            }
+        }
         }
 
     }

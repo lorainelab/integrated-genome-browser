@@ -96,7 +96,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class GeneralLoadUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(GeneralLoadUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GeneralLoadUtils.class);
     private static final int MAX_INTERNAL_THREAD = Runtime.getRuntime().availableProcessors() + 1;
     private static final Pattern tab_regex = Pattern.compile("\t");
     /**
@@ -339,7 +339,7 @@ public final class GeneralLoadUtils {
         } catch (IllegalStateException ex) {
             // due to multithreading, it's possible that this sequence has been created by another thread while doing this test.
             // we can safely return in this case.
-            logger.trace("Ignoring multithreading illegal state exception.");
+            LOG.trace("Ignoring multithreading illegal state exception.");
             return;
         }
 
@@ -483,7 +483,9 @@ public final class GeneralLoadUtils {
             if (overlap.getMin() == selected_seq.getMin() && overlap.getMax() == selected_seq.getMax()) {
                 overlap = new SimpleSeqSpan(selected_seq.getMin(), selected_seq.getMax() - 1, selected_seq);
             }
-        } else if (gFeature.getLoadStrategy() == LoadStrategy.GENOME /*|| gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME*/) {
+        } else if (gFeature.getLoadStrategy() == LoadStrategy.GENOME /*
+                 * || gFeature.getLoadStrategy() == LoadStrategy.CHROMOSOME
+                 */) {
             // TODO: Investigate edge case at max
             overlap = new SimpleSeqSpan(selected_seq.getMin(), selected_seq.getMax() - 1, selected_seq);
         }
@@ -552,12 +554,12 @@ public final class GeneralLoadUtils {
                     }
                     return singleThreadedLoad(chrList);
                 } catch (Throwable ex) {
-                    logger.error(
+                    LOG.error(
                             "Error while loading feature", ex);
                     return null;
                 } finally {
                     stopwatch.stop();
-                    logger.info("Loaded {} in {}", feature.getDataSetName(), stopwatch);
+                    LOG.info("Loaded {} in {}", feature.getDataSetName(), stopwatch);
                 }
             }
 
@@ -610,7 +612,7 @@ public final class GeneralLoadUtils {
                 try {
                     internalExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
                 } catch (InterruptedException ex) {
-                    logger.warn("Internal executor exception", ex);
+                    LOG.warn("Internal executor exception", ex);
                 }
 
                 return null;
@@ -664,7 +666,7 @@ public final class GeneralLoadUtils {
                         loadFeaturesForSym(feature, optimized_sym);
                     }
                 } catch (Exception ex) {
-                    logger.error("Error in loadOnSequence", ex);
+                    LOG.error("Error in loadOnSequence", ex);
                     if (ex instanceof FileNotFoundException) {
                         ErrorHandler.errorPanel(feature.getDataSetName() + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
                     }
@@ -677,7 +679,7 @@ public final class GeneralLoadUtils {
 
     private static void loadFeaturesForSym(final SeqSymmetry optimized_sym, final DataSet dataSet) throws OutOfMemoryError {
         if (optimized_sym == null) {
-            logger.debug("All of new query covered by previous queries for feature {}", dataSet.getDataSetName());
+            LOG.debug("All of new query covered by previous queries for feature {}", dataSet.getDataSetName());
             return;
         }
 
@@ -690,13 +692,13 @@ public final class GeneralLoadUtils {
                 try {
                     return loadFeaturesForSym(dataSet, optimized_sym);
                 } catch (RuntimeException ex) {
-                    logger.error(ex.getMessage(), ex);
+                    LOG.error(ex.getMessage(), ex);
                 } catch (Exception ex) {
                     if (ex instanceof FileNotFoundException) {
                         ErrorHandler.errorPanel(dataSet.getDataSetName() + " not Found", "The server is no longer available. Please refresh the server from Preferences > Data Sources or try again later.", Level.SEVERE);
                     }
                 } catch (Throwable ex) {
-                    logger.error(ex.getMessage(), ex);
+                    LOG.error(ex.getMessage(), ex);
                 }
                 return Collections.<String, List<? extends SeqSymmetry>>emptyMap();
             }
@@ -858,7 +860,7 @@ public final class GeneralLoadUtils {
                     }
                 }
             } catch (Exception ex) {
-                logger.error(ex.getMessage(), ex);
+                LOG.error(ex.getMessage(), ex);
                 residuesLoaded = false;
             }
 
@@ -901,7 +903,7 @@ public final class GeneralLoadUtils {
         }
 
         if (aseq.isAvailable(min, max)) {
-            logger.info(
+            LOG.info(
                     "All residues in range are already loaded on sequence {}", new Object[]{aseq});
             return true;
         }
@@ -964,11 +966,10 @@ public final class GeneralLoadUtils {
             return;
         }
 
-        DataSet dataSet = getDataSet(uri, indexUri, fileName, speciesName, genomeVersion, isReferenceSequence);
-
-        if (dataSet != null) {
+        getDataSet(uri, indexUri, fileName, speciesName, genomeVersion, isReferenceSequence).ifPresent(dataSet -> {
             addDataSet(dataSet);
-        }
+        });
+
     }
 
     public static void addDataSet(DataSet dataSet) {
@@ -1036,7 +1037,7 @@ public final class GeneralLoadUtils {
                         result = false;
                     }
                 } catch (Exception ex) {
-                    logger.error(null, ex);
+                    LOG.error(null, ex);
                 }
                 if (result) {
                     GeneralLoadView.addFeatureTier(dataSet);
@@ -1071,10 +1072,13 @@ public final class GeneralLoadUtils {
         return false;
     }
 
-    public static DataSet getDataSet(URI uri, Optional<URI> indexUri, String fileName, String speciesName, GenomeVersion genomeVersion, boolean isReferenceSequence) {
-        DataSet dataSet = GeneralLoadUtils.getLoadedFeature(uri);
+    private static Optional<DataSet> getDataSet(URI uri, Optional<URI> indexUri, String fileName, String speciesName, GenomeVersion genomeVersion, boolean isReferenceSequence) {
+        List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
+        Optional<DataSet> loadedDataSet = GeneralLoadUtils.getLoadedDataSet(uri, visibleFeatures);
+
         // Test to determine if a feature with this uri is contained in the load mode table
-        if (dataSet == null) {
+        if (!loadedDataSet.isPresent()) {
+            DataSet dataSet = loadedDataSet.get();
             DataContainer dataContainer = GeneralLoadUtils.getLocalFileDataContainer(genomeVersion, speciesName);
             dataContainer = setVersion(uri, genomeVersion, dataContainer);
             if (isReferenceSequence) {
@@ -1123,7 +1127,7 @@ public final class GeneralLoadUtils {
                     "The feature " + uri + " has already been added.", Level.WARNING);
         }
 
-        return dataSet;
+        return loadedDataSet;
     }
 
     /**
@@ -1192,7 +1196,7 @@ public final class GeneralLoadUtils {
 
             //TODO: What if there are more than one seq genomeVersion ?
             if (groups.size() > 1) {
-                logger.warn("File {} has more than one genomeVersion. Looking for the closest match to existing", new Object[]{uri.toString()});
+                LOG.warn("File {} has more than one genomeVersion. Looking for the closest match to existing", new Object[]{uri.toString()});
                 //First look for the selected genomeVersion in the groups
                 for (GenomeVersion gr : groups) {
                     if (gr == genomeVersion) {
@@ -1222,7 +1226,7 @@ public final class GeneralLoadUtils {
             //Return the first one
             return groups.get(0);
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            LOG.error(ex.getMessage(), ex);
         } finally {
             GeneralUtils.safeClose(istr);
         }
@@ -1246,7 +1250,7 @@ public final class GeneralLoadUtils {
                 return gr;
             }
         } catch (Exception ex) {
-            logger.error("Exception in handleUseq method", ex);
+            LOG.error("Exception in handleUseq method", ex);
         } finally {
             GeneralUtils.safeClose(istr);
             GeneralUtils.safeClose(zis);
@@ -1264,7 +1268,7 @@ public final class GeneralLoadUtils {
                 return gr;
             }
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            LOG.error(ex.getMessage(), ex);
         } finally {
             GeneralUtils.safeClose(istr);
         }
@@ -1289,7 +1293,7 @@ public final class GeneralLoadUtils {
                 try {
                     loadSymLoader.loadAndAddAllSymmetries(dataSet);
                 } catch (Exception ex) {
-                    logger.error(ex.getMessage(), ex);
+                    LOG.error(ex.getMessage(), ex);
                     removeFeatureAndRefresh(dataSet, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
                 }
                 return null;
@@ -1309,7 +1313,7 @@ public final class GeneralLoadUtils {
                     SeqGroupView.getInstance().refreshTable();
                     GeneralLoadView.getLoadView().refreshDataManagementView();
                 } catch (Exception ex) {
-                    logger.error("Exception occurred while loading symmetries", ex);
+                    LOG.error("Exception occurred while loading symmetries", ex);
                 }
             }
         };
@@ -1317,25 +1321,24 @@ public final class GeneralLoadUtils {
         CThreadHolder.getInstance().execute(dataSet, worker);
     }
 
-    public static boolean isLoaded(DataSet gFeature) {
-        DataSet f = getLoadedFeature(gFeature.getURI());
-        if (f != null && f != gFeature) {
-            gFeature.clear();
-            //TODO look into this refresh call
-            GeneralLoadView.getLoadView().refreshTreeView();
-            return true;
+    public static boolean isLoaded(DataSet gFeature, List<DataSet> visibleFeatures) {
+        Optional<DataSet> loadedFeature = getLoadedDataSet(gFeature.getURI(), visibleFeatures);
+        if (loadedFeature.isPresent()) {
+            if (loadedFeature.get() != gFeature) {
+                gFeature.clear();
+                return true;
+            }
         }
-
         return false;
     }
 
-    public static DataSet getLoadedFeature(URI uri) {
-        for (DataSet dataSet : GeneralLoadUtils.getVisibleFeatures()) {
-            if (dataSet.getURI().equals(uri) && dataSet.isVisible()) {
-                return dataSet;
-            }
-        }
-        return null;
+    //This method is added as a more performant version of previous getLoadedFeature method, 
+    //but its unclear why this even needs to exist and why the DataSet object doesn't just contain a 
+    //equals/hashcode override to allow collections api method to be used (e.g. contains)
+    public static Optional<DataSet> getLoadedDataSet(URI uri, List<DataSet> visibleFeatures) {
+        return visibleFeatures.stream()
+                .filter(dataSet -> dataSet.isVisible())
+                .filter(dataSet -> dataSet.getURI().equals(uri)).findFirst();
     }
 
 }

@@ -47,10 +47,6 @@ import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import org.lorainelab.igb.cache.api.RemoteFileCacheService;
-import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
-import org.lorainelab.igb.services.IgbService;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,13 +59,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
 import javax.swing.JTree;
+import org.lorainelab.igb.cache.api.RemoteFileCacheService;
+import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.services.IgbService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -84,7 +83,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class GeneralLoadView {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GeneralLoadView.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GeneralLoadView.class);
     private static final boolean DEBUG_EVENTS = false;
     private static final GenometryModel gmodel = GenometryModel.getInstance();
     private static SeqMapView gviewer;
@@ -194,7 +193,7 @@ public final class GeneralLoadView {
                         gviewer.setAnnotatedSeq(seq, true, true, true);
                     }
                 } catch (Exception ex) {
-                    logger.error(ex.getMessage(), ex);
+                    LOG.error(ex.getMessage(), ex);
                 } finally {
 //					igbService.removeNotLockedUpMsg("Loading residues for " + seq.getName());
                 }
@@ -248,7 +247,7 @@ public final class GeneralLoadView {
                 }
             }
         } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
+            LOG.error(ex.getMessage(), ex);
             return false;
         }
 
@@ -287,8 +286,9 @@ public final class GeneralLoadView {
     }
 
     static void loadFeatures(List<LoadStrategy> loadStrategies, DataProvider serverType) {
+        List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
         for (DataSet dataSet : GeneralLoadUtils.getGenomeVersionDataSets()) {
-            if (GeneralLoadUtils.isLoaded(dataSet)) {
+            if (GeneralLoadUtils.isLoaded(dataSet, visibleFeatures)) {
                 continue;
             }
             loadFeature(loadStrategies, dataSet, serverType);
@@ -303,12 +303,12 @@ public final class GeneralLoadView {
         return true;
     }
 
-    private static final Predicate<? super DataSet> isLoaded = GeneralLoadUtils::isLoaded;
 
     public synchronized void loadGenomeLoadModeDataSets() {
+        List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
         List<DataSet> unreachableGenomeLoadDataSets = GeneralLoadUtils.getGenomeVersionDataSets().stream()
                 .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
-                .filter(isLoaded.negate())
+                .filter(dataSet-> !GeneralLoadUtils.isLoaded(dataSet, visibleFeatures))
                 .filter(dataSet -> !LocalUrlCacher.isURIReachable(dataSet.getURI())).collect(Collectors.toList());
         if (!unreachableGenomeLoadDataSets.isEmpty()) {
             ModalUtils.errorPanel("The following data sets are required, but unreachable {}" + System.lineSeparator() + Joiner.on(System.lineSeparator()).join(unreachableGenomeLoadDataSets));
@@ -324,7 +324,7 @@ public final class GeneralLoadView {
 
         GeneralLoadUtils.getGenomeVersionDataSets().stream()
                 .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
-                .filter(isLoaded.negate())
+                .filter(dataSet-> !GeneralLoadUtils.isLoaded(dataSet, visibleFeatures))
                 .forEach(dataSet -> {
                     Optional<InputStream> fileIs = Optional.empty();
                     Optional<InputStream> indexFileIs = Optional.empty();
@@ -341,20 +341,20 @@ public final class GeneralLoadView {
                         }
 
                     } catch (Exception ex) {
-                        logger.error(ex.getMessage(), ex);
+                        LOG.error(ex.getMessage(), ex);
                     } finally {
                         if (fileIs.isPresent()) {
                             try {
                                 fileIs.get().close();
                             } catch (IOException ex) {
-                                logger.error(ex.getMessage(), ex);
+                                LOG.error(ex.getMessage(), ex);
                             }
                         }
                         if (indexFileIs.isPresent()) {
                             try {
                                 indexFileIs.get().close();
                             } catch (IOException ex) {
-                                logger.error(ex.getMessage(), ex);
+                                LOG.error(ex.getMessage(), ex);
                             }
                         }
                     }
@@ -402,7 +402,7 @@ public final class GeneralLoadView {
                             ((ResidueTrackSymLoader) quickload.getSymLoader()).loadAsReferenceSequence(true);
 
                         } catch (Exception ex) {
-                            logger.error(ex.getMessage(), ex);
+                            LOG.error(ex.getMessage(), ex);
                         }
                         return null;
                     }
@@ -565,7 +565,7 @@ public final class GeneralLoadView {
             try {
                 uri = new URI(IGBStateProvider.getUniqueName("file:/" + removeIllegalCharacters(dataSetName)));
             } catch (URISyntaxException ex) {
-                logger.error(ex.getMessage(), ex);
+                LOG.error(ex.getMessage(), ex);
             }
         }
         DataContainer dataContainer = GeneralLoadUtils.getLocalFileDataContainer(GenometryModel.getInstance().getSelectedGenomeVersion(), getSelectedSpecies());

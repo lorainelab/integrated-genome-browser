@@ -12,8 +12,6 @@ import com.affymetrix.genoviz.event.NeoRubberBandEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.action.StopAutoScrollAction;
-import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import java.awt.Rectangle;
@@ -26,6 +24,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A MouseListener for the SeqMapView.
@@ -45,6 +47,8 @@ import java.util.List;
  */
 public final class SeqMapViewMouseListener implements MouseListener, MouseMotionListener,
         NeoRubberBandListener, NeoGlyphDragListener, PropertyListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SeqMapViewMouseListener.class);
 
     // This flag determines whether selection events are processed on
     //  mousePressed() or mouseReleased().
@@ -298,7 +302,6 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
     }
 
     private void processSelections(MouseEvent evt, boolean post_selections) {
-
         if (!(evt instanceof NeoMouseEvent) || is_graph_dragging) {
             return;
         }
@@ -395,10 +398,8 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
                         graphs.add((GraphGlyph) obj);
                     }
                 }
-            } else {
-                if (topgl != null && topgl instanceof GraphGlyph) {
-                    graphs.add((GraphGlyph) topgl);
-                }
+            } else if (topgl != null && topgl instanceof GraphGlyph) {
+                graphs.add((GraphGlyph) topgl);
             }
         }
 
@@ -543,15 +544,13 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
                 something_changed = false;
             }
             map.select(glyphs);
+        } else if (glyphs.isEmpty() && num_last_selections == 0
+                && no_of_prop_being_displayed == 0) {
+            something_changed = false;
         } else {
-            if (glyphs.isEmpty() && num_last_selections == 0
-                    && no_of_prop_being_displayed == 0) {
-                something_changed = false;
-            } else {
-                something_changed = true;
-                smv.clearSelection();
-                map.select(glyphs);
-            }
+            something_changed = true;
+            smv.clearSelection();
+            map.select(glyphs);
         }
         if (smv.showEdgeMatches && something_changed) {
             smv.doEdgeMatching(map.getSelected(), false);

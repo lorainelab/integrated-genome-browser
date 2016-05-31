@@ -38,9 +38,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
-import org.lorainelab.igb.preferences.model.DataProviderConfig;
-import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
-import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
@@ -49,10 +46,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.concurrent.CompletableFuture;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
-import javax.swing.SwingUtilities;
+import org.lorainelab.igb.preferences.model.DataProviderConfig;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
@@ -78,14 +78,12 @@ public class DataProviderManager {
     private final StringEncrypter encrypter;
     private final Map<String, ServiceReference> dataProviderServiceReferences;
     private EventService eventService;
-    private GeneralLoadView loadView;
     private EventBus eventBus;
 
     private GenomeVersionSynonymLookup genomeVersionSynonymLookup;
     private SpeciesSynonymsLookup speciesSynLookup;
 
     public DataProviderManager() {
-        loadView = GeneralLoadView.getLoadView();
         dataProviderServiceReferences = Maps.newConcurrentMap();
         encrypter = new StringEncrypter(DESEDE_ENCRYPTION_SCHEME);
     }
@@ -208,23 +206,19 @@ public class DataProviderManager {
                 ServiceRegistration<DataProvider> registerService = bundleContext.registerService(DataProvider.class, dataProvider, null);
                 dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());
             });
-        } else {
-            if (!Strings.isNullOrEmpty(status)) {
-                DataProvider dataProvider = null;
-                if (Strings.isNullOrEmpty(mirrorUrl)) {
-                    if (dataProviderServiceReferences.containsKey(url)) {
-                        dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(url));
-                    }
-                } else {
-                    if (!dataProviderServiceReferences.containsKey(url)) {
-                        if (dataProviderServiceReferences.containsKey(mirrorUrl)) {
-                            dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(mirrorUrl));
-                        }
-                    }
+        } else if (!Strings.isNullOrEmpty(status)) {
+            DataProvider dataProvider = null;
+            if (Strings.isNullOrEmpty(mirrorUrl)) {
+                if (dataProviderServiceReferences.containsKey(url)) {
+                    dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(url));
                 }
-                if (dataProvider != null) {
-                    dataProvider.setStatus(ResourceStatus.fromName(status).get());
+            } else if (!dataProviderServiceReferences.containsKey(url)) {
+                if (dataProviderServiceReferences.containsKey(mirrorUrl)) {
+                    dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(mirrorUrl));
                 }
+            }
+            if (dataProvider != null) {
+                dataProvider.setStatus(ResourceStatus.fromName(status).get());
             }
         }
     }
@@ -261,14 +255,13 @@ public class DataProviderManager {
 
     @Reference(optional = true, multiple = true, dynamic = true, unbind = "removeDataProvider")
     public void addDataProvider(DataProvider dataProvider) {
-        SwingUtilities.invokeLater(() -> {
+        CompletableFuture.runAsync(() -> {
             dataProviders.add(dataProvider);
             DataProviderManager.this.initializeDataProvider(dataProvider);
             if (ALL_SOURCES_INITIALIZED) {
                 eventBus.post(new DataProviderServiceChangeEvent());
             }
         });
-
     }
 
     private void initializeDataProvider(DataProvider dataProvider) {
@@ -304,11 +297,10 @@ public class DataProviderManager {
             if (dataProvider instanceof ReferenceSequenceResource) {
                 referenceSequenceResources.remove((ReferenceSequenceResource) dataProvider);
             }
-            handleSinglePatternCausedRaceCondition();
             GeneralLoadUtils.getAllDataSets().stream()
                     .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
                     .forEach(ds -> {
-                        loadView.removeDataSet(ds, true);
+                        GeneralLoadView.getLoadView().removeDataSet(ds, true);
                         ds.getDataContainer().getGenomeVersion().removeDataContainer(ds.getDataContainer());
                     });
             for (GenomeVersion genomeVerion : GenometryModel.getInstance().getSeqGroups().values()) {
@@ -393,14 +385,13 @@ public class DataProviderManager {
 
     public void disableDataProvider(DataProvider dataProvider) {
         final Set<DataSet> allDataSets = GeneralLoadUtils.getAllDataSets();
-        handleSinglePatternCausedRaceCondition();
         Set<DataContainer> allAssociatedDataContainers = Sets.newHashSet();
         //remove all data sets
         Set<DataSet> dataSetsToRemove = allDataSets.stream()
                 .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
                 .collect(Collectors.toSet());
         dataSetsToRemove.forEach(ds -> allAssociatedDataContainers.add(ds.getDataContainer()));
-        loadView.removeAllDataSets(dataSetsToRemove);
+        GeneralLoadView.getLoadView().removeAllDataSets(dataSetsToRemove);
         Iterator<DataContainer> iter = allAssociatedDataContainers.iterator();
         while (iter.hasNext()) {
             DataContainer dc = iter.next();
@@ -419,17 +410,10 @@ public class DataProviderManager {
             if (PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load)) {
                 GeneralLoadView.loadWholeRangeFeatures(dataProvider);
             }
-            handleSinglePatternCausedRaceCondition();
-            loadView.refreshTreeView();
+            GeneralLoadView.getLoadView().refreshTreeView();
         }
     }
 
-    //TODO an obvious hack which will not be needed once the singleton randomly intialized by convention is removed
-    private void handleSinglePatternCausedRaceCondition() {
-        if (loadView == null) {
-            loadView = GeneralLoadView.getLoadView();
-        }
-    }
 
     public static class DataProviderServiceChangeEvent {
         //just a signal type

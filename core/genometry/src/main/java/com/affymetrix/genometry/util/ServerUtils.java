@@ -6,7 +6,6 @@ import com.affymetrix.genometry.parsers.FileTypeHolder;
 import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderInstNC;
-import com.google.common.base.Stopwatch;
 import java.net.URI;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -29,10 +28,7 @@ public class ServerUtils {
             logger.warn("Couldn't find any Symloader for {0} format. Opening whole file.", new Object[]{extension});
             symLoader = new SymLoaderInstNC(uri, indexUri, featureName, genomeVersion);
         } else {
-            final Stopwatch stopwatch = Stopwatch.createStarted();
             symLoader = fileTypeHandler.createSymLoader(uri, indexUri, featureName, genomeVersion);
-            stopwatch.stop();
-            logger.info("STOPWATCH METRICS for createSymLoader {}", stopwatch);
         }
         return symLoader;
     }

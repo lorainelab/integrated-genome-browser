@@ -25,7 +25,7 @@ public class ServerUtils {
         FileTypeHandler fileTypeHandler = fileTypeHolder.getFileTypeHandler(extension);
         SymLoader symLoader;
         if (fileTypeHandler == null) {
-            logger.warn("Couldn't find any Symloader for {0} format. Opening whole file.", new Object[]{extension});
+            logger.warn("Couldn't find any Symloader for {} format. Opening whole file.", extension);
             symLoader = new SymLoaderInstNC(uri, indexUri, featureName, genomeVersion);
         } else {
             symLoader = fileTypeHandler.createSymLoader(uri, indexUri, featureName, genomeVersion);

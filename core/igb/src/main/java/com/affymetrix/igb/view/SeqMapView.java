@@ -1142,9 +1142,6 @@ public class SeqMapView extends JPanel
             if (showEdgeMatches) {
                 doEdgeMatching(glyphs, false);
             }
-            if (autoload != null) {
-                autoload.loadData();
-            }
         }
     }
 

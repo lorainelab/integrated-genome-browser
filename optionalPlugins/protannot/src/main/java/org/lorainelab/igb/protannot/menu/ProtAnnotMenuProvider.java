@@ -11,13 +11,13 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Optional;
+import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuItem;
 import org.lorainelab.igb.protannot.ProtAnnotAction;
 import org.osgi.service.component.ComponentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
 /**
  *
@@ -50,6 +50,6 @@ public class ProtAnnotMenuProvider implements MenuBarEntryProvider {
 
     @Override
     public MenuBarParentMenu getMenuExtensionParent() {
-        return MenuBarParentMenu.FILE;
+        return MenuBarParentMenu.TOOLS;
     }
 }

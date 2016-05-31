@@ -413,5 +413,5 @@ public final class DataSet {
     public void setSupportsAvailabilityCheck(boolean supportsAvailabilityCheck) {
         this.supportsAvailabilityCheck = supportsAvailabilityCheck;
     }
-
+    
 }

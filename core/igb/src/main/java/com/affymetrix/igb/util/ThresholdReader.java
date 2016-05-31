@@ -29,6 +29,7 @@ public class ThresholdReader {
         this.seqmap = IGB.getInstance().getMapView().getSeqMap();
     }
 
+    //get model coordinates in view... 
     public int getCurrentThresholdValue() {
         return (int) seqmap.getView().getCoordBox().getWidth();
     }

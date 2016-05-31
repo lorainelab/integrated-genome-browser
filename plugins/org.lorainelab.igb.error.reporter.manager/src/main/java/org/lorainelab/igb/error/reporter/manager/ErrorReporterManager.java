@@ -1,7 +1,6 @@
 package org.lorainelab.igb.error.reporter.manager;
 
 import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
 import aQute.bnd.annotation.component.Reference;
 import ch.qos.logback.classic.Level;
@@ -21,7 +20,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(immediate = true)
+//@Component(immediate = true)
 public class ErrorReporterManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErrorReporterManager.class);

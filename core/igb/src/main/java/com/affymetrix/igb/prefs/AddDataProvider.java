@@ -40,7 +40,6 @@ import javax.swing.JFrame;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.lorainelab.igb.javafx.FileChooserUtil;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
 
@@ -259,14 +258,10 @@ public class AddDataProvider extends JFrame {
 
 	private void openDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDirActionPerformed
 
-            File currDir = FileTracker.DATA_DIR_TRACKER.getFile();
-            if (currDir == null) {
-                currDir = new File(System.getProperty("user.home"));
-            }
-            Optional<File> repoDirectory = FileChooserUtil.build().setContext(currDir).retrieveFileFromFxChooser();
-            if (repoDirectory.isPresent() && repoDirectory.get().isDirectory()) {
+            File f = fileChooser(DIRECTORIES_ONLY, this);
+            if (f != null && f.isDirectory()) {
                 try {
-                    urlText.setText(URLDecoder.decode(repoDirectory.get().toURI().toURL().toString(), "UTF-8"));
+                    urlText.setText(URLDecoder.decode(f.toURI().toURL().toString(), "UTF-8"));
                 } catch (MalformedURLException ex) {
                     LOG.error(ex.getMessage(), ex);
                 } catch (UnsupportedEncodingException ex) {

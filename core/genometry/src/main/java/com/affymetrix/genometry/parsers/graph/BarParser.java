@@ -10,8 +10,6 @@ import com.affymetrix.genometry.parsers.AnnotationWriter;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.Timer;
-import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -32,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 
 /**
  * Parser for files in BAR format.
@@ -109,8 +108,6 @@ public final class BarParser implements AnnotationWriter, GraphParser {
      */
     public static GraphSym getRegion(String file_name, SeqSpan span) throws IOException {
         GenometryModel gmodel = GenometryModel.getInstance();
-        Timer tim = new Timer();
-        tim.start();
         BioSeq aseq = span.getBioSeq();
         int min_base = span.getMin();
         int max_base = span.getMax();
@@ -166,12 +163,12 @@ public final class BarParser implements AnnotationWriter, GraphParser {
             }
         }
         return constructGraf(
-                file_name, gmodel, seq_group, min_index, readToEnd, max_index, min_base, max_base, aseq, span, tim);
+                file_name, gmodel, seq_group, min_index, readToEnd, max_index, min_base, max_base, aseq, span);
     }
 
     private static GraphSym constructGraf(
             String file_name, GenometryModel gmodel, GenomeVersion seq_group, int min_index,
-            boolean readToEnd, int max_index, int min_base, int max_base, BioSeq aseq, SeqSpan span, Timer tim)
+            boolean readToEnd, int max_index, int min_base, int max_base, BioSeq aseq, SeqSpan span)
             throws IOException {
         GraphSym graf = null;
         DataInputStream dis = null;
@@ -237,11 +234,6 @@ public final class BarParser implements AnnotationWriter, GraphParser {
             graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", aseq);
             graf.removeSpan(graf.getSpan(aseq));
             graf.addSpan(span);
-            long t1 = tim.read();
-            if (DEBUG) {
-                System.out.println("getSlice() done, points: " + graph_xcoords.length + ", time taken: " + (t1 / 1000f));
-                System.out.println("made graph for slice: " + graf);
-            }
             setTagValues(seq_header, graf);
             // now output bar file slice??
         } finally {
@@ -285,8 +277,6 @@ public final class BarParser implements AnnotationWriter, GraphParser {
      */
     private static void buildIndex(String file_name, String coord_set_id, GenometryModel gmodel, GenomeVersion seq_group)
             throws IOException {
-        Timer tim = new Timer();
-        tim.start();
         // builds an index per sequence in the bar file
         DataInputStream dis = null;
         try {
@@ -337,11 +327,6 @@ public final class BarParser implements AnnotationWriter, GraphParser {
             coordset2seqs.put(coord_set_id, chunk_mins);
         } finally {
             GeneralUtils.safeClose(dis);
-        }
-        if (DEBUG) {
-            long index_time = tim.read();
-            System.out.println("time to index: " + index_time / 1000f);
-            System.out.println(" ");
         }
     }
 
@@ -449,8 +434,6 @@ public final class BarParser implements AnnotationWriter, GraphParser {
         DataInputStream dis = null;
         List<GraphSym> graphs = new ArrayList<>();
 
-        Timer tim = new Timer();
-        tim.start();
         try {
             if (istr instanceof BufferedInputStream) {
                 bis = (BufferedInputStream) istr;
@@ -499,10 +482,6 @@ public final class BarParser implements AnnotationWriter, GraphParser {
                     }
                     handle3ValPerPoint(total_points, dis, seq, min, max, graph_id, ensure_unique_id, file_tagvals, bar2, seq_tagvals, graphs);
                 }
-            }
-            if (DEBUG) {
-                long t1 = tim.read();
-                Logger.getLogger(BarParser.class.getName()).log(Level.FINE, "bar load time: {0}", t1 / 1000f);
             }
         } finally {
             GeneralUtils.safeClose(bis);

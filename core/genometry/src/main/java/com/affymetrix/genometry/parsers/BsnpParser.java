@@ -23,7 +23,6 @@ import com.affymetrix.genometry.symmetry.impl.EfficientSnpSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscGffSym;
-import com.affymetrix.genometry.util.Timer;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -233,8 +232,6 @@ public class BsnpParser implements Parser {
 
     public static List<SeqSymmetry> parse(InputStream istr, String annot_type, GenomeVersion seq_group, boolean annot_seq)
             throws IOException {
-        Timer tim = new Timer();
-        tim.start();
         List<SeqSymmetry> snp_syms = null;
 
         BufferedInputStream bis;
@@ -289,7 +286,6 @@ public class BsnpParser implements Parser {
             }
         }
 
-        tim.print();
         return snp_syms;
     }
 

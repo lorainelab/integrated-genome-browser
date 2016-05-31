@@ -10,7 +10,6 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
 import com.affymetrix.genometry.symmetry.impl.UcscGeneSym;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.Timer;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -89,8 +88,6 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
         if (seq_group == null) {
             throw new IllegalArgumentException("BgnParser called with seq_group null.");
         }
-        Timer tim = new Timer();
-        tim.start();
 
         // annots is list of top-level parent syms (max 1 per seq in seq_group) that get
         //    added as annotations to the annotated BioSeqs -- their children
@@ -194,15 +191,6 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
                 chromseq.addAnnotation(annot);
             }
         }
-        if (DEBUG) {
-            System.out.println("bgn file load time: " + tim.read() / 1000f);
-            System.out.println("transcript count = " + count);
-            System.out.println("exon count = " + total_exon_count);
-            if (count > 0) {
-                System.out.println("average exons / transcript = "
-                        + ((double) total_exon_count / (double) count));
-            }
-        }
         if (!reached_EOF) {
             System.out.println("File loading was terminated early.");
         }
@@ -289,8 +277,6 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
         int biguns = 0;
         int big_spliced = 0;
 
-        Timer tim = new Timer();
-        tim.start();
         FileInputStream fis = null;
         DataOutputStream dos = null;
         BufferedOutputStream bos = null;
@@ -308,7 +294,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
             dos = new DataOutputStream(bos);
 
             writeLines(
-                    br, count, seq_group, dos, biguns, total_exon_count, max_exons, max_tlength, tim, flength, max_spliced_length, big_spliced);
+                    br, count, seq_group, dos, biguns, total_exon_count, max_exons, max_tlength, flength, max_spliced_length, big_spliced);
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
@@ -320,7 +306,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
 
     }
 
-    private void writeLines(BufferedReader br, int count, GenomeVersion seq_group, DataOutputStream dos, int biguns, int total_exon_count, int max_exons, int max_tlength, Timer tim, long flength, int max_spliced_length, int big_spliced) throws NumberFormatException, IOException {
+    private void writeLines(BufferedReader br, int count, GenomeVersion seq_group, DataOutputStream dos, int biguns, int total_exon_count, int max_exons, int max_tlength, long flength, int max_spliced_length, int big_spliced) throws NumberFormatException, IOException {
         String line = null;
         while ((line = br.readLine()) != null) {
             count++;
@@ -373,16 +359,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter, Parser {
             max_exons = Math.max(max_exons, ecount);
             max_tlength = Math.max(max_tlength, tlength);
         }
-        if (DEBUG) {
-            System.out.println("load time: " + tim.read() / 1000f);
-            System.out.println("line count = " + count);
-            System.out.println("file length = " + flength);
-            System.out.println("max genomic transcript length: " + max_tlength);
-            System.out.println("max exons in single transcript: " + max_exons);
-            System.out.println("total exons: " + total_exon_count);
-            System.out.println("max spliced transcript length: " + max_spliced_length);
-            System.out.println("spliced transcripts > 65000: " + big_spliced);
-        }
+     
     }
 
     /**

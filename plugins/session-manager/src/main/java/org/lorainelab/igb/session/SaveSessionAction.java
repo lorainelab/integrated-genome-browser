@@ -10,7 +10,6 @@ import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -22,14 +21,11 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
-import javafx.stage.FileChooser;
 import javax.swing.JFileChooser;
-import org.lorainelab.igb.javafx.FileChooserUtil;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
@@ -49,6 +45,8 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
     private IgbService igbService;
     private BookmarkService bookmarkService;
     private final int TOOLBAR_INDEX = 1;
+    final public static boolean IS_MAC
+            = System.getProperty("os.name").toLowerCase().contains("mac");
     private static final int MENU_POSITION = 50;
     FilenameFilter fileNameFilter = (dir, name) -> name.endsWith(".xml");
 
@@ -61,34 +59,45 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        
-        LocalDate today = LocalDate.now();
-        
-        String defaultFileName = "igbSession-" + today.toString() + ".xml";  
-        showJFileChooser(defaultFileName);
+        Date today = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+        String dateString = sdf.format(today);
+        String defaultFileName = "igbSession-" + dateString + ".xml";
+
+        if (IS_MAC) {
+            showFileDialog(defaultFileName);
+        } else {
+            showJFileChooser(defaultFileName);
+        }
 
     }
 
-    private void showJFileChooser(String defaultFileName) {
-        FileChooser.ExtensionFilter xmlFilter = new FileChooser.ExtensionFilter("xml", Lists.newArrayList("xml")); 
-        java.util.Optional<File> selectedFile = null;
-        selectedFile = FileChooserUtil.build()
-                .setTitle("Save Session")
-                .setContext(new File(System.getProperty("user.home")))
-                .setDefaultFileName(defaultFileName)
-                .setFileExtensionFilters(Lists.newArrayList(xmlFilter)).saveFilesFromFxChooser(); 
-        
-        if(selectedFile.isPresent()){
-            saveSession(selectedFile.get()); 
-            
+    private void showFileDialog(String defaultFileName) {
+        FileDialog dialog = new FileDialog(igbService.getApplicationFrame(), "Save Session", FileDialog.SAVE);
+        dialog.setFilenameFilter(fileNameFilter);
+        dialog.setFile(defaultFileName);
+        dialog.setVisible(true);
+        String fileS = dialog.getFile();
+        if (fileS != null) {
+            File sessionFile = new File(dialog.getDirectory(), dialog.getFile());
+            saveSession(sessionFile);
         }
+    }
 
+    private void showJFileChooser(String defaultFileName) {
+        JFileChooser chooser = GeneralUtils.getJFileChooser();
+        File sessionFile = new File(System.getProperty("user.home") + "/" + defaultFileName);
+        chooser.setSelectedFile(sessionFile);
+        int option = chooser.showSaveDialog(igbService.getApplicationFrame().getContentPane());
+        if (option == JFileChooser.APPROVE_OPTION) {
+            saveSession(chooser.getSelectedFile());
+        }
     }
 
     public void saveSession(File f) {
         try {
             igbService.saveState();
-           Optional<Bookmark> bookmark = bookmarkService.getCurrentBookmark();
+            Optional<Bookmark> bookmark = bookmarkService.getCurrentBookmark();
             if (bookmark.isPresent()) {
                 String bk = URLEncoder.encode(bookmark.get().getURL().toString(), Charsets.UTF_8.displayName());
                 if (bk.length() < Preferences.MAX_VALUE_LENGTH) {

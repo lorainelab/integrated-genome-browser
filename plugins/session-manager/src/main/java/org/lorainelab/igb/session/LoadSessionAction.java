@@ -2,13 +2,15 @@ package org.lorainelab.igb.session;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import static com.affymetrix.common.CommonUtils.IS_MAC;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
 import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -19,8 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.InvalidPreferencesFormatException;
-import javafx.stage.FileChooser;
-import org.lorainelab.igb.javafx.FileChooserUtil;
+import javax.swing.JFileChooser;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
@@ -55,22 +56,37 @@ public class LoadSessionAction extends GenericAction implements MenuBarEntryProv
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        FileChooser.ExtensionFilter xmlFilter = new FileChooser.ExtensionFilter("xml", Lists.newArrayList("xml")); 
-        java.util.Optional<File> selectedFile = null;
-        selectedFile = FileChooserUtil.build()
-                .setTitle("Load Session")
-                .setContext(new File(System.getProperty("user.home")))
-                .setFileExtensionFilters(Lists.newArrayList(xmlFilter))
-                .retrieveFileFromFxChooser(); 
+        if (IS_MAC) {
+            FileDialog fd = new FileDialog(igbService.getApplicationFrame());
+            fd.setDirectory(System.getProperty("user.home"));
+            fd.setFile("*.xml");
+            fd.setLocation(50, 50);
+            fd.setVisible(true);
 
-        if(selectedFile.isPresent()){
-            try{
-                loadSession(selectedFile.get());
-            }catch (InvalidPreferencesFormatException ipfe) {
-                ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n" + ipfe.getMessage()
-                        + "\n\nYou can only load a session from a file that was created with save session.");
-            } catch (Exception x) {
-                ErrorHandler.errorPanel("ERROR", "Error loading session from file", x);
+            if (fd.getFile() != null) {
+                File selectedFile = new File(fd.getDirectory(), fd.getFile());
+                try {
+                    loadSession(selectedFile);
+                } catch (InvalidPreferencesFormatException ipfe) {
+                    ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n" + ipfe.getMessage()
+                            + "\n\nYou can only load a session from a file that was created with save session.");
+                } catch (Exception x) {
+                    ErrorHandler.errorPanel("ERROR", "Error loading session from file", x);
+                }
+            }
+
+        } else {
+            JFileChooser chooser = GeneralUtils.getJFileChooser();
+            int option = chooser.showOpenDialog(igbService.getApplicationFrame().getContentPane());
+            if (option == JFileChooser.APPROVE_OPTION) {
+                try {
+                    loadSession(chooser.getSelectedFile());
+                } catch (InvalidPreferencesFormatException ipfe) {
+                    ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n" + ipfe.getMessage()
+                            + "\n\nYou can only load a session from a file that was created with save session.");
+                } catch (Exception x) {
+                    ErrorHandler.errorPanel("ERROR", "Error loading session from file", x);
+                }
             }
         }
     }

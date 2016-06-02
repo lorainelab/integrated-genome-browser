@@ -31,9 +31,6 @@ import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.google.common.eventbus.Subscribe;
-import org.lorainelab.igb.services.IgbService;
-import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
-import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -62,6 +59,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
+import org.lorainelab.igb.services.IgbService;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -604,6 +604,7 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
             for (DataContainer dataContainer : versionList) {
                 // the same versionName name may occur on multiple servers
                 String versionName = dataContainer.getGenomeVersion().getName();
+                versionName = genomeVersionSynonymLookup.getPreferredName(versionName);
                 if (!versionNames.contains(versionName)) {
                     versionNames.add(versionName);
                 }

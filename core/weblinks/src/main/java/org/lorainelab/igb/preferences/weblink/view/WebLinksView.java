@@ -5,20 +5,20 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.ModalUtils;
+import com.affymetrix.genometry.util.UniFileChooser;
 import com.affymetrix.igb.swing.jide.StyledJTable;
-import com.google.common.collect.Lists;
 import com.jidesoft.grid.JideTable;
 import org.lorainelab.igb.preferences.weblink.WebLinkUtils;
 import org.lorainelab.igb.preferences.weblink.model.WebLink;
 import org.lorainelab.igb.preferences.weblink.model.WebLink.RegexType;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.MessageFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,20 +27,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import javafx.stage.FileChooser;
-import org.lorainelab.igb.javafx.FileChooserUtil;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-
 
 /**
  * All the function codes for web links panel are implemented in this class.
@@ -326,66 +325,69 @@ public final class WebLinksView {
         localModel.setValueAt(WebLink.RegexType.ANNOTATION_NAME, localTable.getSelectedRows()[0], COL_TYPE);
     }
 
- 
+    /**
+     * Gets a static re-usable file chooser that prefers "html" files.
+     */
+    private static JFileChooser getJFileChooser() {
+        if (static_chooser == null) {
+            static_chooser = UniFileChooser.getFileChooser("JSON file", "json");
+            static_chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+        }
+        static_chooser.rescanCurrentDirectory();
+        return static_chooser;
+    }
+
     /**
      * Tracks to import weblinks.
      */
     public void importWebLinks() {
-        
-        File currDir = FileTracker.DATA_DIR_TRACKER.getFile(); 
-        
-        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("json", Lists.newArrayList("json")); 
-        java.util.Optional<File> selectedFile = null;
-        selectedFile = FileChooserUtil.build()
-            .setTitle("Import")
-            .setContext(currDir)
-            .setFileExtensionFilters(Lists.newArrayList(jsonFilter))
-            .retrieveFileFromFxChooser(); 
-        
-        if(selectedFile.isPresent()){
-            File file = selectedFile.get(); 
-            try{
-                WebLinkUtils.importWebLinks(file); 
-            }catch (FileNotFoundException fe) {
+        JFileChooser chooser = getJFileChooser();
+        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+        Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
+        int option = chooser.showOpenDialog(frame);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
+            File fil = chooser.getSelectedFile();
+            try {
+                WebLinkUtils.importWebLinks(fil);
+            } catch (FileNotFoundException fe) {
                 ErrorHandler.errorPanel("Importing web links: File Not Found "
-                        + file.getAbsolutePath(), fe, Level.SEVERE);
+                        + fil.getAbsolutePath(), fe, Level.SEVERE);
             } catch (Exception ex) {
                 ErrorHandler.errorPanel("Importing web links", ex, Level.SEVERE);
             }
         }
 
-   
         refreshList();
         resetRow(0);
     }
 
     public void exportWebLinks() {
-       // Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
+        Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
 
         if (localTable.getRowCount() == 0) {
             ErrorHandler.errorPanel("Error", "No web links to save", Level.WARNING);
             return;
         }
-        
-        LocalDate today = LocalDate.now(); 
-        
-        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("json", Lists.newArrayList("json")); 
-        java.util.Optional<File> selectedFile = null;
-        selectedFile = FileChooserUtil.build()
-                .setTitle("Export")
-                .setContext(new File(System.getProperty("user.home")))
-                .setDefaultFileName("weblinks-"+ today.toString()) 
-                .setFileExtensionFilters(Lists.newArrayList(jsonFilter)).saveFilesFromFxChooser(); 
-        
-        if(selectedFile.isPresent()){
-            try{
-                WebLinkUtils.exportWebLinks(selectedFile.get());  
-            }catch (Exception ex) {
+
+        JFileChooser chooser = getJFileChooser();
+        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+        int option = chooser.showSaveDialog(frame);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            try {
+                
+                File fil = chooser.getSelectedFile();
+                String full_path = fil.getCanonicalPath();
+
+                if (!full_path.endsWith(".json")) {
+                    fil = new File(full_path + ".json");
+                }
+                WebLinkUtils.exportWebLinks(fil);
+            } catch (Exception ex) {
                 ErrorHandler.errorPanel("Error exporting web links", ex, Level.SEVERE);
             }
         }
-        FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
-        
+        FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
     }
 
     public void clear() {

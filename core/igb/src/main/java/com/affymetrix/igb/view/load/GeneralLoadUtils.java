@@ -1078,7 +1078,6 @@ public final class GeneralLoadUtils {
 
         // Test to determine if a feature with this uri is contained in the load mode table
         if (!loadedDataSet.isPresent()) {
-            DataSet dataSet = loadedDataSet.get();
             DataContainer dataContainer = GeneralLoadUtils.getLocalFileDataContainer(genomeVersion, speciesName);
             dataContainer = setVersion(uri, genomeVersion, dataContainer);
             if (isReferenceSequence) {
@@ -1116,7 +1115,7 @@ public final class GeneralLoadUtils {
                     ? new QuickLoadSymLoaderChp(uri, indexUri, friendlyName, dataContainer.getGenomeVersion())
                     : new QuickLoadSymLoader(uri, indexUri, friendlyName, dataContainer.getGenomeVersion(), !isReferenceSequence);
 
-            dataSet = new DataSet(uri, fileName, featureProps, dataContainer, quickLoad, autoload, isReferenceSequence);
+            DataSet dataSet = new DataSet(uri, fileName, featureProps, dataContainer, quickLoad, autoload, isReferenceSequence);
 
             dataContainer.addDataSet(dataSet);
 

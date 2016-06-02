@@ -1120,6 +1120,7 @@ public final class GeneralLoadUtils {
             dataContainer.addDataSet(dataSet);
 
             dataSet.setVisible(); // this should be automatically checked in the feature tree
+            loadedDataSet = Optional.of(dataSet);
 
         } else {
             ErrorHandler.errorPanel("Cannot add same feature",

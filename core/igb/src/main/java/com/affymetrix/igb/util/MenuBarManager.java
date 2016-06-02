@@ -146,7 +146,6 @@ public class MenuBarManager {
         fileMenuEntries.put(15, new JMenuItem(ExportFileAction.getAction()));
         fileMenuEntries.put(20, new JMenuItem(RemoveFeatureAction.getAction()));
         fileMenuEntries.put(25, new JSeparator());
-        fileMenuEntries.put(30, new JMenuItem(LoadFileAction.getAction()));
         fileMenuEntries.put(35, new JMenuItem(PreferencesAction.getAction()));
         fileMenuEntries.put(40, new JSeparator());
         fileMenuEntries.put(60, new JSeparator());

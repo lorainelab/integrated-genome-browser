@@ -8,7 +8,6 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL;
 import com.github.kevinsawicki.http.HttpRequest;
 import static com.google.common.io.Closeables.close;
-import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -57,6 +56,7 @@ import net.sf.samtools.util.BlockCompressedInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.lang3.StringUtils;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -329,7 +329,7 @@ public final class GeneralUtils {
 
     public static void browse(String s) {
         try {
-            URI u = new URI(s);
+            URI u = new URI(URLDecoder.decode(s, UTF8));
 
             if ("file".equalsIgnoreCase(u.getScheme())) {
                 Desktop.getDesktop().open(new File(u));
@@ -473,11 +473,11 @@ public final class GeneralUtils {
         InputStream gzstr = null;
         boolean blockedGZip = false;
         GZIPInputStream gis = null;
+        uriString = URLDecoder.decode(uriString, UTF8);
         try {
             InputStream inputStream;
-            URI uri = new URI(uriString);
-            if (uri.getScheme().equalsIgnoreCase(FILE_PROTOCOL_SCHEME)) {
-                File f = new File(uri);
+            if (isLocalFile(uriString)) {
+                File f = new File(uriString.substring(5));
                 inputStream = new FileInputStream(f);
             } else {
                 URLConnection conn = LocalUrlCacher.connectToUrl(uriString, -1);
@@ -497,12 +497,19 @@ public final class GeneralUtils {
         }
         if (blockedGZip) {
             gzstr = new BlockCompressedInputStream(istr);
+        } else if (isLocalFile(uriString)) {
+            File f = new File(uriString.substring(5));
+            gzstr = new GZIPInputStream(new FileInputStream(f));
         } else {
             URLConnection conn = LocalUrlCacher.connectToUrl(uriString, -1);
             gzstr = new GZIPInputStream(conn.getInputStream());
         }
 
         return gzstr;
+    }
+
+    private static boolean isLocalFile(String uriString) {
+        return uriString.toLowerCase().startsWith(FILE_PROTOCOL_SCHEME);
     }
 
     public static void unzipFile(File f, File f2) throws IOException {
@@ -525,7 +532,9 @@ public final class GeneralUtils {
     }
 
 
-    /* from http://stackoverflow.com/questions/4596447/java-check-if-file-exists-on-remote-server-using-its-url */
+    /*
+     * from http://stackoverflow.com/questions/4596447/java-check-if-file-exists-on-remote-server-using-its-url
+     */
     private static boolean httpExists(String URLName) {
         try {
             HttpURLConnection.setFollowRedirects(false);
@@ -698,7 +707,7 @@ public final class GeneralUtils {
             if (StringUtils.isNotBlank(uriString)) {
                 SwingUtilities.invokeLater(() -> {
                     try {
-                        URI uri = new URI(uriString);
+                        URI uri = new URI(URLDecoder.decode(uriString, UTF8));
                         desktop.browse(uri);
                     } catch (IOException | URISyntaxException ex) {
                         logger.error(ex.getMessage(), ex);

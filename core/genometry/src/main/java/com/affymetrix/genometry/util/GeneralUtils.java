@@ -329,7 +329,7 @@ public final class GeneralUtils {
 
     public static void browse(String s) {
         try {
-            URI u = new URI(URLDecoder.decode(s, UTF8));
+            URI u = new URI(s);
 
             if ("file".equalsIgnoreCase(u.getScheme())) {
                 Desktop.getDesktop().open(new File(u));

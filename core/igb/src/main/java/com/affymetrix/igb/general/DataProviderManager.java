@@ -42,6 +42,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -66,6 +67,7 @@ import org.slf4j.LoggerFactory;
 @Component(name = DataProviderManager.COMPONENT_NAME, immediate = true, provide = DataProviderManager.class)
 public class DataProviderManager {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DataProviderManager.class);
     public static final String COMPONENT_NAME = "DataProviderManager";
     public static boolean ALL_SOURCES_INITIALIZED = false;
     private static final Logger logger = LoggerFactory.getLogger(DataProviderManager.class);
@@ -297,12 +299,19 @@ public class DataProviderManager {
             if (dataProvider instanceof ReferenceSequenceResource) {
                 referenceSequenceResources.remove((ReferenceSequenceResource) dataProvider);
             }
-            GeneralLoadUtils.getAllDataSets().stream()
-                    .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider)
-                    .forEach(ds -> {
-                        GeneralLoadView.getLoadView().removeDataSet(ds, true);
-                        ds.getDataContainer().getGenomeVersion().removeDataContainer(ds.getDataContainer());
-                    });
+            List<DataSet> dataSetsToRemove = GeneralLoadUtils.getAllDataSets().stream()
+                    .filter(ds -> ds.getDataContainer().getDataProvider() == dataProvider).collect(Collectors.toList());
+
+            for (int i = 0; i < dataSetsToRemove.size(); i++) {
+                DataSet toRemove = dataSetsToRemove.get(i);
+                if (i == dataSetsToRemove.size() - 1) {
+                    GeneralLoadView.getLoadView().removeDataSet(toRemove, true);
+                } else {
+                    GeneralLoadView.getLoadView().removeDataSet(toRemove, false);
+                }
+                toRemove.getDataContainer().getGenomeVersion().removeDataContainer(toRemove.getDataContainer());
+            }
+
             for (GenomeVersion genomeVerion : GenometryModel.getInstance().getSeqGroups().values()) {
                 Iterator<DataContainer> iter = genomeVerion.getDataContainers().iterator();
                 while (iter.hasNext()) {
@@ -317,6 +326,7 @@ public class DataProviderManager {
         } catch (BackingStoreException ex) {
             logger.error(ex.getMessage(), ex);
         }
+
         eventBus.post(new DataProviderServiceChangeEvent());
     }
 
@@ -413,7 +423,6 @@ public class DataProviderManager {
             GeneralLoadView.getLoadView().refreshTreeView();
         }
     }
-
 
     public static class DataProviderServiceChangeEvent {
         //just a signal type

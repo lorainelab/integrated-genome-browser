@@ -303,12 +303,11 @@ public final class GeneralLoadView {
         return true;
     }
 
-
     public synchronized void loadGenomeLoadModeDataSets() {
         List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
         List<DataSet> unreachableGenomeLoadDataSets = GeneralLoadUtils.getGenomeVersionDataSets().stream()
                 .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
-                .filter(dataSet-> !GeneralLoadUtils.isLoaded(dataSet, visibleFeatures))
+                .filter(dataSet -> !GeneralLoadUtils.isLoaded(dataSet, visibleFeatures))
                 .filter(dataSet -> !LocalUrlCacher.isURIReachable(dataSet.getURI())).collect(Collectors.toList());
         if (!unreachableGenomeLoadDataSets.isEmpty()) {
             ModalUtils.errorPanel("The following data sets are required, but unreachable {}" + System.lineSeparator() + Joiner.on(System.lineSeparator()).join(unreachableGenomeLoadDataSets));
@@ -324,7 +323,7 @@ public final class GeneralLoadView {
 
         GeneralLoadUtils.getGenomeVersionDataSets().stream()
                 .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
-                .filter(dataSet-> !GeneralLoadUtils.isLoaded(dataSet, visibleFeatures))
+                .filter(dataSet -> !GeneralLoadUtils.isLoaded(dataSet, visibleFeatures))
                 .forEach(dataSet -> {
                     Optional<InputStream> fileIs = Optional.empty();
                     Optional<InputStream> indexFileIs = Optional.empty();
@@ -648,10 +647,6 @@ public final class GeneralLoadView {
         }
     }
 
-    public void removeDataSet(final DataSet feature, final boolean refresh) {
-        removeDataSet(feature, refresh, true);
-    }
-
     public void clearTrack(final ITrackStyleExtended style) {
         final String method = style.getMethodName();
         if (method != null) {
@@ -694,7 +689,7 @@ public final class GeneralLoadView {
         }
     }
 
-    void removeDataSet(final DataSet feature, final boolean refresh, final boolean removeLocal) {
+    public void removeDataSet(final DataSet feature, final boolean refresh) {
         if (feature == null) {
             return;
         }
@@ -724,13 +719,12 @@ public final class GeneralLoadView {
                     }
                 }
 
+                removeTier(feature.getURI().toString());
+                if (!Strings.isNullOrEmpty(feature.getMethod())) {
+                    removeTier(feature.getMethod());
+                }
+                feature.clear();
                 if (refresh) {
-                    removeTier(feature.getURI().toString());
-                    if (!Strings.isNullOrEmpty(feature.getMethod())) {
-                        removeTier(feature.getMethod());
-                    }
-                    feature.clear();
-
                     // Refresh
                     refreshTreeViewAndRestore();
                     refreshDataManagementView();

@@ -19,14 +19,12 @@ import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTabl
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
@@ -56,13 +54,13 @@ public final class DataProviderTableModel extends AbstractTableModel {
 
     private final List<DataProviderTableColumn> tableColumns;
     private List<DataProvider> sortedDataProviders;
-    private Set<DataProvider> temporarilyDisabledDataProviders;
+    private boolean temporarilyDisableRefresh; //only allow 1 server to be refreshed at a time
     private GenometryModel gmodel;
 
     public DataProviderTableModel() {
         gmodel = GenometryModel.getInstance();
         loadView = GeneralLoadView.getLoadView();
-        temporarilyDisabledDataProviders = Sets.newConcurrentHashSet();
+        temporarilyDisableRefresh = false;
         tableColumns = Lists.newArrayList(DataProviderTableColumn.values());
         sortDataSources();
     }
@@ -189,7 +187,7 @@ public final class DataProviderTableModel extends AbstractTableModel {
         boolean isEditable = PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).getBoolean(DataProviderPrefKeys.IS_EDITABLE, true);
         switch (tableColumns.get(columnIndex)) {
             case Refresh: {
-                return dataProvider.getStatus() != ResourceStatus.Disabled || !temporarilyDisabledDataProviders.contains(dataProvider);
+                return dataProvider.getStatus() != ResourceStatus.Disabled || temporarilyDisableRefresh;
             }
             case Name: {
                 return isEditable;
@@ -217,13 +215,13 @@ public final class DataProviderTableModel extends AbstractTableModel {
                 if ((Boolean) getValueAt(rowindex, getColumnIndex(DataProviderTableColumn.Enabled))) {
                     if (dataProvider.getStatus() != ResourceStatus.Disabled
                             && confirmRefresh()) {
-                        if (!temporarilyDisabledDataProviders.contains(dataProvider)) {
+                        if (temporarilyDisableRefresh) {
                             CompletableFuture.runAsync(() -> {
-                                temporarilyDisabledDataProviders.add(dataProvider);
+                                temporarilyDisableRefresh = true;
                                 dataProviderManager.disableDataProvider(dataProvider);
                             }).whenComplete((result, ex) -> {
                                 dataProviderManager.enableDataProvider(dataProvider);
-                                temporarilyDisabledDataProviders.remove(dataProvider);
+                                temporarilyDisableRefresh = false;
                                 fireTableRowsUpdated(sortedDataProviders.indexOf(dataProvider), sortedDataProviders.indexOf(dataProvider));
                             });
                         }

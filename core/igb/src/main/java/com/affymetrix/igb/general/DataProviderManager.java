@@ -47,10 +47,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.concurrent.CompletableFuture;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
+import javax.swing.SwingUtilities;
 import org.lorainelab.igb.preferences.model.DataProviderConfig;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
@@ -257,7 +257,7 @@ public class DataProviderManager {
 
     @Reference(optional = true, multiple = true, dynamic = true, unbind = "removeDataProvider")
     public void addDataProvider(DataProvider dataProvider) {
-        CompletableFuture.runAsync(() -> {
+        SwingUtilities.invokeLater(() -> {
             dataProviders.add(dataProvider);
             DataProviderManager.this.initializeDataProvider(dataProvider);
             if (ALL_SOURCES_INITIALIZED) {

@@ -223,7 +223,6 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         addBtn = new JButton(BUNDLE.getString("addButton"));
         addBtn.addActionListener((ActionEvent e) -> {
             dataSourcesTable.stopCellEditing();
-            int row = dataSourcesTable.getSelectedRow();
             addDataProvider.init(false, ADD_DATA_SOURCE, null);
         });
     }

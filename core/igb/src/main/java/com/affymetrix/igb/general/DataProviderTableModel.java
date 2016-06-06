@@ -215,9 +215,9 @@ public final class DataProviderTableModel extends AbstractTableModel {
                 if ((Boolean) getValueAt(rowindex, getColumnIndex(DataProviderTableColumn.Enabled))) {
                     if (dataProvider.getStatus() != ResourceStatus.Disabled
                             && confirmRefresh()) {
-                        if (temporarilyDisableRefresh) {
+                        if (!temporarilyDisableRefresh) {
+                               temporarilyDisableRefresh = true;
                             CompletableFuture.runAsync(() -> {
-                                temporarilyDisableRefresh = true;
                                 dataProviderManager.disableDataProvider(dataProvider);
                             }).whenComplete((result, ex) -> {
                                 dataProviderManager.enableDataProvider(dataProvider);

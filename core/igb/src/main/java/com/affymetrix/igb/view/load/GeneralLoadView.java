@@ -8,7 +8,6 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.LocalDataProvider;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
@@ -47,6 +46,7 @@ import com.affymetrix.igb.view.TrackView;
 import static com.affymetrix.igb.view.load.GeneralLoadUtils.LOADING_MESSAGE_PREFIX;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
@@ -263,7 +263,7 @@ public final class GeneralLoadView {
         loadStrategies.add(LoadStrategy.VISIBLE);
 //		loadStrategies.add(LoadStrategy.CHROMOSOME);
         //TODO refactor code to not use serverType == null as a hack
-        loadFeatures(loadStrategies, null);
+        loadFeatures(loadStrategies);
     }
 
     /**
@@ -272,30 +272,33 @@ public final class GeneralLoadView {
     public static void loadAutoLoadFeatures() {
         List<LoadStrategy> loadStrategies = new ArrayList<>();
         loadStrategies.add(LoadStrategy.AUTOLOAD);
-        loadFeatures(loadStrategies, null);
+        loadFeatures(loadStrategies);
         GeneralLoadUtils.bufferDataForAutoload();
     }
 
     /**
      * Load any features that have a whole strategy and haven't already been loaded.
      */
-    public static void loadWholeRangeFeatures(DataProvider dataProvider) {
-        List<LoadStrategy> loadStrategies = new ArrayList<>();
-        loadStrategies.add(LoadStrategy.GENOME);
-        loadFeatures(loadStrategies, dataProvider);
-    }
-
-    static void loadFeatures(List<LoadStrategy> loadStrategies, DataProvider serverType) {
+    public static void loadWholeRangeFeatures() {
         List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
-        for (DataSet dataSet : GeneralLoadUtils.getGenomeVersionDataSets()) {
-            if (GeneralLoadUtils.isLoaded(dataSet, visibleFeatures)) {
-                continue;
-            }
-            loadFeature(loadStrategies, dataSet, serverType);
-        }
+        GeneralLoadUtils.getGenomeVersionDataSets().stream()
+                .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
+                .filter(dataSet -> !GeneralLoadUtils.isLoaded(dataSet, visibleFeatures))
+                .forEach(dataSet -> {
+                    loadFeature(Lists.newArrayList(LoadStrategy.GENOME), dataSet);
+                });
+
     }
 
-    static boolean loadFeature(List<LoadStrategy> loadStrategies, DataSet gFeature, DataProvider serverType) {
+    static void loadFeatures(List<LoadStrategy> loadStrategies) {
+        GeneralLoadUtils.getGenomeVersionDataSets().stream()
+                .filter(dataSet -> loadStrategies.contains(dataSet.getLoadStrategy()))
+                .forEach(dataSet -> {
+                    loadFeature(loadStrategies, dataSet);
+                });
+    }
+
+    static boolean loadFeature(List<LoadStrategy> loadStrategies, DataSet gFeature) {
         if (!loadStrategies.contains(gFeature.getLoadStrategy())) {
             return false;
         }
@@ -360,10 +363,14 @@ public final class GeneralLoadView {
 
                     if (dataSet.getSymL() instanceof SymLoaderInst) {
                         GeneralLoadUtils.loadAllSymmetriesThread(dataSet);
-                    } else {
+                    } else if (isNotAlreadyLoaded(dataSet)) {
                         GeneralLoadUtils.iterateSeqList(dataSet);
                     }
                 });
+    }
+
+    private static boolean isNotAlreadyLoaded(final DataSet dataSet) {
+        return dataSet.getRequestSym().getChildCount() == 0;
     }
 
     public void useAsRefSequence(final DataSet feature) throws Exception {
@@ -592,7 +599,7 @@ public final class GeneralLoadView {
         List<LoadStrategy> loadStrategies = new java.util.ArrayList<>();
         loadStrategies.add(LoadStrategy.GENOME);
 
-        if (!loadFeature(loadStrategies, dataSet, null)) {
+        if (!loadFeature(loadStrategies, dataSet)) {
             addFeatureTier(dataSet);
         }
 

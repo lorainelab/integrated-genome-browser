@@ -528,7 +528,6 @@ public final class GeneralLoadUtils {
             }
             return;
         }
-
         iterateSeqList(dataSource);
     }
 
@@ -948,7 +947,7 @@ public final class GeneralLoadUtils {
 
         //It autoload data is selected then load.
         if (autoload) {
-            GeneralLoadView.loadWholeRangeFeatures(null);
+            GeneralLoadView.loadWholeRangeFeatures();
             GeneralLoadView.getLoadView().refreshTreeView();
             GeneralLoadView.getLoadView().refreshDataManagementView();
         }
@@ -1321,11 +1320,10 @@ public final class GeneralLoadUtils {
         CThreadHolder.getInstance().execute(dataSet, worker);
     }
 
-    public static boolean isLoaded(DataSet gFeature, List<DataSet> visibleFeatures) {
-        Optional<DataSet> loadedFeature = getLoadedDataSet(gFeature.getURI(), visibleFeatures);
+    public static boolean isLoaded(DataSet dataSet, List<DataSet> visibleFeatures) {
+        Optional<DataSet> loadedFeature = getLoadedDataSet(dataSet.getURI(), visibleFeatures);
         if (loadedFeature.isPresent()) {
-            if (loadedFeature.get() != gFeature) {
-                gFeature.clear();
+            if (loadedFeature.get().getRequestSym().getChildCount() > 0) {
                 return true;
             }
         }
@@ -1337,7 +1335,6 @@ public final class GeneralLoadUtils {
     //equals/hashcode override to allow collections api method to be used (e.g. contains)
     public static Optional<DataSet> getLoadedDataSet(URI uri, List<DataSet> visibleFeatures) {
         return visibleFeatures.stream()
-                .filter(dataSet -> dataSet.isVisible())
                 .filter(dataSet -> dataSet.getURI().equals(uri)).findFirst();
     }
 

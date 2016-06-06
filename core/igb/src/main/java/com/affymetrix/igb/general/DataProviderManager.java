@@ -418,7 +418,7 @@ public class DataProviderManager {
             GeneralLoadUtils.initVersionAndSeq(selectedGenomeVersion.get().getName());
             GenometryModel.getInstance().refreshCurrentGenome();
             if (PreferenceUtils.getBooleanParam(PreferenceUtils.AUTO_LOAD, PreferenceUtils.default_auto_load)) {
-                GeneralLoadView.loadWholeRangeFeatures(dataProvider);
+                GeneralLoadView.loadWholeRangeFeatures();
             }
             GeneralLoadView.getLoadView().refreshTreeView();
         }

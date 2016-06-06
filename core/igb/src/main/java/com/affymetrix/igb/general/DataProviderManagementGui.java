@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 public class DataProviderManagementGui extends JRPJPanel implements PreferencesPanelProvider {
 
     public static final String COMPONENT_NAME = "DataProviderManagementGui";
-    private static final Logger logger = LoggerFactory.getLogger(DataProviderManagementGui.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataProviderManagementGui.class);
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
     public static final String TAB_NAME = BUNDLE.getString("dataSourceTabName");
     private static final int TAB_POSITION = 4;
@@ -333,7 +333,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
                     u,
                     RequestorType.SERVER);
         } catch (MalformedURLException ex) {
-            logger.error(ex.getMessage(), ex);
+            LOG.error(ex.getMessage(), ex);
         }
     }
 
@@ -384,5 +384,4 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         this.synonymsControlPanel = synonymsControlPanel;
     }
 
-    
 }

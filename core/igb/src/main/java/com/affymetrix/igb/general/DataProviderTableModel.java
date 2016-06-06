@@ -19,16 +19,20 @@ import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTabl
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 import org.lorainelab.igb.services.IgbService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -37,6 +41,7 @@ import org.lorainelab.igb.services.IgbService;
 @Component(name = DataProviderTableModel.COMPONENT_NAME, immediate = true, provide = DataProviderTableModel.class)
 public final class DataProviderTableModel extends AbstractTableModel {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DataProviderTableModel.class);
     public static final String COMPONENT_NAME = "DataProviderTableModel";
     private DataProviderManager dataProviderManager;
     private EventService eventService;
@@ -51,11 +56,13 @@ public final class DataProviderTableModel extends AbstractTableModel {
 
     private final List<DataProviderTableColumn> tableColumns;
     private List<DataProvider> sortedDataProviders;
+    private Set<DataProvider> temporarilyDisabledDataProviders;
     private GenometryModel gmodel;
 
     public DataProviderTableModel() {
         gmodel = GenometryModel.getInstance();
         loadView = GeneralLoadView.getLoadView();
+        temporarilyDisabledDataProviders = Sets.newConcurrentHashSet();
         tableColumns = Lists.newArrayList(DataProviderTableColumn.values());
         sortDataSources();
     }
@@ -182,7 +189,7 @@ public final class DataProviderTableModel extends AbstractTableModel {
         boolean isEditable = PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).getBoolean(DataProviderPrefKeys.IS_EDITABLE, true);
         switch (tableColumns.get(columnIndex)) {
             case Refresh: {
-                return dataProvider.getStatus() != ResourceStatus.Disabled;
+                return dataProvider.getStatus() != ResourceStatus.Disabled || !temporarilyDisabledDataProviders.contains(dataProvider);
             }
             case Name: {
                 return isEditable;
@@ -210,12 +217,16 @@ public final class DataProviderTableModel extends AbstractTableModel {
                 if ((Boolean) getValueAt(rowindex, getColumnIndex(DataProviderTableColumn.Enabled))) {
                     if (dataProvider.getStatus() != ResourceStatus.Disabled
                             && confirmRefresh()) {
-                        CompletableFuture.runAsync(() -> {
-                            dataProviderManager.disableDataProvider(dataProvider);
-                        }).whenComplete((result, ex) -> {
-                            dataProviderManager.enableDataProvider(dataProvider);
-                            fireTableRowsUpdated(sortedDataProviders.indexOf(dataProvider), sortedDataProviders.indexOf(dataProvider));
-                        });
+                        if (!temporarilyDisabledDataProviders.contains(dataProvider)) {
+                            CompletableFuture.runAsync(() -> {
+                                temporarilyDisabledDataProviders.add(dataProvider);
+                                dataProviderManager.disableDataProvider(dataProvider);
+                            }).whenComplete((result, ex) -> {
+                                dataProviderManager.enableDataProvider(dataProvider);
+                                temporarilyDisabledDataProviders.remove(dataProvider);
+                                fireTableRowsUpdated(sortedDataProviders.indexOf(dataProvider), sortedDataProviders.indexOf(dataProvider));
+                            });
+                        }
                     }
                 }
 

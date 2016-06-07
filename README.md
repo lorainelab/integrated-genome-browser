@@ -21,29 +21,27 @@ See:
 
 To build and run from the command line:
 
-* clone this repo 
-* navigate to your cloned repository
-* checkout the branch you wish to build
+1. Clone the [team repository](https://bitbucket.org/lorainelab/integrated-genome-browser) to your desktop.  
+2. Inside the local copy, check out the branch you wish to build. Check out release_candidate to get the released (or soon to be released) version of IGB.
+3. Build IGB using maven. Skip tests to save time.
+4. Run IGB using the run_igb script for your platform.
 
-`git checkout release_candidate` 
+Ex)
 
-The release_candidate branch usually corresponds to the version of IGB available to users for download from [BioViz.org](http://www.bioviz.org). 
+```
+git clone https://bitbucket.org/lorainelab/integrated-genome-browser
+cd integrated-genome-browser
+git checkout release_candidate
+mvn clean install -DskipTests=true
+run_igb.sh
+```
 
-* not strictly required, but we suggest cleaning up any untracked files after checking out a new branch
+The preceding commands:
 
-`git clean -d -f`
+* Create IGB executable igb_exe.jar, used by the run scripts to run IGB. Contains all dependencies required to run IGB.
+* Copy IGB jar files (artifacts) to your local maven cache, useful you are developing IGB Apps.
 
-* Use maven to build IGB. Skip tests to save time.
-
-`mvn clean install -DskipTests=true`
-
-Then you can run IGB using scripts provided in the repository. On Unix systems, execute:
-
-`run_igb.sh` 
-
-On Windows, run:
-
-`run_igb.bat`
+IGB and IGB Apps use [semantic versioning](http://semver.org/). Different IGB versions can co-exist in your local maven cache.
 
 ***
 

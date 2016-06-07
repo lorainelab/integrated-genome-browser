@@ -1,6 +1,6 @@
 # Integrated Genome Browser
 
-The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and flexible desktop genome browser. IGB is open source, free software. 
+The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and flexible desktop genome browser. IGB is open source software. 
 
 IGB is also a platform for developers to create new visualizations and visual analysis functions for genomics.
 

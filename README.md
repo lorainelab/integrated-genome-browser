@@ -54,9 +54,15 @@ For a tutorial on OSGi written by IGB Developers, see:
 
 * Stackleader.com [blog posts on OSGI](https://blog.stackleader.com/tags/osgi/)
 
-# To contribute
+# How to contribute
 
 IGB development uses the Fork-and-Branch workflow. See:
 
 * Forking Workflow [tutorial](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow) by Atlassian
 * Blog post titled [Using the Fork-and-Branch Git Workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/)
+
+To contribute:
+
+1. Fork the team repository at http://www.bitbucket.org/lorainelab/integrated-genome-browser.
+2. Develop on a branch specific to the changes you want to make, push to your fork.
+3. Issue pull requests from branches on your fork to the team repository's master branch. 

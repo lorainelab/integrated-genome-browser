@@ -1,18 +1,18 @@
 # Integrated Genome Browser
 
-The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and flexible desktop genome browser originally developed at Affymetrix and now public domain and open sources. 
+The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and flexible desktop genome browser. IGB is open source, free software. 
 
 IGB is also a platform for developers to create new visualizations and visual analysis functions for genomics.
 
-To get a copy, you clone this repository or visit the [IGB Download](http://bioviz.org/igb/download.html) page at [BioViz.org](http://www.bioviz.org).
+To get a copy, clone this repository or download an [IGB installer for your platform](http://bioviz.org/igb/download.html).
 
 See:
 
 * [BioViz Web site](http://www.bioviz.org) with platform-specific installers
-* Searchable on-line [User's Guide](https://wiki.transvar.org/display/igbman/Home) explains IGB features
-* [Developers Guide](https://wiki.transvar.org/display/igbdevelopers/Home) explains how to develop IGB and IGB Apps
+* Searchable on-line [User's Guide](https://wiki.transvar.org/display/igbman/Home)
+* [Developers Guide](https://wiki.transvar.org/display/igbdevelopers/Home) explains IGB development and IGB Apps
 * [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg) with video tutorials and demos
-* [IGB Issue Tracker site](http://jira.transvar.org) describes development plans.
+* [IGB Jira Issue Tracker site](http://jira.transvar.org) describes development plans
 * [Integrated Genome Browser: Visual analytics platform for genomics](http://bioinformatics.oxfordjournals.org/content/early/2016/04/04/bioinformatics.btw069.long) - article appearing in the journal Bioinformatics
 # Command-line quick start 
 

@@ -1,6 +1,6 @@
 # Integrated Genome Browser
 
-The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and flexible desktop genome browser. IGB is open source software. 
+The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and flexible desktop genome browser. Originally developed at Affymetrix, IGB is now open source software supported by community developers.
 
 IGB is also a platform for developers to create new visualizations and visual analysis functions for genomics.
 
@@ -13,7 +13,8 @@ See:
 * [Developers Guide](https://wiki.transvar.org/display/igbdevelopers/Home) explains IGB development and IGB Apps
 * [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg) with video tutorials and demos
 * [IGB Jira Issue Tracker site](http://jira.transvar.org) describes development plans
-* [Integrated Genome Browser: Visual analytics platform for genomics](http://bioinformatics.oxfordjournals.org/content/early/2016/04/04/bioinformatics.btw069.long) - article appearing in the journal Bioinformatics
+* Article describing [Integrated Genome Browser: Visual analytics platform for genomics](http://bioinformatics.oxfordjournals.org/content/early/2016/04/04/bioinformatics.btw069.long) 
+
 # Command-line quick start 
 
 To build and run from the command line:
@@ -54,15 +55,17 @@ For a tutorial on OSGi written by IGB Developers, see:
 
 * Stackleader.com [blog posts on OSGI](https://blog.stackleader.com/tags/osgi/)
 
-# How to contribute
+# To contribute
 
-IGB development uses the Fork-and-Branch workflow. See:
+Use fork-and-branch workflow:
+
+1. Fork the [team repository](http://www.bitbucket.org/lorainelab/integrated-genome-browser).
+2. Create branches specific to the changes you want to make, push to your fork.
+3. Issue pull requests from branches on your fork to the team repository's master branch.
+
+See:
 
 * Forking Workflow [tutorial](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow) by Atlassian
 * Blog post titled [Using the Fork-and-Branch Git Workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/)
 
 To contribute:
-
-1. Fork the team repository at http://www.bitbucket.org/lorainelab/integrated-genome-browser.
-2. Develop on a branch specific to the changes you want to make, push to your fork.
-3. Issue pull requests from branches on your fork to the team repository's master branch. 

@@ -1,8 +1,8 @@
 # Integrated Genome Browser
 
-The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and flexible desktop genome browser. Originally developed at Affymetrix, IGB is now open source software supported by community developers.
+The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and highly interactive desktop genome browser ideal for exploring and understanding large-scale data sets from genomics. Originally developed at Affymetrix, IGB is now open source software. 
 
-IGB is also a platform for developers to create new visualizations and visual analysis functions for genomics.
+IGB is also an extensible visual analytics platform developers can use to create new interactive visualizations and visual analysis functions.
 
 To get a copy, clone this repository or download an [IGB installer for your platform](http://bioviz.org/igb/download.html).
 
@@ -14,6 +14,8 @@ See:
 * [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg) with video tutorials and demos
 * [IGB Jira Issue Tracker site](http://jira.transvar.org) describes development plans
 * Article describing [Integrated Genome Browser: Visual analytics platform for genomics](http://bioinformatics.oxfordjournals.org/content/early/2016/04/04/bioinformatics.btw069.long) 
+
+***
 
 # Command-line quick start 
 
@@ -43,10 +45,14 @@ On Windows, run:
 
 `run_igb.bat`
 
+***
+
 # To get help
 
 * Post to the [Biostars question and answer site](https://www.biostars.org/p/new/post/?tag_val=igb")
 * Visit the [Bioviz help page](http://bioviz.org/igb/help.html)
+
+***
 
 # Developing IGB Apps
 
@@ -54,6 +60,8 @@ IGB runs in an OSGi container, which supports adding and removing pluggable Apps
 For a tutorial on OSGi written by IGB Developers, see: 
 
 * Stackleader.com [blog posts on OSGI](https://blog.stackleader.com/tags/osgi/)
+
+***
 
 # To contribute
 
@@ -67,5 +75,3 @@ See:
 
 * Forking Workflow [tutorial](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow) by Atlassian
 * Blog post titled [Using the Fork-and-Branch Git Workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/)
-
-To contribute:

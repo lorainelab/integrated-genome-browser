@@ -67,7 +67,7 @@ Use fork-and-branch workflow:
 
 1. Fork the [team repository](http://www.bitbucket.org/lorainelab/integrated-genome-browser).
 2. Create branches specific to the changes you want to make, push to your fork.
-3. Issue pull requests from branches on your fork to the team repository's master branch.
+3. Issue pull requests to the team repository's master branch.
 
 See:
 

@@ -55,7 +55,7 @@ IGB and IGB Apps use [semantic versioning](http://semver.org/). Different IGB ve
 # Developing IGB Apps
 
 IGB runs in an OSGi container, which supports adding and removing pluggable Apps while IGB is running. 
-For a tutorial on OSGi written by IGB Developers, see: 
+For OSGi tutorials written by IGB Developers, see: 
 
 * Stackleader.com [blog posts on OSGI](https://blog.stackleader.com/tags/osgi/)
 

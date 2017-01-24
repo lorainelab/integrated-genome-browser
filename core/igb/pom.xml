@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.0.0</version>
+        <version>9.0.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     

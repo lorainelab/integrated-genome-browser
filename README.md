@@ -1,44 +1,75 @@
 # Integrated Genome Browser
 
-The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and flexible desktop genome browser. It is also a platform for developers to create new visualizations and visual analysis functions for genomics.
+The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and highly interactive desktop genome browser ideal for exploring and understanding large-scale data sets from genomics. Originally developed at Affymetrix, IGB is now open source software. 
 
-To get a copy, you can clone this repository or visit the [IGB Download](http://bioviz.org/igb/download.html) page at [BioViz.org](http://www.bioviz.org).
+IGB is also an extensible visual analytics platform. Developers can use IGB to create new interactive visualizations and visual analysis functions called IGB Apps.
 
-For documentation, visit:
+To get IGB, clone this repository or download an [IGB installer for your platform](http://bioviz.org/igb/download.html).
+
+See:
 
 * [BioViz Web site](http://www.bioviz.org) with platform-specific installers
-* Searchable on-line [User's Guide](https://wiki.transvar.org/display/igbman/Home) explains IGB features
-* [Developers Guide](https://wiki.transvar.org/display/igbdevelopers/Home) with links to Javadocs, explains IGB development workflow
+* Searchable on-line [User's Guide](https://wiki.transvar.org/display/igbman/Home)
+* [Developers Guide](https://wiki.transvar.org/display/igbdevelopers/Home) explains IGB development and IGB Apps
 * [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg) with video tutorials and demos
+* [IGB Jira Issue Tracker site](http://jira.transvar.org) describes development plans
+* Article describing [Integrated Genome Browser: Visual analytics platform for genomics](http://bioinformatics.oxfordjournals.org/content/early/2016/04/04/bioinformatics.btw069.long) 
 
-For information about development plans, visit the [IGB Issue Tracker site](http://jira.transvar.org).
+***
 
 # Command-line quick start 
 
 To build and run from the command line:
 
-* clone this repo 
-* navigate to your cloned repository
-* checkout the branch you wish to build, for example
+1. Clone the [team repository](https://bitbucket.org/lorainelab/integrated-genome-browser) to your desktop.  
+2. Inside the local copy, check out the branch you wish to build. Check out release_candidate to get the released (or soon to be released) version of IGB.
+3. Build IGB using maven. Skip tests to save time.
+4. Run IGB using the run_igb script for your platform.
 
-`git checkout igb_8_6` 
+Ex)
 
-* not strictly required, but we suggest cleaning up any untracked files after checking out a new branch
+```
+git clone https://bitbucket.org/lorainelab/integrated-genome-browser
+cd integrated-genome-browser
+git checkout release_candidate
+mvn clean install -DskipTests=true
+run_igb.sh
+```
 
-`git clean -d -f`
+The preceding commands:
 
-* Use maven to build IGB. Skip tests to save time.
+* Create IGB executable igb_exe.jar, used by the run scripts to run IGB. Contains all dependencies required to run IGB.
+* Copy IGB jar files (artifacts) to your local maven cache, useful you are developing IGB Apps.
 
-`mvn clean install -DskipTests=true`
+IGB and IGB Apps use [semantic versioning](http://semver.org/). Different IGB versions can co-exist in your local maven cache.
 
-This builds a igb_exe.jar, which you can run like this:
-
-`java -Xmx4g -jar igb_exe.jar`
-
-Use the -Xmx option to control how much memory the java process can consume. IGB runs best if you give it 4 Gb or more memory.
+***
 
 # To get help
 
-* Ask on the [Biostars question and answer site](https://www.biostars.org/p/new/post/?tag_val=igb")
+* Post to the [Biostars question and answer site](https://www.biostars.org/p/new/post/?tag_val=igb")
 * Visit the [Bioviz help page](http://bioviz.org/igb/help.html)
 
+***
+
+# Developing IGB Apps
+
+IGB runs in an OSGi container, which supports adding and removing pluggable Apps while IGB is running. 
+For OSGi tutorials written by IGB Developers, see: 
+
+* Stackleader.com [blog posts on OSGI](https://blog.stackleader.com/tags/osgi/)
+
+***
+
+# To contribute
+
+Use fork-and-branch workflow:
+
+1. Fork the [team repository](http://www.bitbucket.org/lorainelab/integrated-genome-browser).
+2. Create branches specific to the changes you want to make, push to your fork.
+3. Issue pull requests to the team repository's master branch.
+
+See:
+
+* Forking Workflow [tutorial](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow) by Atlassian
+* Blog post titled [Using the Fork-and-Branch Git Workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/)

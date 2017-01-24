@@ -13,7 +13,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>Merge Annotation Operator</name>
+    <name>Merge Annotation Track Operator</name>
 
     <dependencies>       
         <dependency>
@@ -79,15 +79,25 @@
                 <configuration>
                     <obrRepository>${project.parent.basedir}/extbundles</obrRepository>     
                     <instructions>
-                        <Bundle-Name>Combine Annotation Operator</Bundle-Name>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
                         <Bundle-Activator>com.gene.mergeannotationoperator.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-Description>Install this to enable merging selected annotation tracks.</Bundle-Description>
+                        <Bundle-Description>${bundleDescription}</Bundle-Description>
                     </instructions>
                 </configuration>
-            </plugin>            
+            </plugin>    
+            <plugin>
+                <groupId>org.lorainelab</groupId>
+                <artifactId>bundle-markdown-encoder</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>encodeMarkdown</goal>
+                        </goals>
+                    </execution> 
+                </executions>
+            </plugin>           
         </plugins>
     </build>
 

@@ -14,7 +14,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>Geometric Mean</name>
+    <name>Geometric Mean Graph Operator</name>
 
     <dependencies>        
         <dependency>
@@ -97,15 +97,41 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>                
                 <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>build plugin repository</id>
+                        <goals>
+                            <goal>
+                                index
+                            </goal>                       
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <obrRepository>${project.build.directory}</obrRepository>    
+                            <mavenRepository>${project.build.directory}</mavenRepository>                      
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
                     <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>  
                     <instructions>
                         <Export-Package/>
                         <Bundle-Activator>com.gene.geometricmean.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Bundle-Description>Compute geometric mean of selected graph tracks.</Bundle-Description>
+                        <Bundle-Description>${bundleDescription}</Bundle-Description>
                     </instructions>
                 </configuration>
+            </plugin>   
+            <plugin>
+                <groupId>org.lorainelab</groupId>
+                <artifactId>bundle-markdown-encoder</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>encodeMarkdown</goal>
+                        </goals>
+                    </execution> 
+                </executions>
             </plugin>            
         </plugins>
     </build>

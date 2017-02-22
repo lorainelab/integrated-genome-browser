@@ -42,6 +42,7 @@ public class CustomizeAction extends SeqMapViewActionA {
 //			}
 //		}
         JFrame f = pv.getFrame();
+        f.setState(JFrame.NORMAL);
         f.setVisible(true);
     }
 

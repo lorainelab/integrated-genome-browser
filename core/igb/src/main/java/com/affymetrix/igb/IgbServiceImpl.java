@@ -456,6 +456,7 @@ public class IgbServiceImpl implements IgbService {
         PreferencesPanel pv = PreferencesPanel.getSingleton();
         pv.setTab(cls);
         JFrame f = pv.getFrame();
+        f.setState(JFrame.NORMAL);
         f.setVisible(true);
     }
 

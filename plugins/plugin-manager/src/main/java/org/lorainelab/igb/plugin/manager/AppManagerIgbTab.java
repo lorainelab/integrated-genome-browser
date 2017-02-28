@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
@@ -38,6 +39,7 @@ public class AppManagerIgbTab extends IgbTabPanel {
     private void activate() {
         message.addActionListener((ActionEvent e) -> {
             Platform.runLater(() -> {
+                frame.setState(JFrame.NORMAL);
                 frame.setVisible(true);
             });
         });

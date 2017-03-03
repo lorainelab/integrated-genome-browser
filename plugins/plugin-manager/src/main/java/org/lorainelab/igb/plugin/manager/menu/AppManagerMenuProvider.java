@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
+import javax.swing.JFrame;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
@@ -41,6 +42,7 @@ public class AppManagerMenuProvider implements MenuBarEntryProvider {
     public Optional<List<MenuItem>> getMenuItems() {
         MenuItem menuItem = new MenuItem(APP_MANAGER_MENU_LABEL, (Void t) -> {
             Platform.runLater(() -> {
+                frame.setState(JFrame.NORMAL);
                 frame.setVisible(true);
             });
             return t;

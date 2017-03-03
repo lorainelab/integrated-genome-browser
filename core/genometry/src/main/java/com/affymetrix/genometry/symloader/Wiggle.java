@@ -473,6 +473,9 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
             int x2 = graf.getGraphXCoord(i) + graf.getGraphWidthCoord(i);
             bw.write(seq_id + ' ' + graf.getGraphXCoord(i) + ' ' + x2
                     + ' ' + graf.getGraphYCoord(i) + '\n');
+            //Use tabs instead of spaces:
+            //bw.write(seq_id + '\t' + graf.getGraphXCoord(i) + '\t' + x2
+            //        + '\t' + graf.getGraphYCoord(i) + '\n');
         }
     }
 

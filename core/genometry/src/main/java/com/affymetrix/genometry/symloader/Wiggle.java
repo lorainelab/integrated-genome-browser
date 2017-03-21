@@ -57,7 +57,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         BED4, VARSTEP, FIXEDSTEP
     }
 
-    private static final Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
+    private static final Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace 
     private static final boolean ensure_unique_id = true;
 
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
@@ -471,8 +471,8 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         int total_points = graf.getPointCount();
         for (int i = 0; i < total_points; i++) {
             int x2 = graf.getGraphXCoord(i) + graf.getGraphWidthCoord(i);
-            bw.write(seq_id + ' ' + graf.getGraphXCoord(i) + ' ' + x2
-                    + ' ' + graf.getGraphYCoord(i) + '\n');
+            bw.write("" + seq_id + "\t" + graf.getGraphXCoord(i) + "\t" + x2
+                   + "\t" + graf.getGraphYCoord(i) + '\n');
         }
     }
 
@@ -491,12 +491,13 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         String gname = graf.getGraphName();
         GraphState state = graf.getGraphState();
         Color color = state.getTierStyle().getForeground();
+        //GenomeVersion genomeVersion = seq.getGenomeVersion(); 
 
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new OutputStreamWriter(outstream));
             if (genome_version != null && genome_version.length() > 0) {
-                bw.write("# genome_version = " + genome_version + '\n');
+                bw.write("# genome_version = " + genome_version + '\n'); //seq.getGenomeVersion().getName()
             }
             bw.write("track type=" + getTrackType() + " name=\"" + gname + "\"");
             bw.write(" description=\"" + human_name + "\"");
@@ -678,7 +679,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
             Iterator<? extends SeqSymmetry> iter = syms.iterator();
             for (GraphSym graf; iter.hasNext();) {
                 graf = (GraphSym) iter.next();
-                writeBedFormat(graf, graf.getGraphSeq().getId(), ostr);
+                writeBedFormat(graf, graf.getGraphSeq().getGenomeVersion().getName() , ostr); 
             }
 
             return true;

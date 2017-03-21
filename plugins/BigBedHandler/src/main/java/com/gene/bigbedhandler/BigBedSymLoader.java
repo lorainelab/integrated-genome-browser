@@ -133,7 +133,7 @@ public class BigBedSymLoader extends SymLoader {
         init();
         String seqString = cleanSeq2Seq.get(span.getBioSeq().getId());
         try {
-            regions = parse(span.getBioSeq(), bbReader.getBigBedIterator(seqString, span.getStart(), seqString, span.getEnd(), true));
+            regions = parse(span.getBioSeq(), bbReader.getBigBedIterator(seqString, span.getStart(), seqString, span.getEnd(), false));
         } catch (RuntimeException x) {
             if (x.getMessage().startsWith("No wig data found")) {
                 Logger.getLogger(BigBedSymLoader.class.getName()).log(Level.WARNING, x.getMessage());

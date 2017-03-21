@@ -491,14 +491,7 @@ public final class MapRangeBox implements ActionListener, NeoViewBoxListener, Gr
                     res = searchResults != null ? searchResults.getResults() : null;
                 }
                 if (searchResults != null && res != null && res.size() > 0) {
-
-                    //sort by similarity to original search
-                    Collections.sort(res, (SeqSymmetry o1, SeqSymmetry o2) -> {
-                        Integer i1 = StringUtils.getLevenshteinDistance(o1.getID().toLowerCase(), searchText.toLowerCase());
-                        Integer i2 = StringUtils.getLevenshteinDistance(o2.getID().toLowerCase(), searchText.toLowerCase());
-                        return (i2 > i1) ? 1 : -1;
-                    });
-
+                    //search resulte will already be sorted -> responsibility of SearchModeIDOrProps
                     fireSearchResult(searchResults);
                     List<SeqSpan> rawSpans = findSpansFromSyms(res);
                     if (rawSpans.size() > 0) {

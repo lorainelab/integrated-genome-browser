@@ -104,6 +104,7 @@ public class ConsoleLogger extends JFrame {
     public void showConsole() {
 
         java.awt.EventQueue.invokeLater(() -> {
+            setState(NORMAL);
             setVisible(true);
         });
 

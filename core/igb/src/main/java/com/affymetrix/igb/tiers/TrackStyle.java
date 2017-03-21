@@ -2,6 +2,7 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.color.ColorProviderI;
+import com.affymetrix.genometry.color.ColorProviderPersistanceHelper;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.style.ITrackStyle;
@@ -820,6 +821,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     @Override
     public void setColorProvider(ColorProviderI cp) {
         this.color_provider = cp;
+        ColorProviderPersistanceHelper.persistColorProvider(color_provider, node.node("colorProvider"));
     }
 
     @Override

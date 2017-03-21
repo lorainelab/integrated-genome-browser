@@ -15,6 +15,8 @@ package com.affymetrix.genometry.style;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.prefs.Preferences;
 
 /**
  * Basic implementation of ITrackStyle.
@@ -169,6 +171,11 @@ public class DefaultTrackStyle implements ITrackStyle {
         setY(g.getY());
         setExpandable(g.getExpandable());
         getTransientPropertyMap().putAll(g.getTransientPropertyMap());
+    }
+
+    @Override
+    public Optional<Preferences> getPreferenceChildForProperty(String propertyName) {
+        return Optional.empty();
     }
 
 }

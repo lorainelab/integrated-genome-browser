@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.prefs.Preferences;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -1091,5 +1092,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         } else if (PREF_SHADE_BASED_ON_QUALITY_SCORE.equals(key) && value instanceof Boolean) {
             this.setShadeBasedOnQualityScore((Boolean) value);
         }
+    }
+
+    @Override
+    public Optional<Preferences> getPreferenceChildForProperty(String propertyName) {
+        return Optional.of(node.node(propertyName));
     }
 }

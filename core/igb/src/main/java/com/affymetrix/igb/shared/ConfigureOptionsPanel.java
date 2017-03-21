@@ -1,6 +1,7 @@
 package com.affymetrix.igb.shared;
 
 import com.affymetrix.common.ExtensionPointHandler;
+import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.general.ID;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.general.NewInstance;
@@ -10,18 +11,25 @@ import com.affymetrix.genometry.style.HeatMap;
 import com.affymetrix.genometry.style.HeatMapExtended;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genoviz.swing.NumericFilter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.jidesoft.combobox.ColorComboBox;
 import cytoscape.visual.ui.editors.continuous.ColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientEditorPanel;
 import java.awt.Color;
 import java.awt.Component;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -51,6 +59,10 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     private JComboBox comboBox;
     private JPanel paramsPanel;
     private List<SelectionChangeListener> tChangeListeners;
+    private Preferences preferenceNode;
+    // This is used to keep track of preferences update once result is accepted bu user,
+    // ie. getReturnValue called with parameter true.
+    private Runnable commitPreferences = null;
 
     /**
      * Creates the reusable dialog.
@@ -64,6 +76,11 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     }
 
     public ConfigureOptionsPanel(Class clazz, Object label, Filter<T> filter, boolean includeNone) {
+        this(clazz, label, filter, includeNone, null);
+    }
+
+    public ConfigureOptionsPanel(Class clazz, Object label, Filter<T> filter, boolean includeNone, Preferences preferences) {
+        preferenceNode = preferences;
         init(clazz, label, filter, includeNone);
     }
 
@@ -214,15 +231,44 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     Object hm = cp.getParameterValue(label);
                     float[] positions;
                     Color[] colorRanges;
+                    String colorByPropName = ((ColorProviderI) cp).getName();
+                    String[] heatMapTitle = {"HeatMapExtended"};
+                    Preferences[] currentLabelPreferences = new Preferences[]{null};
                     if (hm instanceof HeatMapExtended) {
                         positions = ((HeatMapExtended) hm).getValues();
                         colorRanges = ((HeatMapExtended) hm).getRangeColors();
+                        heatMapTitle[0] = ((HeatMapExtended) hm).getName();
                     } else {
                         HeatMapExtended hme = (HeatMapExtended) cp.getParameterValue(label);
                         positions = hme.getValues();
                         colorRanges = hme.getColors();
+                        heatMapTitle[0] = hme.getName();
+                    }
+                    List<String> previosPrefs = new ArrayList<>();
+                    if (preferenceNode != null) {
+                        try {
+                            previosPrefs = Arrays.asList(preferenceNode.childrenNames());
+                        } catch (BackingStoreException ex) {
+                            //Preferences store not available
+                        }
+                        currentLabelPreferences[0] = preferenceNode.node(colorByPropName);
+                        if (previosPrefs.contains(colorByPropName)) {
+                            // read json from pref and create values and colors
+                            Preferences node = preferenceNode.node(colorByPropName);
+                            float[] pos = new Gson().fromJson(node.get("values", ""), float[].class);;
+                            Color[] color = new GsonBuilder().registerTypeAdapter(Color.class, (InstanceCreator<Color>) (Type type) -> new Color(0)).create().fromJson(node.get("colors", ""), Color[].class);;
+                            if (pos != null && color != null) {
+                                positions = pos;
+                                colorRanges = color;
+                            }
+
+                        }
                     }
                     editor.setVirtualRange(positions, colorRanges);
+                    ColorInterpolator colorInterpolator1 = new GradientColorInterpolator(editor.getVirtualRange());
+                    setParameter(cp, label, new HeatMapExtended(heatMapTitle[0],
+                            colorInterpolator1.getColorRange(HeatMap.BINS),
+                            positions, colorRanges));
 
                     final JButton editButton = new JButton("Edit");
                     editButton.addActionListener(evt -> {
@@ -234,10 +280,19 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                         Object value = editor.showDialog();
                         if (value.equals(JOptionPane.OK_OPTION)) {
                             ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
-                            setParameter(cp, label, new HeatMapExtended("HeatMapExtended",
+                            setParameter(cp, label, new HeatMapExtended(heatMapTitle[0],
                                     colorInterpolator.getColorRange(HeatMap.BINS),
                                     editor.getVirtualRange().getVirtualValues(),
                                     editor.getVirtualRange().getColors()));
+                            commitPreferences = () -> {
+                                if (preferenceNode != null) {
+                                    // Convert to JSON and save to preferences.
+                                    String values = new Gson().toJson(editor.getVirtualRange().getVirtualValues());
+                                    String colors = new Gson().toJson(editor.getVirtualRange().getColors());
+                                    currentLabelPreferences[0].put("values", values);
+                                    currentLabelPreferences[0].put("colors", colors);
+                                }
+                            };
                         }
                     });
                     component = editButton;
@@ -335,6 +390,9 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             returnValue = selectedCP;
             if (returnValue instanceof IParameters) {
                 ((IParameters) returnValue).setParametersValue(paramMap);
+            }
+            if (commitPreferences != null) {
+                commitPreferences.run();
             }
         }
         return returnValue;

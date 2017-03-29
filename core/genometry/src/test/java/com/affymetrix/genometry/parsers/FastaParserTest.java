@@ -62,36 +62,36 @@ public class FastaParserTest {
         assertEquals("GGGTT", result.getResidues(9 + 5, 9));
     }
 
-    @Test
-    public void testReadFASTA() throws Exception {
-        String filename = "data/fasta/FASTA_obey_70.fasta";
-        filename = FastaParserTest.class.getClassLoader().getResource(filename).getFile();
-
-        char[] expected_fasta = null;
-        byte[] fasta = null;
-        expected_fasta = "LCLYTHIGRN".toCharArray();
-        testFASTASegment(filename, fasta, expected_fasta, 0, 10);
-
-        expected_fasta = "VITNLFSAIPYIGTNLVEWI".toCharArray();
-        testFASTASegment(filename, fasta, expected_fasta, 53, 73);
-
-        expected_fasta = "L".toCharArray();
-        testFASTASegment(filename, fasta, expected_fasta, 0, 1);
-
-        expected_fasta = null;
-        testFASTASegment(filename, fasta, expected_fasta, 3, 3);
-
-        expected_fasta = "LMPFLH".toCharArray();
-        testFASTASegment(filename, fasta, expected_fasta, 211, 217);
-
-        expected_fasta = "IENY".toCharArray();
-        testFASTASegment(filename, fasta, expected_fasta, 280, 284);
-
-        testFASTASegment(filename, fasta, expected_fasta, 280, 290);
-
-        fasta = FastaParser.readFASTA(new File(filename), 290, 291);
-        assertNull(fasta);
-    }
+//    @Test
+//    public void testReadFASTA() throws Exception {
+//        String filename = "data/fasta/FASTA_obey_70.fasta";
+//        filename = FastaParserTest.class.getClassLoader().getResource(filename).getFile();
+//
+//        char[] expected_fasta = null;
+//        byte[] fasta = null;
+//        expected_fasta = "LCLYTHIGRN".toCharArray();
+//        testFASTASegment(filename, fasta, expected_fasta, 0, 10);
+//
+//        expected_fasta = "VITNLFSAIPYIGTNLVEWI".toCharArray();
+//        testFASTASegment(filename, fasta, expected_fasta, 53, 73);
+//
+//        expected_fasta = "L".toCharArray();
+//        testFASTASegment(filename, fasta, expected_fasta, 0, 1);
+//
+//        expected_fasta = null;
+//        testFASTASegment(filename, fasta, expected_fasta, 3, 3);
+//
+//        expected_fasta = "LMPFLH".toCharArray();
+//        testFASTASegment(filename, fasta, expected_fasta, 211, 217);
+//
+//        expected_fasta = "IENY".toCharArray();
+//        testFASTASegment(filename, fasta, expected_fasta, 280, 284);
+//
+//        testFASTASegment(filename, fasta, expected_fasta, 280, 290);
+//
+//        fasta = FastaParser.readFASTA(new File(filename), 290, 291);
+//        assertNull(fasta);
+//    }
 
     @Test
     public void testReadBadFASTA_1() throws Exception {

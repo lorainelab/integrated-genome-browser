@@ -393,6 +393,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             }
             if (commitPreferences != null) {
                 commitPreferences.run();
+                commitPreferences = null;
             }
         }
         return returnValue;

@@ -255,7 +255,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                         if (previosPrefs.contains(colorByPropName)) {
                             // read json from pref and create values and colors
                             Preferences node = preferenceNode.node(colorByPropName);
-                            float[] pos = new Gson().fromJson(node.get("values", ""), float[].class);;
+                            float[] pos = new Gson().fromJson(node.get("values", ""), float[].class);
                             Color[] color = new GsonBuilder().registerTypeAdapter(Color.class, (InstanceCreator<Color>) (Type type) -> new Color(0)).create().fromJson(node.get("colors", ""), Color[].class);;
                             if (pos != null && color != null) {
                                 positions = pos;
@@ -393,6 +393,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             }
             if (commitPreferences != null) {
                 commitPreferences.run();
+                commitPreferences = null;
             }
         }
         return returnValue;

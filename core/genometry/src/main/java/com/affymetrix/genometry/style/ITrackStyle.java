@@ -14,6 +14,8 @@ package com.affymetrix.genometry.style;
 
 import java.awt.Color;
 import java.util.Map;
+import java.util.Optional;
+import java.util.prefs.Preferences;
 
 /**
  * Track style information. This interface can be used regardless of
@@ -96,4 +98,15 @@ public interface ITrackStyle {
     public Map<String, Object> getTransientPropertyMap();
 
     public void copyPropertiesFrom(ITrackStyle s);
+
+    /*
+     * Tracks operations support creating new track from existing, and in such
+     * cases, their preferences should also be copied. This will allow
+     * components like "color by" to store preferences below those of track and
+     * hence allow them to be copied when track is getting copied
+     *
+     * @param propertyName
+     * @return
+     */
+    public Optional<Preferences> getPreferenceChildForProperty(String propertyName);
 }

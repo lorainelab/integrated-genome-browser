@@ -1,17 +1,14 @@
 package com.affymetrix.igb.action;
 
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.general.SupportsFileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
-import com.affymetrix.genometry.style.HeatMapExtended;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
-import com.google.gson.Gson;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 
@@ -66,9 +63,11 @@ public class ColorByAction extends SeqMapViewActionA {
         colorByDialog.setTitle("Color By");
         colorByDialog.setLocationRelativeTo(getSeqMapView());
         colorByDialog.setInitialValue(cp);
-        cp = colorByDialog.showDialog();
+        ColorProviderI newCp = colorByDialog.showDialog();
 
-        style.setColorProvider(cp);
+        //set color provider to all selected tiers
+        getTierManager().getSelectedTiers().forEach(tm -> tm.getAnnotStyle().setColorProvider(newCp));
+//        style.setColorProvider(cp);
         refreshMap(false, false);
         //TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
     }

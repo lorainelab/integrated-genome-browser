@@ -80,12 +80,11 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         TierPrefsView.getSingleton().clearTable();
     }
 
-    void generateFeature2StyleReference(List<DataSet> features) {
-        // Sort these features so the features to be loaded are at the top.
-        Collections.sort(features, new featureTableComparator());
-        this.features = features;
+    void generateFeature2StyleReference(List<DataSet> features) {        
         feature2StyleReference.clear();
         features.forEach(this::createPrimaryVirtualFeatures);
+        this.features = new ArrayList<>(feature2StyleReference.keySet());
+        Collections.sort(this.features, new featureTableComparator());
         fireTableDataChanged();
     }
 
@@ -96,26 +95,22 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         for (TrackStyle style : getTierGlyphStyles()) {
             if (style.getFeature() == gFeature) {
                 feature2StyleReference.put(gFeature, style);
-                if (!style.isGraphTier()) {
-                    break;
-                }
+                break;
             }
         }
-        features = new ArrayList<>(feature2StyleReference.keySet());
     }
 
     private final static class featureTableComparator implements Comparator<DataSet> {
 
         @Override
         public int compare(DataSet left, DataSet right) {
-            if (left.getLoadStrategy() != right.getLoadStrategy()) {
-                return (left.getLoadStrategy().compareTo(right.getLoadStrategy()));
-            }
-            if (left.getDataSetName().compareTo(right.getDataSetName()) != 0) {
-                return left.getDataSetName().compareTo(right.getDataSetName());
-            }
 
-            return left.getDataContainer().getDataProvider().getName().compareTo(right.getDataContainer().getDataProvider().getName());
+            int comp = left.getDataContainer().getDataProvider().getName().compareTo(right.getDataContainer().getDataProvider().getName());
+            if (comp != 0) {
+                return comp;
+            }
+            
+            return left.getDataSetName().compareTo(right.getDataSetName());
         }
     }
 

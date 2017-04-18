@@ -324,12 +324,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     private void addListeners() {
         comboBox.addItemListener(e -> {
             T cp = (T) comboBox.getSelectedItem();
-            // If a user selects same color provider as initial then reuses the same object
-            if (returnValue != null && cp != null && cp.getName().equals(returnValue.getName())) {
-                cp = returnValue;
-            } else if (cp != null) {
-                cp = (T) cp.newInstance();
-            }
+            cp = (T) cp.newInstance();
             setSelected(cp);
             if (tChangeListeners != null && !tChangeListeners.isEmpty() && cp != returnValue) {
                 for (SelectionChangeListener tChangeListener : tChangeListeners) {

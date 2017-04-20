@@ -95,7 +95,7 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         for (TrackStyle style : getTierGlyphStyles()) {
             if (style.getFeature() == gFeature) {
                 feature2StyleReference.put(gFeature, style);
-                break;
+                break; //once you find the style that goes with a given feature, stop looping through styles.
             }
         }
     }

@@ -19,7 +19,10 @@ public class JRPTextFieldTableCellRenderer extends DefaultCellEditor
         this.jrpTextField = ((JRPTextField) this.editorComponent);
         this.jrpTextField.setForeground(fg);
         this.jrpTextField.setBackground(bg);
-        this.jrpTextField.setHorizontalAlignment(JRPTextField.RIGHT);
+        
+        // <Ashwini Kadam> IGBF-1131 
+        // Changed field alignment to display track name on left in Data Management Table
+        this.jrpTextField.setHorizontalAlignment(JRPTextField.LEFT);
 
         this.jrpTextField.addActionListener(e -> stopCellEditing());
 

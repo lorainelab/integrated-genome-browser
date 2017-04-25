@@ -445,7 +445,8 @@ public final class GeneralLoadView {
         });
     }
 
-    private static void refreshDataManagementTable(final List<DataSet> visibleFeatures) {
+    // added "synchronized" to resolve errors encountered after edits for issue IGBF-201 <Ivory Blakley>
+    private static synchronized void refreshDataManagementTable(final List<DataSet> visibleFeatures) {
 
         ThreadUtils.runOnEventQueue(() -> {
             table.stopCellEditing();

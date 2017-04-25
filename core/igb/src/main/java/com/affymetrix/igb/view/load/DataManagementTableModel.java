@@ -12,6 +12,8 @@ import com.affymetrix.igb.prefs.TierPrefsView;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.genometry.style.ITrackStyle;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.igb.view.SeqMapView;
 import com.google.common.collect.Maps;
 import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
@@ -37,6 +39,14 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  * Model for table of features.
+ * 
+ * When the DataManagementTable is generated, a row is made for each DataSet 
+ * and this object is used to retrieve the style info to use for each row 
+ * including (foreground color, background color, hidden/visible, and the 
+ * name to display). As of IGBF-201, rows are generated the same way, BUT THEN 
+ * additional rows are made for each style in joinedGraphStyleReference using 
+ * only the style info, with no corresponding DataSet (so in those rows, there 
+ * is no option to refresh or delete the track or change the load mode).
  */
 public final class DataManagementTableModel extends AbstractTableModel implements ChangeListener, TableModelListener {
 
@@ -55,13 +65,15 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     private final GeneralLoadView glv;
     private final SeqMapView smv;
     private final AffyLabelledTierMap map;
-    private final Map<DataSet, TrackStyle> feature2StyleReference;
-    public List<DataSet> features;
+    private final Map<DataSet, TrackStyle> feature2StyleReference; //holds styles that are associated with a single DataSet
+    private final List<ITrackStyleExtended> joinedGraphStyleReference; //added to accomodate joined graphs <Ivory Blakley> IGBF-201
+    public List<DataSet> features; // holds the features that are associated with the styles in feature2StyleReference
 
     DataManagementTableModel(GeneralLoadView glv) {
         this.glv = glv;
         this.features = new ArrayList<>();
         feature2StyleReference = Maps.newHashMap();
+        joinedGraphStyleReference = new ArrayList<>(); // <Ivory Blakley> IGBF-201
         IGB igb = IGB.getInstance();
         smv = igb.getMapView();
         map = (AffyLabelledTierMap) smv.getSeqMap();
@@ -76,14 +88,18 @@ public final class DataManagementTableModel extends AbstractTableModel implement
     public void clearFeatures() {
         features.clear();
         feature2StyleReference.clear();
+        joinedGraphStyleReference.clear(); // <Ivory Blakley> IGBF-201
         fireTableDataChanged();
         TierPrefsView.getSingleton().clearTable();
     }
 
     void generateFeature2StyleReference(List<DataSet> theFeatures) {        
         feature2StyleReference.clear();
+        joinedGraphStyleReference.clear();
         // associate styles with the new features
-        theFeatures.forEach(this::createPrimaryVirtualFeatures);
+        theFeatures.forEach(this::createFeature2StyleReference);
+        // catch styles that do not return a single DataSet, intended for joined graph styles
+        createJoinedGraphStyleReference();
         // use the keyset from the style hashmap to create the list of features to display in the table
         features = new ArrayList<>(feature2StyleReference.keySet());
         // sort the features
@@ -92,14 +108,42 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         fireTableDataChanged();
     }
 
-    /*
+    /**
      * Some file formats might have multiple tracks, try load GFF1_example.gff
+     *
+     * Some styles are not TrackStyle objects. For instance, joined graphs use SimpleTrackStyle.
+     * In feature2StyleReference, only store the styles that link to exactly one DataSet
+     * 
+     * DataSets do not include a pointer to the corresponding style, 
+     * but styles (well, some styles) include a pointer to the corresponding 
+     * DataSet. generateFeature2StyleReference() works essentially like an 
+     * outer for loop, with createFeature2StyleReference() as an inner for loop.
+     * pseudo-code:
+     * for every DataSet that is passed in:
+     * -- look at all of the current styles, 
+     * -- for each of these styles:
+     * -- -- if it is the style that goes with this DataSet, 
+     * -- -- -- put this DataSet and this style into feature2styleReference as a key/value pair.
+     * 
+     * <Ivory Blakley> IGBF-201
      */
-    private void createPrimaryVirtualFeatures(DataSet gFeature) {
-        for (TrackStyle style : getTierGlyphStyles()) {
-            if (style.getFeature() == gFeature) {
-                feature2StyleReference.put(gFeature, style);
+    private void createFeature2StyleReference(DataSet gFeature) {
+        for (ITrackStyleExtended style : getTierGlyphStyles()) {
+            if (style.getFeature() == gFeature && style instanceof TrackStyle) {
+                feature2StyleReference.put(gFeature, (TrackStyle) style);
                 break; //once you find the style that goes with a given feature, stop looping through styles.
+            }
+        }
+    }
+    
+    /**
+     * Catch the styles that are for joined graphs.
+     * <Ivory Blakley> IGBF-201
+     */
+    private void createJoinedGraphStyleReference(){
+        for (ITrackStyleExtended style : getTierGlyphStyles()) {
+            if (style.getFeature() == null) {
+                joinedGraphStyleReference.add(style);
             }
         }
     }

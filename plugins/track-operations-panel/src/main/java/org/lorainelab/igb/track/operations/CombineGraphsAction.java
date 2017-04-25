@@ -76,6 +76,8 @@ public class CombineGraphsAction extends GenericAction {
         }
         combo_style.setHeight(height);
         updateDisplay();
+        //update the Data Management Table <Ivory Blakley> IGBF-201
+        igbService.refreshDataManagementView();
     }
 
     private void updateDisplay() {

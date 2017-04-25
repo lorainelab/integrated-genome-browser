@@ -80,12 +80,15 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         TierPrefsView.getSingleton().clearTable();
     }
 
-    void generateFeature2StyleReference(List<DataSet> features) {
-        // Sort these features so the features to be loaded are at the top.
-        Collections.sort(features, new featureTableComparator());
-        this.features = features;
+    void generateFeature2StyleReference(List<DataSet> theFeatures) {        
         feature2StyleReference.clear();
-        features.forEach(this::createPrimaryVirtualFeatures);
+        // associate styles with the new features
+        theFeatures.forEach(this::createPrimaryVirtualFeatures);
+        // use the keyset from the style hashmap to create the list of features to display in the table
+        features = new ArrayList<>(feature2StyleReference.keySet());
+        // sort the features
+        Collections.sort(features, new featureTableComparator());
+        //refresh the table
         fireTableDataChanged();
     }
 
@@ -96,26 +99,25 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         for (TrackStyle style : getTierGlyphStyles()) {
             if (style.getFeature() == gFeature) {
                 feature2StyleReference.put(gFeature, style);
-                if (!style.isGraphTier()) {
-                    break;
-                }
+                break; //once you find the style that goes with a given feature, stop looping through styles.
             }
         }
-        features = new ArrayList<>(feature2StyleReference.keySet());
     }
 
     private final static class featureTableComparator implements Comparator<DataSet> {
 
         @Override
         public int compare(DataSet left, DataSet right) {
-            if (left.getLoadStrategy() != right.getLoadStrategy()) {
-                return (left.getLoadStrategy().compareTo(right.getLoadStrategy()));
-            }
-            if (left.getDataSetName().compareTo(right.getDataSetName()) != 0) {
-                return left.getDataSetName().compareTo(right.getDataSetName());
-            }
+            // Keep the features in logical groups. Within groups, sort by name.
+            // Sort first by where the data is coming from, then by the full name of the dataset.
+            // Dataset names include the file-system-like structure that we see in the data-access panel.
 
-            return left.getDataContainer().getDataProvider().getName().compareTo(right.getDataContainer().getDataProvider().getName());
+            int comp = left.getDataContainer().getDataProvider().getName().compareTo(right.getDataContainer().getDataProvider().getName());
+            if (comp != 0) {
+                return comp;
+            }
+            
+            return left.getDataSetName().compareTo(right.getDataSetName());
         }
     }
 

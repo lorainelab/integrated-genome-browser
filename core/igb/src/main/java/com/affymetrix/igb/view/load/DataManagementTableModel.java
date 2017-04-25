@@ -80,10 +80,10 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         TierPrefsView.getSingleton().clearTable();
     }
 
-    void generateFeature2StyleReference(List<DataSet> newFeatures) {        
+    void generateFeature2StyleReference(List<DataSet> theFeatures) {        
         feature2StyleReference.clear();
         // associate styles with the new features
-        newFeatures.forEach(this::createPrimaryVirtualFeatures);
+        theFeatures.forEach(this::createPrimaryVirtualFeatures);
         // use the keyset from the style hashmap to create the list of features to display in the table
         features = new ArrayList<>(feature2StyleReference.keySet());
         // sort the features

@@ -190,9 +190,11 @@ public final class UniFileFilter extends FileFilter {
                 // build the description from the extension list
                 Iterator<String> extensions = filters.iterator();
                 if (extensions.hasNext()) {
-                    fullDescription += "*." + extensions.next();
+                    fullDescription += extensions.next();
+                    //fullDescription += "*." + extensions.next();
                     while (extensions.hasNext()) {
-                        fullDescription += ", *." + extensions.next();
+                        fullDescription += ", " + extensions.next();
+                        //fullDescription += ", *." + extensions.next();
                     }
                 }
                 fullDescription += ")";

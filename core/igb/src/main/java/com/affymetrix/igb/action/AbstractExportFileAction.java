@@ -24,6 +24,8 @@ import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
@@ -103,6 +105,8 @@ public abstract class AbstractExportFileAction
                 });
 
             });
+            //<Ivory Blakley> issue IGBF-1149, make defualt file type consistent
+            Collections.sort(filters, new filterComparator());
 
             FileChooserUtil fcUtil = FileChooserUtil.build()
                     .setFileExtensionFilters(filters)
@@ -159,4 +163,16 @@ public abstract class AbstractExportFileAction
 
     protected abstract void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException;
 
+    // Sort the file type options before creating the pop-up, so the order of items in the pull down menu is consistent.
+    // The first item is the default, so this makes the default consistent.  <Ivory Blakley> issue IGBF-1149
+    private final static class filterComparator implements Comparator<FileChooser.ExtensionFilter> {
+        @Override
+        public int compare(FileChooser.ExtensionFilter left, FileChooser.ExtensionFilter right) {
+            //sort alphabetically by file type (description) and then by file extention
+            if (left.getDescription().compareTo(right.getDescription()) != 0){
+                return left.getDescription().compareTo(right.getDescription());
+            }
+            return left.getExtensions().get(0).compareTo(right.getExtensions().get(0));
+        }
+    }
 }

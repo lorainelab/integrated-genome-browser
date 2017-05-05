@@ -445,10 +445,10 @@ public abstract class AbstractSequenceViewer implements ActionListener, WindowLi
             }
             if (cv.getSi().getCdsStart() >= 0) {
                 if (toggleReverseComplement) {
-                    seqview.addOutlineAnnotation(start + revCdsStart - 3, start + revCdsStart - 1, Color.green);
+                    seqview.addOutlineAnnotation(start + revCdsStart - 3, start + revCdsStart - 1, colorSwitch?Color.green.darker().darker():Color.green);  //Deepti Joshi IGBF-1137
                     seqview.setCdsStart(start + revCdsStart - 3);
                 } else {
-                    seqview.addOutlineAnnotation(start + cdsStart, start + cdsStart + 2, Color.green);
+                    seqview.addOutlineAnnotation(start + cdsStart, start + cdsStart + 2, colorSwitch?Color.green.darker().darker():Color.green);  //Deepti Joshi IGBF-1137
                     seqview.setCdsStart(start + cdsStart);
                 }
             }

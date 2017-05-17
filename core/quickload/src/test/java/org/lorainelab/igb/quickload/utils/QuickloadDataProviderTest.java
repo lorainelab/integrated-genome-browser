@@ -54,8 +54,8 @@ public class QuickloadDataProviderTest {
     @Test
     public void testAssemblyInfo() {
         Map<String, Integer> assemblyInfo = dataProvider.getAssemblyInfo(version);
-        assertTrue(assemblyInfo.containsKey("chr5"));
-        assertTrue(assemblyInfo.containsKey("chrM"));
+        assertTrue(assemblyInfo.containsKey("Chr5"));
+        assertTrue(assemblyInfo.containsKey("ChrM"));
     }
 
     @Test

@@ -2,7 +2,11 @@ package com.affymetrix.sequenceviewer;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.AxisPopupListener;
+import com.affymetrix.genometry.event.SymSelectionEvent;
+import com.affymetrix.genometry.event.SymSelectionListener;
+import com.affymetrix.genometry.symmetry.SymWithResidues;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.google.common.collect.Lists;
@@ -27,13 +31,15 @@ import org.slf4j.LoggerFactory;
  * @author hiralv
  */
 @Component(immediate = true, provide = {AnnotationContextMenuProvider.class, AxisPopupListener.class})
-public class PopupListener implements AnnotationContextMenuProvider, AxisPopupListener {
+public class PopupListener implements AnnotationContextMenuProvider, AxisPopupListener, SymSelectionListener{
 
     private static final Logger LOG = LoggerFactory.getLogger(PopupListener.class);
     JMenuItem genomicSequenceViewer, readSequenceViewer;
     private final static String SEQUENCE_VIEWER_ICONPATH = "Sequence_Viewer.png";
-
+    private boolean isSymWithResidues=false;   //Deepti Joshi IGBF-1139
+    
     public PopupListener() {
+        GenometryModel.getInstance().addSymSelectionListener(this);   //Deepti Joshi IGBF-1139
     }
 
     @Override
@@ -89,6 +95,7 @@ public class PopupListener implements AnnotationContextMenuProvider, AxisPopupLi
         } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
         }
+        readSequenceMenuItem.setEnabled(isSymWithResidues);   //Deepti Joshi IGBF-1139
         readSequenceMenuItem.setMenuSection(ContextMenuSection.SEQUENCE);
         return readSequenceMenuItem;
     }
@@ -107,4 +114,16 @@ public class PopupListener implements AnnotationContextMenuProvider, AxisPopupLi
         return genomicSequenceMenuItem;
     }
 
+//  Start---Deepti Joshi IGBF-1139    
+    @Override
+    public void symSelectionChanged(SymSelectionEvent evt) {
+        isSymWithResidues=false;
+        if (!evt.getSelectedGraphSyms().isEmpty() && !(evt.getSelectedGraphSyms().get(0) instanceof GraphSym)) {
+            if (evt.getSelectedGraphSyms().get(0) instanceof SymWithResidues) {
+                isSymWithResidues=true;
+            }   
+        }
+    }
+
+//  End---Deepti Joshi IGBF-1139
 }

@@ -21,35 +21,22 @@ import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.general.DataProviderManager;
 import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeEvent;
-import static com.affymetrix.igb.shared.OpenURIAction.CUSTOM_GENOME_COUNTER;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import java.awt.Component;
-import java.awt.HeadlessException;
 import java.awt.Point;
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import javafx.scene.control.Control;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-//import org.lorainelab.igb.javafx.DirectoryChooserUtil;
-import org.lorainelab.igb.javafx.FileChooserUtil;
+import org.lorainelab.igb.javafx.DirectoryChooserUtil;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
 
@@ -268,7 +255,8 @@ public class AddDataProvider extends JFrame {
 
 	private void openDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDirActionPerformed
 
-            File f = fileChooser(DIRECTORIES_ONLY, this);
+            // <Ashwini Kadam> IGBF-1140
+            File f = dirChooser();
             
             if (f != null && f.isDirectory()) {
                 try {
@@ -390,39 +378,23 @@ public class AddDataProvider extends JFrame {
     private static javax.swing.JTextField urlText;
     // End of variables declaration//GEN-END:variables
 
-    protected static File fileChooser(int mode, Component parent) throws HeadlessException {
-//        JFileChooser chooser = new JFileChooser();
-//        File file;
-//        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-//        chooser.setFileSelectionMode(mode);
-//        chooser.setDialogTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"));
-//        chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
-//        chooser.rescanCurrentDirectory();
-//       
-//        if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION) {
-//            return null;
-//        }
-//        
-//        file = chooser.getSelectedFile();
-//        FileTracker.DATA_DIR_TRACKER.setFile(file.getParentFile());
-//        return file;
-
+    // <Ashwini Kadam> IGBF-1140
+    // JFileChooser displays JavaFX Swing version of file chooser. 
+    // To diplsay operating system's native file chooser, I am using class FileChooser.
+    // DirectoryChooserUtil (based on FileChooserUtil) opens and allows user to
+    // choose only directory (and not file)
+    protected static File dirChooser() {
         FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
-        File file = null;
-        Optional<File> selectedFile = FileChooserUtil.build()
+        File dir = null;
+        Optional<File> selectedDir = DirectoryChooserUtil.build()
                 .setContext(fileTracker.getFile())
-                .setTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"))
-                .retrieveFileFromFxChooser();
-        if (selectedFile.isPresent()) {
-            file = selectedFile.get();
-            if (file != null && file.exists()) {
-                if (file.isDirectory()) {
-                    fileTracker.setFile(file.getParentFile());
-                } else {
-                    return null;
-                }
-            }
+                .setTitle("Choose Local Folder")
+                .retrieveDirFromFxChooser();
+        
+        if (selectedDir.isPresent()) {
+            fileTracker.setFile(selectedDir.get().getParentFile());
         }
-        return file;
+        
+        return dir;
     }
 }

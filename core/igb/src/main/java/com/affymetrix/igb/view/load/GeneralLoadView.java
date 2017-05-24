@@ -450,7 +450,7 @@ public final class GeneralLoadView {
 
         ThreadUtils.runOnEventQueue(() -> {
             table.stopCellEditing();
-            tableModel.generateFeature2StyleReference(visibleFeatures);
+            tableModel.refreshStyleReferences(visibleFeatures);
             DataManagementTable.setComboBoxEditors(table, !GeneralLoadView.IsGenomeSequence());
         });
     }
@@ -471,7 +471,7 @@ public final class GeneralLoadView {
         }
         final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
         table.stopCellEditing();
-        tableModel.generateFeature2StyleReference(visibleFeatures);
+        tableModel.refreshStyleReferences(visibleFeatures);
 
         table.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
         table.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMinWidth(20);

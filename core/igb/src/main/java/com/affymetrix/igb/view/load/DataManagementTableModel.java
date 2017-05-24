@@ -93,7 +93,15 @@ public final class DataManagementTableModel extends AbstractTableModel implement
         TierPrefsView.getSingleton().clearTable();
     }
 
-    void generateFeature2StyleReference(List<DataSet> theFeatures) {        
+    /**
+     * This method is called every time a Dataset is added or removed.
+     * It removes all of the style references and regenerates the references
+     * based on the current styles.
+     * Method name changed generateFeature2StyleReference -> refreshStyleReferences
+     * as of IGBF 201 <Ivory Blakley>
+     * @param theFeatures 
+     */
+    void refreshStyleReferences(List<DataSet> theFeatures) {        
         feature2StyleReference.clear();
         joinedGraphStyleReference.clear();
         // associate styles with the new features

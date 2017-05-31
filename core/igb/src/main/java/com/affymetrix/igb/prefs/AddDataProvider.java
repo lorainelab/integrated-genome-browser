@@ -392,7 +392,8 @@ public class AddDataProvider extends JFrame {
                 .retrieveDirFromFxChooser();
         
         if (selectedDir.isPresent()) {
-            fileTracker.setFile(selectedDir.get().getParentFile());
+            dir = selectedDir.get();
+            fileTracker.setFile(dir.getParentFile());
         }
         
         return dir;

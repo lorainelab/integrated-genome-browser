@@ -58,49 +58,28 @@ public class LoadSessionAction extends GenericAction implements MenuBarEntryProv
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        if (IS_MAC) {
-            FileDialog fd = new FileDialog(igbService.getApplicationFrame());
-            fd.setDirectory(System.getProperty("user.home"));
-            fd.setFile("*.xml");
-            fd.setLocation(50, 50);
-            fd.setVisible(true);
+        // <Ashwini Kadam> IGBF-1150 : Related to IGBF-1140
+        // JFileChooser displays JavaFX style Open File Session dialog
+        // while loading a session. Instead we want OS Native file choooser. 
+        // Thus we are turning to FileChooser for opening a dialog.
+        FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
+        FileChooser.ExtensionFilter extFilter = 
+                    new FileChooser.ExtensionFilter("XML File", "*.xml");
+        Optional<File> selectedFile = FileChooserUtil.build()
+                .setContext(fileTracker.getFile())
+                .setTitle("Load Session")
+                .setFileExtensionFilters(Lists.newArrayList(extFilter))
+                .retrieveFileFromFxChooser();
 
-            if (fd.getFile() != null) {
-                File selectedFile = new File(fd.getDirectory(), fd.getFile());
-                try {
-                    loadSession(selectedFile);
-                } catch (InvalidPreferencesFormatException ipfe) {
-                    ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n" + ipfe.getMessage()
-                            + "\n\nYou can only load a session from a file that was created with save session.");
-                } catch (Exception x) {
-                    ErrorHandler.errorPanel("ERROR", "Error loading session from file", x);
-                }
-            }
-            
-        } else {
-            // <Ashwini Kadam> IGBF-1150 : Related to IGBF-1140
-            // JFileChooser displays JavaFX Swing style Open File Session dialog
-            // while loading a session. Instead we want OS Native file choooser. 
-            // Thus we are turning to FileChooser for opening a dialog.
-            FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
-            FileChooser.ExtensionFilter extFilter = 
-                        new FileChooser.ExtensionFilter("XML File", "*.xml");
-            Optional<File> selectedFile = FileChooserUtil.build()
-                    .setContext(fileTracker.getFile())
-                    .setTitle("Load Session")
-                    .setFileExtensionFilters(Lists.newArrayList(extFilter))
-                    .retrieveFileFromFxChooser();
-
-            if (selectedFile.isPresent()) {
-                fileTracker.setFile(selectedFile.get().getParentFile());
-                try {
-                    loadSession(selectedFile.get());
-                } catch (InvalidPreferencesFormatException ipfe) {
-                    ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n" + ipfe.getMessage()
-                            + "\n\nYou can only load a session from a file that was created with save session.");
-                } catch (Exception x) {
-                    ErrorHandler.errorPanel("ERROR", "Error loading session from file", x);
-                }
+        if (selectedFile.isPresent()) {
+            fileTracker.setFile(selectedFile.get().getParentFile());
+            try {
+                loadSession(selectedFile.get());
+            } catch (InvalidPreferencesFormatException ipfe) {
+                ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n" + ipfe.getMessage()
+                        + "\n\nYou can only load a session from a file that was created with save session.");
+            } catch (Exception x) {
+                ErrorHandler.errorPanel("ERROR", "Error loading session from file", x);
             }
         }
     }

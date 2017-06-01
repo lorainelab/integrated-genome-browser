@@ -30,6 +30,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author hiralv
  */
+
+/*
+*Deepti Joshi-IGBF-1139
+*Added a function symSelectionChanged to check if the selection is 'symmetry with residues' and has a single sequence. If yes, "Read view sequence" 
+is enabled, else disabled.
+*/
+
 @Component(immediate = true, provide = {AnnotationContextMenuProvider.class, AxisPopupListener.class})
 public class PopupListener implements AnnotationContextMenuProvider, AxisPopupListener, SymSelectionListener{
 
@@ -118,12 +125,12 @@ public class PopupListener implements AnnotationContextMenuProvider, AxisPopupLi
     @Override
     public void symSelectionChanged(SymSelectionEvent evt) {
         isSymWithResidues=false;
-        if (!evt.getSelectedGraphSyms().isEmpty() && !(evt.getSelectedGraphSyms().get(0) instanceof GraphSym)) {
-            if (evt.getSelectedGraphSyms().get(0) instanceof SymWithResidues) {
+        if (!evt.getSelectedGraphSyms().isEmpty() 
+            && !(evt.getSelectedGraphSyms().get(0) instanceof GraphSym)
+            && (evt.getSelectedGraphSyms().get(0) instanceof SymWithResidues)
+            && (evt.getSelectedGraphSyms().size()==1)){
                 isSymWithResidues=true;
             }   
-        }
     }
-
 //  End---Deepti Joshi IGBF-1139
 }

@@ -54,8 +54,9 @@ public class QuickloadDataProviderTest {
     @Test
     public void testAssemblyInfo() {
         Map<String, Integer> assemblyInfo = dataProvider.getAssemblyInfo(version);
-        assertTrue(assemblyInfo.containsKey("chr5"));
-        assertTrue(assemblyInfo.containsKey("chrM"));
+        //JDaly - Changed from "chr5" in IGBF-1142 to match output from AssemblyInfo
+        assertTrue(assemblyInfo.containsKey("Chr5"));
+        assertTrue(assemblyInfo.containsKey("ChrM"));
     }
 
     @Test

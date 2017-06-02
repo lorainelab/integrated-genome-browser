@@ -1,5 +1,3 @@
-S_bicolor.png
-V_carteri.png
 A_melanoleuca.png
 A_mellifera.png
 B_taurus.png
@@ -12,17 +10,16 @@ O_aries.png
 P_troglodytes.png
 T_rubripes.png
 X_tropicalis.png
+R_norvegicus.png
 G_gallus.png
 A_gambiae.png
 E_coli_K12-MG1655.png
+C_elegans.png
 D_rerio.png
 S_cerevisiae.png
-C_elegans.png
 D_melanogaster.png
-H_sapiens.png
 M_musculus.png
-R_norvegicus.png
-S_pombe.png
+H_sapiens.png
 A_thaliana.png
 V_corymbosum.png
 O_sativa_japonica.png
@@ -34,6 +31,7 @@ P_patens.png
 V_vinifera.png
 M_truncatula.png
 B_distachyon.png
+S_pombe.png
 A_lyrata.png
 C_albicans_SC5314.png
 C_papaya.png
@@ -41,3 +39,5 @@ C_reinhardtii.png
 D_discoideum_Ax4.png
 P_persica.png
 R_communis.png
+S_bicolor.png
+V_carteri.png

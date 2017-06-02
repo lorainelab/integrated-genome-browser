@@ -7,16 +7,20 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.parsers.AnnotationWriter;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
 import com.affymetrix.genometry.util.ExportFileModel;
 import com.affymetrix.genometry.util.FileTypeCategoryUtils;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import com.affymetrix.igb.IgbServiceImpl;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.event.KeyEvent;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class ExportFileAction
         extends AbstractExportFileAction {
@@ -61,9 +65,17 @@ public class ExportFileAction
                 }
             }
         } else {
-            syms.add(rootSeqSymmetry);
-            annotationWriter.writeAnnotations(syms, aseq, "", dos);
-
+            if (category.equals(FileTypeCategory.Graph)) {
+                List<List<SeqSymmetry>> myList = new ArrayList<List<SeqSymmetry>>();
+                myList.add(new ArrayList<>());
+                aseq.getGenomeVersion().getSeqList().forEach(seq -> {
+                    myList.get(0).addAll(seq.getAnnotations(Pattern.compile(".*")).stream().filter(s -> s instanceof GraphSym).collect(Collectors.toList()));
+                });
+                annotationWriter.writeAnnotations(myList.get(0), aseq, aseq.getGenomeVersion().getName(), dos);
+            } else {
+                syms.add(rootSeqSymmetry);
+                annotationWriter.writeAnnotations(syms, aseq, "", dos);
+            }
         }
     }
 }

@@ -54,33 +54,36 @@ public class ExportFileAction
         List<SeqSymmetry> syms = new ArrayList<>();
         RootSeqSymmetry rootSeqSymmetry = (RootSeqSymmetry) atier.getInfo();
         FileTypeCategory category = rootSeqSymmetry.getCategory();
+        GenomeVersion genomeVersion = aseq.getGenomeVersion(); //removed from if block in IGBF-1090
+        List<BioSeq> seql = genomeVersion.getSeqList(); //removed from if block in IGBF-1090
+        // If the selected track is an annotation (if block) or a graph track (else-if block), 
+        // then collect and save all loaded data from that data set from all chromosomes.
+        // Otherwise (else block), just save the current chromosomes data. (Not sure when this would be the case.)
         if (FileTypeCategoryUtils.isFileTypeCategoryContainer(category) && (rootSeqSymmetry instanceof TypeContainerAnnot)) {
-            GenomeVersion genomeVersion = aseq.getGenomeVersion();
-            List<BioSeq> seql = genomeVersion.getSeqList();
             for (BioSeq aseql : seql) {
                 RootSeqSymmetry rootSym = aseql.getAnnotation(((TypeContainerAnnot) atier.getInfo()).getType());
                 if (rootSym != null) {
-                    syms = new ArrayList<>();
+                    syms.clear(); //syms = new ArrayList<>();//IGBF-1090
                     ExportFileModel.collectSyms(rootSym, syms, atier.getAnnotStyle().getGlyphDepth());
                     annotationWriter.writeAnnotations(syms, aseql, "", dos);
                 }
             }
-        } else {
-            if (category.equals(FileTypeCategory.Graph)) {
-                List<List<SeqSymmetry>> myList = new ArrayList<List<SeqSymmetry>>();
-                myList.add(new ArrayList<>());
-                String selectedSym = rootSeqSymmetry.getID();
-                aseq.getGenomeVersion().getSeqList().forEach(seq -> {
-                    myList.get(0).addAll(seq.getAnnotations(Pattern.compile(".*"))
+        //This section was heavily modified for IGBF-1090 <Ivory Blakley, Jennifer Daly, Devdatta Kalkarni>
+        } else if (rootSeqSymmetry instanceof GraphSym) {
+                //reference the selected track to test for matching tracks from each chromosome
+                String selectedSym = rootSeqSymmetry.getID(); 
+                seql.forEach(aseql -> {
+                    syms.addAll(aseql.getAnnotations(Pattern.compile(".*"))//This regex allows for all tracks to be returned.
                             .stream()
-                            .filter(s -> selectedSym.equals(s.getID()))
+                            .filter(s -> selectedSym.equals(s.getID())) //only save the tracks that match the selected one
                             .collect(Collectors.toList()));
                 });
-                annotationWriter.writeAnnotations(myList.get(0), aseq, aseq.getGenomeVersion().getName(), dos);
-            } else {
+                annotationWriter.writeAnnotations(syms, aseq, genomeVersion.getName(), dos);
+        } else {
                 syms.add(rootSeqSymmetry);
                 annotationWriter.writeAnnotations(syms, aseq, "", dos);
             }
-        }
     }
+    
+    
 }

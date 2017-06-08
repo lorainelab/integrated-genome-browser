@@ -469,6 +469,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
 
     private static void writeGraphPoints(Collection<? extends SeqSymmetry> syms, BufferedWriter bw) throws IOException {
 
+        //Create multiple GraphSym objects (for multiple chromosomes)
         Iterator iterator = syms.iterator();
         while (iterator.hasNext()) {
             GraphSym graf = (GraphSym) iterator.next();
@@ -491,22 +492,23 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
      * track line as a header.
      */
     public void writeBedFormat(Collection<? extends SeqSymmetry> syms, String genome_version, OutputStream outstream) throws IOException {
+        //Create one GraphSym object from the provided Syms. (only need 1 header)
         GraphSym graf = null;
         Iterator<? extends SeqSymmetry> iter = syms.iterator();
         if (iter.hasNext()) {
             graf = (GraphSym) iter.next();
         }
-
-        if (graf != null) {
+        
+        if (graf != null) {  
             BioSeq seq = graf.getGraphSeq();
             String human_name = graf.getGraphState().getTierStyle().getTrackName();
             String gname = graf.getGraphName();
             GraphState state = graf.getGraphState();
             Color color = state.getTierStyle().getForeground();
-
             BufferedWriter bw = null;
             try {
                 bw = new BufferedWriter(new OutputStreamWriter(outstream));
+                //Write out header
                 if (genome_version != null && genome_version.length() > 0) {
                     bw.write("# genome_version = " + genome_version + '\n');
                 }
@@ -515,7 +517,8 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
                 bw.write(" visibility=full");
                 bw.write(" color=" + color.getRed() + "," + color.getGreen() + "," + color.getBlue());
                 bw.write(" viewLimits=" + Float.toString(state.getVisibleMinY()) + ":" + Float.toString(state.getVisibleMaxY()));
-                bw.write('\n');
+                bw.write('\n');               
+                //Populate file contents
                 writeGraphPoints(syms, bw);
                 bw.flush();
             } finally {
@@ -679,11 +682,13 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         }
     }
 
+    //Saves graph (.bedgraph) (.gr) files. 
+    //Modified in IGBF-1090<JDaly, DKalkarni> to be one function instead of two.
     @Override
-    public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) throws IOException {
+    public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String genome_version, OutputStream outstream) throws IOException {
 
         try {
-            writeBedFormat(syms, type, outstream);
+            writeBedFormat(syms, genome_version, outstream);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

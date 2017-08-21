@@ -442,7 +442,15 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
     private String interpretCigar(String str, int start, int end, boolean isIns,
             char D, char N, char P, char E) {
-        if (cigar == null || cigar.numCigarElements() == 0 || str == null) {
+        
+        // IGBF-1173: User reported issue that when BAM files are loaded, IGB freezes.
+        // After analysis, it is found that according to the sam/bam spec (https://samtools.github.io/hts-specs/) 
+        // '*' is the standard code for 'unavailable' in SAM plain text format. 
+        // This means that Phred quality score string was unavailable in BAM file and it contained '*' instead.
+        // This scenario arises when user creates BAM file from fasta file format. 
+        // IGB did not handle this earlier and hence exceptions were thrown for substring operation. 
+        // To fix it, we are now checking if input string is '*'. 
+        if (cigar == null || cigar.numCigarElements() == 0 || str == null || str.equals("*")) {
             return "";
         }
         start = Math.max(start, txMin);

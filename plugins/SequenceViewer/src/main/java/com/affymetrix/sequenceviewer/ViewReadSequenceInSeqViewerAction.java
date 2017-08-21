@@ -27,6 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
+/*
+*Deepti Joshi-IGBF-1139
+*Added an additional condition in the if statements in symSelectionChanged method to check if the selection contains a single sequence. If it contains multiple sequences, 
+*"View read sequence" is disabled.
+*Also changed the structure of the if conditions.
+*/
+
 @Component(name = ViewReadSequenceInSeqViewerAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, MenuBarEntryProvider.class})
 public class ViewReadSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener, MenuBarEntryProvider {
 
@@ -71,18 +78,17 @@ public class ViewReadSequenceInSeqViewerAction extends GenericAction implements 
 
     @Override
     public void symSelectionChanged(SymSelectionEvent evt) {
-        if (!evt.getSelectedGraphSyms().isEmpty() && !(evt.getSelectedGraphSyms().get(0) instanceof GraphSym)) {
-            if (evt.getSelectedGraphSyms().get(0) instanceof SymWithResidues) {
+    //  Start---Deepti Joshi IGBF-1139
+        setEnabled(false);
+        menuItem.setEnabled(false);
+        if (!evt.getSelectedGraphSyms().isEmpty() 
+            && !(evt.getSelectedGraphSyms().get(0) instanceof GraphSym)
+            && (evt.getSelectedGraphSyms().get(0) instanceof SymWithResidues)
+            && (evt.getSelectedGraphSyms().size()==1)){
                 setEnabled(true);
                 menuItem.setEnabled(true);
-            } else {
-                setEnabled(false);
-                menuItem.setEnabled(false);
-            }
-        } else {
-            setEnabled(false);
-            menuItem.setEnabled(false);
-        }
+            }  
+    //  End---Deepti Joshi IGBF-1139
         MenuBarMenuItemEvent menuItemEvent = new MenuBarMenuItemEvent(menuItem, MenuBarParentMenu.VIEW);
         menuItemEventService.getEventBus().post(menuItemEvent);
     }

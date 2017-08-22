@@ -20,6 +20,7 @@ import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.Lists;
 import org.lorainelab.igb.services.IgbService;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -35,8 +36,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import javafx.stage.FileChooser;
 import javax.swing.Action;
 import javax.swing.DropMode;
 import javax.swing.JButton;
@@ -65,6 +68,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.undo.UndoManager;
 import org.apache.commons.lang3.StringUtils;
+import org.lorainelab.igb.javafx.FileChooserUtil;
 
 /**
  * A panel for viewing and re-arranging bookmarks in a hierarchy.
@@ -306,15 +310,19 @@ public final class BookmarkManagerView {
         BookmarkList bookmark_list = new BookmarkList("Import " + createdTime);
         bookmark_list.setComment("Created Time: " + createdTime);
 
-        JFileChooser chooser = getJFileChooser(false);
-        chooser.setDialogTitle("Import");
-        chooser.setCurrentDirectory(getLoadDirectory());
-        int option = chooser.showOpenDialog(null);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            setLoadDirectory(chooser.getCurrentDirectory());
+        // IGBF-1152: Changing JavaFX swing style file chooser to native OS file chooser.
+        FileChooser.ExtensionFilter extFilter = 
+                new FileChooser.ExtensionFilter("HTML File(html, htm, xhtml)","*.html", "*.htm", "*.xhtml");
+        Optional<File> selectedFile = FileChooserUtil.build()
+                .setContext(getLoadDirectory())
+                .setTitle("Import")
+                .setFileExtensionFilters(Lists.newArrayList(extFilter))
+                .retrieveFileFromFxChooser();
+        
+        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+            setLoadDirectory(selectedFile.get().getParentFile());
             try {
-                File fil = chooser.getSelectedFile();
-                BookmarksParser.parse(bookmark_list, fil);
+                BookmarksParser.parse(bookmark_list, selectedFile.get());
                 insertImport(bookmark_list);
             } catch (IOException ex) {
                 ErrorHandler.errorPanel("Error importing bookmarks", ex, Level.SEVERE);

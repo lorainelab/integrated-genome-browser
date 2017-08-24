@@ -6,16 +6,19 @@
 package org.lorainelab.igb.plugin.manager.repos.view;
 
 import com.affymetrix.common.PreferenceUtils;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.google.common.base.Strings;
 import org.lorainelab.igb.plugin.manager.repos.PluginRepositoryList;
 import org.lorainelab.igb.preferences.model.PluginRepository;
+import org.lorainelab.igb.javafx.DirectoryChooserUtil;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.Point;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.Optional;
 import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -196,7 +199,8 @@ public class AddBundleRepositoryFrame extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void openDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDirActionPerformed
-        File f = fileChooser(DIRECTORIES_ONLY, this);
+        // IGBF-1157: Changing directory chooser window style
+        File f = dirChooser();
         if (f != null && f.isDirectory()) {
             try {
                 urlText.setText(f.toURI().toURL().toString());
@@ -250,6 +254,23 @@ public class AddBundleRepositoryFrame extends JFrame {
         file = chooser.getSelectedFile();
         // FileTracker.DATA_DIR_TRACKER.setFile(file.getParentFile());
         return file;
+    }
+       
+    protected static File dirChooser() {
+        // IGBF-1157: Changing file/directory chooser style to Native OS file chooser. 
+        FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
+        File dir = null;
+        Optional<File> selectedDir = DirectoryChooserUtil.build()
+                .setContext(fileTracker.getFile())
+                .setTitle("Choose Local Folder")
+                .retrieveDirFromFxChooser();
+        
+        if (selectedDir.isPresent()) {
+            dir = selectedDir.get();
+            fileTracker.setFile(dir.getParentFile());
+        }
+        
+        return dir;
     }
 
     private void infoPanel(final String message, final String check, final boolean def_val) {

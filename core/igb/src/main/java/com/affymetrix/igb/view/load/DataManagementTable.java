@@ -89,15 +89,23 @@ public final class DataManagementTable {
 
         for (int row = 0; row < featureSize; row++) {
             DataSet feature = ftm.getRowFeature(row);
-            ITrackStyleExtended style = ftm.getStyleFromFeature(feature);
-            JComboBox featureCB = new JComboBox(feature.getLoadChoices().toArray());
-            featureCB.setRenderer(comboRenderer);
-            featureCB.setEnabled(true);
-            featureCB.setSelectedItem(feature.getLoadStrategy());
-            DefaultCellEditor featureEditor = new DefaultCellEditor(featureCB);
-            choices.addEditorForRow(row, featureEditor);
-            ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(feature);
-            action.addEditorForRow(row, buttonEditor);
+            // Get style by row
+            ITrackStyleExtended style = ftm.getStyleFromRow(row);
+            if (feature != null) {
+                //some actions require a DataSet
+                JComboBox featureCB = new JComboBox(feature.getLoadChoices().toArray());
+                featureCB.setRenderer(comboRenderer);
+                featureCB.setEnabled(true);
+                featureCB.setSelectedItem(feature.getLoadStrategy());
+                DefaultCellEditor featureEditor = new DefaultCellEditor(featureCB);
+                choices.addEditorForRow(row, featureEditor);
+                ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(feature);
+                action.addEditorForRow(row, buttonEditor);
+            } else {
+                // Even without a DataSet, buttons should act a like buttons.
+                ButtonTableCellEditor buttonEditor = new ButtonTableCellEditor(style);
+                action.addEditorForRow(row, buttonEditor);
+            }
             JRPTextFieldTableCellRenderer trackNameFieldEditor;
             if (style != null) {
                 trackNameFieldEditor = new JRPTextFieldTableCellRenderer("LoadModeTable_trackNameFieldEditor" + row,
@@ -146,6 +154,9 @@ public final class DataManagementTable {
                 boolean hasFocus, int row, int column) {
             DataManagementTableModel ftm = (DataManagementTableModel) table.getModel();
             DataSet feature = ftm.getRowFeature(row);
+            if (feature == null) { //allow for the possibility that feature is null <Ivory Blakley> IGBF-201
+                return null;
+            }
             if (value != null) { // Fixes null pointer exception caused by clicking cell after load mode has been set to whole genome
                 if (value.equals(gtextField.getText())) {
                     return gtextField;
@@ -219,17 +230,20 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 
     @Override
     public TableCellRenderer getCellRenderer(int row, int column) {
+        // Allow for the possibility that feature is null <Ivory Blakley> IGBF-201
+        // Some buttons should be shown as inactive if there is no feature.
         DataManagementTableModel ftm = (DataManagementTableModel) getModel();
         DataSet feature = ftm.getRowFeature(row);
-        ITrackStyleExtended style = ftm.getStyleFromFeature(feature);
-        if (feature == null) {
-            return super.getCellRenderer(row, column);
-        }
+        ITrackStyleExtended style = ftm.getStyleFromRow(row);
 
         if (column == DataManagementTableModel.REFRESH_FEATURE_COLUMN) {
 //			if (!feature.isPrimary()) {
 //				return new LabelTableCellRenderer(null, false);
 //			}
+            if (feature == null) {
+                //for joined graphs, the refresh button is inactive
+                return new LabelTableCellRenderer(DataManagementTable.refresh_icon, false);
+            }
             boolean enabled = (feature.getLoadStrategy() != LoadStrategy.NO_LOAD
                     && feature.getLoadStrategy() != LoadStrategy.GENOME
                     && smv.getAnnotatedSeq() != null
@@ -239,15 +253,11 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 //			if (!feature.isPrimary()) {
 //				return new LabelTableCellRenderer(null, false);
 //			}
-            return new DataManagementTable.ColumnRenderer();
+            return new DataManagementTable.ColumnRenderer();//This function give acceptable results for the null feature cases.
         } else if (column == DataManagementTableModel.TRACK_NAME_COLUMN) {
-            if (style != null) {
-//				if(style.getFileTypeCategory() == null){
-//					return new ErrorNotificationCellRenderer(feature.getVirtualFeature().featureName,
-//						BUNDLE.getString("igb_track"), DataManagementTable.igb_icon);
-//				}
-                return new JRPTextFieldTableCellRenderer(feature.getDataSetName(), style.getTrackName(), style.getForeground(), style.getBackground());
-            } else {
+            if (style != null) { //get info from style only
+                return new JRPTextFieldTableCellRenderer(style.getUrl(), style.getTrackName(), style.getForeground(), style.getBackground());
+            } else { //get info from feature only
                 return new JRPTextFieldTableCellRenderer(feature.getDataSetName(), feature.getDataSetName(), Color.BLACK, Color.WHITE);
             }
 
@@ -255,20 +265,17 @@ class JTableX extends JRPStyledTable implements TrackStylePropertyListener {
 //			if (!feature.isPrimary()) {
 //				return new LabelTableCellRenderer(null, false);
 //			}
+            if (feature == null) {
+                return new LabelTableCellRenderer(DataManagementTable.delete_icon, false);
+            }
             return new LabelTableCellRenderer(DataManagementTable.delete_icon, true);
         } else if (column == DataManagementTableModel.HIDE_FEATURE_COLUMN) {
-            currentTiers = smv.getSeqMap().getTiers();
-            for (TierGlyph tier : currentTiers) {
-                if (style != null && tier.getAnnotStyle().getMethodName() != null
-                        && tier.getAnnotStyle().getMethodName().equalsIgnoreCase(
-                                style.getMethodName()))//need changed
-                {
-                    if (tier.getAnnotStyle().getShow()) {
-                        return new LabelTableCellRenderer(DataManagementTable.visible_icon, true);
-                    } else {
-                        return new LabelTableCellRenderer(DataManagementTable.invisible_icon, true);
-                    }
-                }
+            // rather than loop through all of the tiers to find the one that matches the current style, just to extract the style,
+            // just use the current style
+            if (style.getShow()) {
+                return new LabelTableCellRenderer(DataManagementTable.visible_icon, true);
+            } else {
+                return new LabelTableCellRenderer(DataManagementTable.invisible_icon, true);
             }
         }
         return super.getCellRenderer(row, column);

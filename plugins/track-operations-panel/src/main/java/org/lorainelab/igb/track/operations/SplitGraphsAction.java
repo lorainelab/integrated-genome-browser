@@ -31,6 +31,8 @@ public class SplitGraphsAction extends GenericAction {
         }
         //igbService.getSeqMapView().postSelections();
         updateDisplay();
+        //update the Data Management Table <Ivory Blakley> IGBF-201
+        igbService.refreshDataManagementView();  
     }
 
     private void updateDisplay() {

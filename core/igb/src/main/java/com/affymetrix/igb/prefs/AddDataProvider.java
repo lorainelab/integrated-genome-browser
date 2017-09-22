@@ -24,8 +24,6 @@ import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeE
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.google.common.base.Strings;
-import java.awt.Component;
-import java.awt.HeadlessException;
 import java.awt.Point;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -34,12 +32,11 @@ import java.net.URLDecoder;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.lorainelab.igb.javafx.DirectoryChooserUtil;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
 
@@ -258,7 +255,9 @@ public class AddDataProvider extends JFrame {
 
 	private void openDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDirActionPerformed
 
-            File f = fileChooser(DIRECTORIES_ONLY, this);
+            // <Ashwini Kadam> IGBF-1140
+            File f = dirChooser();
+            
             if (f != null && f.isDirectory()) {
                 try {
                     urlText.setText(URLDecoder.decode(f.toURI().toURL().toString(), "UTF-8"));
@@ -379,21 +378,24 @@ public class AddDataProvider extends JFrame {
     private static javax.swing.JTextField urlText;
     // End of variables declaration//GEN-END:variables
 
-    protected static File fileChooser(int mode, Component parent) throws HeadlessException {
-        JFileChooser chooser = new JFileChooser();
-        File file;
-        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        chooser.setFileSelectionMode(mode);
-        chooser.setDialogTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"));
-        chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
-        chooser.rescanCurrentDirectory();
-
-        if (chooser.showOpenDialog(parent) != JFileChooser.APPROVE_OPTION) {
-            return null;
+    // <Ashwini Kadam> IGBF-1140
+    // JFileChooser displays JavaFX Swing version of file chooser. 
+    // To diplsay operating system's native file chooser, I am using class FileChooser.
+    // DirectoryChooserUtil (based on FileChooserUtil) opens and allows user to
+    // choose only directory (and not file)
+    protected static File dirChooser() {
+        FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
+        File dir = null;
+        Optional<File> selectedDir = DirectoryChooserUtil.build()
+                .setContext(fileTracker.getFile())
+                .setTitle("Choose Local Folder")
+                .retrieveDirFromFxChooser();
+        
+        if (selectedDir.isPresent()) {
+            dir = selectedDir.get();
+            fileTracker.setFile(dir.getParentFile());
         }
-        file = chooser.getSelectedFile();
-        FileTracker.DATA_DIR_TRACKER.setFile(file.getParentFile());
-        return file;
+        
+        return dir;
     }
-
 }

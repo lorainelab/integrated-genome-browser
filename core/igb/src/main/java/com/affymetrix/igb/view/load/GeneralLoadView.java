@@ -445,11 +445,12 @@ public final class GeneralLoadView {
         });
     }
 
-    private static void refreshDataManagementTable(final List<DataSet> visibleFeatures) {
+    // added "synchronized" to resolve errors encountered after edits for issue IGBF-201 <Ivory Blakley>
+    private static synchronized void refreshDataManagementTable(final List<DataSet> visibleFeatures) {
 
         ThreadUtils.runOnEventQueue(() -> {
             table.stopCellEditing();
-            tableModel.generateFeature2StyleReference(visibleFeatures);
+            tableModel.refreshStyleReferences(visibleFeatures);
             DataManagementTable.setComboBoxEditors(table, !GeneralLoadView.IsGenomeSequence());
         });
     }
@@ -470,7 +471,7 @@ public final class GeneralLoadView {
         }
         final int finalMaxFeatureNameLength = maxFeatureNameLength;	// necessary for threading
         table.stopCellEditing();
-        tableModel.generateFeature2StyleReference(visibleFeatures);
+        tableModel.refreshStyleReferences(visibleFeatures);
 
         table.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setPreferredWidth(20);
         table.getColumnModel().getColumn(DataManagementTableModel.REFRESH_FEATURE_COLUMN).setMinWidth(20);

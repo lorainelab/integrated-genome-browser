@@ -57,7 +57,7 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         BED4, VARSTEP, FIXEDSTEP
     }
 
-    private static final Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace 
+    private static final Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
     private static final boolean ensure_unique_id = true;
 
     private static final List<LoadStrategy> strategyList = new ArrayList<>();
@@ -467,12 +467,19 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         return grafs;
     }
 
-    private static void writeGraphPoints(GraphSym graf, BufferedWriter bw, String seq_id) throws IOException {
-        int total_points = graf.getPointCount();
-        for (int i = 0; i < total_points; i++) {
-            int x2 = graf.getGraphXCoord(i) + graf.getGraphWidthCoord(i);
-            bw.write("" + seq_id + "\t" + graf.getGraphXCoord(i) + "\t" + x2
-                   + "\t" + graf.getGraphYCoord(i) + '\n');
+    private static void writeGraphPoints(Collection<? extends SeqSymmetry> syms, BufferedWriter bw) throws IOException {
+
+        //Create multiple GraphSym objects (for multiple chromosomes)
+        Iterator iterator = syms.iterator();
+        while (iterator.hasNext()) {
+            GraphSym graf = (GraphSym) iterator.next();
+            int total_points = graf.getPointCount();
+            for (int i = 0; i < total_points; i++) {
+                int x2 = graf.getGraphXCoord(i) + graf.getGraphWidthCoord(i);
+                String seq_id = (graf.getGraphSeq() == null ? "." : graf.getGraphSeq().getId());
+                bw.write(seq_id + "\t" + graf.getGraphXCoord(i) + "\t" + x2
+                        + "\t" + graf.getGraphYCoord(i) + '\n');
+            }
         }
     }
 
@@ -484,32 +491,39 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
      * Writes the given GraphIntervalSym in wiggle-BED format. Also writes a
      * track line as a header.
      */
-    public void writeBedFormat(GraphSym graf, String genome_version, OutputStream outstream) throws IOException {
-        BioSeq seq = graf.getGraphSeq();
-        String seq_id = (seq == null ? "." : seq.getId());
-        String human_name = graf.getGraphState().getTierStyle().getTrackName();
-        String gname = graf.getGraphName();
-        GraphState state = graf.getGraphState();
-        Color color = state.getTierStyle().getForeground();
-        //GenomeVersion genomeVersion = seq.getGenomeVersion(); 
-
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new OutputStreamWriter(outstream));
-            if (genome_version != null && genome_version.length() > 0) {
-                bw.write("# genome_version = " + genome_version + '\n'); //seq.getGenomeVersion().getName()
+    public void writeBedFormat(Collection<? extends SeqSymmetry> syms, String genome_version, OutputStream outstream) throws IOException {
+        //Create one GraphSym object from the provided Syms. (only need 1 header)
+        GraphSym graf = null;
+        Iterator<? extends SeqSymmetry> iter = syms.iterator();
+        if (iter.hasNext()) {
+            graf = (GraphSym) iter.next();
+        }
+        
+        if (graf != null) {  
+            BioSeq seq = graf.getGraphSeq();
+            String human_name = graf.getGraphState().getTierStyle().getTrackName();
+            String gname = graf.getGraphName();
+            GraphState state = graf.getGraphState();
+            Color color = state.getTierStyle().getForeground();
+            BufferedWriter bw = null;
+            try {
+                bw = new BufferedWriter(new OutputStreamWriter(outstream));
+                //Write out header
+                if (genome_version != null && genome_version.length() > 0) {
+                    bw.write("# genome_version = " + genome_version + '\n');
+                }
+                bw.write("track type=" + getTrackType() + " name=\"" + gname + "\"");
+                bw.write(" description=\"" + human_name + "\"");
+                bw.write(" visibility=full");
+                bw.write(" color=" + color.getRed() + "," + color.getGreen() + "," + color.getBlue());
+                bw.write(" viewLimits=" + Float.toString(state.getVisibleMinY()) + ":" + Float.toString(state.getVisibleMaxY()));
+                bw.write('\n');               
+                //Populate file contents
+                writeGraphPoints(syms, bw);
+                bw.flush();
+            } finally {
+                GeneralUtils.safeClose(bw);
             }
-            bw.write("track type=" + getTrackType() + " name=\"" + gname + "\"");
-            bw.write(" description=\"" + human_name + "\"");
-            bw.write(" visibility=full");
-            bw.write(" color=" + color.getRed() + "," + color.getGreen() + "," + color.getBlue());
-            bw.write(" viewLimits=" + Float.toString(state.getVisibleMinY()) + ":" + Float.toString(state.getVisibleMaxY()));
-            bw.write("");
-            bw.write('\n');
-            writeGraphPoints(graf, bw, seq_id);
-            bw.flush();
-        } finally {
-            GeneralUtils.safeClose(bw);
         }
     }
 
@@ -668,28 +682,20 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
         }
     }
 
+    //Saves graph (.bedgraph) (.gr) files. 
+    //Modified in IGBF-1090<JDaly, DKalkarni> to be one function instead of two.
     @Override
-    public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) throws IOException {
-        return writeAnnotations(syms, seq, outstream);
-    }
+    public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String genome_version, OutputStream outstream) throws IOException {
 
-    public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, OutputStream ostr) throws IOException {
         try {
-
-            Iterator<? extends SeqSymmetry> iter = syms.iterator();
-            for (GraphSym graf; iter.hasNext();) {
-                graf = (GraphSym) iter.next();
-                writeBedFormat(graf, graf.getGraphSeq().getGenomeVersion().getName() , ostr); 
-            }
-
+            writeBedFormat(syms, genome_version, outstream);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
-
-        return false;
     }
-
+    
     @Override
     public SeqSpan getSpan(String line) {
         return null; // not used yet
@@ -700,7 +706,8 @@ public class Wiggle extends SymLoader implements AnnotationWriter, LineProcessor
     }
 
     @Override
-    public boolean isMultiThreadOK() {
+        public boolean isMultiThreadOK() {
         return true;
     }
+
 }

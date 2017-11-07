@@ -4,11 +4,16 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.GeneralUtils; 
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -23,6 +28,7 @@ import static javax.swing.JFileChooser.APPROVE_OPTION;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
@@ -84,14 +90,35 @@ public class SynonymsControlPanel {
         final JRPTextField csynonymFile = new JRPTextField("DataLoadPrefsView_csynonymFile", PreferenceUtils.getLocationsNode().get(PREF_CSYN_FILE_URL, ""));
         final JRPButton vopenFile = new JRPButton("DataLoadPrefsView_vopenFile", "\u2026");
         final JRPButton copenFile = new JRPButton("DataLoadPrefsView_copenFile", "\u2026");
-
+        
         final ActionListener vlistener = e -> {
             if (e.getSource() == vopenFile) {
                 File file = fileChooser(FILES_AND_DIRECTORIES);
                 try {
                     if (file != null) {
                         vsynonymFile.setText(file.getCanonicalPath());
-
+                        
+                        // IGBF-1187: Display messgae to restart IGB when version synonym file is selected
+                        // and user has already selected spacies. If user sets synonym file
+                        // and then selectes spacies, then there is no need to restart IGB.
+                        String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
+                        GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
+                        if (speciesName!= null && loadGroup!= null) {
+                            String[] options = {"Quit IGB", "No, don't quit"};
+                            if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+                            PreferencesPanel.getSingleton(), 
+                            "To start using your Personal Synonyms, quit and re-start IGB. \n" +
+                            "Do you want to quit now?", "IGB Restart",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                            options, options[1])) {
+                                try {
+                                    ((IGB) IGB.getInstance()).defaultCloseOperations();
+                                    System.exit(0);
+                                } catch (Exception ex) {
+                                    com.affymetrix.genoviz.util.ErrorHandler.errorPanel("ERROR", "Error clearing preferences", ex);
+                                }
+                            }
+                        }
                     }
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
@@ -113,7 +140,28 @@ public class SynonymsControlPanel {
                 try {
                     if (file != null) {
                         csynonymFile.setText(file.getCanonicalPath());
-
+                        
+                        // IGBF-1187: Display messgae to restart IGB when chromosome file is selected
+                        // and user has already selected spacies. If user sets chromosome file
+                        // and then selectes spacies, then there is no need to restart IGB.
+                        String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
+                        GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
+                        if (speciesName!= null && loadGroup!= null) {
+                            String[] options = {"Quit IGB", "No, don't quit"};
+                            if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+                              PreferencesPanel.getSingleton(), 
+                              "To start using your Personal Synonyms, quit and re-start IGB. \n" +
+                              "Do you want to quit now?", "IGB Restart",
+                              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                              options, options[1])) {
+                                try {
+                                    ((IGB) IGB.getInstance()).defaultCloseOperations();
+                                    System.exit(0);
+                                } catch (Exception ex) {
+                                    com.affymetrix.genoviz.util.ErrorHandler.errorPanel("ERROR", "Error clearing preferences", ex);
+                                }
+                            }
+                        }
                     }
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);

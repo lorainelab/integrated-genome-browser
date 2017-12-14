@@ -79,14 +79,13 @@ Loxodonta africana	African bush elephant	L_africana	loxAfr	Loxodonta_africana
 Lotus japonicus	a model legume	L_japonicus
 Macaca mulatta	Rhesus monkey	M_mulatta	rheMac	Macaca_mulatta
 Macropus eugenii	Tammar wallaby	M_eugenii		Macropus_eugenii	macEug
-Malus domestica	Apple	M_domestica
+Malus domestica Borkh	Apple	M_domestica_Borkh
 Manihot esculenta	Cassava	M_esculenta
 Medicago truncatula	Barrel medic	M_truncatula	
 Meleagris gallopavo	Turkey		M_gallopavo	Meleagris_gallopavo	melGal
 Melopsittacus undulatus	Budgie	M_undulatus	melUnd
 Microcebus murinus	Gray mouse lemur	M_murinus	micMur	Microcebus_murinus
 Mimulus guttatus	Monkey flower	M_guttatus
-Monodelphis domestica	Opossum	M_domestica	monDom	Monodelphis_domestica
 Monosiga brevicollis	Choanoflagellates	Monosiga_brevicollis
 Mus musculus	House mouse	M_musculus	mm	Mus_musculus
 Mustela putorius furo	Domesticated ferret	M_putorius	musFur

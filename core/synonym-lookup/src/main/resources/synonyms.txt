@@ -124,9 +124,7 @@ L_africana_Jul_2009	loxAfr3	Loxodonta_africana.loxAfr3.reference
 L_africana_Jul_2008	loxAfr2
 L_africana_May_2005	loxAfr1
 L_chalumnae_Aug_2011	latCha1
-M_domestica_Oct_2006	monDom5	Monodelphus_domestica.BROAD05.reference	Monodelphis_domestica.BROADO5.reference
-M_domestica_Jan_2006	monDom4
-M_domestica_Oct_2004	monDom1
+M_domestic_Borkh_Jun_2017	M_domestica_Borkh
 M_eugenii_Sep_2009	macEug2
 M_gallopavo_Dec_2009	melGal1
 M_murinus_Jun_2003	micMur1	Microcebus_murinus.micMur1.reference

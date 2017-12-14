@@ -7,6 +7,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.affymetrix.igb.swing.jide.StyledJTable;
+import com.google.common.collect.Lists;
 import com.jidesoft.grid.JideTable;
 import org.lorainelab.igb.preferences.weblink.WebLinkUtils;
 import org.lorainelab.igb.preferences.weblink.model.WebLink;
@@ -22,11 +23,13 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javafx.stage.FileChooser;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -40,6 +43,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import org.lorainelab.igb.javafx.FileChooserUtil;
 
 /**
  * All the function codes for web links panel are implemented in this class.
@@ -54,6 +58,7 @@ public final class WebLinksView {
     public WebLinksTableModel serverModel;
     public WebLinksTableModel localModel;
     private static JFileChooser static_chooser = null;
+    private static FileChooserUtil file_chooser = null; 
     public static final String NAME = "Name";
     public static final String URL = "URL Pattern";
     public static final String REGEX = "Regular Expression";
@@ -337,17 +342,28 @@ public final class WebLinksView {
         return static_chooser;
     }
 
+    private static FileChooserUtil getFileChooser() {
+        if (file_chooser == null) {
+            file_chooser =  FileChooserUtil.build();
+        }
+        file_chooser.setContext(FileTracker.DATA_DIR_TRACKER.getFile());
+        return file_chooser;
+    }
+    
     /**
      * Tracks to import weblinks.
      */
     public void importWebLinks() {
-        JFileChooser chooser = getJFileChooser();
-        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
-        int option = chooser.showOpenDialog(frame);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-            File fil = chooser.getSelectedFile();
+        // IGBF-1183: Change 'Tools->Configure Web Links->Import' file chooser window to OS native file chooser window style
+        FileChooserUtil chooser = getFileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("JSON file","*.json, *.JSON");
+        Optional<File> selectedFile = chooser.setTitle("Import")
+                .setFileExtensionFilters(Lists.newArrayList(extFilter))
+                .retrieveFileFromFxChooser();
+       
+        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+            FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
+            File fil = selectedFile.get();
             try {
                 WebLinkUtils.importWebLinks(fil);
             } catch (FileNotFoundException fe) {
@@ -386,7 +402,7 @@ public final class WebLinksView {
             } catch (Exception ex) {
                 ErrorHandler.errorPanel("Error exporting web links", ex, Level.SEVERE);
             }
-        }
+        } 
         FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
     }
 

@@ -5,7 +5,6 @@ C_porcellus.png
 E_caballus.png
 F_catus.png
 L_africana.png
-M_domestica.png
 O_aries.png
 P_troglodytes.png
 T_rubripes.png

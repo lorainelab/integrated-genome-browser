@@ -4,12 +4,13 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
-import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -25,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
-import javax.swing.JFileChooser;
+import javafx.stage.FileChooser;
+import org.lorainelab.igb.javafx.FileChooserUtil;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
@@ -85,12 +87,22 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
     }
 
     private void showJFileChooser(String defaultFileName) {
-        JFileChooser chooser = GeneralUtils.getJFileChooser();
-        File sessionFile = new File(System.getProperty("user.home") + "/" + defaultFileName);
-        chooser.setSelectedFile(sessionFile);
-        int option = chooser.showSaveDialog(igbService.getApplicationFrame().getContentPane());
-        if (option == JFileChooser.APPROVE_OPTION) {
-            saveSession(chooser.getSelectedFile());
+        // IGBF-1151: JFileChooser displays JavaFX style dialog. 
+        // Instead we want OS Native file choooser (Windows and Linux). 
+        // Thus we are using FileChooser for opening a dialog.
+        FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML File", "xml"); 
+        fileTracker.setFile(new File(System.getProperty("user.home")));
+        java.util.Optional<File> selectedFile = FileChooserUtil.build()
+                    .setContext(fileTracker.getFile())
+                    .setDefaultFileName(defaultFileName)
+                    .setTitle("Save Session")
+                    .setFileExtensionFilters(Lists.newArrayList(extFilter))
+                    .saveFilesFromFxChooser();
+        
+        if (selectedFile.isPresent()) {
+            fileTracker.setFile(selectedFile.get().getParentFile());
+            saveSession(selectedFile.get());
         }
     }
 

@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
  * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
@@ -13,23 +13,21 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.ThreadUtils;
-import com.affymetrix.genometry.util.UniFileFilter;
 import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
-import com.affymetrix.igb.swing.JRPFileChooser;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.swing.script.ScriptProcessorHolder;
+import com.google.common.collect.Lists;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ListIterator;
+import java.util.Optional;
 import java.util.logging.Level;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
+import javafx.stage.FileChooser;
 import javax.swing.SwingWorker;
+import org.lorainelab.igb.javafx.FileChooserUtil;
 
 public final class RunScriptAction extends GenericAction {
 
@@ -43,73 +41,53 @@ public final class RunScriptAction extends GenericAction {
     public static RunScriptAction getAction() {
         return ACTION;
     }
-    private final JFrame gviewerFrame;
-    private final FileTracker load_dir_tracker;
-    private JRPFileChooser chooser = null;
-
+    
     private RunScriptAction() {
         super(BUNDLE.getString("runScript"), null,
                 "16x16/actions/run_script.png",
                 "22x22/actions/run_script.png",
                 KeyEvent.VK_R, null, true);
-
-        this.gviewerFrame = IGB.getInstance().getFrame();
-        load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        loadFile(load_dir_tracker, gviewerFrame);
+        loadFile();
     }
-
-    private JRPFileChooser getFileChooser(String id) {
-        chooser = new JRPFileChooser(id);
-        chooser.setMultiSelectionEnabled(false);
+    
+    // IGBF-1182: Change file chooser UI to OS native style for 'Run Script' command. 
+    protected static File getSelectedFile() {
+        // IGBF-1182: Currently we support only .igb files 
+        // (hence for loop is not required), but if in future we start
+        // supporting other file types, this structure would be useful.
         java.util.List<String> var = ScriptProcessorHolder.getInstance().getScriptExtensions();
-        chooser.addChoosableFileFilter(new UniFileFilter(
-                var,
-                "Script File"));
-
-        Set<String> all_known_endings = new HashSet<>();
-        for (javax.swing.filechooser.FileFilter filter : chooser.getChoosableFileFilters()) {
-            if (filter instanceof UniFileFilter) {
-                UniFileFilter uff = (UniFileFilter) filter;
-                uff.addCompressionEndings(GeneralUtils.compression_endings);
-                all_known_endings.addAll(uff.getExtensions());
-            }
+        for (final ListIterator<String> i = var.listIterator(); i.hasNext();) {
+            final String ext = i.next();
+            i.set("*." + ext);
         }
-        UniFileFilter all_known_types = new UniFileFilter(
-                all_known_endings,
-                "Known Types");
-        all_known_types.setExtensionListInDescription(false);
-        all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
-        chooser.addChoosableFileFilter(all_known_types);
-        chooser.setFileFilter(all_known_types);
-        return chooser;
+        
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Script File(.igb)",var);
+        Optional<File> selectedFile = FileChooserUtil.build()
+                .setContext(FileTracker.DATA_DIR_TRACKER.getFile())
+                .setTitle("Choose File")
+                .setFileExtensionFilters(Lists.newArrayList(extFilter))
+                .retrieveFileFromFxChooser();
+        
+        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+            FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
+            return selectedFile.get();
+        }
+        return null;
     }
-
+    
     /**
      * Load a file into the global singleton genometry model.
      */
-    private void loadFile(final FileTracker load_dir_tracker, final JFrame gviewerFrame) {
-        JRPFileChooser fileChooser = getFileChooser("runScript");
-        File currDir = load_dir_tracker.getFile();
-        if (currDir == null) {
-            currDir = new File(System.getProperty("user.home"));
-        }
-        fileChooser.setCurrentDirectory(currDir);
-        fileChooser.rescanCurrentDirectory();
-
-        int option = fileChooser.showOpenDialog(gviewerFrame);
-
-        if (option != JFileChooser.APPROVE_OPTION) {
+    private void loadFile() {
+        final File file = getSelectedFile();
+        if (file == null)
             return;
-        }
-
-        load_dir_tracker.setFile(fileChooser.getCurrentDirectory());
-
-        final File file = fileChooser.getSelectedFile();
+        
         if (ScriptManager.getInstance().isScript(file.getAbsolutePath())) {
             runScript(file.getAbsolutePath());
         } else {
@@ -129,7 +107,7 @@ public final class RunScriptAction extends GenericAction {
                     protected Void doInBackground() {
                         ScriptManager.getInstance().runScript(filePath);
                         return null;
-                    }
+                    } 
 
                     @Override
                     protected void done() {

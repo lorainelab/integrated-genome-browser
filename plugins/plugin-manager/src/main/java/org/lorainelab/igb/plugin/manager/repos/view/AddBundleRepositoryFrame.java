@@ -262,7 +262,7 @@ public class AddBundleRepositoryFrame extends JFrame {
         File dir = null;
         Optional<File> selectedDir = DirectoryChooserUtil.build()
                 .setContext(fileTracker.getFile())
-                .setTitle("Choose Local Folder")
+                .setTitle("Choose local folder")
                 .retrieveDirFromFxChooser();
         
         if (selectedDir.isPresent()) {

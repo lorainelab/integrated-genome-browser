@@ -1,6 +1,5 @@
 package com.affymetrix.igb.swing.script;
 
-import com.affymetrix.igb.swing.JavascriptScriptProcessor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,16 +8,16 @@ import java.util.Map;
 
 public class ScriptProcessorHolder {
 
-    private static final ScriptProcessorHolder instance = new ScriptProcessorHolder();
-    private Map<String, ScriptProcessor> scriptProcessors = new HashMap<>();
+    private static final ScriptProcessorHolder INSTANCE = new ScriptProcessorHolder();
+    private final Map<String, ScriptProcessor> scriptProcessors = new HashMap<>();
 
     private ScriptProcessorHolder() {
         super();
-        addScriptProcessor(new JavascriptScriptProcessor()); // guaranteed to be available
+        // IGBF-1182: We don't support javascript file to run a script(Tools->Script->Run Script). 
     }
 
     public static ScriptProcessorHolder getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public void addScriptProcessor(ScriptProcessor scriptProcessor) {

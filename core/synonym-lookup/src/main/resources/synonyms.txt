@@ -216,11 +216,12 @@ T_syrichta_Aug_2008	tarSyr1	Tarsius_syrichta.tarSyr1.reference
 V_pacos_Jul_2008	vicPac1	Vicugna_pacos.vicPac1.reference
 X_tropicalis_Nov_2009	xenTro3
 X_tropicalis_Aug_2005	xenTro2	Xenopus_tropicalis.JGI4.1.reference
+Z_mays_B73_Mar_2010	Z_mays_B73
 X_tropicalis_Oct_2004	xenTro1	Xenopus_tropicalis.JGI3.0.reference
 Y_lipolytica_CLIB122_Jul_2004	Yarrowia_lipolytica_CLIB122	Y_lipolytica_CLIB122 
 Y_lipolytica_PO1f_May_2014	Yarrowia_lipolytica_PO1f	Y_lipolytica_PO1f 
 Y_lipolytica_WSH-Z06_Mar_2014	Yarrowia_lipolytica_WSH-Z06	Y_lipolytica_WSH-Z06
-L_passim_Apr_2014	C_mellificae_Apr_2014	Crithidia_mellificae	C_mellificae
+
 
 
 

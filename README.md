@@ -11,7 +11,7 @@ See:
 * [BioViz Web site](http://www.bioviz.org) with platform-specific installers
 * Searchable on-line [User's Guide](https://wiki.transvar.org/display/igbman/Home)
 * [Developers Guide](https://wiki.transvar.org/display/igbdevelopers/Home) explains IGB development and IGB Apps
-* IGB programming [on-line class] (https://canvas.instructure.com/courses/1164217)
+* IGB programming [on-line class](https://canvas.instructure.com/courses/1164217)
 * [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg) with video tutorials and demos
 * [IGB Jira Issue Tracker site](http://jira.transvar.org) describes development plans
 * Article describing [Integrated Genome Browser: Visual analytics platform for genomics](http://bioinformatics.oxfordjournals.org/content/early/2016/04/04/bioinformatics.btw069.long) 

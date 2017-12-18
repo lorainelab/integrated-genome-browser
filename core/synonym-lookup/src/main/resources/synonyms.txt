@@ -84,7 +84,7 @@ D_yakuba_Nov_2005	droYak2
 E_virus_Jun_2014	eboVir
 E_caballus_Jan_2007	equCab1
 E_caballus_Sep_2007	equCab2	Equus_caballus.EquCab2.reference
-E_coli_K12-MG1655_Jan_2012	E_coli_K12_Jan_2012	E. coli
+E_coli_K12-MG1655_Jan_2012	E_coli_K12_Jan_2012	E. coli	eschColi_K12
 E_europaeus_Jun_2006	eriEur1
 E_telfairi_Jul_2005	echTel1
 F_catus_Mar_2006	felCat3
@@ -124,6 +124,8 @@ L_africana_Jul_2009	loxAfr3	Loxodonta_africana.loxAfr3.reference
 L_africana_Jul_2008	loxAfr2
 L_africana_May_2005	loxAfr1
 L_chalumnae_Aug_2011	latCha1
+L_passim_Apr_2014	C_mellificae_Apr_2014	Crithidia_mellificae	C_mellificae
+M_acuminata_DH_Pahang_Jan_2016	M_acuminata_DH_Pahang
 M_domestic_Borkh_Jun_2017	M_domestica_Borkh
 M_eugenii_Sep_2009	macEug2
 M_gallopavo_Dec_2009	melGal1
@@ -131,6 +133,8 @@ M_murinus_Jun_2003	micMur1	Microcebus_murinus.micMur1.reference
 M_mulatta_Jan_2006	Rhesus_Jan_2006	Macaque_Jan_2006	Rhesus_macaque_Jan_2006	rheMac2	Baylor Mmul_051212 v.1.0	Macaca_mulatta.MMUL_1.reference
 M_musculus_Dec_2011	mm10	GRCm38
 M_musculus_Jul_2007	Mm:NCBIv37	Mm:NCBI37	mm9
+M_musculus_Mar_2006	Mouse_Mar_2006 
+M-musculus_Feb_2006	mm8 
 M_musculus_Feb_2006	Mm:NCBIv36	Mm:NCBI36	mm8
 M_musculus_Aug_2005	http://www.ncbi.nlm.nih.gov/genome/M_musculus/35.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/35.1/
 M_musculus_Aug_2005	Mouse_Aug_2005	mm7	Mm:NCBIv35	Mm:NCBI35
@@ -213,3 +217,14 @@ V_pacos_Jul_2008	vicPac1	Vicugna_pacos.vicPac1.reference
 X_tropicalis_Nov_2009	xenTro3
 X_tropicalis_Aug_2005	xenTro2	Xenopus_tropicalis.JGI4.1.reference
 X_tropicalis_Oct_2004	xenTro1	Xenopus_tropicalis.JGI3.0.reference
+Y_lipolytica_CLIB122_Jul_2004	Yarrowia_lipolytica_CLIB122	Y_lipolytica_CLIB122 
+Y_lipolytica_PO1f_May_2014	Yarrowia_lipolytica_PO1f	Y_lipolytica_PO1f 
+Y_lipolytica_WSH-Z06_Mar_2014	Yarrowia_lipolytica_WSH-Z06	Y_lipolytica_WSH-Z06
+L_passim_Apr_2014	C_mellificae_Apr_2014	Crithidia_mellificae	C_mellificae
+Y_lipolytica_CLIB122_Jul_2004	Yarrowia_lipolytica_CLIB122	Y_lipolytica_CLIB122
+Y_lipolytica_PO1f_May_2014	Yarrowia_lipolytica_PO1f	Y_lipolytica_PO1f
+Y_lipolytica_WSH-Z06_Mar_2014	Yarrowia_lipolytica_WSH-Z06	Y_lipolytica_WSH-Z06
+M_musculus_Mar_2006	Mouse_Mar_2006
+M-musculus_Feb_2006	mm8
+M_acuminata_DH_Pahang_Jan_2016	M_acuminata_DH_Pahang
+E_coli_K12-MG1655_Jan_2012	E_coli_K12_Jan_2012	E. coli	eschColi_K12

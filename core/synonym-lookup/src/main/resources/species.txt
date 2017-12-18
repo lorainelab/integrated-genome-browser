@@ -160,4 +160,10 @@ Xenopus laevis	African clawed frog	X_laevis
 Xenopus tropicalis	Pipid frog	X_tropicalis	xenTro	Xenopus_tropicalis
 Yersinia pestis	Bubonic plague pathogen	Y_pestis
 Yersinia pseudotuberculosis	Y. pseudotuberculosis	Y_pseudotuberculosis
-Zea mays B73	Maize B73	Z_mays
+Zea mays B73	Maize B73	Z_maysLotmaria passim	L_passim SF	L_passim
+Yarrowia lipolytica CLIB122	CLIB122	Y_lipolytica_CLIB
+Yarrowia lipolytica PO1f	PO1f	Y_lipolytica_PO
+Yarrowia lipolytica WSH-Z06	WSHZ06	Y_lipolytica_WSH
+Camelina sativa DH55	False flax	C_sativa_DH55
+Musa acuminata DH Pahang	banana	M_acuminata_DH_Pahang
+

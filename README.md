@@ -32,7 +32,6 @@ Ex)
 ```
 git clone https://bitbucket.org/lorainelab/integrated-genome-browser
 cd integrated-genome-browser
-git checkout release_candidate
 mvn clean install -DskipTests=true
 run_igb.sh
 ```
@@ -42,14 +41,18 @@ The preceding commands:
 * Create IGB executable igb_exe.jar, used by the run scripts to run IGB. Contains all dependencies required to run IGB.
 * Copy IGB jar files (artifacts) to your local maven cache, useful you are developing IGB Apps.
 
-IGB and IGB Apps use [semantic versioning](http://semver.org/). Different IGB versions can co-exist in your local maven cache.
+IGB and IGB Apps use [semantic versioning](http://semver.org/). 
+
+Note that IGB runs as modular OSGi bundles within an OSGi container. When IGB launches, the OSGi container may 
+load these bundles to a local bundle cache directory named for the IGB version. To ensure that only the newest,
+most recently built code is used, delete the bundle cache directory for the version you want to run. See .igb
+in your user home directory. 
 
 ***
 
 # To get help
 
-* Post to the [Biostars question and answer site](https://www.biostars.org/p/new/post/?tag_val=igb")
-* Visit the [Bioviz help page](http://bioviz.org/igb/help.html)
+Visit the [Bioviz help page](http://bioviz.org/igb/help.html)
 
 ***
 
@@ -72,5 +75,6 @@ Use fork-and-branch workflow:
 
 See:
 
+* Free on-line course [Open source programming with IGB](https://canvas.instructure.com/courses/1164217)
 * Forking Workflow [tutorial](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow) by Atlassian
 * Blog post titled [Using the Fork-and-Branch Git Workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/)

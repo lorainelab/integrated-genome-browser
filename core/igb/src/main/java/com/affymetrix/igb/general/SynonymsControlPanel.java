@@ -21,10 +21,6 @@ import javafx.stage.FileChooser;
 import javax.swing.GroupLayout;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
-import javax.swing.JFileChooser;
-import static javax.swing.JFileChooser.APPROVE_OPTION;
-import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
-import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
@@ -63,20 +59,21 @@ public class SynonymsControlPanel {
         return panel;
     }
 
-    protected static File fileChooser(int mode) throws HeadlessException {
-        JFileChooser chooser = new JFileChooser();
-
-        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        chooser.setFileSelectionMode(mode);
-        chooser.setDialogTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"));
-        chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
-        chooser.rescanCurrentDirectory();
-
-        if (chooser.showOpenDialog(null) != APPROVE_OPTION) {
-            return null;
+    protected static File getSelectedFile() throws HeadlessException {
+        // IGBF-1185: Provide File chooser UI in native OS file chooser style and 
+        // allow user to select only text file. 
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files","*.txt",".TXT", ".Txt");
+        Optional<File> selectedFile = FileChooserUtil.build()
+                .setContext(FileTracker.DATA_DIR_TRACKER.getFile())
+                .setTitle("Choose File")
+                .setFileExtensionFilters(Lists.newArrayList(extFilter))
+                .retrieveFileFromFxChooser();
+        
+        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+            FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
+            return selectedFile.get();
         }
-
-        return chooser.getSelectedFile();
+        return null;
     }
     
     protected static File getSelectedFile() throws HeadlessException {
@@ -129,11 +126,10 @@ public class SynonymsControlPanel {
 
         final ActionListener clistener = e -> {
             if (e.getSource() == copenFile) {
-                File file = fileChooser(FILES_AND_DIRECTORIES);
+                File selectedFile = getSelectedFile();
                 try {
-                    if (file != null) {
-                        csynonymFile.setText(file.getCanonicalPath());
-
+                    if (selectedFile != null) {
+                        csynonymFile.setText(selectedFile.getCanonicalPath());
                         }
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
@@ -153,7 +149,7 @@ public class SynonymsControlPanel {
         vopenFile.addActionListener(vlistener);
         vsynonymFile.addActionListener(vlistener);
 
-        copenFile.setToolTipText("Open Local Directory");
+        copenFile.setToolTipText("Open Local File");
         copenFile.addActionListener(clistener);
         csynonymFile.addActionListener(clistener);
 

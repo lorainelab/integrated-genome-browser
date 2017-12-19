@@ -1,0 +1,43 @@
+# Integrated Genome Browser bitbucket-pipelines.yml file
+# Author: Sanket Patil (spatil26@uncc.edu)
+# Team: IGB (http://www.bioviz.org/igb)
+# Only use spaces to indent your .yml configuration.
+# -----
+#  Image refers to the docker image hosted at docker hub
+image: 
+  name: lorainelab/igb-maven-install4j:jre-1.8.0_152
+
+# There are two configurations available one is default and other one custom called 'release'
+# Default will get triggered whenever there is a change in the IGB repository
+# Custom configuration 'release' is for manual execution of bitbucket pipelines
+# To run pipelines manually go to branches -> hover on the brach on which you want to execute piplines-> click on ... -> select run pipeline for the branch-> select custom configuration
+pipelines:
+  default:
+    - step:
+        caches:
+          - maven
+        script: 
+          # Executes maven command on the IGB project
+          - mvn clean install -D skipTests=false
+          # Posts igb_exe.jar file under Download section of repository
+          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar"
+  custom:
+   release:
+    - step:
+        caches:
+          - maven
+        script: 
+          # Getting Windows and Mac Keystore for signing Windows installer. We are using bitbucket pipeline environment variables here for security purpose
+          - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $WINDOWS_KEYSTORE_LINK -P /opt/igb
+          - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $MAC_KEYSTORE_LINK -P /opt/igb
+          # Replacing Keywords with actual passwords using bitbucket pipeline environment variables
+          - sed -i "s/_INSTALL4jLICENSE_/${INSTALL4J_LICENSE}/" /opt/atlassian/pipelines/agent/build/pom.xml
+          - sed -i "s/_WINKEYSTOREPASSWORD_/${WIN_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
+          - sed -i "s/_MACKEYSTOREPASSWORD_/${MAC_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
+          # Performing maven clean install goal. Note that we are using here Profile 'release' which generates installers and additional plugins
+          - mvn clean install -P release-bitbucket-pipelines
+          # Creating a .zip file containing igb_exe.jar and other reference materials releted to IGB project
+          - zip -r -j igb /opt/atlassian/pipelines/agent/build/igb_exe.jar /opt/atlassian/pipelines/agent/build/LICENSE.html /opt/atlassian/pipelines/agent/build/NOTICES.txt /opt/atlassian/pipelines/agent/build/README.md /opt/atlassian/pipelines/agent/build/run_igb.bat /opt/atlassian/pipelines/agent/build/run_igb.command /opt/atlassian/pipelines/agent/build/run_igb.sh 
+          # Posting all required files under download section of the repository
+          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar" --form files=@"igb.zip" --form files=@"main/target/media/IGB_unix_9_0_1.sh" --form files=@"main/target/media/IGB_windows_9_0_1.exe" --form files=@"main/target/media/IGB_windows-x64_9_0_1.exe" --form files=@"main/target/media/IGB_macos_9_0_1.dmg" --form files=@"main/target/media/md5sums" --form files=@"main/target/media/updates.xml" --form files=@"extbundles/repository.xml" --form files=@"extbundles/optional/23andMe-snp-converter-9.0.1.jar" --form files=@"extbundles/optional/geometric-mean-9.0.1.jar" --form files=@"extbundles/optional/merge-annotation-operator-9.0.1.jar" --form files=@"extbundles/optional/igb-command-socket-9.0.1.jar" --form files=@"extbundles/optional/protannot-9.0.1.jar"
+          

@@ -9,12 +9,15 @@ import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
+import com.google.common.collect.Lists;
 import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Level;
+import javafx.stage.FileChooser;
 import javax.swing.GroupLayout;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
@@ -25,6 +28,7 @@ import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+import org.lorainelab.igb.javafx.FileChooserUtil;
 import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.SynonymLookupService;
@@ -74,6 +78,23 @@ public class SynonymsControlPanel {
 
         return chooser.getSelectedFile();
     }
+    
+    protected static File getSelectedFile() throws HeadlessException {
+        // IGBF-1185: Provide File chooser UI in native OS file chooser style and 
+        // allow user to select only text file. 
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files","*.txt",".TXT", ".Txt");
+        Optional<File> selectedFile = FileChooserUtil.build()
+                .setContext(FileTracker.DATA_DIR_TRACKER.getFile())
+                .setTitle("Choose File")
+                .setFileExtensionFilters(Lists.newArrayList(extFilter))
+                .retrieveFileFromFxChooser();
+        
+        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+            FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
+            return selectedFile.get();
+        }
+        return null;
+    }
 
     private JPanel initSynonymsPanel() {
         final JPanel synonymsPanel = new JPanel();
@@ -87,11 +108,10 @@ public class SynonymsControlPanel {
 
         final ActionListener vlistener = e -> {
             if (e.getSource() == vopenFile) {
-                File file = fileChooser(FILES_AND_DIRECTORIES);
+                File selectedFile = getSelectedFile();
                 try {
-                    if (file != null) {
-                        vsynonymFile.setText(file.getCanonicalPath());
-
+                    if (selectedFile != null){
+                        vsynonymFile.setText(selectedFile.getCanonicalPath());
                     }
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
@@ -100,11 +120,11 @@ public class SynonymsControlPanel {
 
             if (vsynonymFile.getText().isEmpty() || loadSynonymFile(genomeVersionSynonymLookup, vsynonymFile)) {
                 PreferenceUtils.getLocationsNode().put(PREF_VSYN_FILE_URL, vsynonymFile.getText());
-            } else {
+            } else { 
                 ErrorHandler.errorPanel(
                         "Unable to Load Version Synonyms",
                         "Unable to load personal synonyms from " + vsynonymFile.getText() + ".", Level.SEVERE);
-            }
+            } 
         };
 
         final ActionListener clistener = e -> {
@@ -114,7 +134,7 @@ public class SynonymsControlPanel {
                     if (file != null) {
                         csynonymFile.setText(file.getCanonicalPath());
 
-                    }
+                        }
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
@@ -129,7 +149,7 @@ public class SynonymsControlPanel {
             }
         };
 
-        vopenFile.setToolTipText("Open Local Directory");
+        vopenFile.setToolTipText("Open Local File");
         vopenFile.addActionListener(vlistener);
         vsynonymFile.addActionListener(vlistener);
 

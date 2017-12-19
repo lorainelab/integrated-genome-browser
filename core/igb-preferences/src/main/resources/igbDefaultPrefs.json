@@ -4,33 +4,33 @@
             {
                 "factoryName": "quickload",
                 "name": "IGB Quickload",
-                "url": "http://igbquickload.org/quickload/",
+                "url": "http://igbquickload.org/quickload",
                 "loadPriority": "0",
-                "mirror": "http://bioviz.org/quickload/",
+                "mirror": "http://lorainelab-quickload.scidas.org/quickload",
                 "isEditable": "false"
             },
             {
                 "factoryName": "quickload",
                 "name": "Pollen",
-                "url": "http://www.igbquickload.org/pollen",
+                "url": "http://igbquickload.org/pollen",
                 "loadPriority": "1",
-                "mirror": "http://bioviz.org/pollen/",
+                "mirror": "http://lorainelab-quickload.scidas.org/pollen",
                 "isEditable": "false"
             },
             {
                 "factoryName": "quickload",
                 "name": "Cytokinin",
-                "url": "http://www.igbquickload.org/cyto",
+                "url": "http://igbquickload.org/cyto",
                 "loadPriority": "2",
-                "mirror": "http://bioviz.org/cytopub/",
+                "mirror": "http://lorainelab-quickload.scidas.org/cyto",
                 "isEditable": "false"
             },
             {
                 "factoryName": "quickload",
                 "name": "Blueberry",
-                "url": "http://www.igbquickload.org/blueberry",
+                "url": "http://igbquickload.org/blueberry",
                 "loadPriority": "3",
-                "mirror": "http://bioviz.org/berrypub/",
+                "mirror": "http://lorainelab-quickload.scidas.org/blueberry",
                 "isEditable": "false"
             },
             {

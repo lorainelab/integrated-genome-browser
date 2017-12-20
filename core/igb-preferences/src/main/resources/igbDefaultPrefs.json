@@ -34,6 +34,14 @@
                 "isEditable": "false"
             },
             {
+                "factoryName": "quickload",
+                "name": "SoySeq",
+                "url": "http://igbquickload.org/soyseq",
+                "loadPriority": "4",
+                "mirror": "http://lorainelab-quickload.scidas.org/soyseq",
+                "isEditable": "true"
+            },
+            {
                 "factoryName": "das",
                 "name": "UCSC",
                 "url": "http://genome.cse.ucsc.edu/cgi-bin/das",

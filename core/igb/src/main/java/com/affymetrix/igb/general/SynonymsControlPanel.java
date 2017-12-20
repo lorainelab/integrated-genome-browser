@@ -75,23 +75,6 @@ public class SynonymsControlPanel {
         }
         return null;
     }
-    
-    protected static File getSelectedFile() throws HeadlessException {
-        // IGBF-1185: Provide File chooser UI in native OS file chooser style and 
-        // allow user to select only text file. 
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files","*.txt",".TXT", ".Txt");
-        Optional<File> selectedFile = FileChooserUtil.build()
-                .setContext(FileTracker.DATA_DIR_TRACKER.getFile())
-                .setTitle("Choose File")
-                .setFileExtensionFilters(Lists.newArrayList(extFilter))
-                .retrieveFileFromFxChooser();
-        
-        if (selectedFile.isPresent() && selectedFile.get()!= null) {
-            FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
-            return selectedFile.get();
-        }
-        return null;
-    }
 
     private JPanel initSynonymsPanel() {
         final JPanel synonymsPanel = new JPanel();

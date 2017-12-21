@@ -106,7 +106,7 @@ public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
         if (cache_file.exists()) {
             StringBuilder cacheInfo = new StringBuilder();
             cacheInfo.append("<p>");
-            cacheInfo.append("Cached data are stored in ").append(cache_file.getAbsolutePath()).append(PERIOD);
+            cacheInfo.append("Downloaded, cached genome data are stored in ").append(cache_file.getAbsolutePath()).append(PERIOD);
             cacheInfo.append("</p>");
             replace(CACHE_COMMENT, cacheInfo.toString(), sb);
         }
@@ -115,7 +115,7 @@ public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
             File data_dir_f = new File(data_dir);
             StringBuilder dataDirInfo = new StringBuilder();
             dataDirInfo.append("<p>");
-            dataDirInfo.append("Application data are stored in ").append(data_dir_f.getAbsolutePath()).append(PERIOD);
+            dataDirInfo.append("Application data and OSGi bundle cache are stored in ").append(data_dir_f.getAbsolutePath()).append(PERIOD);
             dataDirInfo.append("</p>");
             replace(DATA_DIR_COMMENT, dataDirInfo.toString(), sb);
         }

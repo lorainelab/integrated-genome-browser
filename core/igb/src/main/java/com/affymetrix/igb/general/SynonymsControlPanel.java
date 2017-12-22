@@ -4,27 +4,33 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.GeneralUtils; 
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.google.common.collect.Lists;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.logging.Level;
-import javafx.stage.FileChooser;
 import javax.swing.GroupLayout;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
+import javax.swing.JFileChooser;
+import static javax.swing.JFileChooser.APPROVE_OPTION;
+import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
+import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
-import org.lorainelab.igb.javafx.FileChooserUtil;
 import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.SynonymLookupService;
@@ -59,21 +65,20 @@ public class SynonymsControlPanel {
         return panel;
     }
 
-    protected static File getSelectedFile() throws HeadlessException {
-        // IGBF-1185: Provide File chooser UI in native OS file chooser style and 
-        // allow user to select only text file. 
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text files","*.txt",".TXT", ".Txt");
-        Optional<File> selectedFile = FileChooserUtil.build()
-                .setContext(FileTracker.DATA_DIR_TRACKER.getFile())
-                .setTitle("Choose File")
-                .setFileExtensionFilters(Lists.newArrayList(extFilter))
-                .retrieveFileFromFxChooser();
-        
-        if (selectedFile.isPresent() && selectedFile.get()!= null) {
-            FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
-            return selectedFile.get();
+    protected static File fileChooser(int mode) throws HeadlessException {
+        JFileChooser chooser = new JFileChooser();
+
+        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+        chooser.setFileSelectionMode(mode);
+        chooser.setDialogTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"));
+        chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
+        chooser.rescanCurrentDirectory();
+
+        if (chooser.showOpenDialog(null) != APPROVE_OPTION) {
+            return null;
         }
-        return null;
+
+        return chooser.getSelectedFile();
     }
 
     private JPanel initSynonymsPanel() {
@@ -85,13 +90,35 @@ public class SynonymsControlPanel {
         final JRPTextField csynonymFile = new JRPTextField("DataLoadPrefsView_csynonymFile", PreferenceUtils.getLocationsNode().get(PREF_CSYN_FILE_URL, ""));
         final JRPButton vopenFile = new JRPButton("DataLoadPrefsView_vopenFile", "\u2026");
         final JRPButton copenFile = new JRPButton("DataLoadPrefsView_copenFile", "\u2026");
-
+        
         final ActionListener vlistener = e -> {
             if (e.getSource() == vopenFile) {
-                File selectedFile = getSelectedFile();
+                File file = fileChooser(FILES_AND_DIRECTORIES);
                 try {
-                    if (selectedFile != null){
-                        vsynonymFile.setText(selectedFile.getCanonicalPath());
+                    if (file != null) {
+                        vsynonymFile.setText(file.getCanonicalPath());
+                        
+                        // IGBF-1187: Display messgae to restart IGB when version synonym file is selected
+                        // and user has already selected spacies. If user sets synonym file
+                        // and then selectes spacies, then there is no need to restart IGB.
+                        String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
+                        GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
+                        if (speciesName!= null && loadGroup!= null) {
+                            String[] options = {"Quit IGB", "No, don't quit"};
+                            if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+                            PreferencesPanel.getSingleton(), 
+                            "To start using your Personal Synonyms, quit and re-start IGB. \n" +
+                            "Do you want to quit now?", "IGB Restart",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                            options, options[1])) {
+                                try {
+                                    ((IGB) IGB.getInstance()).defaultCloseOperations();
+                                    System.exit(0);
+                                } catch (Exception ex) {
+                                    com.affymetrix.genoviz.util.ErrorHandler.errorPanel("ERROR", "Error clearing preferences", ex);
+                                }
+                            }
+                        }
                     }
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
@@ -100,20 +127,42 @@ public class SynonymsControlPanel {
 
             if (vsynonymFile.getText().isEmpty() || loadSynonymFile(genomeVersionSynonymLookup, vsynonymFile)) {
                 PreferenceUtils.getLocationsNode().put(PREF_VSYN_FILE_URL, vsynonymFile.getText());
-            } else { 
+            } else {
                 ErrorHandler.errorPanel(
                         "Unable to Load Version Synonyms",
                         "Unable to load personal synonyms from " + vsynonymFile.getText() + ".", Level.SEVERE);
-            } 
+            }
         };
 
         final ActionListener clistener = e -> {
             if (e.getSource() == copenFile) {
-                File selectedFile = getSelectedFile();
+                File file = fileChooser(FILES_AND_DIRECTORIES);
                 try {
-                    if (selectedFile != null) {
-                        csynonymFile.setText(selectedFile.getCanonicalPath());
+                    if (file != null) {
+                        csynonymFile.setText(file.getCanonicalPath());
+                        
+                        // IGBF-1187: Display messgae to restart IGB when chromosome file is selected
+                        // and user has already selected spacies. If user sets chromosome file
+                        // and then selectes spacies, then there is no need to restart IGB.
+                        String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
+                        GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
+                        if (speciesName!= null && loadGroup!= null) {
+                            String[] options = {"Quit IGB", "No, don't quit"};
+                            if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+                              PreferencesPanel.getSingleton(), 
+                              "To start using your Personal Synonyms, quit and re-start IGB. \n" +
+                              "Do you want to quit now?", "IGB Restart",
+                              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                              options, options[1])) {
+                                try {
+                                    ((IGB) IGB.getInstance()).defaultCloseOperations();
+                                    System.exit(0);
+                                } catch (Exception ex) {
+                                    com.affymetrix.genoviz.util.ErrorHandler.errorPanel("ERROR", "Error clearing preferences", ex);
+                                }
+                            }
                         }
+                    }
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
@@ -128,11 +177,11 @@ public class SynonymsControlPanel {
             }
         };
 
-        vopenFile.setToolTipText("Open Local File");
+        vopenFile.setToolTipText("Open Local Directory");
         vopenFile.addActionListener(vlistener);
         vsynonymFile.addActionListener(vlistener);
 
-        copenFile.setToolTipText("Open Local File");
+        copenFile.setToolTipText("Open Local Directory");
         copenFile.addActionListener(clistener);
         csynonymFile.addActionListener(clistener);
 

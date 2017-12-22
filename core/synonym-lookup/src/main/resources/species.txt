@@ -20,6 +20,7 @@ Caenorhabditis japonica	C. japonica (nematode)	C_japonica	caeJap
 Caenorhabditis remanei	C. remanei (nematode)	C_remanei	caeRem
 Callithrix jacchus	Common marmoset	C_jacchus	calJac	Callithrix_jacchus
 Callorhinchus milii	Elephant shark	C_milii	calMil
+Camelina sativa DH55	False flax	C_sativa_DH55 
 Candida albicans SC	Yeast (Human Flora) SC	C_albicans_SC
 Candida albicans WO	Yeast (Human Flora) WO	C_albicans_WO
 Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
@@ -77,6 +78,7 @@ Linum usitatissimum	flax	L_usitatissimum
 Loligo pealeii	Longfin inshore squid	L_pealeii
 Loxodonta africana	African bush elephant	L_africana	loxAfr	Loxodonta_africana
 Lotus japonicus	a model legume	L_japonicus
+Lotmaria passim	L_passim SF	L_passim
 Macaca mulatta	Rhesus monkey	M_mulatta	rheMac	Macaca_mulatta
 Macropus eugenii	Tammar wallaby	M_eugenii		Macropus_eugenii	macEug
 Malus domestica Borkh	Apple	M_domestica_Borkh
@@ -88,6 +90,7 @@ Microcebus murinus	Gray mouse lemur	M_murinus	micMur	Microcebus_murinus
 Mimulus guttatus	Monkey flower	M_guttatus
 Monosiga brevicollis	Choanoflagellates	Monosiga_brevicollis
 Mus musculus	House mouse	M_musculus	mm	Mus_musculus
+Musa acuminata DH Pahang	banana	M_acuminata_DH_Pahang
 Mustela putorius furo	Domesticated ferret	M_putorius	musFur
 Mycobacterium abscessus	M. abcessus	M_abscessus	
 Mycobacterium smegmatis	M. smegmatis	M_smegmatis	
@@ -160,4 +163,9 @@ Xenopus laevis	African clawed frog	X_laevis
 Xenopus tropicalis	Pipid frog	X_tropicalis	xenTro	Xenopus_tropicalis
 Yersinia pestis	Bubonic plague pathogen	Y_pestis
 Yersinia pseudotuberculosis	Y. pseudotuberculosis	Y_pseudotuberculosis
+Yarrowia lipolytica CLIB122	CLIB122	Y_lipolytica_CLIB 
+Yarrowia lipolytica PO1f	PO1f	Y_lipolytica_PO 
+Yarrowia lipolytica WSH-Z06	WSHZ06	Y_lipolytica_WSH
 Zea mays B73	Maize B73	Z_mays
+
+

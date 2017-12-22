@@ -141,7 +141,7 @@
     </modules>
 
     <profiles>
-        <profile> <!-- profile for jenkins -->
+        <profile>
             <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -150,7 +150,7 @@
                 <module>main</module>
             </modules>            
         </profile>
-        <profile> <!-- profile for jenkins -->
+        <profile> <!-- profile for lorainelab build server jenkins AWS -->
             <id>development</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -174,11 +174,60 @@
                 <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
             </modules>            
         </profile>
-        <profile>
+        <profile> <!-- profile for lorainelab build server jenkins AWS -->
             <id>release</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <modules>
+                <module>optionalPlugins/merge-annotation-operator</module>
+                <module>optionalPlugins/geometric-mean</module>
+                <module>optionalPlugins/igb-command-socket</module>
+                <module>optionalPlugins/23andMe-snp-converter</module>
+                <module>optionalPlugins/protannot</module>
+                <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
+            </modules>            
+        </profile>
+        <profile>
+            <id>development-bitbucket-pipelines</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <install4j.home>/opt/install4j7/</install4j.home>
+                <install4j.licenseKey>_INSTALL4jLICENSE_</install4j.licenseKey>
+                <install4j.winKeystorePassword>_WINKEYSTOREPASSWORD_</install4j.winKeystorePassword>
+                <install4j.macKeystorePassword>_MACKEYSTOREPASSWORD_</install4j.macKeystorePassword>
+            </properties>
+            <modules>
+                <module>optionalPlugins/merge-annotation-operator</module>
+                <module>optionalPlugins/geometric-mean</module>
+                <module>optionalPlugins/igb-command-socket</module> 
+                <module>optionalPlugins/23andMe-snp-converter</module>
+                <module>optionalPlugins/protannot</module>
+                <module>developmentPlugins/FindAnnotations</module>
+                <module>developmentPlugins/OverlapAnnotationOperator</module>                
+                <module>developmentPlugins/SampleSelection</module>
+                <module>developmentPlugins/SearchModeSymmetryFilter</module>
+                <module>developmentPlugins/TallyHandler</module>
+                <module>developmentPlugins/TranscriptIsoform</module>               
+                <module>developmentPlugins/ParentOperators</module>
+                <module>developmentPlugins/NCBIPrimer</module>
+                <module>developmentPlugins/SearchModeLucene</module>
+                <module>main</module>   <!-- declared last because this module builds the ext bundles obr xml-->
+            </modules>
+        </profile>
+        <profile>
+            <id>release-bitbucket-pipelines</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <install4j.home>/opt/install4j7/</install4j.home>
+                <install4j.licenseKey>_INSTALL4jLICENSE_</install4j.licenseKey>
+                <install4j.winKeystorePassword>_WINKEYSTOREPASSWORD_</install4j.winKeystorePassword>
+                <install4j.macKeystorePassword>_MACKEYSTOREPASSWORD_</install4j.macKeystorePassword>
+            </properties>
             <modules>
                 <module>optionalPlugins/merge-annotation-operator</module>
                 <module>optionalPlugins/geometric-mean</module>

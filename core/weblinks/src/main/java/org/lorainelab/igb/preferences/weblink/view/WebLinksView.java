@@ -356,7 +356,7 @@ public final class WebLinksView {
     public void importWebLinks() {
         // IGBF-1183: Change 'Tools->Configure Web Links->Import' file chooser window to OS native file chooser window style
         FileChooserUtil chooser = getFileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("JSON file","*.json, *.JSON");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("JSON file","*.json", "*.JSON");
         Optional<File> selectedFile = chooser.setTitle("Import")
                 .setFileExtensionFilters(Lists.newArrayList(extFilter))
                 .retrieveFileFromFxChooser();

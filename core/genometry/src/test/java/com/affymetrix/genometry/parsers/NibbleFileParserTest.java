@@ -14,7 +14,12 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- *
+ * About this test - and bnib: Affymetrix many years ago created a random access
+ * sequence file type called bnib. So far as I know (Ann, Jan 2018) no-one uses
+ * now, except possibly David Nix and his DAS2 server at University of Utah. So
+ * we are leaving it in the code base for now. However, we are using 2bit for
+ * IGB Quickload because Jim Kent has made various programs for 2bit that make
+ * 2bit more convenient.
  * @author hiralv
  */
 public class NibbleFileParserTest {
@@ -30,7 +35,19 @@ public class NibbleFileParserTest {
     public void testOriginal() throws Exception {
         sb = new StringBuffer();
         isr = GeneralUtils.getInputStream(infile, sb);
-        BioSeq seq = NibbleResiduesParser.parse(isr, new GenomeVersion("Test"));
+        // IGBF-1203: test fails without setUseSynonyms(false) because 
+        // chrSynLookup variable in GenomeVersion object is null. 
+        // Weirdly, testing like this passes: mvn clean install -DskipTests=False
+        // Testing like this fails: mvn -Dtest=NibbleFileParserTest#testOriginal -DfailIfNoTests=false test
+        // Bitbucket pipeline also fails.
+        // It has something to do with the bundle context (OSGI container) not
+        // activating the synonym service and setting chrSynLookup correctly. 
+        GenomeVersion genomeVersion = new GenomeVersion("This is a fake genome.");
+        genomeVersion.setUseSynonyms(false); // don't use synonym service
+        // It's the right thing to not use the synonym service because if we do,
+        // then we're testing the service AND the parser. This test should test the
+        // parser, nothing else. 
+        BioSeq seq = NibbleResiduesParser.parse(isr, genomeVersion);
         assertEquals(seq.getResidues(), input_string);
     }
 

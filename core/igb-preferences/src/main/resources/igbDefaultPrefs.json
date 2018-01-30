@@ -11,18 +11,9 @@
             },
             {
                 "factoryName": "quickload",
-                "name": "Pollen",
-                "url": "http://igbquickload.org/pollen",
+                "name": "RNA-Seq",
+                "url": "http://lorainelab-quickload.scidas.org/rnaseq",
                 "loadPriority": "1",
-                "mirror": "http://lorainelab-quickload.scidas.org/pollen",
-                "isEditable": "false"
-            },
-            {
-                "factoryName": "quickload",
-                "name": "Cytokinin",
-                "url": "http://igbquickload.org/cyto",
-                "loadPriority": "2",
-                "mirror": "http://lorainelab-quickload.scidas.org/cyto",
                 "isEditable": "false"
             },
             {

@@ -4,55 +4,60 @@
             {
                 "factoryName": "quickload",
                 "name": "IGB Quickload",
-                "url": "http://igbquickload.org/quickload/",
+                "url": "http://igbquickload.org/quickload",
                 "loadPriority": "0",
-                "mirror": "http://bioviz.org/quickload/"
+                "mirror": "http://lorainelab-quickload.scidas.org/quickload",
+                "isEditable": "false"
             },
             {
                 "factoryName": "quickload",
-                "name": "Pollen",
-                "url": "http://www.igbquickload.org/pollen",
+                "name": "RNA-Seq",
+                "url": "http://lorainelab-quickload.scidas.org/rnaseq",
                 "loadPriority": "1",
-                "mirror": "http://bioviz.org/pollen/"
-            },
-            {
-                "factoryName": "quickload",
-                "name": "Cytokinin",
-                "url": "http://www.igbquickload.org/cyto",
-                "loadPriority": "2",
-                "mirror": "http://bioviz.org/cytopub/"
+                "isEditable": "false"
             },
             {
                 "factoryName": "quickload",
                 "name": "Blueberry",
-                "url": "http://www.igbquickload.org/blueberry",
+                "url": "http://igbquickload.org/blueberry",
                 "loadPriority": "3",
-                "mirror": "http://bioviz.org/berrypub/"
+                "mirror": "http://lorainelab-quickload.scidas.org/blueberry",
+                "isEditable": "false"
+            },
+            {
+                "factoryName": "quickload",
+                "name": "SoySeq",
+                "url": "http://igbquickload.org/soyseq",
+                "loadPriority": "4",
+                "mirror": "http://lorainelab-quickload.scidas.org/soyseq",
+                "isEditable": "true"
             },
             {
                 "factoryName": "das",
                 "name": "UCSC",
                 "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
                 "loadPriority": "5",
-                "enabled": "false"
+                "status": "disabled",
+                "isEditable": "false"
             },
             {
                 "factoryName": "das2",
                 "name": "UofUtahBioinfoCore",
                 "url": "http://bioserver.hci.utah.edu:8080/DAS2DB",
                 "loadPriority": "6",
-                "enabled": "false"
+                "status": "disabled",
+                "isEditable": "false"
             }
         ],
         "repository": [
             {
-                "name": "Bioviz",
+                "name": "BioViz",
                 "url": "http://bioviz.org/igbserver",
                 "enabled": "true",
                 "default": "true"
             },
             {
-                "name": "Bioviz development",
+                "name": "BioViz development",
                 "url": "http://eos.transvar.org/igb_plugins",
                 "enabled": "false",
                 "default": "true"
@@ -64,7 +69,7 @@
                 "name": "Google",
                 "url": "http://www.google.com/search?q=$$",
                 "type": "default",
-                "image_icon_path": "16x16/actions/google.png",
+                "image_icon_path": "google.png",
                 "description": "Always support Google searching"
             },
             {
@@ -73,7 +78,7 @@
                 "description": "",
                 "url": "http://www.ncbi.nlm.nih.gov/nuccore/$$",
                 "type": "default",
-                "image_icon_path": "16x16/actions/ncbi.png",
+                "image_icon_path": "ncbi.png",
                 "description": "Any RefSeq mRNA alignment"
             },
             {
@@ -81,7 +86,7 @@
                 "name": "TAIR",
                 "url": "http://www.arabidopsis.org/servlets/TairObject?type=gene&name=$$",
                 "type": "default",
-                "image_icon_path": "16x16/actions/tair.png",
+                "image_icon_path": "tair.png",
                 "description": "Match AGI gene models names for model organism database"
             },
             {

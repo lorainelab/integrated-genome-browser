@@ -206,7 +206,7 @@ public class DataProviderManager {
                 initializeCustomDataProvider(node);
             } //else - this is a legacy defautl, do not initiate it.
         } else {// node DOES have a defaultDataProviderId
-            // Is there a registred default data provider with that id?
+            // Is there a registered default data provider with that id?
             if (defaultDataProviderIdToKey.containsKey(defaultDataProviderId)) {
                 integrateUserPrefsToDefaultDataProvider(node);
             }// else - this is a depricated default, do not initiate it.
@@ -280,11 +280,10 @@ public class DataProviderManager {
         dataProviderFactory.ifPresent(factory -> {
             BaseDataProvider dataProvider;
             if (Strings.isNullOrEmpty(config.getMirror())) {
-                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getLoadPriority());
+                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getLoadPriority(), config.getId());
             } else {
-                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getMirror(), config.getLoadPriority());
+                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getMirror(), config.getLoadPriority(), config.getId());
             }
-            dataProvider.setId(config.getId());//In reading from default prefs, we can assume that every data provider must have an id.
             defaultDataProviderIdToKey.put(dataProvider.getId(), dataProvider.getUrl());
             ServiceRegistration<DataProvider> registerService = bundleContext.registerService(DataProvider.class, dataProvider, null);
             dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());

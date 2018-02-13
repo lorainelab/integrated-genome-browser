@@ -73,6 +73,22 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
         chromosomeSynonymReference = Maps.newHashMap();
     }
     
+        public QuickloadDataProvider(String url, String name, int loadPriority, String id) {
+        super(toExternalForm(url), name, loadPriority, id);
+        supportedGenomeVersionInfo = Maps.newConcurrentMap();
+        speciesInfo = Sets.newHashSet();
+        genomeVersionSynonyms = HashMultimap.create();
+        chromosomeSynonymReference = Maps.newHashMap();
+    }
+
+    public QuickloadDataProvider(String url, String name, String mirrorUrl, int loadPriority, String id) {
+        super(toExternalForm(url), name, toExternalForm(mirrorUrl), loadPriority, id);
+        supportedGenomeVersionInfo = Maps.newHashMap();
+        speciesInfo = Sets.newHashSet();
+        genomeVersionSynonyms = HashMultimap.create();
+        chromosomeSynonymReference = Maps.newHashMap();
+    }
+    
     private static GenomeVersionSynonymLookup getDefaultSynonymLookup() {
         if(genomeVersionSynonymLookup == null) {
             Bundle bundle = FrameworkUtil.getBundle(QuickloadDataProvider.class);

@@ -8,7 +8,7 @@
                 "loadPriority": "0",
                 "mirror": "http://lorainelab-quickload.scidas.org/quickload",
                 "isEditable": "false",
-                "defualtDataProviderId": "1"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:1"
             },
             {
                 "factoryName": "quickload",
@@ -16,7 +16,7 @@
                 "url": "http://lorainelab-quickload.scidas.org/rnaseq",
                 "loadPriority": "1",
                 "isEditable": "false",
-                "defualtDataProviderId": "2"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:2"
             },
             {
                 "factoryName": "quickload",
@@ -25,7 +25,7 @@
                 "loadPriority": "3",
                 "mirror": "http://lorainelab-quickload.scidas.org/blueberry",
                 "isEditable": "false",
-                "defualtDataProviderId": "3"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:3"
             },
             {
                 "factoryName": "quickload",
@@ -34,7 +34,7 @@
                 "loadPriority": "4",
                 "mirror": "http://lorainelab-quickload.scidas.org/soyseq",
                 "isEditable": "true",
-                "defualtDataProviderId": "4"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:4"
             },
             {
                 "factoryName": "das",
@@ -43,7 +43,7 @@
                 "loadPriority": "5",
                 "status": "disabled",
                 "isEditable": "false",
-                "defualtDataProviderId": "5"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
             {
                 "factoryName": "das2",
@@ -52,7 +52,7 @@
                 "loadPriority": "6",
                 "status": "disabled",
                 "isEditable": "false",
-                "defualtDataProviderId": "6"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:6"
             }
         ],
         "repository": [

@@ -118,9 +118,4 @@ public interface DataProvider {
         return Optional.empty();
     }
     
-    
-    public String getId();
-    
-    public void setId(String id);
-
 }

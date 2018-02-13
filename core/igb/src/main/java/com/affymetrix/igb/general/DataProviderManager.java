@@ -6,6 +6,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.data.BaseDataProvider;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.data.DataProviderFactoryManager;
@@ -277,11 +278,11 @@ public class DataProviderManager {
             preferencesNode.put(STATUS, ResourceStatus.Disabled.toString());
         }
         dataProviderFactory.ifPresent(factory -> {
-            DataProvider dataProvider;
+            BaseDataProvider dataProvider;
             if (Strings.isNullOrEmpty(config.getMirror())) {
-                dataProvider = factory.createDataProvider(config.getUrl(), config.getName(), config.getLoadPriority());
+                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getLoadPriority());
             } else {
-                dataProvider = factory.createDataProvider(config.getUrl(), config.getName(), config.getMirror(), config.getLoadPriority());
+                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getMirror(), config.getLoadPriority());
             }
             dataProvider.setId(config.getId());//In reading from default prefs, we can assume that every data provider must have an id.
             defaultDataProviderIdToKey.put(dataProvider.getId(), dataProvider.getUrl());

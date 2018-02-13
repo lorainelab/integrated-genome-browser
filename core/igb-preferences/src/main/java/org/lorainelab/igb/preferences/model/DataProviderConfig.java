@@ -44,6 +44,17 @@ public class DataProviderConfig {
     @Expose
     @XmlAttribute(name = "status")
     protected String status;
+    @Expose
+    @XmlAttribute(name = "defaultDataProviderId")
+    protected String defaultDataProviderId;
+    
+    public String getId() {
+        return defaultDataProviderId;
+    }
+
+    public void setId(String id) {
+        this.defaultDataProviderId = id;
+    }
 
     public String getStatus() {
         return status;

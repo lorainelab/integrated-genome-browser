@@ -7,14 +7,16 @@
                 "url": "http://igbquickload.org/quickload",
                 "loadPriority": "0",
                 "mirror": "http://lorainelab-quickload.scidas.org/quickload",
-                "isEditable": "false"
+                "isEditable": "false",
+                "defualtDataProviderId": "1"
             },
             {
                 "factoryName": "quickload",
                 "name": "RNA-Seq",
                 "url": "http://lorainelab-quickload.scidas.org/rnaseq",
                 "loadPriority": "1",
-                "isEditable": "false"
+                "isEditable": "false",
+                "defualtDataProviderId": "2"
             },
             {
                 "factoryName": "quickload",
@@ -22,7 +24,8 @@
                 "url": "http://igbquickload.org/blueberry",
                 "loadPriority": "3",
                 "mirror": "http://lorainelab-quickload.scidas.org/blueberry",
-                "isEditable": "false"
+                "isEditable": "false",
+                "defualtDataProviderId": "3"
             },
             {
                 "factoryName": "quickload",
@@ -30,7 +33,8 @@
                 "url": "http://igbquickload.org/soyseq",
                 "loadPriority": "4",
                 "mirror": "http://lorainelab-quickload.scidas.org/soyseq",
-                "isEditable": "true"
+                "isEditable": "true",
+                "defualtDataProviderId": "4"
             },
             {
                 "factoryName": "das",
@@ -38,7 +42,8 @@
                 "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
                 "loadPriority": "5",
                 "status": "disabled",
-                "isEditable": "false"
+                "isEditable": "false",
+                "defualtDataProviderId": "5"
             },
             {
                 "factoryName": "das2",
@@ -46,7 +51,8 @@
                 "url": "http://bioserver.hci.utah.edu:8080/DAS2DB",
                 "loadPriority": "6",
                 "status": "disabled",
-                "isEditable": "false"
+                "isEditable": "false",
+                "defualtDataProviderId": "6"
             }
         ],
         "repository": [

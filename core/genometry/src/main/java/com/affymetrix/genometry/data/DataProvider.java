@@ -117,5 +117,10 @@ public interface DataProvider {
     public default Optional<String> getDataSetLinkoutUrl(DataSet dataSet) {
         return Optional.empty();
     }
+    
+    
+    public String getId();
+    
+    public void setId(String id);
 
 }

@@ -21,4 +21,5 @@ public class DataProviderPrefKeys {
     public static final String IS_DEFAULT_SERVER = "default";
     public static final String REMEMBER_CREDENTIALS = "rememberCredentials";
     public static final String IS_EDITABLE = "isEditable";
+    public static final String DEFAULT_PROVIDER_ID = "defualtDataProviderId";
 }

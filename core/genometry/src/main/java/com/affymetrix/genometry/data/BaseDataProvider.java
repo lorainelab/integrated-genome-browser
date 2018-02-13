@@ -39,6 +39,7 @@ public abstract class BaseDataProvider implements DataProvider {
     protected ResourceStatus status;
     private StringEncrypter encrypter;
     protected boolean useMirror;
+    protected String defaultDataProviderId;
 
     public BaseDataProvider(String url, String name, int loadPriority) {
         this.url = checkNotNull(url);
@@ -51,14 +52,8 @@ public abstract class BaseDataProvider implements DataProvider {
     }
 
     public BaseDataProvider(String url, String name, String mirrorUrl, int loadPriority) {
-        this.url = checkNotNull(url);
-        this.name = checkNotNull(name);
+        this(url, name, loadPriority);
         this.mirrorUrl = checkNotNull(mirrorUrl);
-        this.loadPriority = loadPriority;
-        encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
-        preferencesNode = PreferenceUtils.getDataProviderNode(url);
-        loadPersistedConfiguration();
-        initializePreferences();
     }
 
     private void loadPersistedConfiguration() {
@@ -212,5 +207,17 @@ public abstract class BaseDataProvider implements DataProvider {
         }
         return true;
     }
+
+    @Override
+    public void setId(String id){
+        this.defaultDataProviderId = id;
+    }
+
+    @Override
+    public String getId(){
+        return defaultDataProviderId;
+    }
+    
+    
 
 }

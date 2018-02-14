@@ -7,7 +7,6 @@
                 "url": "http://igbquickload.org/quickload",
                 "loadPriority": "0",
                 "mirror": "http://lorainelab-quickload.scidas.org/quickload",
-                "isEditable": "false",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:1"
             },
             {
@@ -15,7 +14,6 @@
                 "name": "RNA-Seq",
                 "url": "http://lorainelab-quickload.scidas.org/rnaseq",
                 "loadPriority": "1",
-                "isEditable": "false",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:2"
             },
             {
@@ -24,7 +22,6 @@
                 "url": "http://igbquickload.org/blueberry",
                 "loadPriority": "3",
                 "mirror": "http://lorainelab-quickload.scidas.org/blueberry",
-                "isEditable": "false",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:3"
             },
             {
@@ -33,7 +30,6 @@
                 "url": "http://igbquickload.org/soyseq",
                 "loadPriority": "4",
                 "mirror": "http://lorainelab-quickload.scidas.org/soyseq",
-                "isEditable": "true",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:4"
             },
             {
@@ -42,7 +38,6 @@
                 "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
                 "loadPriority": "5",
                 "status": "disabled",
-                "isEditable": "false",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
             {
@@ -51,7 +46,6 @@
                 "url": "http://bioserver.hci.utah.edu:8080/DAS2DB",
                 "loadPriority": "6",
                 "status": "disabled",
-                "isEditable": "false",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:6"
             }
         ],

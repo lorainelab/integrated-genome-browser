@@ -258,7 +258,15 @@ public class DataProviderManager {
         //Update the status, but change nothing else.
         // We expect all default data providers to have a status
         String status = node.get(STATUS, null);
+        String login = node.get(LOGIN, null);
+        String password = node.get(PASSWORD, null);
         dp.setStatus(ResourceStatus.fromName(status).get());
+        if (!Strings.isNullOrEmpty(login)){
+            dp.setLogin(login);
+        }
+        if (!Strings.isNullOrEmpty(password)){
+            dp.setPassword(encrypter.decrypt(password));
+        }
     }
 
     

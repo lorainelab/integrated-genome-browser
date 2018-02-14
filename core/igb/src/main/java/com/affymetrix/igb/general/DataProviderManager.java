@@ -83,7 +83,6 @@ public class DataProviderManager {
     private BundleContext bundleContext;
     private final StringEncrypter encrypter;
     private final Map<String, ServiceReference> dataProviderServiceReferences;
-    private final Map<String, String> defaultDataProviderIdToKey;
     private EventService eventService;
     private EventBus eventBus;
 
@@ -93,7 +92,6 @@ public class DataProviderManager {
     public DataProviderManager() {
         dataProviderServiceReferences = Maps.newConcurrentMap();
         encrypter = new StringEncrypter(DESEDE_ENCRYPTION_SCHEME);
-        defaultDataProviderIdToKey = new HashMap<String, String>();
     }
 
     @Activate
@@ -207,8 +205,9 @@ public class DataProviderManager {
             } //else - this is a legacy defautl, do not initiate it.
         } else {// node DOES have a defaultDataProviderId
             // Is there a registered default data provider with that id?
-            if (defaultDataProviderIdToKey.containsKey(defaultDataProviderId)) {
-                integrateUserPrefsToDefaultDataProvider(node);
+            DataProvider dataProvider = getDataProviderById(defaultDataProviderId);
+            if (dataProvider != null) {
+                integrateUserPrefsToDefaultDataProvider(node, dataProvider);
             }// else - this is a depricated default, do not initiate it.
         }
     }
@@ -255,18 +254,21 @@ public class DataProviderManager {
             
             
 
-    private void integrateUserPrefsToDefaultDataProvider(Preferences node) {
+    private void integrateUserPrefsToDefaultDataProvider(Preferences node, DataProvider dp) {
         //Update the status, but change nothing else.
         // We expect all default data providers to have a status
-        String defaultDataProviderId = node.get(DEFAULT_PROVIDER_ID, null);
         String status = node.get(STATUS, null);
-        
-        DataProvider dataProvider = null;
-        String urlKey = defaultDataProviderIdToKey.get(defaultDataProviderId);
-        dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(urlKey));
-        dataProvider.setStatus(ResourceStatus.fromName(status).get());
+        dp.setStatus(ResourceStatus.fromName(status).get());
     }
 
+    
+    private DataProvider getDataProviderById (String id){
+        List<DataProvider> dpList = dataProviders.stream()
+                .filter(dp -> dp instanceof BaseDataProvider)
+                .filter(dp -> ((BaseDataProvider) dp).getId().equals(id))
+                .collect(Collectors.toList());
+        return dpList.get(0);
+    }
 
 
     
@@ -284,7 +286,6 @@ public class DataProviderManager {
             } else {
                 dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getMirror(), config.getLoadPriority(), config.getId());
             }
-            defaultDataProviderIdToKey.put(dataProvider.getId(), dataProvider.getUrl());
             ServiceRegistration<DataProvider> registerService = bundleContext.registerService(DataProvider.class, dataProvider, null);
             dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());
         });

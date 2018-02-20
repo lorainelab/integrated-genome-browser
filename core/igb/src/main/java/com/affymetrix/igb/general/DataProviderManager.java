@@ -270,12 +270,12 @@ public class DataProviderManager {
     }
 
     
-    private DataProvider getDataProviderById (String id){
+    private BaseDataProvider getDataProviderById (String id){
         List<DataProvider> dpList = dataProviders.stream()
                 .filter(dp -> dp instanceof BaseDataProvider)
                 .filter(dp -> ((BaseDataProvider) dp).getId().equals(id))
                 .collect(Collectors.toList());
-        return dpList.get(0);
+        return (BaseDataProvider)dpList.get(0);
     }
 
 

@@ -22,6 +22,7 @@ public class HeatMap {
         VIOLET("Violet", Color.BLACK, new Color(255, 0, 255)),
         BLUE_YELLOW("Blue/Yellow", Color.BLUE, Color.YELLOW),
         BLUE_YELLOW_2("Blue/Yellow 2", new Color(0, 0, 128), new Color(255, 255, 0)),
+        YELLOW_BLUE("Yellow/Blue", Color.YELLOW, Color.BLUE),
         RED_BLACK_GREEN("Red/Black/Green", null, null) {
                     @Override
                     protected HeatMap create(String name, Color c1, Color c2) {

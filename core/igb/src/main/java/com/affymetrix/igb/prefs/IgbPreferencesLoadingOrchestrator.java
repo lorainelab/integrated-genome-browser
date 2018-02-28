@@ -65,7 +65,7 @@ public class IgbPreferencesLoadingOrchestrator {
         this.eventService = eventService;
     }
 
-    public void loadIGBPrefs() {
+    private void loadIGBPrefs() {
         loadDefaultPrefs();
         migrateOldDataProviders();
         //Load from persistence api

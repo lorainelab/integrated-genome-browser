@@ -213,7 +213,7 @@ public class DataProviderManager {
                 //Here, isEditable is going to tell us if a Data Provider is a default or user provided. This check is
                 //STRICTLY for IGB versions 9.0.0 or before. It has been depricated from the defaults(JSON) since 9.0.1.
                 initializeCustomDataProvider(node);
-            } //else - this is a legacy defautl, do not initiate it.
+            } //else - this is a legacy default, do not initiate it.
         }
     }
             

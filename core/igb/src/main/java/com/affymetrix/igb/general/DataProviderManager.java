@@ -198,17 +198,22 @@ public class DataProviderManager {
         String defaultDataProviderId = node.get(DEFAULT_PROVIDER_ID, null);
         // If it has a defaultDataProviderId, handle it as a default data provider,
         // otherwise, it must be a user-supplied data provider or a legacy default
-        if (defaultDataProviderId == null) { 
-            if (isEditable) {
-                //User-supplied data provider: initiate it  
-                initializeCustomDataProvider(node);
-            } //else - this is a legacy defautl, do not initiate it.
-        } else {// node DOES have a defaultDataProviderId
+        if (defaultDataProviderId!=null) { 
+            // node DOES have a defaultDataProviderId
             // Is there a registered default data provider with that id?
             DataProvider dataProvider = getDataProviderById(defaultDataProviderId);
             if (dataProvider != null) {
                 integrateUserPrefsToDefaultDataProvider(node, dataProvider);
             }// else - this is a depricated default, do not initiate it.
+        } else {
+            if (isEditable) {                
+                //User-supplied data provider: initiate it .
+                //IMPORTANT NOTE: About field isEditable: It has nothing to do with the "Edit" option of a Data Provider.
+                //It is not used in deciding if a Data Provider is editable or not.
+                //Here, isEditable is going to tell us if a Data Provider is a default or user provided. This check is
+                //STRICTLY for IGB versions 9.0.0 or before. It has been depricated from the defaults(JSON) since 9.0.1.
+                initializeCustomDataProvider(node);
+            } //else - this is a legacy defautl, do not initiate it.
         }
     }
             

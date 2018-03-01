@@ -26,10 +26,6 @@ import javafx.stage.FileChooser;
 import javax.swing.GroupLayout;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
-import javax.swing.JFileChooser;
-import static javax.swing.JFileChooser.APPROVE_OPTION;
-import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
-import static javax.swing.JFileChooser.FILES_AND_DIRECTORIES;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -69,21 +65,6 @@ public class SynonymsControlPanel {
         return panel;
     }
 
-    protected static File fileChooser(int mode) throws HeadlessException {
-        JFileChooser chooser = new JFileChooser();
-
-        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        chooser.setFileSelectionMode(mode);
-        chooser.setDialogTitle("Choose " + (mode == DIRECTORIES_ONLY ? "Directory" : "File"));
-        chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
-        chooser.rescanCurrentDirectory();
-
-        if (chooser.showOpenDialog(null) != APPROVE_OPTION) {
-            return null;
-        }
-
-        return chooser.getSelectedFile();
-    }
     
     protected static File getSelectedFile() throws HeadlessException {
         // IGBF-1185: Provide File chooser UI in native OS file chooser style and 
@@ -157,10 +138,10 @@ public class SynonymsControlPanel {
 
         final ActionListener clistener = e -> {
             if (e.getSource() == copenFile) {
-                File file = fileChooser(FILES_AND_DIRECTORIES);
+                File selectedFile = getSelectedFile();
                 try {
-                    if (file != null) {
-                        csynonymFile.setText(file.getCanonicalPath());
+                    if (selectedFile != null) {
+                        csynonymFile.setText(selectedFile.getCanonicalPath());
                         
                         // IGBF-1187: Display messgae to restart IGB when chromosome file is selected
                         // and user has already selected spacies. If user sets chromosome file
@@ -202,7 +183,7 @@ public class SynonymsControlPanel {
         vopenFile.addActionListener(vlistener);
         vsynonymFile.addActionListener(vlistener);
 
-        copenFile.setToolTipText("Open Local Directory");
+        copenFile.setToolTipText("Open Local File");
         copenFile.addActionListener(clistener);
         csynonymFile.addActionListener(clistener);
 

@@ -67,7 +67,7 @@ public class IgbPreferencesLoadingOrchestrator {
 
     private void loadIGBPrefs() {
         loadDefaultPrefs();
-        migrateOldDataProviders();
+        //migrateOldDataProviders();
         //Load from persistence api
         loadFromPersistenceStorage();
         notifyUserOfNotRespondingServers();
@@ -128,6 +128,12 @@ public class IgbPreferencesLoadingOrchestrator {
         timer.start();
     }
 
+    
+    /**
+    // The migrateOldDataProviders() method was introduced in 2015, immediately after substantial refactoring about the DataProvider class. 
+    * // It was intended to migrate old dataProviders ("servers") from IGB 8.3 to IGB 8.4.
+    * // This method includes a set of fixed urls that it prevents from transferring. 
+    * // Without 
     private void migrateOldDataProviders() {
         Set<DataProvider> loadedDataProviders = DataProviderManager.getAllServers();
         List<String> URL_IGNORE_LIST = ImmutableList.of("http://www.ensembl.org/das/dsn/", "http://bioviz.org/cached/", "http://genome.cse.ucsc.edu/cgi-bin/das/dsn/");
@@ -166,4 +172,5 @@ public class IgbPreferencesLoadingOrchestrator {
     private String addTrailingSlash(String url) {
         return url + (url.endsWith("/") ? "" : "/");
     }
+    */
 }

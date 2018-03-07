@@ -38,9 +38,16 @@ public class DataProviderConfig {
     @Expose
     @XmlAttribute(name = "mirror")
     protected String mirror;
+    /**
+     * Default Data Providers should not be edited in the Data Sources table.
+     * Only default data providers are read through this class, 
+     * so editable should always be set to false.  Before IGBF-1206,
+     * editable was consistently set to false essentially by accident. 
+     * Now it is explicitly and deliberately the case. 
+     */
     @Expose
     @XmlAttribute(name = "isEditable")
-    protected boolean editable;
+    protected boolean editable = false;
     @Expose
     @XmlAttribute(name = "status")
     protected String status;

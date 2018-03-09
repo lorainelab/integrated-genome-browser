@@ -1,14 +1,7 @@
 package com.affymetrix.genometry.data;
 
 import com.affymetrix.common.PreferenceUtils;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOAD_PRIORITY;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOGIN;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.MIRROR_URL;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.PASSWORD;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.PRIMARY_URL;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.PROVIDER_NAME;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.REMEMBER_CREDENTIALS;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.STATUS;
+import static com.affymetrix.genometry.general.DataProviderPrefKeys.*;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
@@ -39,6 +32,7 @@ public abstract class BaseDataProvider implements DataProvider {
     protected ResourceStatus status;
     private StringEncrypter encrypter;
     protected boolean useMirror;
+    protected String defaultDataProviderId;
 
     public BaseDataProvider(String url, String name, int loadPriority) {
         this.url = checkNotNull(url);
@@ -53,8 +47,31 @@ public abstract class BaseDataProvider implements DataProvider {
     public BaseDataProvider(String url, String name, String mirrorUrl, int loadPriority) {
         this.url = checkNotNull(url);
         this.name = checkNotNull(name);
-        this.mirrorUrl = checkNotNull(mirrorUrl);
         this.loadPriority = loadPriority;
+        this.mirrorUrl = checkNotNull(mirrorUrl);
+        encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
+        preferencesNode = PreferenceUtils.getDataProviderNode(url);
+        loadPersistedConfiguration();
+        initializePreferences();
+    }
+    
+    public BaseDataProvider(String url, String name, int loadPriority, String id) {
+        this.url = checkNotNull(url);
+        this.name = checkNotNull(name);
+        this.loadPriority = loadPriority;
+        this.defaultDataProviderId = id;
+        encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
+        preferencesNode = PreferenceUtils.getDataProviderNode(url);
+        loadPersistedConfiguration();
+        initializePreferences();
+    }
+    
+    public BaseDataProvider(String url, String name, String mirrorUrl, int loadPriority, String id) {
+        this.url = checkNotNull(url);
+        this.name = checkNotNull(name);
+        this.loadPriority = loadPriority;
+        this.defaultDataProviderId = id;
+        this.mirrorUrl = checkNotNull(mirrorUrl);
         encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
         preferencesNode = PreferenceUtils.getDataProviderNode(url);
         loadPersistedConfiguration();
@@ -85,10 +102,13 @@ public abstract class BaseDataProvider implements DataProvider {
 
     private void initializePreferences() {
         preferencesNode.put(PRIMARY_URL, url);
-        preferencesNode.put(PROVIDER_NAME, name);
+        preferencesNode.put(PROVIDER_NAME, name);       
         preferencesNode.putInt(LOAD_PRIORITY, loadPriority);
         if (!Strings.isNullOrEmpty(mirrorUrl)) {
             preferencesNode.put(MIRROR_URL, mirrorUrl);
+        }
+        if (!Strings.isNullOrEmpty(defaultDataProviderId)){
+            preferencesNode.put(DEFAULT_PROVIDER_ID, defaultDataProviderId);
         }
     }
 
@@ -212,5 +232,15 @@ public abstract class BaseDataProvider implements DataProvider {
         }
         return true;
     }
+
+    public void setId(String id){
+        this.defaultDataProviderId = id;
+    }
+
+    public String getId(){
+        return defaultDataProviderId;
+    }
+    
+    
 
 }

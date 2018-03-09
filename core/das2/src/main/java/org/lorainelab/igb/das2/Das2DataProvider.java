@@ -52,6 +52,18 @@ public final class Das2DataProvider extends BaseDataProvider implements DataProv
         versionInfo = Sets.newLinkedHashSet();
         initialize();
     }
+    
+    public Das2DataProvider(String dasUrl, String name, int loadPriority, String id) {
+        super(dasUrl, name, loadPriority, id);
+        versionInfo = Sets.newLinkedHashSet();
+        initialize();
+    }
+
+    public Das2DataProvider(String dasUrl, String name, String mirrorUrl, int loadPriority, String id) {
+        super(dasUrl, name, mirrorUrl, loadPriority, id);
+        versionInfo = Sets.newLinkedHashSet();
+        initialize();
+    }
 
     @Override
     public void initialize() {

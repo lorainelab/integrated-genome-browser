@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.general;
 
 /**
- * This class contains constant values that are used to stored preferences for
+ * This class contains constant values that are used to store preferences for
  * the generic server.
  *
  */
@@ -18,7 +18,11 @@ public class DataProviderPrefKeys {
     public static final String MIRROR_URL = "mirrorUrl";
     public static final String STATUS = "status";
     public static final String LOAD_PRIORITY = "loadPriority";
-    public static final String IS_DEFAULT_SERVER = "default";
     public static final String REMEMBER_CREDENTIALS = "rememberCredentials";
+    /**
+     * The isEditable tag is only used to identify legacy defaults.
+     * It should NOT be used in igbDefaultPrefs.json.
+     */
     public static final String IS_EDITABLE = "isEditable";
+    public static final String DEFAULT_PROVIDER_ID = "defaultDataProviderId";
 }

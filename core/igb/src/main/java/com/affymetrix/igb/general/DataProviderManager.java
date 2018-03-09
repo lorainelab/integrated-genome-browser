@@ -6,6 +6,7 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.data.BaseDataProvider;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.data.DataProviderFactoryManager;
@@ -14,14 +15,16 @@ import static com.affymetrix.genometry.data.DataProviderUtils.toExternalForm;
 import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceResource;
 import com.affymetrix.genometry.general.DataContainer;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.FACTORY_NAME;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOAD_PRIORITY;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOGIN;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.MIRROR_URL;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.PASSWORD;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.PRIMARY_URL;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.PROVIDER_NAME;
-import static com.affymetrix.genometry.general.DataProviderPrefKeys.STATUS;
+import static com.affymetrix.genometry.general.DataProviderPrefKeys.*;
+//import static com.affymetrix.genometry.general.DataProviderPrefKeys.FACTORY_NAME;
+//import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOAD_PRIORITY;
+//import static com.affymetrix.genometry.general.DataProviderPrefKeys.LOGIN;
+//import static com.affymetrix.genometry.general.DataProviderPrefKeys.MIRROR_URL;
+//import static com.affymetrix.genometry.general.DataProviderPrefKeys.PASSWORD;
+//import static com.affymetrix.genometry.general.DataProviderPrefKeys.PRIMARY_URL;
+//import static com.affymetrix.genometry.general.DataProviderPrefKeys.PROVIDER_NAME;
+//import static com.affymetrix.genometry.general.DataProviderPrefKeys.STATUS;
+//import static com.affymetrix.genometry.general.DataProviderPrefKeys.DEFAULT_PROVIDER_ID;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Disabled;
@@ -47,6 +50,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.HashMap;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -169,8 +173,52 @@ public class DataProviderManager {
         return referenceSequenceResources;
     }
 
-    //TODO this node parsing should be pushed up to factories to allow more flexibility and more isolation of responsibility
+    /**
+     * As of IGB 9.0.1, each default Data Providers has an id.
+     * This allows us to update these DataProviders (including the url), 
+     * while maintaining any settings the user may have applied.
+     * With this change, the work of initializing Data Providers read from the user prefs 
+     * (work previously done by initializeDataProvider)
+     * is now handled by either initializeCustomDataProvider (for user-supplied data providers) 
+     * or integrateUserPrefsToDefaultDataProvider (for default data providers).
+     * The initializeDataProvider method handles the logic flow to pass the 
+     * preferences node to one of those functions.
+     * Legacy defaults (9.0.0 and earlier) had no id, and had isEditable=false.
+     * User-supplied data providers have no id.
+     * Default Data Providers are initialized in initializeDataProvider(DataProviderConfig config).
+     * When user preferences are read, all defaults have already been initialized.
+     * Any default that has not already been initialized must have been removed 
+     * from the default set, and should be ignored.
+     * For each default that has been initialized, we only need to update 
+     * the attributes (currently just status) that the user could have changed.
+     * @param node 
+     */
     public void initializeDataProvider(Preferences node) {
+        boolean isEditable = node.getBoolean(IS_EDITABLE, true);
+        String defaultDataProviderId = node.get(DEFAULT_PROVIDER_ID, null);
+        // If it has a defaultDataProviderId, handle it as a default data provider,
+        // otherwise, it must be a user-supplied data provider or a legacy default
+        if (defaultDataProviderId!=null) { 
+            // node DOES have a defaultDataProviderId
+            // Is there a registered default data provider with that id?
+            DataProvider dataProvider = getDataProviderById(defaultDataProviderId);
+            if (dataProvider != null) {
+                integrateUserPrefsToDefaultDataProvider(node, dataProvider);
+            }// else - this is a depricated default, do not initiate it.
+        } else {
+            if (isEditable) {                
+                //User-supplied data provider: initiate it .
+                //IMPORTANT NOTE: About field isEditable: It has nothing to do with the "Edit" option of a Data Provider.
+                //It is not used in deciding if a Data Provider is editable or not.
+                //Here, isEditable is going to tell us if a Data Provider is a default or user provided. This check is
+                //STRICTLY for IGB versions 9.0.0 or before. It has been depricated from the defaults(JSON) since 9.0.1.
+                initializeCustomDataProvider(node);
+            } //else - this is a legacy default, do not initiate it.
+        }
+    }
+            
+    //TODO this node parsing should be pushed up to factories to allow more flexibility and more isolation of responsibility
+    private void initializeCustomDataProvider(Preferences node) {
         String url = node.get(PRIMARY_URL, null);
         String name = node.get(PROVIDER_NAME, null);
         String factoryName = node.get(FACTORY_NAME, null);
@@ -184,58 +232,59 @@ public class DataProviderManager {
             return;
         }
 
-        if (isValidNonDuplicate(url, factoryName, name, mirrorUrl)) {
-            Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);
-            dataProviderFactory.ifPresent(factory -> {
-                DataProvider dataProvider;
-                if (Strings.isNullOrEmpty(mirrorUrl)) {
-                    dataProvider = factory.createDataProvider(url, name, loadPriority);
-                } else {
-                    dataProvider = factory.createDataProvider(url, name, mirrorUrl, loadPriority);
-                }
-                if (!Strings.isNullOrEmpty(login)) {
-                    dataProvider.setLogin(login);
-                }
-                if (!Strings.isNullOrEmpty(password)) {
-                    dataProvider.setPassword(encrypter.decrypt(password));
-                }
-                if (!Strings.isNullOrEmpty(status)) {
-                    dataProvider.setStatus(ResourceStatus.fromName(status).get());
-                }
-                if (loadPriority != -1) {
-                    dataProvider.setLoadPriority(loadPriority);
-                }
-                ServiceRegistration<DataProvider> registerService = bundleContext.registerService(DataProvider.class, dataProvider, null);
-                dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());
-            });
-        } else if (!Strings.isNullOrEmpty(status)) {
-            DataProvider dataProvider = null;
+        Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);
+        dataProviderFactory.ifPresent(factory -> {
+            DataProvider dataProvider;
             if (Strings.isNullOrEmpty(mirrorUrl)) {
-                if (dataProviderServiceReferences.containsKey(url)) {
-                    dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(url));
-                }
-            } else if (!dataProviderServiceReferences.containsKey(url)) {
-                if (dataProviderServiceReferences.containsKey(mirrorUrl)) {
-                    dataProvider = bundleContext.<DataProvider>getService(dataProviderServiceReferences.get(mirrorUrl));
-                }
+                dataProvider = factory.createDataProvider(url, name, loadPriority);
+            } else {
+                dataProvider = factory.createDataProvider(url, name, mirrorUrl, loadPriority);
             }
-            if (dataProvider != null) {
+            if (!Strings.isNullOrEmpty(login)) {
+                dataProvider.setLogin(login);
+            }
+            if (!Strings.isNullOrEmpty(password)) {
+                dataProvider.setPassword(encrypter.decrypt(password));
+            }
+            if (!Strings.isNullOrEmpty(status)) {
                 dataProvider.setStatus(ResourceStatus.fromName(status).get());
             }
+            if (loadPriority != -1) {
+                dataProvider.setLoadPriority(loadPriority);
+            }
+            ServiceRegistration<DataProvider> registerService = bundleContext.registerService(DataProvider.class, dataProvider, null);
+            dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());
+        });
+    }
+            
+            
+
+    private void integrateUserPrefsToDefaultDataProvider(Preferences node, DataProvider dp) {
+        //Update the status, but change nothing else.
+        // We expect all default data providers to have a status
+        String status = node.get(STATUS, null);
+        String login = node.get(LOGIN, null);
+        String password = node.get(PASSWORD, null);
+        dp.setStatus(ResourceStatus.fromName(status).get());
+        if (!Strings.isNullOrEmpty(login)){
+            dp.setLogin(login);
+        }
+        if (!Strings.isNullOrEmpty(password)){
+            dp.setPassword(encrypter.decrypt(password));
         }
     }
 
-    private boolean isValidNonDuplicate(String url, String factoryName, String name, String mirrorUrl) {
-        if (Strings.isNullOrEmpty(url) || Strings.isNullOrEmpty(factoryName) || Strings.isNullOrEmpty(name)) {
-            return false;
-        }
-        if (Strings.isNullOrEmpty(mirrorUrl)) {
-            return !dataProviderServiceReferences.containsKey(url);
-        } else {
-            return !dataProviderServiceReferences.containsKey(url) && !dataProviderServiceReferences.containsKey(mirrorUrl);
-        }
+    
+    private BaseDataProvider getDataProviderById (String id){
+        List<DataProvider> dpList = dataProviders.stream()
+                .filter(dp -> dp instanceof BaseDataProvider)
+                .filter(dp -> ((BaseDataProvider) dp).getId().equals(id))
+                .collect(Collectors.toList());
+        return (BaseDataProvider)dpList.get(0);
     }
 
+
+    
     public void initializeDataProvider(DataProviderConfig config) {
         String factoryName = config.getFactoryName();
         Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);
@@ -244,11 +293,11 @@ public class DataProviderManager {
             preferencesNode.put(STATUS, ResourceStatus.Disabled.toString());
         }
         dataProviderFactory.ifPresent(factory -> {
-            DataProvider dataProvider;
+            BaseDataProvider dataProvider;
             if (Strings.isNullOrEmpty(config.getMirror())) {
-                dataProvider = factory.createDataProvider(config.getUrl(), config.getName(), config.getLoadPriority());
+                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getLoadPriority(), config.getId());
             } else {
-                dataProvider = factory.createDataProvider(config.getUrl(), config.getName(), config.getMirror(), config.getLoadPriority());
+                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getMirror(), config.getLoadPriority(), config.getId());
             }
             ServiceRegistration<DataProvider> registerService = bundleContext.registerService(DataProvider.class, dataProvider, null);
             dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());

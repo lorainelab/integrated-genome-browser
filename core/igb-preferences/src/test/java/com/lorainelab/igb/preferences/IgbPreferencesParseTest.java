@@ -1,4 +1,4 @@
-package org.lorainelab.igb.preferences;
+package com.lorainelab.igb.preferences;
 
 import org.lorainelab.igb.preferences.IgbPreferencesParser;
 import org.lorainelab.igb.preferences.model.DataProviderConfig;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class IgbPreferencesParseTest {
     public void readJsonIgbPrefs() {
         Reader reader = new InputStreamReader(IgbPreferencesParseTest.class.getClassLoader().getResourceAsStream("igbDefaultPrefs.json"));
         IgbPreferences prefs = igbPreferencesParser.fromJson(reader).get();
-        assertEquals("IGB Quickload", prefs.getDataProviders().get(0).getName());
+        assertTrue(prefs.getDataProviders().size()>0);
     }
 
     @Test

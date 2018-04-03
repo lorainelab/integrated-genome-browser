@@ -47,6 +47,13 @@
                 "loadPriority": "6",
                 "status": "disabled",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:6"
+            },
+            {
+                "factoryName": "quickload",
+                "name": "Bio-Analytic Resource",
+                "url": "http://lorainelab-quickload.scidas.org/bar",
+                "loadPriority": "7",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
             }
         ],
         "repository": [

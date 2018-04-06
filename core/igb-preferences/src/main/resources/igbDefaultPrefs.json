@@ -12,7 +12,7 @@
                 "factoryName": "quickload",
                 "name": "IGB Quickload",
                 "url": "http://igbquickload.org/quickload",
-                "loadPriority": "1",
+                "loadPriority": "2",
                 "mirror": "http://lorainelab-quickload.scidas.org/quickload",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:1"
             },
@@ -20,7 +20,7 @@
                 "factoryName": "quickload",
                 "name": "Blueberry",
                 "url": "http://igbquickload.org/blueberry",
-                "loadPriority": "2",
+                "loadPriority": "3",
                 "mirror": "http://lorainelab-quickload.scidas.org/blueberry",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:3"
             },
@@ -28,7 +28,7 @@
                 "factoryName": "quickload",
                 "name": "SoySeq",
                 "url": "http://igbquickload.org/soyseq",
-                "loadPriority": "3",
+                "loadPriority": "4",
                 "mirror": "http://lorainelab-quickload.scidas.org/soyseq",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:4"
             },
@@ -36,7 +36,7 @@
                 "factoryName": "das",
                 "name": "UCSC",
                 "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
-                "loadPriority": "4",
+                "loadPriority": "5",
                 "status": "disabled",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
@@ -44,7 +44,7 @@
                 "factoryName": "das2",
                 "name": "UofUtahBioinfoCore",
                 "url": "http://bioserver.hci.utah.edu:8080/DAS2DB",
-                "loadPriority": "5",
+                "loadPriority": "6",
                 "status": "disabled",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:6"
             },
@@ -52,7 +52,7 @@
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
                 "url": "http://lorainelab-quickload.scidas.org/bar",
-                "loadPriority": "7",
+                "loadPriority": "1",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:7"
             }
         ],

@@ -32,20 +32,21 @@ public class IgbPreferencesParseTest {
     @Before
     public void init() {
         igbPreferencesParser = new IgbPreferencesParser();
+        Reader reader = new InputStreamReader(IgbPreferencesParseTest.class.getClassLoader().getResourceAsStream("igbDefaultPrefs.json"));
+        prefs = igbPreferencesParser.fromJson(reader).get();
     }
 
     @Test
     public void readJsonIgbPrefs() {
-        Reader reader = new InputStreamReader(IgbPreferencesParseTest.class.getClassLoader().getResourceAsStream("igbDefaultPrefs.json"));
-        prefs = igbPreferencesParser.fromJson(reader).get();
         assertTrue(prefs.getDataProviders().size()>0);
-        checkForDataProviderId(prefs);
-        checkForDataProviderName(prefs);
-        checkForDataProviderLoadPriority(prefs);
+       // checkForDataProviderId(prefs);
+        //checkForDataProviderName(prefs);
+        //checkForDataProviderLoadPriority(prefs);
     }
     
     /* checks if all the data providers in igbDefaultPrefs.json has Id*/
-    public void checkForDataProviderId(IgbPreferences prefs) {
+    @Test
+    public void checkForDataProviderId(/*IgbPreferences prefs*/) {
         
         for (DataProviderConfig item : prefs.getDataProviders()) {
             assertTrue(!Strings.isNullOrEmpty( item.getId().trim() ));
@@ -53,7 +54,8 @@ public class IgbPreferencesParseTest {
     }
     
     /* checks if all the data providers in igbDefaultPrefs.json has provider name*/
-    public void checkForDataProviderName(IgbPreferences prefs) {
+    @Test
+    public void checkForDataProviderName(/*IgbPreferences prefs*/) {
         
         for (DataProviderConfig item : prefs.getDataProviders()) {
             assertTrue(!Strings.isNullOrEmpty( item.getName().trim() ));
@@ -61,7 +63,8 @@ public class IgbPreferencesParseTest {
     }
     
     /* checks if all the data providers in igbDefaultPrefs.json has load priority */
-    public void checkForDataProviderLoadPriority(IgbPreferences prefs) {
+    @Test
+    public void checkForDataProviderLoadPriority(/*IgbPreferences prefs*/) {
         
         for (DataProviderConfig item : prefs.getDataProviders()) {
             assertTrue((Object)item.getLoadPriority() instanceof Integer);

@@ -40,13 +40,20 @@
                 "status": "disabled",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
-            {
+            {{
                 "factoryName": "das2",
                 "name": "UofUtahBioinfoCore",
                 "url": "http://bioserver.hci.utah.edu:8080/DAS2DB",
                 "loadPriority": "5",
                 "status": "disabled",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:6"
+            },
+            {
+                "factoryName": "quickload",
+                "name": "Bio-Analytic Resource",
+                "url": "http://lorainelab-quickload.scidas.org/bar",
+                "loadPriority": "7",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
             }
         ],
         "repository": [

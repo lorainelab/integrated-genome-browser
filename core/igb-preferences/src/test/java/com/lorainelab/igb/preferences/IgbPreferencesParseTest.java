@@ -1,5 +1,6 @@
 package com.lorainelab.igb.preferences;
 
+import com.google.common.base.Strings;
 import org.lorainelab.igb.preferences.IgbPreferencesParser;
 import org.lorainelab.igb.preferences.model.DataProviderConfig;
 import org.lorainelab.igb.preferences.model.IgbPreferences;
@@ -35,6 +36,10 @@ public class IgbPreferencesParseTest {
         Reader reader = new InputStreamReader(IgbPreferencesParseTest.class.getClassLoader().getResourceAsStream("igbDefaultPrefs.json"));
         IgbPreferences prefs = igbPreferencesParser.fromJson(reader).get();
         assertTrue(prefs.getDataProviders().size()>0);
+        String dpName = prefs.getDataProviders().get(0).getName();
+        assertTrue(!Strings.isNullOrEmpty( dpName ));
+        int loadPriority = prefs.getDataProviders().get(0).getLoadPriority();
+        assertTrue((Object)loadPriority instanceof Integer);
     }
 
     @Test

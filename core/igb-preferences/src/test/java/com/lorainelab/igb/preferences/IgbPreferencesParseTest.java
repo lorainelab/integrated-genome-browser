@@ -39,9 +39,6 @@ public class IgbPreferencesParseTest {
     @Test
     public void readJsonIgbPrefs() {
         assertTrue(prefs.getDataProviders().size()>0);
-       // checkForDataProviderId(prefs);
-        //checkForDataProviderName(prefs);
-        //checkForDataProviderLoadPriority(prefs);
     }
     
     /* checks if all the data providers in igbDefaultPrefs.json has Id*/

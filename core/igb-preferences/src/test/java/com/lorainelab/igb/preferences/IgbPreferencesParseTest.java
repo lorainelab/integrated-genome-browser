@@ -8,8 +8,10 @@ import org.lorainelab.igb.preferences.model.JsonWrapper;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import jdk.nashorn.internal.objects.NativeArray;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -25,6 +27,7 @@ public class IgbPreferencesParseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(IgbPreferencesParseTest.class);
     private IgbPreferencesParser igbPreferencesParser;
+    private IgbPreferences prefs;
 
     @Before
     public void init() {
@@ -34,12 +37,35 @@ public class IgbPreferencesParseTest {
     @Test
     public void readJsonIgbPrefs() {
         Reader reader = new InputStreamReader(IgbPreferencesParseTest.class.getClassLoader().getResourceAsStream("igbDefaultPrefs.json"));
-        IgbPreferences prefs = igbPreferencesParser.fromJson(reader).get();
+        prefs = igbPreferencesParser.fromJson(reader).get();
         assertTrue(prefs.getDataProviders().size()>0);
-        String dpName = prefs.getDataProviders().get(0).getName();
-        assertTrue(!Strings.isNullOrEmpty( dpName ));
-        int loadPriority = prefs.getDataProviders().get(0).getLoadPriority();
-        assertTrue((Object)loadPriority instanceof Integer);
+        checkForDataProviderId(prefs);
+        checkForDataProviderName(prefs);
+        checkForDataProviderLoadPriority(prefs);
+    }
+    
+    /* checks if all the data providers in igbDefaultPrefs.json has Id*/
+    public void checkForDataProviderId(IgbPreferences prefs) {
+        
+        for (DataProviderConfig item : prefs.getDataProviders()) {
+            assertTrue(!Strings.isNullOrEmpty( item.getId().trim() ));
+        }
+    }
+    
+    /* checks if all the data providers in igbDefaultPrefs.json has provider name*/
+    public void checkForDataProviderName(IgbPreferences prefs) {
+        
+        for (DataProviderConfig item : prefs.getDataProviders()) {
+            assertTrue(!Strings.isNullOrEmpty( item.getName().trim() ));
+        }
+    }
+    
+    /* checks if all the data providers in igbDefaultPrefs.json has load priority */
+    public void checkForDataProviderLoadPriority(IgbPreferences prefs) {
+        
+        for (DataProviderConfig item : prefs.getDataProviders()) {
+            assertTrue((Object)item.getLoadPriority() instanceof Integer);
+        }
     }
 
     @Test

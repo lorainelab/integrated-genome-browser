@@ -8,10 +8,8 @@ import org.lorainelab.igb.preferences.model.JsonWrapper;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.xml.bind.JAXBException;
-import jdk.nashorn.internal.objects.NativeArray;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -43,7 +41,7 @@ public class IgbPreferencesParseTest {
     
     /* checks if all the data providers in igbDefaultPrefs.json has Id*/
     @Test
-    public void checkForDataProviderId(/*IgbPreferences prefs*/) {
+    public void checkForDataProviderId() {
         
         for (DataProviderConfig item : prefs.getDataProviders()) {
             assertTrue(!Strings.isNullOrEmpty( item.getId().trim() ));
@@ -52,7 +50,7 @@ public class IgbPreferencesParseTest {
     
     /* checks if all the data providers in igbDefaultPrefs.json has provider name*/
     @Test
-    public void checkForDataProviderName(/*IgbPreferences prefs*/) {
+    public void checkForDataProviderName() {
         
         for (DataProviderConfig item : prefs.getDataProviders()) {
             assertTrue(!Strings.isNullOrEmpty( item.getName().trim() ));
@@ -61,7 +59,7 @@ public class IgbPreferencesParseTest {
     
     /* checks if all the data providers in igbDefaultPrefs.json has load priority */
     @Test
-    public void checkForDataProviderLoadPriority(/*IgbPreferences prefs*/) {
+    public void checkForDataProviderLoadPriority() {
         
         for (DataProviderConfig item : prefs.getDataProviders()) {
             assertTrue((Object)item.getLoadPriority() instanceof Integer);

@@ -1,16 +1,16 @@
 # Integrated Genome Browser bitbucket-pipelines.yml file
 # Author: Sanket Patil (spatil26@uncc.edu)
-# Team: IGB (http://www.bioviz.org/igb)
+# Team: IGB (http://bioviz.org)
 # Only use spaces to indent your .yml configuration.
 # -----
 #  Image refers to the docker image hosted at docker hub.
 image: 
   name: lorainelab/igb-maven-install4j:jre-1.8.0_152
 
-# There are two configurations available one is default and other is 'branches'. branches cofiguration have sub 3 cofigurations. 
-# 1. IGBF-*: Any topic branch with name starting form IGBF-
+# There are two configurations available - default and branches. Branches configuration has 3 sub configurations. 
+# 1. IGBF-*: Any topic branch with name starting IGBF-
 # 2. master
-# 3. release
+# 3. release-*
 # On each commit to a branch specified in branches, Pipelines executes the scripts assigned to the branch
 # Default will get triggered whenever there is a commit in a branch which is not mentioned under branches configuration.
 # To run pipelines manually go to branches -> hover on the brach on which you want to execute piplines-> click on ... -> select run pipeline for the branch-> select configuration
@@ -52,7 +52,7 @@ pipelines:
         caches:
           - maven
         script: 
-          - echo "This script runs on a commit/change to master branch"
+          - echo "This script runs on a commit/change to master branch."
           # Getting Windows and Mac Keystore for signing Windows installer. Bitbucket pipeline environment variables used here for security purpose
           - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $WINDOWS_KEYSTORE_LINK -P /opt/igb
           - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $MAC_KEYSTORE_LINK -P /opt/igb
@@ -67,12 +67,12 @@ pipelines:
            # Posting all required files under download section of the repository
           - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$BITBUCKET_BRANCH.jar" --form files=@"main/target/media/IGB_windows-x64_9_0_1.exe; filename=IGB-$BITBUCKET_BRANCH-x64.exe" --form files=@"main/target/media/IGB_macos_9_0_1.dmg; filename=IGB-$BITBUCKET_BRANCH.dmg"
  
-    release:
+    release-*:
     - step:
         caches:
           - maven
         script: 
-          - echo "This script runs on a commit/change to release branch"
+          - echo "This script runs on a commit/change to release branch."
           # Getting Windows and Mac Keystore for signing Windows installer. Bitbucket pipeline environment variables used here for security purpose
           - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $WINDOWS_KEYSTORE_LINK -P /opt/igb
           - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $MAC_KEYSTORE_LINK -P /opt/igb

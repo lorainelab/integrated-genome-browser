@@ -16,6 +16,10 @@ public interface DataProviderFactory extends Weighted {
     public DataProvider createDataProvider(String url, String name, int loadPriority);
 
     public DataProvider createDataProvider(String url, String name, String mirrorUrl, int loadPriority);
+    
+    public DataProvider createDataProvider(String url, String name, int loadPriority, String id);
+
+    public DataProvider createDataProvider(String url, String name, String mirrorUrl, int loadPriority, String id);
 
     /**
      * @return if user's should be allowed to create local file system based instances of this type

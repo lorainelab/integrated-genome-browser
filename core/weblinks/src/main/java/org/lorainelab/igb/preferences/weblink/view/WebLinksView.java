@@ -345,6 +345,7 @@ public final class WebLinksView {
     private static FileChooserUtil getFileChooser() {
         if (file_chooser == null) {
             file_chooser =  FileChooserUtil.build();
+            //file_chooser.setContext(FileTracker.DATA_DIR_TRACKER.getFile());
         }
         file_chooser.setContext(FileTracker.DATA_DIR_TRACKER.getFile());
         return file_chooser;
@@ -354,16 +355,13 @@ public final class WebLinksView {
      * Tracks to import weblinks.
      */
     public void importWebLinks() {
-        // IGBF-1183: Change 'Tools->Configure Web Links->Import' file chooser window to OS native file chooser window style
-        FileChooserUtil chooser = getFileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("JSON file","*.json", "*.JSON");
-        Optional<File> selectedFile = chooser.setTitle("Import")
-                .setFileExtensionFilters(Lists.newArrayList(extFilter))
-                .retrieveFileFromFxChooser();
-       
-        if (selectedFile.isPresent() && selectedFile.get()!= null) {
-            FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
-            File fil = selectedFile.get();
+        JFileChooser chooser = getJFileChooser();
+        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+        Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
+        int option = chooser.showOpenDialog(frame);
+        if (option == JFileChooser.APPROVE_OPTION) {
+            FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
+            File fil = chooser.getSelectedFile();
             try {
                 WebLinkUtils.importWebLinks(fil);
             } catch (FileNotFoundException fe) {
@@ -379,31 +377,31 @@ public final class WebLinksView {
     }
 
     public void exportWebLinks() {
-        Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
-
         if (localTable.getRowCount() == 0) {
             ErrorHandler.errorPanel("Error", "No web links to save", Level.WARNING);
             return;
         }
 
-        JFileChooser chooser = getJFileChooser();
-        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        int option = chooser.showSaveDialog(frame);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            try {
+        // IGBF-1184: Change 'Tools->Configure Web Links->Export file chooser window style to Native OS window style
+        FileChooserUtil chooser = getFileChooser();
+        Optional<File> selectedFile = chooser.setTitle("Export")
+                .saveFilesFromFxChooser();
                 
-                File fil = chooser.getSelectedFile();
+        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+            FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
+            try {
+                File fil = selectedFile.get();
                 String full_path = fil.getCanonicalPath();
 
-                if (!full_path.endsWith(".json")) {
+                if ( ! (full_path.endsWith(".json") || full_path.endsWith(".JSON"))) {
                     fil = new File(full_path + ".json");
                 }
+                
                 WebLinkUtils.exportWebLinks(fil);
             } catch (Exception ex) {
                 ErrorHandler.errorPanel("Error exporting web links", ex, Level.SEVERE);
             }
         } 
-        FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
     }
 
     public void clear() {

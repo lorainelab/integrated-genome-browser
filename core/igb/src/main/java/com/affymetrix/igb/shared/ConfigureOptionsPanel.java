@@ -324,7 +324,18 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     private void addListeners() {
         comboBox.addItemListener(e -> {
             T cp = (T) comboBox.getSelectedItem();
-            cp = (T) cp.newInstance();
+            // If a user selects same color provider as initial then reuses the same object
+            // this if-statement was removed in IGBF-1129 and 
+            // it was restored (with modification) in IGBF-1232
+            // The condition: !(cp instanceof ColorProviderI)
+            // was added to address the needs of IGBF-1129
+            if (returnValue != null && cp != null 
+                    && cp.getName().equals(returnValue.getName())
+                    && !(cp instanceof ColorProviderI)) { 
+                cp = returnValue;
+            } else {
+                cp = (T) cp.newInstance();
+            }
             setSelected(cp);
             if (tChangeListeners != null && !tChangeListeners.isEmpty() && cp != returnValue) {
                 for (SelectionChangeListener tChangeListener : tChangeListeners) {

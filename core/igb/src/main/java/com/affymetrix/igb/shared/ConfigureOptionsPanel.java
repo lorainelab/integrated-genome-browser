@@ -54,12 +54,12 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private T returnValue, selectedCP;
+    private T returnValue, selectedValue;
     private Map<String, Object> paramMap;
     private JComboBox comboBox;
     private JPanel paramsPanel;
     private List<SelectionChangeListener> tChangeListeners;
-    private Preferences preferenceNode;
+    private List<Preferences> preferenceNodes;
     // This is used to keep track of preferences update once result is accepted bu user,
     // ie. getReturnValue called with parameter true.
     private Runnable commitPreferences = null;
@@ -79,8 +79,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         this(clazz, label, filter, includeNone, null);
     }
 
-    public ConfigureOptionsPanel(Class clazz, Object label, Filter<T> filter, boolean includeNone, Preferences preferences) {
-        preferenceNode = preferences;
+    public ConfigureOptionsPanel(Class clazz, Object label, Filter<T> filter, boolean includeNone, List<Preferences> preferences) {
+        preferenceNodes = preferences;
         init(clazz, label, filter, includeNone);
     }
 
@@ -129,32 +129,32 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         addListeners();
 
         //Initialized with first value
-        if (selectedCP == null && comboBox.getItemCount() > 0) {
+        if (selectedValue == null && comboBox.getItemCount() > 0) {
             T cp = (T) comboBox.getItemAt(0);
             returnValue = cp;
             setSelected(cp);
         }
     }
 
-    private void addOptions(final IParameters cp, final JPanel paramsPanel) {
+    private void addOptions(final IParameters iParameters, final JPanel paramsPanel) {
         paramMap = new HashMap<>();
         JPanel panel = new JPanel(new MigLayout("fill"));
 
         paramsPanel.removeAll();
-        if (cp != null && cp.getParametersType() != null) {
-            for (Map.Entry<String, Class<?>> entry : cp.getParametersType().entrySet()) {
+        if (iParameters != null && iParameters.getParametersType() != null) {
+            for (Map.Entry<String, Class<?>> entry : iParameters.getParametersType().entrySet()) {
                 final String label = entry.getKey();
                 final Class<?> clazz = entry.getValue();
-                final List<Object> possibleValues = cp.getParametersPossibleValues(label);
+                final List<Object> possibleValues = iParameters.getParametersPossibleValues(label);
                 JComponent component = null;
 
                 if (possibleValues != null) {
                     final JComboBox cb = new JComboBox();
                     cb.setRenderer(new IDListCellRenderer());
                     possibleValues.forEach(cb::addItem);
-                    cb.setSelectedItem(cp.getParameterValue(label));
+                    cb.setSelectedItem(iParameters.getParameterValue(label));
 
-                    cb.addItemListener(e -> ConfigureOptionsPanel.this.setParameter(cp, label, cb.getSelectedItem()));
+                    cb.addItemListener(e -> ConfigureOptionsPanel.this.setParameter(iParameters, label, cb.getSelectedItem()));
 
                     //cb.setMaximumSize(new java.awt.Dimension(70, 60));
 //                    cb.setPreferredSize(new java.awt.Dimension(70, 60));
@@ -173,7 +173,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     } else {
                         tf = new JTextField();
                     }
-                    tf.setText(String.valueOf(cp.getParameterValue(label)));
+                    tf.setText(String.valueOf(iParameters.getParameterValue(label)));
                     tf.getDocument().addDocumentListener(new DocumentListener() {
                         @Override
                         public void insertUpdate(DocumentEvent e) {
@@ -196,16 +196,16 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                                     try {
                                         if (Integer.class.isAssignableFrom(clazz)) {
                                             int value = Integer.valueOf(tf.getText());
-                                            ConfigureOptionsPanel.this.setParameter(cp, label, value);
+                                            ConfigureOptionsPanel.this.setParameter(iParameters, label, value);
                                         } else {
                                             float value = Float.valueOf(tf.getText());
-                                            ConfigureOptionsPanel.this.setParameter(cp, label, value);
+                                            ConfigureOptionsPanel.this.setParameter(iParameters, label, value);
                                         }
                                     } catch (NumberFormatException ex) {
                                     }
                                 }
                             } else {
-                                ConfigureOptionsPanel.this.setParameter(cp, label, tf.getText().trim());
+                                ConfigureOptionsPanel.this.setParameter(iParameters, label, tf.getText().trim());
                             }
                         }
                     });
@@ -216,8 +216,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     component = tf;
                 } else if (Color.class.isAssignableFrom(clazz)) {
                     final ColorComboBox colorComboBox = new ColorComboBox();
-                    colorComboBox.setSelectedColor((Color) cp.getParameterValue(label));
-                    colorComboBox.addItemListener(e -> setParameter(cp, label, e.getItem()));
+                    colorComboBox.setSelectedColor((Color) iParameters.getParameterValue(label));
+                    colorComboBox.addItemListener(e -> setParameter(iParameters, label, e.getItem()));
                     colorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
                     colorComboBox.setButtonVisible(false);
                     colorComboBox.setColorValueVisible(false);
@@ -228,30 +228,31 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     component = colorComboBox;
                 } else if (HeatMapExtended.class.isAssignableFrom(clazz)) {
                     final GradientEditorPanel editor = new GradientEditorPanel(null);
-                    Object hm = cp.getParameterValue(label);
+                    Object hm = iParameters.getParameterValue(label);
                     float[] positions;
                     Color[] colorRanges;
-                    String colorByPropName = ((ColorProviderI) cp).getName();
+                    String colorByPropName = ((ColorProviderI) iParameters).getName();
                     String[] heatMapTitle = {"HeatMapExtended"};
-                    Preferences[] currentLabelPreferences = new Preferences[]{null};
+//                    Preferences[] currentLabelPreferences = new Preferences[]{null};
                     if (hm instanceof HeatMapExtended) {
                         positions = ((HeatMapExtended) hm).getValues();
                         colorRanges = ((HeatMapExtended) hm).getRangeColors();
                         heatMapTitle[0] = ((HeatMapExtended) hm).getName();
                     } else {
-                        HeatMapExtended hme = (HeatMapExtended) cp.getParameterValue(label);
+                        HeatMapExtended hme = (HeatMapExtended) iParameters.getParameterValue(label);
                         positions = hme.getValues();
                         colorRanges = hme.getColors();
                         heatMapTitle[0] = hme.getName();
                     }
+                    //Initial values of heatmap are set to the ones found in preferences of first selected track.
                     List<String> previosPrefs = new ArrayList<>();
-                    if (preferenceNode != null) {
+                    if (preferenceNodes != null && preferenceNodes.size() > 0) {
+                        Preferences preferenceNode = preferenceNodes.get(0);
                         try {
                             previosPrefs = Arrays.asList(preferenceNode.childrenNames());
                         } catch (BackingStoreException ex) {
                             //Preferences store not available
                         }
-                        currentLabelPreferences[0] = preferenceNode.node(colorByPropName);
                         if (previosPrefs.contains(colorByPropName)) {
                             // read json from pref and create values and colors
                             Preferences node = preferenceNode.node(colorByPropName);
@@ -266,7 +267,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     }
                     editor.setVirtualRange(positions, colorRanges);
                     ColorInterpolator colorInterpolator1 = new GradientColorInterpolator(editor.getVirtualRange());
-                    setParameter(cp, label, new HeatMapExtended(heatMapTitle[0],
+                    setParameter(iParameters, label, new HeatMapExtended(heatMapTitle[0],
                             colorInterpolator1.getColorRange(HeatMap.BINS),
                             positions, colorRanges));
 
@@ -280,17 +281,23 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                         Object value = editor.showDialog();
                         if (value.equals(JOptionPane.OK_OPTION)) {
                             ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
-                            setParameter(cp, label, new HeatMapExtended(heatMapTitle[0],
+                            setParameter(iParameters, label, new HeatMapExtended(heatMapTitle[0],
                                     colorInterpolator.getColorRange(HeatMap.BINS),
                                     editor.getVirtualRange().getVirtualValues(),
                                     editor.getVirtualRange().getColors()));
+                            // This is used to keep track of preferences update once result is accepted by user,
+                            // ie. getReturnValue called with parameter true.
+                            //Here we create a function that will save heatmap preferences if user clicks "Ok" on "color by" dialog.
                             commitPreferences = () -> {
-                                if (preferenceNode != null) {
+                                if (preferenceNodes != null) {
                                     // Convert to JSON and save to preferences.
                                     String values = new Gson().toJson(editor.getVirtualRange().getVirtualValues());
                                     String colors = new Gson().toJson(editor.getVirtualRange().getColors());
-                                    currentLabelPreferences[0].put("values", values);
-                                    currentLabelPreferences[0].put("colors", colors);
+                                    preferenceNodes.forEach(node -> {
+                                        node = node.node(colorByPropName);
+                                        node.put("values", values);
+                                        node.put("colors", colors);
+                                    });
                                 }
                             };
                         }
@@ -346,10 +353,10 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
     }
 
-    private void setSelected(T cp) {
-        selectedCP = cp;
-        if (cp instanceof IParameters) {
-            initParamPanel((IParameters) cp);
+    private void setSelected(T value) {
+        selectedValue = value;
+        if (value instanceof IParameters) {
+            initParamPanel((IParameters) value);
         } else {
             paramsPanel.removeAll();
         }
@@ -376,14 +383,14 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         comboBox.setEnabled(b);
     }
 
-    public void setInitialValue(T cp) {
-        returnValue = cp;
-        if (cp == null) {
-            comboBox.setSelectedItem(cp);
+    public void setInitialValue(T t) {
+        returnValue = t;
+        if (t == null) {
+            comboBox.setSelectedItem(t);
         } else {
             for (int i = 0; i < comboBox.getItemCount(); i++) {
                 T item = (T) comboBox.getItemAt(i);
-                if (item != null && item.getName().equals(cp.getName())) {
+                if (item != null && item.getName().equals(t.getName())) {
                     comboBox.setSelectedItem(item);
                     break;
                 }
@@ -393,7 +400,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
     public T getReturnValue(boolean applyChanges) {
         if (applyChanges) {
-            returnValue = selectedCP;
+            returnValue = selectedValue;
             if (returnValue instanceof IParameters) {
                 ((IParameters) returnValue).setParametersValue(paramMap);
             }

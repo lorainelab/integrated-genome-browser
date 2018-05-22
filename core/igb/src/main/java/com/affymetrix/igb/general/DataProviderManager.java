@@ -51,6 +51,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -174,31 +175,32 @@ public class DataProviderManager {
     }
 
     /**
-     * As of IGB 9.0.1, each default Data Providers has an id.
-     * This allows us to update these DataProviders (including the url), 
-     * while maintaining any settings the user may have applied.
-     * With this change, the work of initializing Data Providers read from the user prefs 
-     * (work previously done by initializeDataProvider)
-     * is now handled by either initializeCustomDataProvider (for user-supplied data providers) 
-     * or integrateUserPrefsToDefaultDataProvider (for default data providers).
-     * The initializeDataProvider method handles the logic flow to pass the 
-     * preferences node to one of those functions.
-     * Legacy defaults (9.0.0 and earlier) had no id, and had isEditable=false.
-     * User-supplied data providers have no id.
-     * Default Data Providers are initialized in initializeDataProvider(DataProviderConfig config).
-     * When user preferences are read, all defaults have already been initialized.
-     * Any default that has not already been initialized must have been removed 
-     * from the default set, and should be ignored.
-     * For each default that has been initialized, we only need to update 
-     * the attributes (currently just status) that the user could have changed.
-     * @param node 
+     * As of IGB 9.0.1, each default Data Providers has an id. This allows us to
+     * update these DataProviders (including the url), while maintaining any
+     * settings the user may have applied. With this change, the work of
+     * initializing Data Providers read from the user prefs (work previously
+     * done by initializeDataProvider) is now handled by either
+     * initializeCustomDataProvider (for user-supplied data providers) or
+     * integrateUserPrefsToDefaultDataProvider (for default data providers). The
+     * initializeDataProvider method handles the logic flow to pass the
+     * preferences node to one of those functions. Legacy defaults (9.0.0 and
+     * earlier) had no id, and had isEditable=false. User-supplied data
+     * providers have no id. Default Data Providers are initialized in
+     * initializeDataProvider(DataProviderConfig config). When user preferences
+     * are read, all defaults have already been initialized. Any default that
+     * has not already been initialized must have been removed from the default
+     * set, and should be ignored. For each default that has been initialized,
+     * we only need to update the attributes (currently just status) that the
+     * user could have changed.
+     *
+     * @param node
      */
     public void initializeDataProvider(Preferences node) {
         boolean isEditable = node.getBoolean(IS_EDITABLE, true);
         String defaultDataProviderId = node.get(DEFAULT_PROVIDER_ID, null);
         // If it has a defaultDataProviderId, handle it as a default data provider,
         // otherwise, it must be a user-supplied data provider or a legacy default
-        if (defaultDataProviderId!=null) { 
+        if (defaultDataProviderId != null) {
             // node DOES have a defaultDataProviderId
             // Is there a registered default data provider with that id?
             DataProvider dataProvider = getDataProviderById(defaultDataProviderId);
@@ -206,7 +208,7 @@ public class DataProviderManager {
                 integrateUserPrefsToDefaultDataProvider(node, dataProvider);
             }// else - this is a depricated default, do not initiate it.
         } else {
-            if (isEditable) {                
+            if (isEditable) {
                 //User-supplied data provider: initiate it .
                 //IMPORTANT NOTE: About field isEditable: It has nothing to do with the "Edit" option of a Data Provider.
                 //It is not used in deciding if a Data Provider is editable or not.
@@ -216,7 +218,7 @@ public class DataProviderManager {
             } //else - this is a legacy default, do not initiate it.
         }
     }
-            
+
     //TODO this node parsing should be pushed up to factories to allow more flexibility and more isolation of responsibility
     private void initializeCustomDataProvider(Preferences node) {
         String url = node.get(PRIMARY_URL, null);
@@ -256,35 +258,35 @@ public class DataProviderManager {
             dataProviderServiceReferences.put(dataProvider.getUrl(), registerService.getReference());
         });
     }
-            
-            
 
     private void integrateUserPrefsToDefaultDataProvider(Preferences node, DataProvider dp) {
-        //Update the status, but change nothing else.
+        //Update the status, any username/password, and the load priority, but change nothing else.
         // We expect all default data providers to have a status
         String status = node.get(STATUS, null);
         String login = node.get(LOGIN, null);
         String password = node.get(PASSWORD, null);
+        int lp = node.getInt(LOAD_PRIORITY, -1);
+        //status
         dp.setStatus(ResourceStatus.fromName(status).get());
-        if (!Strings.isNullOrEmpty(login)){
+        //username and password
+        if (!Strings.isNullOrEmpty(login)) {
             dp.setLogin(login);
         }
-        if (!Strings.isNullOrEmpty(password)){
+        if (!Strings.isNullOrEmpty(password)) {
             dp.setPassword(encrypter.decrypt(password));
         }
+        //load priority
+        dp.setLoadPriority(lp);
     }
 
-    
-    private BaseDataProvider getDataProviderById (String id){
+    private BaseDataProvider getDataProviderById(String id) {
         List<DataProvider> dpList = dataProviders.stream()
                 .filter(dp -> dp instanceof BaseDataProvider)
                 .filter(dp -> ((BaseDataProvider) dp).getId().equals(id))
                 .collect(Collectors.toList());
-        return (BaseDataProvider)dpList.get(0);
+        return (BaseDataProvider) dpList.get(0);
     }
 
-
-    
     public void initializeDataProvider(DataProviderConfig config) {
         String factoryName = config.getFactoryName();
         Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);

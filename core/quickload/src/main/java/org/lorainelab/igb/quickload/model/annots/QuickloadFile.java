@@ -143,10 +143,18 @@ public class QuickloadFile {
         return foreground;
     }
 
+    private String formatColor(String color){
+        if(color.charAt(0)=='#'){
+            color=color.substring(1);
+        }
+        return color;
+    }
+
     @XmlAttribute(name = "foreground")
     public void setForeground(String value) {
         this.foreground = value;
         if (!Strings.isNullOrEmpty(value)) {
+            value= formatColor(value);
             props.put("foreground", value);
         }
     }
@@ -159,6 +167,7 @@ public class QuickloadFile {
     public void setBackground(String value) {
         this.background = value;
         if (!Strings.isNullOrEmpty(value)) {
+            value= formatColor(value);
             props.put("background", value);
         }
     }
@@ -171,6 +180,7 @@ public class QuickloadFile {
     public void setPositiveStrandColor(String value) {
         this.positiveStrandColor = value;
         if (!Strings.isNullOrEmpty(value)) {
+            value= formatColor(value);
             props.put("positive_strand_color", value);
         }
     }
@@ -183,6 +193,7 @@ public class QuickloadFile {
     public void setNegativeStrandColor(String value) {
         this.negativeStrandColor = value;
         if (!Strings.isNullOrEmpty(value)) {
+            value= formatColor(value);
             props.put("negative_strand_color", value);
         }
     }

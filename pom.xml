@@ -77,15 +77,14 @@
             <url>http://maven2.bioviz.org/repo3</url>
         </pluginRepository>
     </pluginRepositories>
-  <!--  
+  
     <distributionManagement>
         <repository>
-            <id>nexus</id>
-            <name>nexus</name>
-            <url>http://nexus.bioviz.org/nexus/content/repositories/release</url>
+            <id>maven-releases</id>
+            <name>maven-releases</name>
+            <url>https://nexus.bioviz.org/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
--->
 
     <modules>
 <!--        <module>core/taglets</module>-->
@@ -1203,7 +1202,26 @@
                     </filesets>
                 </configuration>
             </plugin>
-             
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.3</version>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <serverId>maven-releases</serverId>
+                    <nexusUrl>https://nexus.bioviz.org/repository/maven-releases/</nexusUrl> 
+                    <skipStaging>true</skipStaging>
+                </configuration>
+            </plugin>
+ 
         </plugins>
     </build>
 

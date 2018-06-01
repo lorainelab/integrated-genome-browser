@@ -17,7 +17,7 @@ public class ScoreFilter extends SymmetryFilter {
 
     private final static String SCORE = "score";
     private final static String COMPARATOR = "comparator";
-    private final static int DEFAULT_SCORE = 10;
+    private final static float DEFAULT_SCORE = 10;
     private final static List<MathComparisonOperator> COMPARATOR_VALUES = new LinkedList<>();
 
     static {
@@ -29,12 +29,12 @@ public class ScoreFilter extends SymmetryFilter {
         COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.NotEqualMathComparisonOperator());
     }
 
-    private Parameter<Integer> score = new Parameter<>(DEFAULT_SCORE);
+    private Parameter<Float> score = new Parameter<>(DEFAULT_SCORE);
     private Parameter<MathComparisonOperator> comparator = new BoundedParameter<>(COMPARATOR_VALUES);
 
     public ScoreFilter() {
         super();
-        parameters.addParameter(SCORE, Integer.class, score);
+        parameters.addParameter(SCORE, Float.class, score);
         parameters.addParameter(COMPARATOR, MathComparisonOperator.class, comparator);
     }
 

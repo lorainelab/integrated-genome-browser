@@ -6,6 +6,7 @@ import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel.Filter;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.prefs.Preferences;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -35,7 +36,7 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
         this(clazz, label, filter, true);
     }
 
-    public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter, Preferences preferences) {
+    public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter, List<Preferences> preferences) {
         this(clazz, label, filter, true, preferences);
     }
 
@@ -43,7 +44,7 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
         this(clazz, label, filter, includeNone, null);
     }
 
-    public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter, boolean includeNone, Preferences preferences) {
+    public ConfigureOptionsDialog(Class clazz, String label, Filter<T> filter, boolean includeNone, List<Preferences> preferences) {
         super((Frame) null, true);
         init(clazz, label, filter, includeNone, preferences);
     }
@@ -52,7 +53,7 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
         init(clazz, label, filter, includeNone, null);
     }
 
-    private void init(Class clazz, String label, Filter<T> filter, boolean includeNone, Preferences preferences) throws SecurityException {
+    private void init(Class clazz, String label, Filter<T> filter, boolean includeNone, List<Preferences> preferences) throws SecurityException {
         configureOptionPanel = new ConfigureOptionsPanel<T>(clazz, label, filter, includeNone, preferences) {
             @Override
             public void revalidate() {

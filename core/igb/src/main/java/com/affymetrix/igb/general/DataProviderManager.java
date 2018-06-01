@@ -284,7 +284,11 @@ public class DataProviderManager {
                 .filter(dp -> dp instanceof BaseDataProvider)
                 .filter(dp -> ((BaseDataProvider) dp).getId().equals(id))
                 .collect(Collectors.toList());
-        return (BaseDataProvider) dpList.get(0);
+        //Added the null check and size check as part of IGBF-1249, change by kiran
+        if(dpList !=null && dpList.size()>0) {
+            return (BaseDataProvider) dpList.get(0);
+        }
+        return null;
     }
 
     public void initializeDataProvider(DataProviderConfig config) {

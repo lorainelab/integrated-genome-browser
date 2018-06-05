@@ -111,6 +111,9 @@ public class AppManagerFxPanel extends JFXPanel {
     private BundleActionManager bundleActionManager;
     private RepositoryInfoManager repositoryInfoManager;
 
+    private JSBridge jsBridge;
+    private JSLogger jsLogger;
+
     private void refreshUpdateAllBtn() {
         Platform.runLater(() -> {
             updateAllBtn.setDisable(!filteredList.stream().anyMatch(plugin -> plugin.getIsUpdatable().getValue()));
@@ -224,8 +227,10 @@ public class AppManagerFxPanel extends JFXPanel {
         description.setContextMenuEnabled(false);
         webEngine = description.getEngine();
         JSObject jsobj = (JSObject) webEngine.executeScript("window");
-        jsobj.setMember("Bridge", new JSBridge());
-        jsobj.setMember("logger", new JSLogger());
+        jsBridge = new JSBridge();
+        jsLogger = new JSLogger();
+        jsobj.setMember("Bridge", jsBridge);
+        jsobj.setMember("logger", jsLogger);
 
         String htmlUrl;
         if (bundleContext != null) {

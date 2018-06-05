@@ -227,6 +227,8 @@ public class AppManagerFxPanel extends JFXPanel {
         description.setContextMenuEnabled(false);
         webEngine = description.getEngine();
         JSObject jsobj = (JSObject) webEngine.executeScript("window");
+        /*~kiran: IGBF-1244- Creating instance variables to avoid garbage collection of the weak references
+         causing subsequent accesses to the JavaScript objects to have no effect.*/
         jsBridge = new JSBridge();
         jsLogger = new JSLogger();
         jsobj.setMember("Bridge", jsBridge);

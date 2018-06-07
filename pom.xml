@@ -59,22 +59,22 @@
     <repositories>
         <repository>
             <id>repo1</id>
-            <url>http://maven2.bioviz.org/repo1</url>
+            <url>http://maven.bioviz.org/repo1</url>
         </repository>
         <repository>
             <id>repo2</id>
-            <url>http://maven2.bioviz.org/repo2</url>
+            <url>http://maven.bioviz.org/repo2</url>
         </repository>
         <repository>
             <id>repo3</id>
-            <url>http://maven2.bioviz.org/repo3</url>
+            <url>http://maven.bioviz.org/repo3</url>
         </repository>
     </repositories>
     
     <pluginRepositories>
         <pluginRepository>
             <id>repo3</id>
-            <url>http://maven2.bioviz.org/repo3</url>
+            <url>http://maven.bioviz.org/repo3</url>
         </pluginRepository>
     </pluginRepositories>
   

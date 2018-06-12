@@ -264,14 +264,15 @@ public class IGBScriptEngine implements ScriptEngine {
             return filePath;
         }
         //~kiran: IGBF-1245 : Added null check for filename to avoid exception
-        String scriptLocation ="";
+        String scriptLocation =".";
         if(fileName!=null){
             scriptLocation=File.separator + fileName.substring(fileName.indexOf("/") + 1, fileName.lastIndexOf("/"));
         }
         if (filePath.startsWith(BASH_HOME)) {
             filePath = filePath.replaceAll(BASH_HOME, System.getProperty("user.home") + File.separator);
         }
-        if (!filePath.startsWith("/")) {
+        //~Kiran: IGBF-1286: Added 2nd condition to handle relative paths from scripts
+        if ((!filePath.startsWith("/")) && (!filePath.startsWith("."))) {
             filePath = scriptLocation + File.separator + filePath;
         }
         return filePath;

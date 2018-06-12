@@ -153,6 +153,33 @@
                 <module>main</module>
             </modules>            
         </profile>
+        <!-- ~Kiran:IGBF:-1196:Added two profiles to run in windows and Unix-->
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os><family>windows</family></os>
+            </activation>
+            <properties>
+                <!--cacheDirecotory property will be used in mvn-clean-plugin to delete users local cache folder-->
+                <cacheDirectory>${user.home}\AppData\Roaming\IGB\bundles</cacheDirectory>
+            </properties>
+            <modules>
+                <module>main</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>unix</id>
+            <activation>
+                <os><family>unix</family></os>
+            </activation>
+            <properties>
+                <cacheDirectory>${user.home}/.igb/bundles</cacheDirectory>
+            </properties>
+            <modules>
+                <module>main</module>
+            </modules>
+        </profile>
+
         <profile> <!-- profile for lorainelab build server jenkins AWS -->
             <id>development</id>
             <activation>
@@ -1095,7 +1122,7 @@
                     <configuration>
                         <filesets>
                             <fileset>
-                                <directory>${project.parent.basedir}/bundles</directory>
+                                <directory>${project.basedir}/bundles</directory>
                                 <includes>
                                     <include>${project.build.finalName}.jar</include>
                                 </includes>
@@ -1196,6 +1223,14 @@
                             <includes>
                                 <include>*.jar</include>
                                 <include>repository.xml</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <!--Added fileset to delete users local cache folder for windows and unix system-->
+                        <fileset>
+                            <directory>${cacheDirectory}</directory>
+                            <includes>
+                                <include>**</include>
                             </includes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>

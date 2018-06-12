@@ -258,7 +258,8 @@ public class IGBScriptEngine implements ScriptEngine {
 
     private String getAbsolutePath(String filePath) throws UnsupportedEncodingException {
         if (CommonUtils.IS_WINDOWS) {
-            return filePath;
+            /*~Kiran:IGBF-1286: Replaced ':' char with '-' as windows does not support following chars in file name ['\','/',':','*','?','"','<','>','|']*/
+            return filePath.replaceAll(":","-");
         }
         if (filePath.startsWith(HTTP_PROTOCOL_SCHEME)) {
             return filePath;

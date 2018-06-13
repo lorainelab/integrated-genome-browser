@@ -273,7 +273,7 @@ public class IGBScriptEngine implements ScriptEngine {
             filePath = filePath.replaceAll(BASH_HOME, System.getProperty("user.home") + File.separator);
         }
         //~Kiran: IGBF-1286: Added 2nd condition to handle relative paths from scripts
-        if ((!filePath.startsWith("/")) && (!filePath.startsWith("."))) {
+        if ((!filePath.startsWith(File.separator)) && (!filePath.startsWith("."))) {
             filePath = scriptLocation + File.separator + filePath;
         }
         return filePath;

@@ -161,7 +161,7 @@
             </activation>
             <properties>
                 <!--cacheDirecotory property will be used in mvn-clean-plugin to delete users local cache folder-->
-                <cacheDirectory>${user.home}\AppData\Roaming\IGB\bundles</cacheDirectory>
+                <cacheDirectory>${user.home}\AppData\Roaming\IGB\bundles\v${project.version}-bundle-cache</cacheDirectory>
             </properties>
             <modules>
                 <module>main</module>
@@ -173,7 +173,7 @@
                 <os><family>unix</family></os>
             </activation>
             <properties>
-                <cacheDirectory>${user.home}/.igb/bundles</cacheDirectory>
+                <cacheDirectory>${user.home}/.igb/bundles/v${version}-bundle-cache</cacheDirectory>
             </properties>
             <modules>
                 <module>main</module>

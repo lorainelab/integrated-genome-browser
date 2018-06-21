@@ -423,6 +423,11 @@ public class AppManagerFxPanel extends JFXPanel {
                         updateWebContent();
                         listView.setItems(listView.getItems());
                     });
+                }else{ /*~kiran:IGBF-1108:Added to update UI if no network connection*/
+                    Platform.runLater(() -> {
+                        plugin.setIsBusy(Boolean.FALSE);
+                        updateWebContent();
+                    });
                 }
                 return Void.TYPE;
             };

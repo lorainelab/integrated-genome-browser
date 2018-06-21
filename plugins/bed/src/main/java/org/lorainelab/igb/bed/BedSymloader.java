@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import org.broad.tribble.readers.LineReader;
+import htsjdk.tribble.readers.LineReader;
 import org.slf4j.LoggerFactory;
 
 /**

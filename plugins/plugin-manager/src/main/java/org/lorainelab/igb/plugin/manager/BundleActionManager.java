@@ -10,6 +10,8 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import org.lorainelab.igb.plugin.manager.model.PluginListItemMetadata;
 import org.lorainelab.igb.services.IgbService;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Optional;
@@ -98,13 +100,20 @@ public class BundleActionManager {
             @Override
             public Boolean get() {
                 try {
-                    installBundle(resource, bundle);
+                    /*~Kiran:IGBF-1108:Added to make sure an active internet connection exists*/
+                    InetAddress inetAddress = InetAddress.getByName(resource.getURI());
+                    if (inetAddress != null && inetAddress.isReachable(30)){
+                        installBundle(resource, bundle);
+                    }
                 } catch (IllegalStateException ex) {
                     if (tryToRecover && ex.getMessage().equals(KNOWN_FELIX_EXCEPTION)) {
                         tryToRecover = false; //only try this once
                         installBundle(plugin, callback);
                     }
-                } catch (Throwable ex) {
+                } catch(UnknownHostException ex){
+                    logger.error("Unable to reach "+ex.getMessage()+" Please check your internet connection");
+                    return false;
+                }catch (Throwable ex) {
                     logger.error(ex.getMessage(), ex);
                     return false;
                 }

@@ -10,6 +10,12 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import org.lorainelab.igb.plugin.manager.model.PluginListItemMetadata;
 import org.lorainelab.igb.services.IgbService;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Optional;
@@ -89,6 +95,28 @@ public class BundleActionManager {
             return true;
         });
     }
+    /*~Kiran:IGBF-1108:Added this method as we cannot believe in InetAddress.isReachable method.*/
+    public static boolean isInternetReachable(URL url)
+    {
+        try {
+            //open a connection to that source
+            HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
+
+            //trying to retrieve data from the source. If there is no connection, this line will fail
+            Object objData = urlConnect.getContent();
+        } catch (UnknownHostException ex) {
+            logger.error(ex.getMessage());
+            return false;
+        }
+        catch (IOException ex) {
+            logger.error(ex.getMessage());
+            return false;
+        }catch (Exception ex){
+            logger.error(ex.getMessage());
+            return false;
+        }
+        return true;
+    }
 
     public void installBundle(final PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {
         Bundle bundle = plugin.getBundle();
@@ -98,7 +126,12 @@ public class BundleActionManager {
             @Override
             public Boolean get() {
                 try {
-                    installBundle(resource, bundle);
+                    /*~Kiran:IGBF-1108:Added to make sure an active internet connection exists*/
+                    if (isInternetReachable(new URL(resource.getURI()))){
+                        installBundle(resource, bundle);
+                    }else{
+                        return false;
+                    }
                 } catch (IllegalStateException ex) {
                     if (tryToRecover && ex.getMessage().equals(KNOWN_FELIX_EXCEPTION)) {
                         tryToRecover = false; //only try this once

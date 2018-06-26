@@ -105,7 +105,11 @@ public class IGBScriptEngine implements ScriptEngine {
     @Override
     public Object eval(String script, ScriptContext context) throws ScriptException {
         try {
-            fileName = URLDecoder.decode((String) context.getAttribute(ScriptManager.FILENAME), "UTF-8");
+            logger.info("Running script"+script);
+            //~kiran: IGBF-1245 : Added null check for filename to avoid exception
+            if(context.getAttribute(ScriptManager.FILENAME)!=null){
+                fileName = URLDecoder.decode((String) context.getAttribute(ScriptManager.FILENAME), "UTF-8");
+            }
         } catch (UnsupportedEncodingException ex) {
             java.util.logging.Logger.getLogger(IGBScriptEngine.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -254,16 +258,22 @@ public class IGBScriptEngine implements ScriptEngine {
 
     private String getAbsolutePath(String filePath) throws UnsupportedEncodingException {
         if (CommonUtils.IS_WINDOWS) {
-            return filePath;
+            /*~Kiran:IGBF-1286: Replaced ':' char with '-' as windows does not support following chars in file name ['\','/',':','*','?','"','<','>','|']*/
+            return filePath.replaceAll(":","-");
         }
         if (filePath.startsWith(HTTP_PROTOCOL_SCHEME)) {
             return filePath;
         }
-        String scriptLocation = File.separator + fileName.substring(fileName.indexOf("/") + 1, fileName.lastIndexOf("/"));
+        //~kiran: IGBF-1245 : Added null check for filename to avoid exception
+        String scriptLocation =".";
+        if(fileName!=null){
+            scriptLocation=File.separator + fileName.substring(fileName.indexOf("/") + 1, fileName.lastIndexOf("/"));
+        }
         if (filePath.startsWith(BASH_HOME)) {
             filePath = filePath.replaceAll(BASH_HOME, System.getProperty("user.home") + File.separator);
         }
-        if (!filePath.startsWith("/")) {
+        //~Kiran: IGBF-1286: Added 2nd condition to handle relative paths from scripts
+        if ((!filePath.startsWith(File.separator)) && (!filePath.startsWith("."))) {
             filePath = scriptLocation + File.separator + filePath;
         }
         return filePath;

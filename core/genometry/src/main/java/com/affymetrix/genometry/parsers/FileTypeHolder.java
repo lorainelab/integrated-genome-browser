@@ -148,7 +148,7 @@ public class FileTypeHolder {
         addFileTypeHandler("Cytobands", new String[]{"cyt"}, /*FileTypeCategory.Cytoband*/ null, CytobandParser.class, SymLoaderInst.class);
         addFileTypeHandler("Binary", new String[]{"ead"}, FileTypeCategory.Annotation, ExonArrayDesignParser.class, SymLoaderInstNC.class);
         addFileTypeHandler(new FileTypeHandler() {
-            String[] extensions = new String[]{"fa", "fas", "fasta", "fna", "fsa", "mpfa"};
+            String[] extensions = new String[]{"fa", "fas", "fasta", "fna", "fsa", "mpfa","fa.gz","fas.gz","fasta.gz","fna.gz","fsa.gz","mpfa.gz"};
 
             @Override
             public String getName() {

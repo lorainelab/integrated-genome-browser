@@ -50,6 +50,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -386,7 +387,8 @@ public final class BookmarkUnibrowControlServlet {
         }
         java.util.Optional<DataSet> dataSet = java.util.Optional.empty();
         if (dataProvider instanceof LocalDataProvider) {
-            directlyLoadFile(queryUrl, igbService, genomeVersion);
+            /*~kiran:IGBF-1287: Adapting to the new method signature by passing null for trackLabel*/
+            directlyLoadFile(queryUrl, null, igbService, genomeVersion);
             java.util.Optional<DataContainer> dataContainer = genomeVersion.getAvailableDataContainers()
                     .stream()
                     .filter(dc -> dc.getDataProvider() instanceof LocalDataProvider)
@@ -552,16 +554,23 @@ public final class BookmarkUnibrowControlServlet {
 
     private void directlyLoadUrls(GenomeVersion genomeVersion, final ListMultimap<String, String> parameters, IgbService igbService) {
         List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
-        query_urls.stream().forEach((urlToLoad) -> {
-            directlyLoadFile(urlToLoad, igbService, genomeVersion);
+        /*~kiran:IGBF-1287: Making use of sym_name for track labels*/
+        List<String> trackLabels= parameters.get(SYM.NAME + "0");
+        Map<String, String> trackLabelsMap = IntStream.range(0, query_urls.size()).boxed()
+                .collect(Collectors.toMap(i -> (trackLabels !=null && trackLabels.size()>i) ?trackLabels.get(i): DataSetUtils.extractNameFromPath(query_urls.get(i)), i -> query_urls.get(i)));
+        trackLabelsMap.forEach((trackLabel,urlToLoad) -> {
+            directlyLoadFile(urlToLoad, trackLabel, igbService, genomeVersion);
         });
 
     }
 
-    private void directlyLoadFile(String urlToLoad, IgbService igbService, GenomeVersion genomeVersion) {
-        String fileName = DataSetUtils.extractNameFromPath(urlToLoad);
+    private void directlyLoadFile(String urlToLoad,String trackLabel, IgbService igbService, GenomeVersion genomeVersion) {
+        /*~kiran:IGBF-1287: Using filename if trackLabel is null*/
+        if(trackLabel==null){
+            trackLabel = DataSetUtils.extractNameFromPath(urlToLoad);
+        }
         try {
-            igbService.openURI(new URI(urlToLoad), fileName, genomeVersion, genomeVersion.getSpeciesName(), false);
+            igbService.openURI(new URI(urlToLoad), trackLabel, genomeVersion, genomeVersion.getSpeciesName(), false);
         } catch (URISyntaxException ex) {
             logger.error("Invalid bookmark syntax.", ex);
         }

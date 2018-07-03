@@ -51,6 +51,9 @@
           <entry location="distribution" fileType="regular" />
           <entry location="run_igb.command" fileType="regular" />
           <entry location="nb-configuration.xml" fileType="regular" />
+          <!-- IGBF-1346 unneeded files wrongly installed with IGB -->
+          <entry location="rename.sh" fileType="regular" />
+          <entry location="bitbucket-pipelines.yml" fileType="regular" />
         </exclude>
       </dirEntry>
     </entries>

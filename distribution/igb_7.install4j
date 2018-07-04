@@ -14,7 +14,7 @@
     <variables>
       <variable name="projectHomeDirectory" value=".." description="This variable should point to the source control root of the IGB project" category="" />
       <variable name="igbVersion" value="9.0.1" description="" category="" />
-      <variable name="codeBaseUrl" value="http://eos.transvar.org/igb/" description="A variable holding the url location of the lateset IGB installers and update information" category="" />
+      <variable name="codeBaseUrl" value="https://ann.bioviz.org/igb/releases/current" description="A variable holding the url location of the lateset IGB installers and update information" category="" />
     </variables>
     <mergedProjects />
     <codeSigning macEnabled="true" macPkcs12File="/opt/igb/developerID_application_igb.p12" windowsEnabled="true" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="/opt/igb/windows_keystore.pfx" />

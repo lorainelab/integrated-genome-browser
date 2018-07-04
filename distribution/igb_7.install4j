@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="7.0.3" transformSequenceNumber="7">
   <directoryPresets config="/opt/igb/developerID_application_igb.p12" />
-  <application name="Integrated Genome Browser" distributionSourceDir="" applicationId="3576-6097-5539-7524" mediaDir="${compiler:projectHomeDirectory}/distribution/build" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="true" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="false" shortName="IGB" publisher="Loraine Lab" publisherWeb="http://bioviz.org/igb/" version="${compiler:igbVersion}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="a1638eb14df51528" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+  <application name="Integrated Genome Browser" distributionSourceDir="" applicationId="3576-6097-5539-7524" mediaDir="${compiler:projectHomeDirectory}/distribution/build" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="true" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="false" shortName="IGB" publisher="Loraine Lab" publisherWeb="https://bioviz.org" version="${compiler:igbVersion}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="a1638eb14df51528" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -14,7 +14,7 @@
     <variables>
       <variable name="projectHomeDirectory" value=".." description="This variable should point to the source control root of the IGB project" category="" />
       <variable name="igbVersion" value="9.0.1" description="" category="" />
-      <variable name="codeBaseUrl" value="http://eos.transvar.org/igb/" description="A variable holding the url location of the lateset IGB installers and update information" category="" />
+      <variable name="codeBaseUrl" value="https://bioviz.org/igb/releases/current" description="Directory containing updates.xml file." category="" />
     </variables>
     <mergedProjects />
     <codeSigning macEnabled="true" macPkcs12File="/opt/igb/developerID_application_igb.p12" windowsEnabled="true" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="/opt/igb/windows_keystore.pfx" />
@@ -1283,10 +1283,12 @@ return console.askYesNo(message, true);
                           <java class="java.beans.XMLDecoder">
                             <object class="com.install4j.runtime.beans.formcomponents.HyperlinkLabelComponent">
                               <void property="hyperlinkText">
-                                <string>View Changes</string>
+                                <!-- IGBF-1349-FixNewsLink, link appears in IGB updater -->
+                                <string>IGB News</string>
                               </void>
                               <void property="url">
-                                <string>http://bioviz.org/igb/news.html</string>
+                                <!-- IGBF-1349-FixNewsLink, link appears in IGB updater -->
+                                <string>https://bioviz.org/news.html</string>
                               </void>
                             </object>
                           </java>

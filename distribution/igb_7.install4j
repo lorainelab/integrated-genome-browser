@@ -1283,10 +1283,12 @@ return console.askYesNo(message, true);
                           <java class="java.beans.XMLDecoder">
                             <object class="com.install4j.runtime.beans.formcomponents.HyperlinkLabelComponent">
                               <void property="hyperlinkText">
-                                <string>View Changes</string>
+                                <!-- IGBF-1349-FixNewsLink, link appears in IGB updater -->
+                                <string>IGB News</string>
                               </void>
                               <void property="url">
-                                <string>http://bioviz.org/igb/news.html</string>
+                                <!-- IGBF-1349-FixNewsLink, link appears in IGB updater -->
+                                <string>https://bioviz.org/news.html</string>
                               </void>
                             </object>
                           </java>

@@ -83,6 +83,7 @@ public class LoadURLAction extends OpenURIAction {
             dialog.setModal(true);
             dialog.pack();
             dialog.setLocationRelativeTo(igbService.getApplicationFrame());
+            dialog.setResizable(true);
             dialog.setVisible(true);
         } else {
             ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"),

@@ -15,7 +15,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Set;
-import net.sf.samtools.Cigar;
+import htsjdk.samtools.Cigar;
 
 /**
  * A glyph to connect exons to display isoforms.

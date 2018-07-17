@@ -16,13 +16,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMSequenceDictionary;
-import net.sf.samtools.SAMSequenceRecord;
-import net.sf.samtools.StubBAMFileIndex;
-import net.sf.samtools.seekablestream.SeekableFileStream;
-import net.sf.samtools.seekablestream.SeekableHTTPStream;
-import net.sf.samtools.seekablestream.SeekableStream;
+import htsjdk.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMSequenceRecord;
+import htsjdk.samtools.seekablestream.SeekableFileStream;
+import htsjdk.samtools.seekablestream.SeekableHTTPStream;
+import htsjdk.samtools.seekablestream.SeekableStream;
 
 public class BaiZoomSymLoader extends IndexZoomSymLoader {
     
@@ -62,23 +60,10 @@ public class BaiZoomSymLoader extends IndexZoomSymLoader {
         }
     }
 
+    /*getBinIter() is not used and cannot find equivalent Class files needed to implement the method.
+    * Hence decided to return null from the method to avoid compile errors.*/
     @Override
     protected Iterator<Map<Integer, List<List<Long>>>> getBinIter(String seq) {
-        try {
-            SeekableStream ssData = getSeekableStream(getBamURI(uri));
-            SeekableStream ssIndex = getSeekableStream(uri);
-            SAMFileReader sfr = new SAMFileReader(ssData, false);
-            SAMSequenceDictionary ssd = sfr.getFileHeader().getSequenceDictionary();
-            int refno = getRefNo(seq, ssd);
-            if (refno == -1) {
-                return null;
-            } else {
-                StubBAMFileIndex sbfi = new StubBAMFileIndex(ssIndex, uri, ssd);
-                return sbfi.getBinIter(refno);
-            }
-        } catch (Exception x) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "cannot read BAI file " + uri, x);
-            return null;
-        }
+       return null;
     }
 }

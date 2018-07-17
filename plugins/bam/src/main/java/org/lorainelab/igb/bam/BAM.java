@@ -32,16 +32,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import net.sf.picard.sam.BuildBamIndex;
-import net.sf.samtools.SAMException;
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMFileReader.ValidationStringency;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMFormatException;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.seekablestream.SeekableBufferedStream;
-import net.sf.samtools.seekablestream.SeekableHTTPStream;
-import net.sf.samtools.util.CloseableIterator;
+import htsjdk.samtools.SamReader;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SamReaderFactory;
+import htsjdk.samtools.SamInputResource;
+import htsjdk.samtools.ValidationStringency;
+import htsjdk.samtools.SAMFormatException;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMException;
+import htsjdk.samtools.SAMFileWriter;
+import htsjdk.samtools.seekablestream.SeekableBufferedStream;
+import htsjdk.samtools.seekablestream.SeekableHTTPStream;
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.samtools.SAMFileWriterFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +55,8 @@ public final class BAM extends XAM implements Das2SliceSupport {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BAM.class);
     public final static List<String> pref_list = new ArrayList<>();
-    private SAMFileReader mateReader;
+    /*SAMFileReader was changed to SamReader to accommodate the changes in the new library.*/
+    private SamReader mateReader;
     
     //FYI: the variable reader is inherited from the parent class XAM.java
 
@@ -69,17 +73,20 @@ public final class BAM extends XAM implements Das2SliceSupport {
         strategyList.add(LoadStrategy.AUTOLOAD);
     }
 
-    private SAMFileReader getSAMFileReader() throws IOException, BamIndexNotFoundException {
+    private SamReader getSAMFileReader() throws IOException, BamIndexNotFoundException {
+
+        final SamReaderFactory factory = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT);
+        SamInputResource resource = null;
         File indexFile = null;
-        SAMFileReader samFileReader = null;
+        SamReader samFileReader = null;
         String scheme = uri.getScheme().toLowerCase();
         if (StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)) {
             // BAM is file.
             //indexFile = new File(uri.)
             File f = new File(uri);
             indexFile = findIndexFile(f);
-            samFileReader = new SAMFileReader(f, indexFile, false);
-            samFileReader.setValidationStringency(ValidationStringency.SILENT);
+            resource = SamInputResource.of(f).index(indexFile);
+            samFileReader = factory.open(resource);
         } else if (StringUtils.equals(scheme, HTTP_PROTOCOL_SCHEME) || StringUtils.equals(scheme, HTTPS_PROTOCOL_SCHEME)) {
             String reachable_url = LocalUrlCacher.getReachableUrl(uri.toASCIIString());
 
@@ -105,20 +112,22 @@ public final class BAM extends XAM implements Das2SliceSupport {
 
             SeekableBufferedStream seekableStream = new SeekableBufferedStream(new SeekableHTTPStream(new URL(reachable_url)));
             if (!localFile && indexCacheStatus != null && indexCacheStatus.isDataExists() && !indexCacheStatus.isCorrupt()) {
-                samFileReader = new SAMFileReader(seekableStream, indexCacheStatus.getData(), false);
+                resource = SamInputResource.of(seekableStream).index(indexCacheStatus.getData());
+                samFileReader = factory.open(resource);
             } else {
                 indexFile = LocalUrlCacher.convertURIToFile(baiUri);
-                samFileReader = new SAMFileReader(seekableStream, indexFile, false);
+                resource = SamInputResource.of(seekableStream).index(indexFile);
+                samFileReader = factory.open(resource);
             }
-            samFileReader.setValidationStringency(ValidationStringency.SILENT);
         } else if (scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
             URI baiUri = indexUri;
             if (indexUri == null) {
                 baiUri = URI.create(getBamIndexUriStr(uri));
             }
             indexFile = LocalUrlCacher.convertURIToFile(baiUri);
-            samFileReader = new SAMFileReader(new SeekableBufferedStream(new SeekableFTPStream(uri.toURL())), indexFile, false);
-            samFileReader.setValidationStringency(ValidationStringency.SILENT);
+
+            resource = SamInputResource.of(uri.toURL()).index(indexFile);
+            samFileReader = factory.open(resource);
         } else {
             Logger.getLogger(BAM.class.getName()).log(
                     Level.SEVERE, "URL scheme: {0} not recognized", scheme);
@@ -174,7 +183,7 @@ public final class BAM extends XAM implements Das2SliceSupport {
      * @return current CompressedStreamPosition for SAMFileReader
      * @throws Exception
      */
-    private BlockCompressedStreamPosition getCompressedInputStreamPosition(SAMFileReader sfr) throws Exception {
+    private BlockCompressedStreamPosition getCompressedInputStreamPosition(SamReader sfr) throws Exception {
         Field privateReaderField = sfr.getClass().getDeclaredField("mReader");
         privateReaderField.setAccessible(true);
         Object mReaderValue = privateReaderField.get(sfr);
@@ -260,8 +269,10 @@ public final class BAM extends XAM implements Das2SliceSupport {
      */
     @Override
     public List<SeqSymmetry> parseAll(BioSeq seq, String method) {
-        reader = new SAMFileReader(new File(uri));
-        reader.setValidationStringency(ValidationStringency.SILENT);
+
+        final SamReaderFactory factory = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT);
+        SamInputResource resource = null;
+        reader = factory.open(new File(uri));
         List<SeqSymmetry> symList = new ArrayList<>(1000);
         if (reader != null) {
             for (final SAMRecord sr : reader) {
@@ -317,9 +328,9 @@ public final class BAM extends XAM implements Das2SliceSupport {
             }
             //write out records to file
             //TODO: is this hack necessary with updated picard.jar?
-            reader.getFileHeader().setSortOrder(net.sf.samtools.SAMFileHeader.SortOrder.coordinate); // A hack to prevent error caused by picard tool.
+            reader.getFileHeader().setSortOrder(SAMFileHeader.SortOrder.coordinate); // A hack to prevent error caused by picard tool.
 
-            net.sf.samtools.SAMFileWriterFactory sfwf = new net.sf.samtools.SAMFileWriterFactory();
+            SAMFileWriterFactory sfwf = new SAMFileWriterFactory();
             if (BAMWriter) {
                 // BAM files cannot be written to the stream one line at a time.
                 // Rather, a tempfile is created, and later read into the stream.
@@ -374,7 +385,7 @@ public final class BAM extends XAM implements Das2SliceSupport {
      *
      * @param bamfile
      * @return file
-     * @throws com.affymetrix.genometry.symloader.BAM.BamIndexNotFoundException
+     * @throws org.lorainelab.igb.bam.BAM.BamIndexNotFoundException
      */
     public static File findIndexFile(File bamfile) throws BamIndexNotFoundException {
         //look for xxx.bam.bai

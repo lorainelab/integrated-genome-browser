@@ -173,6 +173,12 @@
             <artifactId>commons-pool</artifactId>
             <scope>runtime</scope> 
         </dependency>
+
+        <dependency>
+            <groupId>com.github.samtools</groupId>
+            <artifactId>htsjdk</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- End of external bundle dependencies-->
 
         <!--Start of plugin module dependencies-->

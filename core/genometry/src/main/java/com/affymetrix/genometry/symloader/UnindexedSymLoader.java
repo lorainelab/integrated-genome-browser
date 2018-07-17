@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.broad.tribble.readers.LineReader;
+import htsjdk.tribble.readers.LineReader;
 
 /**
  * This SymLoader is designed to be used for FileTypes that have a LineReader

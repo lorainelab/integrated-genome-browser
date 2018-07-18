@@ -25,7 +25,7 @@ package com.affymetrix.genometry.util;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import net.sf.samtools.seekablestream.SeekableStream;
+import htsjdk.samtools.seekablestream.SeekableStream;
 
 /**
  * A wrapper class to provide buffered read access to a SeekableStream. Just wrapping such a stream with

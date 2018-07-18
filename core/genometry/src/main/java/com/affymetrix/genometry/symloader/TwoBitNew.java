@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.samtools.seekablestream.SeekableFileStream;
+import htsjdk.samtools.seekablestream.SeekableFileStream;
 import org.slf4j.LoggerFactory;
 
 /**

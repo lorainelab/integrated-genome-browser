@@ -16,16 +16,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.samtools.SAMException;
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMFileReader.ValidationStringency;
-import net.sf.samtools.SAMFormatException;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.SAMTextReader;
-import net.sf.samtools.util.BufferedLineReader;
-import net.sf.samtools.util.CloseableIterator;
-import org.broad.tribble.readers.LineReader;
+import htsjdk.samtools.SamReaderFactory;
+import htsjdk.samtools.SamInputResource;
+import htsjdk.samtools.ValidationStringency;
+import htsjdk.samtools.SAMFormatException;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMException;
+import htsjdk.samtools.util.BufferedLineReader;
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.tribble.readers.LineReader;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -43,9 +43,9 @@ public class SAM extends XAM implements LineProcessor {
     @Override
     public void init() throws Exception {
         try {
-            reader = new SAMFileReader(LocalUrlCacher.convertURIToBufferedStream(uri));
-            reader.setValidationStringency(ValidationStringency.SILENT);
-
+            final SamReaderFactory factory = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT);
+            SamInputResource resource = SamInputResource.of(LocalUrlCacher.convertURIToBufferedStream(uri));
+            reader = factory.open(resource);
             if (this.isInitialized) {
                 return;
             }
@@ -147,15 +147,15 @@ public class SAM extends XAM implements LineProcessor {
 
     @Override
     public List<? extends SeqSymmetry> processLines(BioSeq seq, LineReader lineReader) throws Exception {
-        // LineTrackerI ignored, since the SAMTextReader hides the lines
-        SAMTextReader str = new SAMTextReader(new AsciiTabixLineReader(lineReader), header, ValidationStringency.SILENT);
-        SimpleSeqSpan seqSpan = new SimpleSeqSpan(seq.getMin(), seq.getMax(), seq);
-        return parse(str.queryUnmapped(), seqSpan, false);
+        throw new UnsupportedOperationException("Cannot query SAM text files");
     }
 
+
     public void init(URI uri) {
-        reader = new SAMFileReader(LocalUrlCacher.convertURIToBufferedStream(uri));
-        reader.setValidationStringency(ValidationStringency.SILENT);
+
+        final SamReaderFactory factory = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT);
+        SamInputResource resource = SamInputResource.of(LocalUrlCacher.convertURIToBufferedStream(uri));
+        reader = factory.open(resource);
         header = reader.getFileHeader();
     }
 

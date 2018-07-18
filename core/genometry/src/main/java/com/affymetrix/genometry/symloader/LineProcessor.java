@@ -3,7 +3,7 @@ package com.affymetrix.genometry.symloader;
 import java.net.URI;
 import java.util.List;
 
-import org.broad.tribble.readers.LineReader;
+import htsjdk.tribble.readers.LineReader;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;

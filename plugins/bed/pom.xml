@@ -100,6 +100,11 @@
             <artifactId>affymetrix-common</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.samtools</groupId>
+            <artifactId>htsjdk</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

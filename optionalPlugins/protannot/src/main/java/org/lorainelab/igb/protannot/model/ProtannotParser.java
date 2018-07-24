@@ -135,9 +135,6 @@ public class ProtannotParser {
         List<SeqSymmetry> selectedSyms = seqMapView.getSelectedSyms();
         BioSeq bioseq = seqMapView.getViewSeq();
         String seqId = bioseq.getId();
-        if (!seqId.startsWith("chr")) {
-            seqId = "chr" + seqId;
-        }
         MutableSeqSymmetry mutableSeqSymmetry = new SimpleMutableSeqSymmetry();
         int spanStart, spanEnd;
         for (SeqSymmetry sym : selectedSyms) {

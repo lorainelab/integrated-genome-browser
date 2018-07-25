@@ -7,7 +7,6 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.affymetrix.igb.swing.jide.StyledJTable;
-import com.google.common.collect.Lists;
 import com.jidesoft.grid.JideTable;
 import org.lorainelab.igb.preferences.weblink.WebLinkUtils;
 import org.lorainelab.igb.preferences.weblink.model.WebLink;
@@ -29,7 +28,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import javafx.stage.FileChooser;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -441,13 +439,13 @@ public final class WebLinksView {
         }
 
         public void setLinks(List<WebLink> webLinks) {
-            Collections.sort(webLinks);
             this.webLinks = webLinks;
         }
 
         public List<WebLink> getLinks() {
             return this.webLinks;
         }
+
 
         @Override
         public Class<?> getColumnClass(int c) {

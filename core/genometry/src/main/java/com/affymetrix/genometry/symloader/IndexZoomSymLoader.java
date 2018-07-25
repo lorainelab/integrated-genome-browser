@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.samtools.util.BlockCompressedFilePointerUtil;
+import htsjdk.samtools.util.BlockCompressedFilePointerUtil;
 
 public abstract class IndexZoomSymLoader extends SymLoader {
 

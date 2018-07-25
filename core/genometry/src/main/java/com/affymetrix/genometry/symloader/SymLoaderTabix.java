@@ -31,15 +31,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.samtools.seekablestream.SeekableStream;
-import net.sf.samtools.seekablestream.SeekableStreamFactory;
-import net.sf.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.seekablestream.SeekableStream;
+import htsjdk.samtools.seekablestream.SeekableStreamFactory;
+import htsjdk.samtools.util.BlockCompressedInputStream;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.broad.tribble.readers.LineReader;
-import org.broad.tribble.readers.TabixIteratorLineReader;
-import org.broad.tribble.readers.TabixReader;
+import htsjdk.tribble.readers.LineReader;
+import htsjdk.tribble.readers.TabixIteratorLineReader;
+import htsjdk.tribble.readers.TabixReader;
 import org.lorainelab.igb.cache.api.CacheStatus;
 import org.slf4j.LoggerFactory;
 
@@ -94,9 +94,9 @@ public class SymLoaderTabix extends SymLoader {
         private String indexFile;
 
         public TabixReaderCached(String fn, String indexFile) throws IOException {
-            super(fn);
+            super(fn,indexFile);
             this.indexFile = indexFile;
-            readIndex();
+            //readIndex();
         }
 
         public TabixReaderCached(String fn) throws IOException {
@@ -107,12 +107,13 @@ public class SymLoaderTabix extends SymLoader {
             super(fn, idxFn, stream);
         }
 
-        @Override
-        public void readIndex() throws IOException {
+        /*Read Index is a private method in the new library and is called
+         from the super constructor so this readIndex() is no longer needed*/
+        /*public void readIndex() throws IOException {
             if (!Strings.isNullOrEmpty(indexFile)) {
                 readIndex(SeekableStreamFactory.getInstance().getStreamFor(indexFile));
             }
-        }
+        }*/
 
     }
 
@@ -130,7 +131,9 @@ public class SymLoaderTabix extends SymLoader {
         lineProcessor.init(uri);
         TabixReaderCached tabixReader = pool.borrowObject();
         try {
-            for (String seqID : tabixReader.mChr2tid.keySet()) {
+            /*A tabixReader.mChr2tid.keySet() was replaced by tabixReader.getChromosomes() method
+            as the mChr2tid is made private in the new library and getChromosomes() is implemented which returns the mChr2tid.keySet()*/
+            for (String seqID : tabixReader.getChromosomes()) {
                 BioSeq seq = genomeVersion.getSeq(seqID);
                 if (seq == null) {
                     //int length = 1000000000;
@@ -188,11 +191,15 @@ public class SymLoaderTabix extends SymLoader {
         String seqID = seqs.get(overlapSpan.getBioSeq());
         TabixReaderCached tabixReader = pool.borrowObject();
         try {
-            if (!tabixReader.mChr2tid.containsKey(seqID)) {
+            /*tabixReader.mChr2tid.keySet() was replaced by tabixReader.getChromosomes() method
+            as the mChr2tid is made private in the new library and getChromosomes() is implemented which returns the mChr2tid.keySet()*/
+            if (!tabixReader.getChromosomes().contains(seqID)) {
                 return new ArrayList<>();
             }
 //			System.out.println("Total :" + (pool.getNumActive() + pool.getNumIdle()));
-            final LineReader lineReader = new TabixIteratorLineReader(tabixReader.query(tabixReader.mChr2tid.get(seqID), overlapSpan.getStart(), overlapSpan.getEnd()));
+            /*tabixReader.mChr2tid.get(seqID) was replaced by tabixReader.chr2tid(seqID) method
+            as the mChr2tid is made private in the new library and chr2tid(seqID) is implemented which returns the tid for the specified seqId*/
+            final LineReader lineReader = new TabixIteratorLineReader(tabixReader.query(tabixReader.chr2tid(seqID), overlapSpan.getStart(), overlapSpan.getEnd()));
             long[] startEnd = getStartEnd(lineReader);
             if (startEnd == null) {
                 return new ArrayList<>();

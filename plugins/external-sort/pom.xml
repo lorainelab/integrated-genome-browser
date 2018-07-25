@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.0.1</version>
+        <version>9.0.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -59,6 +59,11 @@
         <dependency>
             <groupId>net.sf</groupId>
             <artifactId>sam-ext</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.samtools</groupId>
+            <artifactId>htsjdk</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

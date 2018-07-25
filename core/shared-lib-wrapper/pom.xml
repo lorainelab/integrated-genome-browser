@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.0.1</version>
+        <version>9.0.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>shared-lib-wrapper</artifactId>
@@ -72,6 +72,11 @@
         <dependency>
             <groupId>com.github.kevinsawicki</groupId>
             <artifactId>http-request</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.samtools</groupId>
+            <artifactId>htsjdk</artifactId>
+            <version>2.15.1</version>
         </dependency>
     </dependencies>
 
@@ -327,6 +332,11 @@
                                     <artifactId>jackson-databind</artifactId>
                                     <version>2.3.5</version>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.github.samtools</groupId>
+                                    <artifactId>htsjdk</artifactId>
+                                    <version>2.15.1</version>
+                                </artifactItem>
                                 <!-- End of development only bundles -->                                                                      
                             </artifactItems>
                             <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>
@@ -376,7 +386,9 @@
                             com.boxysystems.jgoogleanalytics.*,
                             net.miginfocom.layout,
                             net.miginfocom.swing,
-                            com.github.kevinsawicki.http    
+                            com.github.kevinsawicki.http,
+                            htsjdk,
+                            htsjdk.*
                         </Export-Package>
                     </instructions>
                     <archive>

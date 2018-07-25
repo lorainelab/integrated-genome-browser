@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>igb-project</artifactId>
-    <version>9.0.1</version>
+    <version>9.0.2</version>
     <packaging>pom</packaging>
 
     <name>IGB Project</name>
@@ -732,6 +732,13 @@
                 <groupId>com.github.kevinsawicki</groupId>
                 <artifactId>http-request</artifactId>
                 <version>6.0</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.samtools</groupId>
+                <artifactId>htsjdk</artifactId>
+                <version>2.15.1</version>
                 <scope>provided</scope>
             </dependency>
             <!--End of additional provided dependencies-->

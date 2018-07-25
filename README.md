@@ -52,7 +52,7 @@ in your user home directory.
 
 # To get help
 
-Visit the [Bioviz help page](http://bioviz.org/igb/help.html)
+Visit the [Bioviz help page](http://bioviz.org/help.html)
 
 ***
 

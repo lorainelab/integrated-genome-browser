@@ -102,7 +102,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     public static final String COMPONENT_NAME = "IGB";
     private static final Logger logger = LoggerFactory.getLogger(IGB.class);
     private static IGB INSTANCE;
-    private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
+    //private static final String COUNTER_URL = "http://www.igbquickload.org/igb/counter";
     public static final String NODE_PLUGINS = "plugins";
     private JFrame igbMainFrame;
     private JRPMenuBar mbar;
@@ -399,7 +399,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
             };
             tracker.setLoggingAdapter(loggingAdapter);
             tracker.trackAsynchronously(new FocusPoint("IGB_Loaded"));
-            LocalUrlCacher.isValidURL(COUNTER_URL);
+            //LocalUrlCacher.isValidURL(COUNTER_URL);
         }
     }
 

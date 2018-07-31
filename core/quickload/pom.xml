@@ -84,7 +84,7 @@
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>cache</artifactId>
-            <scope></scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

@@ -328,11 +328,6 @@
                                     <artifactId>jackson-databind</artifactId>
                                     <version>2.3.5</version>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.github.samtools</groupId>
-                                    <artifactId>htsjdk</artifactId>
-                                    <version>2.15.1</version>
-                                </artifactItem>
                                 <!-- End of development only bundles -->                                                                      
                             </artifactItems>
                             <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>

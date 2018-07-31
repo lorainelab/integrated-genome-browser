@@ -941,11 +941,6 @@
                 <version>${igb-picard-version}</version>
             </dependency>
             <dependency>
-                <groupId>net.sf</groupId>
-                <artifactId>sam-ext</artifactId>
-                <version>${samVersion}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.broad</groupId>
                 <artifactId>tribble-ext</artifactId>
                 <version>${tribbleVersion}</version>

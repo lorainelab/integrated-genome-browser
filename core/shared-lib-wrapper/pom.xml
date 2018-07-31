@@ -34,10 +34,6 @@
             <artifactId>igb-picard</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.sf</groupId>
-            <artifactId>sam-ext</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.broad</groupId>
             <artifactId>tribble-ext</artifactId>
         </dependency>
@@ -370,8 +366,6 @@
                             net.sf.image4j.*,
                             net.sf.picard,
                             net.sf.picard.*,
-                            net.sf.samtools,
-                            net.sf.samtools.*,
                             org.apache.commons.net,
                             org.apache.commons.net.*,
                             org.jdom.*,

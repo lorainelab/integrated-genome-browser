@@ -3,16 +3,16 @@
     <update>
         <version>7.0.4</version>
         <release_date>Feb 20, 2013</release_date>
-        <link>http://bioviz.org/igb/download.html</link>
+        <link>http://bioviz.org/download.html</link>
     </update>
     <update>
         <version>7.0.5</version>
         <release_date>Feb 25, 2013</release_date>
-        <link>http://bioviz.org/igb/download.html</link>
+        <link>http://bioviz.org/download.html</link>
     </update>
     <update>
         <version>8.3.2</version>
         <release_date>December 12, 2014</release_date>
-        <link>http://bioviz.org/igb/download.html</link>
+        <link>http://bioviz.org/download.html</link>
     </update>
 </updates>

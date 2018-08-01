@@ -17,11 +17,6 @@
     
     <dependencies>    
         <dependency>
-            <groupId>net.sf</groupId>
-            <artifactId>sam-ext</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>genoviz</artifactId>
             <scope>provided</scope>

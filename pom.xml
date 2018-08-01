@@ -46,7 +46,7 @@
         <commonsPoolVersion>1.6</commonsPoolVersion>
         <tribbleVersion>1.111</tribbleVersion>
         <igb-picard-version>1.111</igb-picard-version>
-        <htsjdkVersion>2.15.1</htsjdkVersion>
+        <htsjdkVersion>2.16.0</htsjdkVersion>
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
         <slf4j-version>1.7.7</slf4j-version>

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.lorainelab.igb.cache.disk;
+package com.lorainelab.cache.disk;
 
 import org.lorainelab.igb.cache.api.CacheStatus;
 import java.io.File;
@@ -20,6 +20,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.lorainelab.igb.cache.disk.RemoteFileDiskCacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,21 +47,6 @@ public class RemoteFileCacheServiceTest {
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
-    }
-
-    @Test
-    @Ignore
-    public void testGetCacheStatus() {
-        try {
-            URL url = new URL("http://bioviz.org/quickload/A_thaliana_Jan_2004/chr2.bnib");
-            remoteFileService.clearAllCaches();
-            remoteFileService.getFilebyUrl(url, false);
-            CacheStatus cacheStatus = remoteFileService.getCacheStatus(url);
-            Assert.assertTrue(cacheStatus.isDataExists());
-        } catch (MalformedURLException ex) {
-            LOG.error(ex.getMessage(), ex);
-        }
-
     }
 
     @Ignore

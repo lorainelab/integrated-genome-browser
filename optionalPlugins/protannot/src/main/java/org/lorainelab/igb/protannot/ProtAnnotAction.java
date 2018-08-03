@@ -880,7 +880,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                 }
             } else {
                 return outputErrorMessage("Invalid server name: Server name should start with http or https. "
-                        + "\n eg. http://protannot.bioviz.org/samples/");
+                        + "\n");
             }
 
         } else if ("-f".equals(arg)) {
@@ -888,8 +888,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                 return addToArgumentDictionary(new String[]{"-f", argValue});
             } else {
                 return outputErrorMessage("Invalid file name: File name should end with .paxml"
-                        + "\n eg. /user/home/protannot/samples/ABCD.paxml OR "
-                        + "\n eg. https://protannot.bioviz.org/samples/ABCD.paxml");
+                        + "\n eg. /user/home/protannot/samples/ABCD.paxml");
             }
 
         } else if (arg.length() == 0) {
@@ -1466,9 +1465,7 @@ public class ProtAnnotAction extends GenericAction implements WindowListener {
                         + "affect the sequence and function of proteins encoded \n"
                         + "by diverse variants expressed from the same gene. \n\n"
                         + "Protannot is a program developed by Hiral Vora, John Nicol\n "
-                        + "and Ann Loraine at the University of North Carolina at Charlotte. \n\n"
-                        + "For more information, see:\n"
-                        + "http://www.bioviz.org/protannot\n";
+                        + "and Ann Loraine at the University of North Carolina at Charlotte. \n\n";
 
                         about_text.append(text);
                         message_pane.add(new JScrollPane(about_text));

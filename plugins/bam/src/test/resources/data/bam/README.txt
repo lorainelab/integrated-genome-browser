@@ -1,7 +1,7 @@
 Bam file visualization
 There are parsers and writers for many languages already available.
 
-The Java library is called sam/picard (http://picard.sourceforge.net/javadoc).
+The Java library is called sam/picard (http://broadinstitute.github.io/picard/javadoc/).
 
 SAMFileReader(URL url, File indexFile, boolean eagerDecode) allows fetching over URL.
 The client (IGB) could directly request slices of a bam file over ftp or http

@@ -4,7 +4,7 @@ The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and high
 
 IGB is also an extensible visual analytics platform. Developers can use IGB to create new interactive visualizations and visual analysis functions called IGB Apps.
 
-To get IGB, clone this repository or download an [IGB installer for your platform](http://bioviz.org/igb/download.html).
+To get IGB, clone this repository or download an [IGB installer for your platform](http://bioviz.org/download.html).
 
 See:
 
@@ -52,7 +52,7 @@ in your user home directory.
 
 # To get help
 
-Visit the [Bioviz help page](http://bioviz.org/igb/help.html)
+Visit the [Bioviz help page](http://bioviz.org/help.html)
 
 ***
 

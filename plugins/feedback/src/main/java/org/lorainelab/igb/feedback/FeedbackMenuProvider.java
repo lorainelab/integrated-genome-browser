@@ -34,7 +34,7 @@ public class FeedbackMenuProvider extends GenericAction implements MenuBarEntryP
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private static final int MENU_WEIGHT = 20;
     private FeedbackWidget feedbackWidget;
-    private static final String BIOVIZ_HELP_PAGE = "https://bioviz.org/help.html";
+    private static final String BIOVIZ_HELP_PAGE = "http://bioviz.org/help.html";
 
     public FeedbackMenuProvider() {
         super(BUNDLE.getString("menu.name"),

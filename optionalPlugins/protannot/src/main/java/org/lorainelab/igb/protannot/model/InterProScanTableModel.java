@@ -132,7 +132,7 @@ public class InterProScanTableModel extends AbstractTableModel {
 
         public InterProScanTableData(String proteinProductId, String jobId) {
             this.proteinProductId = proteinProductId;
-            this.url = BASE_URL + jobId + "/xml";;
+            this.url = BASE_URL + jobId + "/xml";
         }
 
         public String getProteinProductId() {

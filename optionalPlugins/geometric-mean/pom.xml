@@ -28,11 +28,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.sf</groupId>
-            <artifactId>sam-ext</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>genoviz</artifactId>
             <scope>provided</scope>
@@ -113,8 +108,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>  
                     <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package/>
                         <Bundle-Activator>com.gene.geometricmean.Activator</Bundle-Activator>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

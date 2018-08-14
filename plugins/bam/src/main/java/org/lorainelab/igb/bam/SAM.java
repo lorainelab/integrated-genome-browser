@@ -56,7 +56,7 @@ public class SAM extends XAM implements LineProcessor {
 
         } catch (SAMFormatException ex) {
             ErrorHandler.errorPanel("SAM exception", "A SAMFormatException has been thrown by the Picard tools.\n"
-                    + "Please validate your BAM files (see http://picard.sourceforge.net/command-line-overview.shtml#ValidateSamFile). "
+                    + "Please validate your BAM files (see http://broadinstitute.github.io/picard/command-line-overview.html#ValidateSamFile). "
                     + "See console for the details of the exception.\n", Level.SEVERE);
             logger.error(ex.getMessage(), ex);
         }

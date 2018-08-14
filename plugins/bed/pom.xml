@@ -81,11 +81,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.sf</groupId>
-            <artifactId>sam-ext</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
             <scope>test</scope>

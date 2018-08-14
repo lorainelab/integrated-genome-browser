@@ -64,7 +64,7 @@
             <simhit>
                 <descriptor type="Match id">PR00978</descriptor>
                 <descriptor type="InterPro Type">Family</descriptor>
-                <descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR000799</descriptor>
+                <descriptor type="URL">http://www.ebi.ac.uk/interpro/entry/IPR000799</descriptor>
                 <descriptor type="Match Database">PRINTS</descriptor>
                 <descriptor type="InterPro Accession">IPR000799</descriptor>
                 <descriptor type="InterPro Name">Steroidogenic acute regulatory protein</descriptor>
@@ -227,7 +227,7 @@
             <simhit>
                 <descriptor type="Match id">PF01852</descriptor>
                 <descriptor type="InterPro Type">Domain</descriptor>
-                <descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR002913</descriptor>
+                <descriptor type="URL">http://www.ebi.ac.uk/interpro/entry/IPR002913</descriptor>
                 <descriptor type="Match Database">PFAM</descriptor>
                 <descriptor type="InterPro Accession">IPR002913</descriptor>
                 <descriptor type="InterPro Name">Lipid-binding START</descriptor>
@@ -239,7 +239,7 @@
             <simhit>
                 <descriptor type="Match id">PF10457</descriptor>
                 <descriptor type="InterPro Type">Domain</descriptor>
-                <descriptor type="URL">http://www.ebi.ac.uk/interpro/IEntry?ac=IPR019498</descriptor>
+                <descriptor type="URL">http://www.ebi.ac.uk/interpro/entry/IPR019498</descriptor>
                 <descriptor type="Match Database">PFAM</descriptor>
                 <descriptor type="InterPro Accession">IPR019498</descriptor>
                 <descriptor type="InterPro Name">MENTAL domain</descriptor>

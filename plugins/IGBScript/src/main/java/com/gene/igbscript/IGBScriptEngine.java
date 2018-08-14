@@ -261,9 +261,16 @@ public class IGBScriptEngine implements ScriptEngine {
             /*~Kiran:IGBF-1286: Replaced ':' char with '-' as windows does not support following chars in file name ['\','/',':','*','?','"','<','>','|']*/
             if(filePath.startsWith("~")){
                 String subFilepath = filePath.substring(1);
-                return System.getProperty("user.home") +File.separator+subFilepath.replaceAll(":","-");
+                filePath= System.getProperty("user.home") +File.separator+subFilepath;
             }
-            return filePath.replaceAll(":","-");
+            File tmpFile = new File(filePath);
+            if(tmpFile.isAbsolute()){
+                filePath = tmpFile.getParent()+File.separator+tmpFile.getName().replaceAll(":","-");
+            }else{
+                filePath= filePath.replaceAll(":","-");
+            }
+            tmpFile.delete();
+            return filePath;
         }
         if (filePath.startsWith(HTTP_PROTOCOL_SCHEME)) {
             return filePath;

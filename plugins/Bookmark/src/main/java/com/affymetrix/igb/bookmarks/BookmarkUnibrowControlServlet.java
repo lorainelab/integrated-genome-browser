@@ -237,7 +237,7 @@ public final class BookmarkUnibrowControlServlet {
                             directlyLoadUrls(genomeVersion, parameters, igbService);
                             return null;
                         }
-                        List<DataSet> gFeatures = loadData(igbService, gmodel.getSelectedGenomeVersion(), dataProivders, query_urls, start, end);
+                        List<DataSet> gFeatures = loadData(igbService, gmodel.getSelectedGenomeVersion(), dataProivders, query_urls, start, end, parameters);
 
                         if (has_properties) {
                             List<String> graph_urls = getGraphUrls(parameters);
@@ -320,7 +320,8 @@ public final class BookmarkUnibrowControlServlet {
         return graph_paths;
     }
 
-    private List<DataSet> loadData(final IgbService igbService, final GenomeVersion genomeVersion, final List<DataProvider> dataProivders, final List<String> query_urls, int start, int end) {
+    private List<DataSet> loadData(final IgbService igbService, final GenomeVersion genomeVersion, final List<DataProvider> dataProivders, final List<String> query_urls, int start, int end,
+            final ListMultimap<String, String> parameters) {
         List<DataSet> gFeatures = new ArrayList<>();
         int i = 0;
         for (String queryUrl : query_urls) {
@@ -339,7 +340,7 @@ public final class BookmarkUnibrowControlServlet {
         }
         igbService.updateGeneralLoadView();
 
-        if (show_message) {
+        if (show_message && parameters.get(Bookmark.START).isEmpty() && parameters.get(Bookmark.END).isEmpty()) {
             ModalUtils.infoPanel(DataSet.LOAD_WARNING_MESSAGE,
                     DataSet.show_how_to_load, DataSet.default_show_how_to_load);
         }

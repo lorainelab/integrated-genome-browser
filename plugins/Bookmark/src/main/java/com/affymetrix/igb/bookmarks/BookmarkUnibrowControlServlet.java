@@ -237,6 +237,7 @@ public final class BookmarkUnibrowControlServlet {
                             directlyLoadUrls(genomeVersion, parameters, igbService);
                             return null;
                         }
+                        // IGBF-1364: add parameters argument, contains parameters from bookmark URL
                         List<DataSet> gFeatures = loadData(igbService, gmodel.getSelectedGenomeVersion(), dataProivders, query_urls, start, end, parameters);
 
                         if (has_properties) {
@@ -339,7 +340,8 @@ public final class BookmarkUnibrowControlServlet {
             }
         }
         igbService.updateGeneralLoadView();
-
+        // IGBF-1364: only show "zoom in click load data" message if bookmark URL did not specify a
+        // a region. Not necessary to zoom in at that point. Also, clicking bookmark URLs triggers data loading.
         if (show_message && parameters.get(Bookmark.START).isEmpty() && parameters.get(Bookmark.END).isEmpty()) {
             ModalUtils.infoPanel(DataSet.LOAD_WARNING_MESSAGE,
                     DataSet.show_how_to_load, DataSet.default_show_how_to_load);

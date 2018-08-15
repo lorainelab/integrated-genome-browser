@@ -259,7 +259,18 @@ public class IGBScriptEngine implements ScriptEngine {
     private String getAbsolutePath(String filePath) throws UnsupportedEncodingException {
         if (CommonUtils.IS_WINDOWS) {
             /*~Kiran:IGBF-1286: Replaced ':' char with '-' as windows does not support following chars in file name ['\','/',':','*','?','"','<','>','|']*/
-            return filePath.replaceAll(":","-");
+            if(filePath.startsWith("~")){
+                String subFilepath = filePath.substring(1);
+                filePath= System.getProperty("user.home") +File.separator+subFilepath;
+            }
+            File tmpFile = new File(filePath);
+            if(tmpFile.isAbsolute()){
+                filePath = tmpFile.getParent()+File.separator+tmpFile.getName().replaceAll(":","-");
+            }else{
+                filePath= filePath.replaceAll(":","-");
+            }
+            tmpFile.delete();
+            return filePath;
         }
         if (filePath.startsWith(HTTP_PROTOCOL_SCHEME)) {
             return filePath;
@@ -445,7 +456,7 @@ public class IGBScriptEngine implements ScriptEngine {
      * @param f
      */
     private void snapShot(IGBScriptEngine.ExportMode exportMode, File f) {
-        logger.info("Exporting file {} in mode: {}", new Object[]{f.getName(), exportMode.toString()});
+        logger.info("Exporting file {} in mode: {} to {}", new Object[]{f.getName(), exportMode.toString(),f.getPath()});
         String ext = GeneralUtils.getExtension(f.getName().toLowerCase());
         if (ext.length() == 0) {
             logger.error("no file extension given for file", f.getName());

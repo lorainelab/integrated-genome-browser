@@ -23,9 +23,11 @@ See:
 To build and run from the command line:
 
 1. Clone the [team repository](https://bitbucket.org/lorainelab/integrated-genome-browser) to your desktop.  
-2. Inside the local copy, check out the branch you wish to build. Check out release_candidate to get the released (or soon to be released) version of IGB.
+2. Inside the local copy, check out the branch you wish to build. Review branch names to identify currently released version of IGB. 
 3. Build IGB using maven. Skip tests to save time.
 4. Run IGB using the run_igb script for your platform.
+
+**Note**: Instructions above assume you have Java installed on your computer. See Download section for platform-specific installers, which come with IGB and Java. 
 
 Ex)
 
@@ -33,20 +35,14 @@ Ex)
 git clone https://bitbucket.org/lorainelab/integrated-genome-browser
 cd integrated-genome-browser
 mvn clean install -DskipTests=true
-run_igb.sh
+./run_igb.sh
 ```
 
 The preceding commands:
 
-* Create IGB executable igb_exe.jar, used by the run scripts to run IGB. Contains all dependencies required to run IGB.
+* Create IGB executable igb_exe.jar, used by the run scripts to run IGB. Contains all dependencies, including third party libraries, required to run IGB.
 * Copy IGB jar files (artifacts) to your local maven cache, useful you are developing IGB Apps.
-
-IGB and IGB Apps use [semantic versioning](http://semver.org/). 
-
-Note that IGB runs as modular OSGi bundles within an OSGi container. When IGB launches, the OSGi container may 
-load these bundles to a local bundle cache directory named for the IGB version. To ensure that only the newest,
-most recently built code is used, delete the bundle cache directory for the version you want to run. See .igb
-in your user home directory. 
+* Run IGB
 
 ***
 
@@ -59,7 +55,7 @@ Visit the [Bioviz help page](http://bioviz.org/help.html)
 # Developing IGB Apps
 
 IGB runs in an OSGi container, which supports adding and removing pluggable Apps while IGB is running. 
-For OSGi tutorials written by IGB Developers, see: 
+For OSGi tutorials written by IGB Developer alumni, see: 
 
 * Stackleader.com [blog posts on OSGI](https://blog.stackleader.com/tags/osgi/)
 
@@ -71,10 +67,4 @@ Use fork-and-branch workflow:
 
 1. Fork the [team repository](http://www.bitbucket.org/lorainelab/integrated-genome-browser).
 2. Create branches specific to the changes you want to make, push to your fork.
-3. Issue pull requests to the team repository's master branch.
-
-See:
-
-* Free on-line course [Open source programming with IGB](https://canvas.instructure.com/courses/1164217)
-* Forking Workflow [tutorial](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow) by Atlassian
-* Blog post titled [Using the Fork-and-Branch Git Workflow](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/)
+3. Issue pull requests to the team repository's master branch from the branch on your fork.

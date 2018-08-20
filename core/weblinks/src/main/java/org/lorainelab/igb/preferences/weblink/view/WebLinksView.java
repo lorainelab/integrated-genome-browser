@@ -7,13 +7,13 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
 import com.affymetrix.igb.swing.jide.StyledJTable;
+import com.google.common.collect.Lists;
 import com.jidesoft.grid.JideTable;
 import org.lorainelab.igb.preferences.weblink.WebLinkUtils;
 import org.lorainelab.igb.preferences.weblink.model.WebLink;
 import org.lorainelab.igb.preferences.weblink.model.WebLink.RegexType;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.HeadlessException;
 import java.io.File;
@@ -28,16 +28,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javafx.stage.FileChooser;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -343,7 +342,6 @@ public final class WebLinksView {
     private static FileChooserUtil getFileChooser() {
         if (file_chooser == null) {
             file_chooser =  FileChooserUtil.build();
-            //file_chooser.setContext(FileTracker.DATA_DIR_TRACKER.getFile());
         }
         file_chooser.setContext(FileTracker.DATA_DIR_TRACKER.getFile());
         return file_chooser;
@@ -353,13 +351,16 @@ public final class WebLinksView {
      * Tracks to import weblinks.
      */
     public void importWebLinks() {
-        JFileChooser chooser = getJFileChooser();
-        chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        Container frame = SwingUtilities.getAncestorOfClass(JFrame.class, null);
-        int option = chooser.showOpenDialog(frame);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-            File fil = chooser.getSelectedFile();
+        // IGBF-1183: Change 'Tools->Configure Web Links->Import' file chooser window to OS native file chooser window style
+        FileChooserUtil chooser = getFileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("JSON file","*.json", "*.JSON");
+        Optional<File> selectedFile = chooser.setTitle("Import")
+                .setFileExtensionFilters(Lists.newArrayList(extFilter))
+                .retrieveFileFromFxChooser();
+       
+        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+            FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
+            File fil = selectedFile.get();
             try {
                 WebLinkUtils.importWebLinks(fil);
             } catch (FileNotFoundException fe) {

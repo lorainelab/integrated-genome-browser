@@ -96,14 +96,16 @@ public class BundleActionManager {
         });
     }
     /*~Kiran:IGBF-1108:Added this method as we cannot believe in InetAddress.isReachable method.*/
-    public static boolean isInternetReachable(URL url)
+    private static boolean isInternetReachable(URL url)
     {
         try {
-            //open a connection to that source
-            HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
-
-            //trying to retrieve data from the source. If there is no connection, this line will fail
-            Object objData = urlConnect.getContent();
+            //Do this test only if it is http or https url skip for local url's
+            if(url.toString().toLowerCase().startsWith("http")){
+                //open a connection to that source
+                HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
+                //try connecting to the source, If there is no connection, this line will fail and throw exception
+                Object objData = urlConnect.getContent();
+            }
         } catch (UnknownHostException ex) {
             logger.error(ex.getMessage());
             return false;

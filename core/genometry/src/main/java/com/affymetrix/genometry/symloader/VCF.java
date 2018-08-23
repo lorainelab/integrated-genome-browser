@@ -493,10 +493,6 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         }
         if (fields.length > 8) {
             String[] format = fields[8].split(":");
-            // format[0] must be "GT"
-            if (!"GT".equals(format[0])) {
-                throw new IllegalStateException("vcf format error, line " + line_count + " first genotype field must be \"GT\"");
-            }
             for (int j = 9; j < fields.length; j++) {
                 String sample;
                 if (j - 9 >= samples.length || samples[j - 9].trim().length() == 0) {

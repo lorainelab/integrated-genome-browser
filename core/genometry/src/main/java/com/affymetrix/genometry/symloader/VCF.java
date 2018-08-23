@@ -44,9 +44,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private static final Pattern info_regex = Pattern.compile(";");
 
     private enum Type {
-//		Numeric,
-
-        Integer,
+	Integer,
         String,
         Float,
         Flag
@@ -55,27 +53,19 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private class INFO {
 
         private final String ID;
-//		private final int number;
+	//private final int number; //It is simpler to determine the number by reading the values.
         private final Type type;
         private final String description;
-//		private final boolean onePerAllele;
-//		private final boolean onePerGenotype;
 
         public INFO(String ID, int number, Type type, String description, boolean onePerAllele, boolean onePerGenotype) {
             this.ID = ID;
-//			this.number = number;
             this.type = type;
             this.description = description;
-//			this.onePerAllele = onePerAllele;
-//			this.onePerGenotype = onePerGenotype;
         }
 
         public String getID() {
             return ID;
         }
-//		public int getNumber() {
-//			return number;
-//		}
 
         public Type getType() {
             return type;
@@ -84,12 +74,6 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         public String getDescription() {
             return description;
         }
-//		public boolean isOnePerAllele() {
-//			return onePerAllele;
-//		}
-//		public boolean isOnePerGenotype() {
-//			return onePerGenotype;
-//		}
     }
 
     private class FILTER {
@@ -114,34 +98,25 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private class FORMAT {
 
         private final String ID;
-//		private final int number;
+        //private final int number;//It is simpler to determine the number by reading the values.
         private final Type type;
-//		private final String description;
+        //private final String description; //description is never shown to the user
 
         public FORMAT(String ID, int number, Type type, String description) {
             this.ID = ID;
-//			this.number = number;
             this.type = type;
-//			this.description = description;
         }
 
         public String getID() {
             return ID;
         }
-//		public int getNumber() {
-//			return number;
-//		}
 
         public Type getType() {
             return type;
         }
-//		public String getDescription() {
-//			return description;
-//		}
     }
-//	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+    
     private double version = -1.0;
-//	private Date date;
     private String[] samples = new String[]{};
     private Map<String, String> metaMap = new HashMap<>();
     private Map<String, INFO> infoMap = new HashMap<>();
@@ -186,7 +161,9 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
                     line_count++;
                     continue;
                 } else if (line.length() > 0) {
-                    processDataLine(mainSym, seq, 0, Integer.MAX_VALUE, featureName, dataMap, graphDataMap, genotypeDataMap, line, line_count, combineGenotype);
+                    processDataLine(mainSym, seq, 0, Integer.MAX_VALUE, 
+                            featureName, dataMap, graphDataMap, genotypeDataMap, 
+                            line, line_count, combineGenotype);
                     line_count++;
                 }
             }
@@ -234,11 +211,9 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
                 } else {
                     gstate.setComboStyle(null, 0);
                 }
-//				gstate.getTierStyle().setHeight(combo_style.getHeight());
                 gstate.getTierStyle().setFloatTier(false); // ignored since combo_style is set
             } else {
                 gstate.setComboStyle(null, 0);
-//				gstate.getTierStyle().setHeight(combo_style.getHeight());
                 gstate.getTierStyle().setFloatTier(false); // ignored since combo_style is set
             }
             symlist.add(graphIntervalSym);
@@ -384,15 +359,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
             String format = line.substring("format=".length());
             ErrorHandler.errorPanel("file version not supported " + format);
             throw new UnsupportedOperationException("file version not supported " + format);
-        } //		else if (line.startsWith("fileDate=")) {
-        //			try {
-        //				date = DATE_FORMAT.parse(line.substring("fileDate=".length()));
-        //			}
-        //			catch (ParseException x) {
-        //				Logger.getLogger(this.getClass().getName()).log(
-        //					Level.WARNING, "Unable to process date " + line.substring("fileDate=".length()));
-        //			}
-        //		}
+        } 
         else if (line.startsWith("INFO=")) {
             INFO info = getInfo(line.substring("INFO=".length()));
             infoMap.put(info.getID(), info);
@@ -438,9 +405,10 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         return sb.toString();
     }
 
-    private BAMSym getBAMSym(String nameType, BioSeq seq, String id, int start, int end, int width, String qualString, String filter, String ref, String alt) {
+    private BAMSym getBAMSym(String nameType, BioSeq seq, String id, 
+            int start, int end, int width, 
+            String qualString, String filter, String ref, String alt) {
         Cigar cigar = null;
-// Cigar cigar = TextCigarCodec.getSingleton().decode(cigarString);
         boolean equal = false;
         boolean equalLength = false;
         boolean insertion = false;
@@ -646,7 +614,8 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         IntArrayList wData = new IntArrayList();
     }
 
-    private void addGraphData(Map<String, GraphData> graphDataMap, String key, BioSeq seq, int pos, int width, float value) {
+    private void addGraphData(Map<String, GraphData> graphDataMap, String key, 
+            BioSeq seq, int pos, int width, float value) {
         GraphData graphData = graphDataMap.get(key);
         if (graphData == null) {
             graphData = new GraphData();

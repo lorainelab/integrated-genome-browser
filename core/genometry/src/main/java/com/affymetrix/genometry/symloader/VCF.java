@@ -350,6 +350,12 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
                 case "VCFv4.1":
                     version = 4.1;
                     break;
+                case "VCFv4.2":
+                    version = 4.2;
+                    break;
+                case "VCFv4.3":
+                    version = 4.3;
+                    break;
                 default:
                     ErrorHandler.errorPanel("file version not supported " + format);
                     throw new UnsupportedOperationException("file version not supported " + format);

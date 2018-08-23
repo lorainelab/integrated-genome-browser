@@ -57,7 +57,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         private final Type type;
         private final String description;
 
-        public INFO(String ID, int number, Type type, String description, boolean onePerAllele, boolean onePerGenotype) {
+        public INFO(String ID, Type type, String description) {
             this.ID = ID;
             this.type = type;
             this.description = description;
@@ -102,7 +102,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         private final Type type;
         //private final String description; //description is never shown to the user
 
-        public FORMAT(String ID, int number, Type type, String description) {
+        public FORMAT(String ID, Type type) {
             this.ID = ID;
             this.type = type;
         }
@@ -314,20 +314,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
     private INFO getInfo(String line) {
         String dataline = "," + line.substring(1, line.length() - 1) + ",";
-        int number = -1;
-        boolean onePerAllele = false;
-        boolean onePerGenotype = false;
-        String numberString = getNumberString(line);
-        if (numberString == null) {
-        } else if ("A".equals(numberString)) {
-            onePerAllele = true;
-        } else if ("G".equals(numberString)) {
-            onePerGenotype = true;
-        } else if (".".equals(numberString)) {
-        } else {
-            number = Integer.parseInt(numberString);
-        }
-        return new INFO(getID(dataline), number, getType(dataline), getDescription(dataline), onePerAllele, onePerGenotype);
+        return new INFO(getID(dataline), getType(dataline), getDescription(dataline));
     }
 
     private FILTER getFilter(String line) {
@@ -337,7 +324,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
     private FORMAT getFormat(String line) {
         String dataline = "," + line.substring(1, line.length() - 1) + ",";
-        return new FORMAT(getID(dataline), getNumber(dataline), getType(dataline), getDescription(dataline));
+        return new FORMAT(getID(dataline), getType(dataline));
     }
 
     private void processMetaInformationLine(String line) {

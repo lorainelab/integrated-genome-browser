@@ -185,12 +185,7 @@ public class SynonymsControlPanel {
             PreferenceUtils.getLocationsNode().put(PREF_FILE_URL_KEY, xsynonymFile.getText());
         } else if(!synonymFileStatus) {
             ErrorHandler.errorPanel("Unable to Load Personal Synonyms - " + PREF_FILE_URL_KEY,
-                    "Please upload a valid synonym file.", Level.SEVERE);
-            return false;
-        }else {
-            ErrorHandler.errorPanel(
-                    "Unable to Load Personal Synonyms - " + PREF_FILE_URL_KEY,
-                    "Unable to load personal synonyms from " + xsynonymFile.getText() + ".", Level.SEVERE);
+                    "Please select a valid synonym file.", Level.SEVERE);
             return false;
         }
         return true;

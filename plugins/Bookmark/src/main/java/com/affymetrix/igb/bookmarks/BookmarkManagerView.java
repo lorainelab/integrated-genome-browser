@@ -40,6 +40,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javax.swing.Action;
 import javax.swing.DropMode;
 import javax.swing.JButton;
@@ -345,19 +346,48 @@ public final class BookmarkManagerView {
             ErrorHandler.errorPanel("No bookmarks to save", (Exception) null, Level.SEVERE);
             return;
         }
-        JFileChooser chooser = getJFileChooser(true);
-        chooser.setDialogTitle("Export");
-        chooser.setCurrentDirectory(getLoadDirectory());
-        int option = chooser.showSaveDialog(null);
-        if (option == JFileChooser.APPROVE_OPTION) {
+        
+        FileChooser.ExtensionFilter htmlExtFilter = 
+                new FileChooser.ExtensionFilter("HTML File(html, htm, xhtml)","html", "htm", "xhtml");
+                FileChooser.ExtensionFilter textExtFilter = new FileChooser.ExtensionFilter("Text File(txt)","txt");
+                ArrayList<FileChooser.ExtensionFilter> extList = Lists.newArrayList(htmlExtFilter);
+                extList.add(textExtFilter);
+     
+        FileChooserUtil fileChooser = FileChooserUtil.build() ;
+        Optional<File> selectedFile = fileChooser.setContext(getLoadDirectory())
+                .setTitle("Export")
+                .setFileExtensionFilters(extList)
+                .saveFilesFromFxChooser();
+        
+        ExtensionFilter ext = fileChooser.getSelectedFileExtension();
+        System.out.println("Extnsions are: "+ext.getExtensions());
+        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+            setLoadDirectory(selectedFile.get().getParentFile());
             try {
-                ((ExportFileFilter) chooser.getFileFilter()).export(main_bookmark_list, chooser.getSelectedFile());
-                setLoadDirectory(chooser.getCurrentDirectory());
-            } catch (Exception ex) {
+                File fil = selectedFile.get();
+                boolean extSet = false;
+                String filePath = fil.getCanonicalPath();
+                System.out.println("File path: "+filePath);
+                for (String extension : ext.getExtensions()) {
+                    if (filePath.endsWith("." + extension)) {
+                        extSet = true;
+                        break;
+                    }
+                }
+                
+                if (!extSet) {
+                    fil = new File(filePath + "." + ext.getExtensions().get(0));
+                }
+                
+                if(ext.equals(htmlExtFilter))
+                    BookmarkList.exportAsHTML(main_bookmark_list, fil);
+                else
+                    BookmarkList.exportAsTEXT(main_bookmark_list, fil);
+            }catch(Exception ex) {
                 ErrorHandler.errorPanel("Error exporting bookmarks", ex, Level.SEVERE);
             }
         }
-    }
+}
 
     public void deleteAction() {
         TreePath[] selectionPaths = tree.getSelectionPaths();
@@ -426,19 +456,6 @@ public final class BookmarkManagerView {
         }
     }
 
-    private static TreePath getPath(TreeNode treeNode) {
-        List<Object> nodes = new ArrayList<>();
-        if (treeNode != null) {
-            nodes.add(treeNode);
-            treeNode = treeNode.getParent();
-            while (treeNode != null) {
-                nodes.add(0, treeNode);
-                treeNode = treeNode.getParent();
-            }
-        }
-        return nodes.isEmpty() ? null : new TreePath(nodes.toArray());
-    }
-
     private void addBookmarkToHistory(TreePath tp) {
         if (tp == null) {
             return;
@@ -480,59 +497,6 @@ public final class BookmarkManagerView {
 
     private void setLoadDirectory(File file) {
         FileTracker.DATA_DIR_TRACKER.setFile(file);
-    }
-
-    /**
-     * Gets a static re-usable file chooser that prefers "html" files.
-     */
-    private JFileChooser getJFileChooser(boolean export) {
-        if (static_chooser == null) {
-            static_chooser = new JFileChooser() {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void approveSelection() {
-                    File f = getSelectedFile();
-                    String path;
-                    if ((f.getAbsolutePath().indexOf('.')) < 0) {
-                        if (static_chooser.getFileFilter().equals(ff)) {
-                            path = f.getAbsolutePath() + ".txt";
-                        } else {
-                            path = f.getAbsolutePath() + ".html";
-                        }
-                        f = new File(path);
-                    }
-                    if (f.exists() && getDialogType() == SAVE_DIALOG) {
-                        int result = JOptionPane.showConfirmDialog(this,
-                                "The file exists, overwrite?", "Existing file",
-                                JOptionPane.YES_NO_OPTION);
-                        switch (result) {
-                            case JOptionPane.YES_OPTION:
-                                super.approveSelection();
-                                return;
-                            case JOptionPane.NO_OPTION:
-                                return;
-                        }
-                    }
-                    super.approveSelection();
-                }
-            };
-            ff1 = new HTMLExportFileFilter(new UniFileFilter(
-                    ImmutableList.<String>of("html", "htm", "xhtml"), "HTML Files"));
-            static_chooser.setAcceptAllFileFilterUsed(false);
-            static_chooser.setCurrentDirectory(getLoadDirectory());
-            static_chooser.addChoosableFileFilter(ff1);
-
-        }
-        if (export) {
-            static_chooser.addChoosableFileFilter(ff);
-        } else {
-            static_chooser.removeChoosableFileFilter(ff);
-        }
-        static_chooser.setFileFilter(ff1);
-        static_chooser.rescanCurrentDirectory();
-        return static_chooser;
     }
 
     /**

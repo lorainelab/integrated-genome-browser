@@ -7,7 +7,6 @@ package org.lorainelab.igb.javafx;
 
 import com.google.common.collect.Lists;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -26,6 +25,7 @@ public class FileChooserUtil {
     private Optional<String> defaultFileName;
     private Optional<File> context;
     private Optional<List<ExtensionFilter>> extensionFilters;
+    private static ExtensionFilter selectedExtensionFilter = null;
 
     private FileChooserUtil() {
         title = Optional.empty();
@@ -130,7 +130,8 @@ public class FileChooserUtil {
                     selectedFile[0] = fileChooser.showSaveDialog(null);
                     File originalSelection = selectedFile[0];
                     if (fileChooser.getSelectedExtensionFilter() != null && !fileChooser.getSelectedExtensionFilter().getExtensions().isEmpty()) {
-                    List<String> selectedExtensionFilterExtensions = fileChooser.getSelectedExtensionFilter().getExtensions();
+                    selectedExtensionFilter = fileChooser.getSelectedExtensionFilter();
+                    List<String> selectedExtensionFilterExtensions = selectedExtensionFilter.getExtensions();
                         if (selectedExtensionFilterExtensions.size() == 1) {
                             String selectedExtension = selectedExtensionFilterExtensions.get(0);
                             if (!selectedExtension.isEmpty()) {
@@ -139,6 +140,7 @@ public class FileChooserUtil {
                                     selectedFile[0] = new File(selectedFile[0].getAbsolutePath() + selectedExtension);
                                 } catch (Exception ex) {
                                     selectedFile[0] = originalSelection;
+                                    logger.error(ex.getMessage(), ex);
                                 }
                             }
                         }
@@ -193,6 +195,10 @@ public class FileChooserUtil {
             return Optional.ofNullable(selectedFiles);
         }
 
+    }
+    
+    public ExtensionFilter getSelectedFileExtension(){
+        return selectedExtensionFilter;
     }
 
 }

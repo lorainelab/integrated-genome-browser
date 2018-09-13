@@ -105,10 +105,12 @@ public class SynonymsControlPanel {
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
+            }else{
+                // Catch the case where the user removes the file
+                // but only if they activate this button, which could be misleading
+                updateSynonymFile(vsynonymFile, genomeVersionSynonymLookup, PREF_VSYN_FILE_URL);
             }
-            // Catch the case where the user removes the file
-            // but only if they activate this button, which could be misleading
-            updateSynonymFile(vsynonymFile, genomeVersionSynonymLookup, PREF_VSYN_FILE_URL);
+
         };
 
         final ActionListener clistener = e -> {
@@ -124,11 +126,11 @@ public class SynonymsControlPanel {
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
+            }else{
+                // Catch the case where the user removes the file
+                // but only if they activate this button, which could be misleading
+                updateSynonymFile(csynonymFile, chrSynLookup, PREF_CSYN_FILE_URL);
             }
-
-            // Catch the case where the user removes the file
-            // but only if they activate this button, which could be misleading
-            updateSynonymFile(csynonymFile, chrSynLookup, PREF_CSYN_FILE_URL);
         };
 
         vopenFile.setToolTipText("Open Local File");

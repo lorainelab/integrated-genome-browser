@@ -287,7 +287,8 @@ public abstract class XAM extends SymLoader {
                     // print matches
                     currentChildEnd += celLength;
                 } else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
-                    // skip over soft clip
+                    //treat softclipping as insertion
+                        insertChilds.add(new SimpleSeqSpan(currentChildEnd, currentChildEnd, seq));
                 } else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
                     // hard clip can be ignored
                 }

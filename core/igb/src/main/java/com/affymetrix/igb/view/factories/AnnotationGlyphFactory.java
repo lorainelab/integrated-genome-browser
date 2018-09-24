@@ -40,6 +40,7 @@ import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.glyph.AlignedResidueGlyph;
 import com.affymetrix.igb.glyph.DeletionGlyph;
+import com.affymetrix.igb.glyph.SoftClippingSeqGlyph;
 import com.affymetrix.igb.glyph.TriangleInsertionSeqGlyph;
 import com.affymetrix.igb.shared.PreprocessorRegistry;
 import com.affymetrix.igb.tiers.TrackConstants.DirectionType;
@@ -172,6 +173,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                 } else {
                     addChildren(sym, parentGlyph.get());
                     handleInsertionGlyphs(sym, parentGlyph.get());
+                    handleSoftClippingGlyphs(sym, parentGlyph.get());
                 }
             }
 
@@ -494,7 +496,56 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             tierGlyph.setDataModelFromOriginalSym(triangleInsertionGlyph, childsym);
         }
     }
+    
+    private void handleSoftClippingGlyphs(SeqSymmetry sym, GlyphI pglyph) {
+        if (!(sym instanceof BAMSym)) {
+            return;
+        }
 
+        BAMSym softsym = (BAMSym) sym;
+        if (softsym.getSoftChildCount() == 0) {
+            return;
+        }
+
+        BioSeq coordseq = seqMap.getViewSeq();
+        SeqSymmetry psym = softsym;
+        if (annotSeq != viewSeq) {
+            psym = seqMap.transformForViewSeq(softsym, annotSeq);
+        }
+        SeqSpan pspan = seqMap.getViewSeqSpan(psym);
+
+        for (int i = 0; i < softsym.getSoftChildCount(); i++) {
+
+            SeqSymmetry childsym = softsym.getSoftChild(i);
+            SeqSymmetry dsym = childsym;
+
+            if (annotSeq != coordseq) {
+                dsym = seqMap.transformForViewSeq(childsym, annotSeq);
+            }
+            SeqSpan dspan = seqMap.getViewSeqSpan(dsym);
+            SeqSpan ispan = childsym.getSpan(annotSeq);
+
+            if (ispan == null || dspan == null) {
+                continue;
+            }
+
+            SoftClippingSeqGlyph softClippingGlyph = new SoftClippingSeqGlyph();
+            softClippingGlyph.setSelectable(true);
+            String residues;
+            
+            if(ispan.getMin()<softsym.getMin()) {
+                residues = softsym.getResidues(ispan.getMax() - 1, ispan.getMax() + 1);
+            } else {
+                residues = softsym.getResidues(ispan.getMin() - 1, ispan.getMin() + 1);
+            }
+            
+            softClippingGlyph.setResidues(residues);
+            softClippingGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin() - 1), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
+            pglyph.addChild(softClippingGlyph);
+            tierGlyph.setDataModelFromOriginalSym(softClippingGlyph, childsym);
+        }
+    }
+    
     @Override
     public void createGlyphs(RootSeqSymmetry sym, ITrackStyleExtended style, SeqMapViewExtendedI gviewer, BioSeq seq) {
         checkNotNull(sym);

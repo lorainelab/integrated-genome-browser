@@ -34,6 +34,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     private static final char ERROR_CHAR = '.';
 
     private final int[] iblockMins, iblockMaxs;
+    private final int[] sblockMins, sblockMaxs;
     private final Cigar cigar;
     private final int min;
     private final String residues;
@@ -42,6 +43,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     private BitSet residueMask;
     private SeqSymmetry children[];
     private SeqSymmetry insChildren[];
+    private SeqSymmetry softChildren[];
     private Integer averageQualityScore;
     //Should be made final
     private boolean readPairedFlag, firstOfPairFlag, secondOfPairFlag, duplicateReadFlag;
@@ -53,15 +55,23 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     private boolean mateNegativeStrandFlag;
 
     //Residues residues;
-    private String insResidues;
-
+    private String insResidues; 
+    private String softResidues;
+    
     public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name,
             boolean forward, int[] blockMins, int[] blockMaxs, int iblockMins[],
             int[] iblockMaxs, Cigar cigar, String residues) {
         this(type, seq, txMin, txMax, name, NO_MAPQ, forward, blockMins,
                 blockMaxs, iblockMins, iblockMaxs, cigar, residues, null);
     }
-
+    
+    public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name,
+            boolean forward, int[] blockMins, int[] blockMaxs, int iblockMins[],
+            int[] iblockMaxs, Cigar cigar, String residues, int sblockMins[], int[] sblockMaxs) {
+        this(type, seq, txMin, txMax, name, NO_MAPQ, forward, blockMins,
+                blockMaxs, iblockMins, iblockMaxs, cigar, residues, null, sblockMins, sblockMaxs);
+    }
+    
     public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name,
             int mapq, boolean forward, int[] blockMins, int[] blockMaxs,
             int iblockMins[], int[] iblockMaxs, Cigar cigar, String residues, String baseQuality) {
@@ -73,6 +83,24 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         this.baseQuality = baseQuality;
         this.min = Math.min(txMin, txMax);
         this.mapq = mapq;
+        this.sblockMins = null;
+        this.sblockMaxs = null;
+    }
+    
+    public BAMSym(String type, BioSeq seq, int txMin, int txMax, String name,
+            int mapq, boolean forward, int[] blockMins, int[] blockMaxs,
+            int iblockMins[], int[] iblockMaxs, Cigar cigar, String residues, String baseQuality,
+            int sblockMins[], int[] sblockMaxs) {
+        super(type, seq, txMin, txMax, name, forward, blockMins, blockMaxs);
+        this.iblockMins = iblockMins;
+        this.iblockMaxs = iblockMaxs;
+        this.cigar = cigar;
+        this.residues = residues;
+        this.baseQuality = baseQuality;
+        this.min = Math.min(txMin, txMax);
+        this.mapq = mapq;
+        this.sblockMins = sblockMins;
+        this.sblockMaxs = sblockMaxs;
     }
 
     public int getMapq() {
@@ -84,6 +112,14 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             return 0;
         } else {
             return iblockMins.length;
+        }
+    }
+    
+    public int getSoftChildCount() {
+        if (sblockMins == null) {
+            return 0;
+        } else {
+            return sblockMins.length;
         }
     }
 
@@ -103,6 +139,24 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             }
         }
         return insChildren[index];
+    }
+    
+    public SeqSymmetry getSoftChild(int index) {
+        if (sblockMins == null || (sblockMins.length <= index)) {
+            return null;
+        }
+        if (softChildren == null) {
+            softChildren = new SeqSymmetry[sblockMins.length];
+        }
+
+        if (softChildren[index] == null) {
+            if (forward) {
+                softChildren[index] = new BamSoftChildSingletonSeqSym(sblockMins[index], sblockMaxs[index], index, seq);
+            } else {
+                softChildren[index] = new BamSoftChildSingletonSeqSym(sblockMaxs[index], sblockMins[index], index, seq);
+            }
+        }
+        return softChildren[index];
     }
 
     @Override
@@ -135,11 +189,15 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     }
 
     public static boolean isBamChildType(SeqSymmetry sym) {
-        return sym instanceof BamChildSingletonSeqSym || sym instanceof BamInsChildSingletonSeqSym;
+        return sym instanceof BamChildSingletonSeqSym || sym instanceof BamInsChildSingletonSeqSym || sym instanceof BamSoftChildSingletonSeqSym;
     }
     
     public static boolean isBamInsChildType(SeqSymmetry sym) {
         return sym instanceof BamInsChildSingletonSeqSym;
+    }
+    
+    public static boolean isBamSoftChildType(SeqSymmetry sym) {
+        return sym instanceof BamSoftChildSingletonSeqSym;
     }
 
     class BamChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {
@@ -153,22 +211,22 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
         @Override
         public String getResidues() {
-            return BAMSym.this.getResidues(this.getMin(), this.getMax(), false);
+            return BAMSym.this.getResidues(this.getMin(), this.getMax(), false, false);
         }
 
         @Override
         public String getResidues(int start, int end) {
-            return BAMSym.this.getResidues(start, end, false);
+            return BAMSym.this.getResidues(start, end, false, false);
         }
 
         @Override
         public String getBaseQuality() {
-            return BAMSym.this.getBaseQuality(this.getMin(), this.getMax(), false);
+            return BAMSym.this.getBaseQuality(this.getMin(), this.getMax(), false, false);
         }
 
         @Override
         public String getBaseQuality(int start, int end) {
-            return BAMSym.this.getBaseQuality(start, end, false);
+            return BAMSym.this.getBaseQuality(start, end, false, false);
         }
 
         @Override
@@ -242,12 +300,12 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
         @Override
         public String getResidues(int start, int end) {
-            return BAMSym.this.getResidues(start, end, true);
+            return BAMSym.this.getResidues(start, end, true, false);
         }
 
         @Override
         public String getResidues() {
-            return BAMSym.this.getResidues(this.getMin(), this.getMax(), true);
+            return BAMSym.this.getResidues(this.getMin(), this.getMax(), true, false);
         }
 
         @Override
@@ -262,12 +320,12 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
         @Override
         public String getBaseQuality() {
-            return BAMSym.this.getBaseQuality(this.getMin(), this.getMax(), true);
+            return BAMSym.this.getBaseQuality(this.getMin(), this.getMax(), true, false);
         }
 
         @Override
         public String getBaseQuality(int start, int end) {
-            return BAMSym.this.getBaseQuality(start, end, true);
+            return BAMSym.this.getBaseQuality(start, end, true, false);
         }
 
         @Override
@@ -317,6 +375,95 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             return super.clone(); //To change body of generated methods, choose Tools | Templates.
         }
     }
+    
+    class BamSoftChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {
+
+        private BitSet residueMask;
+        private Integer averageQualityScore;
+        final int index;
+
+        public BamSoftChildSingletonSeqSym(int start, int end, int index, BioSeq seq) {
+            super(start, end, seq);
+            this.index = index;
+        }
+
+        @Override
+        public String getResidues(int start, int end) {
+            return BAMSym.this.getResidues(start, end, false, true);
+        }
+
+        @Override
+        public String getResidues() {
+            return BAMSym.this.getResidues(this.getMin(), this.getMax(), false, true);
+        }
+
+        @Override
+        public BitSet getResidueMask() {
+            return residueMask;
+        }
+
+        @Override
+        public void setResidueMask(BitSet bitset) {
+            this.residueMask = bitset;
+        }
+
+        @Override
+        public String getBaseQuality() {
+            return BAMSym.this.getBaseQuality(this.getMin(), this.getMax(), false, true);
+        }
+
+        @Override
+        public String getBaseQuality(int start, int end) {
+            return BAMSym.this.getBaseQuality(start, end, false, true);
+        }
+
+        @Override
+        public int getAverageQuality() {
+            if (averageQualityScore == null) {
+                averageQualityScore = BAMSym.this.getAverageQuality(getBaseQuality());
+            }
+            return averageQualityScore;
+        }
+
+        // For the web links to be constructed properly, this class must implement getID(),
+        // or must NOT implement SymWithProps.
+        @Override
+        public String getID() {
+            return BAMSym.this.getID();
+        }
+
+        @Override
+        public Object getProperty(String key) {
+            return BAMSym.this.getProperty(key);
+        }
+
+        @Override
+        public boolean setProperty(String key, Object val) {
+            return false;
+        }
+
+        @Override
+        public Map<String, Object> getProperties() {
+            return cloneProperties();
+        }
+
+        @Override
+        public Map<String, Object> cloneProperties() {
+            HashMap<String, Object> tprops = new HashMap<>();
+            tprops.putAll(BAMSym.this.cloneProperties());
+            tprops.put(ID, name);
+            tprops.put(RESIDUES, getResidues());
+            tprops.put(FORWARD, this.isForward());
+            tprops.put(FEATURE_TYPE, "soft clipped");
+            tprops.put(AVERAGE_QUALITY, getAverageQuality());
+            return tprops;
+        }
+
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        }
+    }
 
     @Override
     public String getResidues() {
@@ -329,7 +476,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     @Override
     public String getResidues(int start, int end) {
         if (residues != null) {
-            return getResidues(start, end, false);
+            return getResidues(start, end, false, false);
         }
         return getEmptyString('-', end - start);
     }
@@ -345,7 +492,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     @Override
     public String getBaseQuality(int start, int end) {
         if (baseQuality != null) {
-            return getBaseQuality(start, end, false);
+            return getBaseQuality(start, end, false, false);
         }
         return getEmptyString('*', end - start);
     }
@@ -393,6 +540,10 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     public void setInsResidues(String residues) {
         this.insResidues = residues;
     }
+    
+    public void setSoftResidues(String residues) {
+        this.softResidues = residues;
+    }
 
     public String getInsResidue(int childNo) {
         if (childNo > iblockMins.length) {
@@ -406,6 +557,20 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         int end = start + (iblockMaxs[childNo] - iblockMins[childNo]);
 
         return insResidues.substring(start, end);
+    }
+    
+    public String getSoftResidue(int childNo) {
+        if (childNo > sblockMins.length) {
+            return "";
+        }
+
+        int start = 0;
+        for (int i = 0; i < childNo; i++) {
+            start += (sblockMaxs[i] - sblockMins[i]);
+        }
+        int end = start + (sblockMaxs[childNo] - sblockMins[childNo]);
+
+        return softResidues.substring(start, end);
     }
 
     @Override
@@ -432,16 +597,16 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         return cigar;
     }
 
-    private String getResidues(int start, int end, boolean isIns) {
-        return interpretCigar(residues, start, end, isIns, DELETION_CHAR, N_CHAR, PADDING_CHAR, ERROR_CHAR);
+    private String getResidues(int start, int end, boolean isIns, boolean isSoft) {
+        return interpretCigar(residues, start, end, isIns, DELETION_CHAR, N_CHAR, PADDING_CHAR, ERROR_CHAR, isSoft);
     }
 
-    private String getBaseQuality(int start, int end, boolean isIns) {
-        return interpretCigar(baseQuality, start, end, isIns, ERROR_CHAR, ERROR_CHAR, ERROR_CHAR, ERROR_CHAR);
+    private String getBaseQuality(int start, int end, boolean isIns, boolean isSoft) {
+        return interpretCigar(baseQuality, start, end, isIns, ERROR_CHAR, ERROR_CHAR, ERROR_CHAR, ERROR_CHAR, isSoft);
     }
 
     private String interpretCigar(String str, int start, int end, boolean isIns,
-            char D, char N, char P, char E) {
+            char D, char N, char P, char E, boolean isSoft) {
         
         // IGBF-1173: User reported issue that when BAM files are loaded, IGB freezes.
         // After analysis, it is found that according to the sam/bam spec (https://samtools.github.io/hts-specs/) 
@@ -453,11 +618,24 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         if (cigar == null || cigar.numCigarElements() == 0 || str == null || str.equals("*")) {
             return "";
         }
-        start = Math.max(start, txMin);
-        end = Math.min(txMax, end);
+        if(isSoft) {
+            int softSpan = (start < end ? end - start : start - end);
+            if(start <= txMin) {
+                start -= min;
+                end -= min;
+                start += softSpan;
+                end += softSpan;
+            } else {
+                start -= min;
+                end -= min;
+            }
+        } else {
+            start = Math.max(start, txMin);
+            end = Math.min(txMax, end);
 
-        start -= min;
-        end -= min;
+            start -= min;
+            end -= min;
+        }
 
         if (start > end) {
             return "";
@@ -486,8 +664,12 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
                         continue;
                     }
                 } else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
-                    stringPtr += celLength;	// skip over soft clip
-                    continue;
+                    if (isSoft && currentPos == start) {
+                        return str.substring(stringPtr, stringPtr + celLength);
+                    } else {
+                        stringPtr += celLength;
+                        continue;
+                    }
                 } else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
                     continue;				// hard clip can be ignored
                 } else if (cel.getOperator() == CigarOperator.DELETION) {

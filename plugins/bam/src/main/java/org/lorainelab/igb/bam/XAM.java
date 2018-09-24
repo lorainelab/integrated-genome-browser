@@ -154,7 +154,8 @@ public abstract class XAM extends SymLoader {
         }
 
         List<SeqSpan> insertChildren = new ArrayList<>();
-        List<SeqSpan> children = getChildren(seq, sr, insertChildren);
+        List<SeqSpan> softclipChildren = new ArrayList<>();
+        List<SeqSpan> children = getChildren(seq, sr, insertChildren, softclipChildren);
 
         int blockMins[] = new int[children.size()];
         int blockMaxs[] = new int[children.size()];
@@ -169,6 +170,13 @@ public abstract class XAM extends SymLoader {
             iblockMins[i] = insertChildren.get(i).getMin() + span.getMin();
             iblockMaxs[i] = iblockMins[i] + insertChildren.get(i).getLength();
         }
+        
+        int sblockMins[] = new int[softclipChildren.size()];
+        int sblockMaxs[] = new int[softclipChildren.size()];
+        for (int i = 0; i < softclipChildren.size(); i++) {
+            sblockMins[i] = softclipChildren.get(i).getMin() + span.getMin();
+            sblockMaxs[i] = sblockMins[i] + softclipChildren.get(i).getLength();
+        }
 
         if (children.isEmpty()) {
             blockMins = new int[1];
@@ -179,7 +187,8 @@ public abstract class XAM extends SymLoader {
 
         BAMSym sym = new BAMSym(meth, seq, start, end, sr.getReadName(),
                 sr.getMappingQuality(), span.isForward(), blockMins, blockMaxs, iblockMins,
-                iblockMaxs, sr.getCigar(), includeResidues ? sr.getReadString() : null, sr.getBaseQualityString());
+                iblockMaxs, sr.getCigar(), includeResidues ? sr.getReadString() : null, sr.getBaseQualityString(),
+                sblockMins, sblockMaxs);
         sym.setProperty(NAME, sr.getReadName());
         if (sr.getAttribute(NH) != null) {
             sym.setProperty(NH, sr.getAttribute(NH));
@@ -236,7 +245,7 @@ public abstract class XAM extends SymLoader {
         getFileHeaderProperties(sr.getHeader(), sym);
     }
 
-    protected static List<SeqSpan> getChildren(BioSeq seq, SAMRecord sr, List<SeqSpan> insertChilds) {
+    protected static List<SeqSpan> getChildren(BioSeq seq, SAMRecord sr, List<SeqSpan> insertChilds, List<SeqSpan> softclipChilds) {
         Cigar cigar = sr.getCigar();
         boolean isNegative = sr.getReadNegativeStrandFlag();
         List<SeqSpan> results = new ArrayList<>();
@@ -287,8 +296,11 @@ public abstract class XAM extends SymLoader {
                     // print matches
                     currentChildEnd += celLength;
                 } else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
-                    //treat softclipping as insertion
-                        insertChilds.add(new SimpleSeqSpan(currentChildEnd, currentChildEnd, seq));
+                        if(currentChildEnd == 0){
+                            softclipChilds.add(new SimpleSeqSpan(currentChildEnd - celLength, currentChildEnd, seq));
+                        } else {
+                            softclipChilds.add(new SimpleSeqSpan(currentChildEnd, currentChildEnd + celLength, seq));
+                        }
                 } else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
                     // hard clip can be ignored
                 }

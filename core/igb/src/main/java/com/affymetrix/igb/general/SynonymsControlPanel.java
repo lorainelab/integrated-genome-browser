@@ -16,6 +16,7 @@ import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.HeadlessException;
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
@@ -99,16 +100,23 @@ public class SynonymsControlPanel {
                     if (selectedFile != null) {
                         vsynonymFile.setText(selectedFile.getCanonicalPath());
                         if(updateSynonymFile(vsynonymFile, genomeVersionSynonymLookup, PREF_VSYN_FILE_URL)){
+                            vsynonymFile.setForeground(Color.BLACK);
+                            vsynonymFile.setBackground(Color.WHITE);
                             suggestRestart();
+                        }else{
+                            vsynonymFile.setForeground(Color.WHITE);
+                            vsynonymFile.setBackground(new Color(204, 102, 119));
                         }
                     }
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
+            }else{
+                // Catch the case where the user removes the file
+                // but only if they activate this button, which could be misleading
+                updateSynonymFile(vsynonymFile, genomeVersionSynonymLookup, PREF_VSYN_FILE_URL);
             }
-            // Catch the case where the user removes the file
-            // but only if they activate this button, which could be misleading
-            updateSynonymFile(vsynonymFile, genomeVersionSynonymLookup, PREF_VSYN_FILE_URL);
+
         };
 
         final ActionListener clistener = e -> {
@@ -118,17 +126,22 @@ public class SynonymsControlPanel {
                     if (selectedFile != null) {
                         csynonymFile.setText(selectedFile.getCanonicalPath());
                         if(updateSynonymFile(csynonymFile, chrSynLookup, PREF_CSYN_FILE_URL)) {
+                            csynonymFile.setForeground(Color.BLACK);
+                            csynonymFile.setBackground(Color.WHITE);
                             suggestRestart();
+                        }else{
+                            csynonymFile.setForeground(Color.WHITE);
+                            csynonymFile.setBackground(new Color(204, 102, 119));
                         }
                     }
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
+            }else{
+                // Catch the case where the user removes the file
+                // but only if they activate this button, which could be misleading
+                updateSynonymFile(csynonymFile, chrSynLookup, PREF_CSYN_FILE_URL);
             }
-
-            // Catch the case where the user removes the file
-            // but only if they activate this button, which could be misleading
-            updateSynonymFile(csynonymFile, chrSynLookup, PREF_CSYN_FILE_URL);
         };
 
         vopenFile.setToolTipText("Open Local File");

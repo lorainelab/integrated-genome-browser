@@ -180,8 +180,8 @@ public interface SynonymLookupService {
      * @throws java.io.IOException if the input stream is null or an error
      * occurs reading it.
      */
-    void loadSynonyms(InputStream istream) throws IOException;
+    boolean loadSynonyms(InputStream istream) throws IOException;
 
-    void loadSynonyms(InputStream istream, boolean setPreferredNames) throws IOException;
+    boolean loadSynonyms(InputStream istream, boolean setPreferredNames) throws IOException;
     
 }

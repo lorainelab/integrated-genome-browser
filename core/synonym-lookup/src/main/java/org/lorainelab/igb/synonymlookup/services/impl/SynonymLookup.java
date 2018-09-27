@@ -55,12 +55,12 @@ public abstract class SynonymLookup implements SynonymLookupService {
      * @throws java.io.IOException if the input stream is null or an error occurs reading it.
      */
     @Override
-    public void loadSynonyms(InputStream istream) throws IOException {
-        this.loadSynonyms(istream, false);
+    public boolean loadSynonyms(InputStream istream) throws IOException {
+        return this.loadSynonyms(istream, false);
     }
 
     @Override
-    public void loadSynonyms(InputStream istream, boolean setPreferredNames) throws IOException {
+    public boolean loadSynonyms(InputStream istream, boolean setPreferredNames) throws IOException {
         try (Reader reader = new InputStreamReader(istream)) {
             Iterable<CSVRecord> records = CSVFormat.TDF
                     .withCommentMarker('#')
@@ -81,11 +81,15 @@ public abstract class SynonymLookup implements SynonymLookupService {
                         }
                     }
                     addSynonyms(row);
+                } else {
+                    return false;
                 }
             }
         } catch (Throwable t) {
             LOG.error(t.getMessage(), t);
+            return false;
         }
+        return true;
     }
 
     @Override

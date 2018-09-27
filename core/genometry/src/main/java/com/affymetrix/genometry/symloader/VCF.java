@@ -44,9 +44,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private static final Pattern info_regex = Pattern.compile(";");
 
     private enum Type {
-//		Numeric,
-
-        Integer,
+	Integer,
         String,
         Float,
         Flag
@@ -55,27 +53,19 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private class INFO {
 
         private final String ID;
-//		private final int number;
+	//private final int number; //It is simpler to determine the number by reading the values.
         private final Type type;
         private final String description;
-//		private final boolean onePerAllele;
-//		private final boolean onePerGenotype;
 
-        public INFO(String ID, int number, Type type, String description, boolean onePerAllele, boolean onePerGenotype) {
+        public INFO(String ID, Type type, String description) {
             this.ID = ID;
-//			this.number = number;
             this.type = type;
             this.description = description;
-//			this.onePerAllele = onePerAllele;
-//			this.onePerGenotype = onePerGenotype;
         }
 
         public String getID() {
             return ID;
         }
-//		public int getNumber() {
-//			return number;
-//		}
 
         public Type getType() {
             return type;
@@ -84,12 +74,6 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         public String getDescription() {
             return description;
         }
-//		public boolean isOnePerAllele() {
-//			return onePerAllele;
-//		}
-//		public boolean isOnePerGenotype() {
-//			return onePerGenotype;
-//		}
     }
 
     private class FILTER {
@@ -114,34 +98,25 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
     private class FORMAT {
 
         private final String ID;
-//		private final int number;
+        //private final int number;//It is simpler to determine the number by reading the values.
         private final Type type;
-//		private final String description;
+        //private final String description; //description is never shown to the user
 
-        public FORMAT(String ID, int number, Type type, String description) {
+        public FORMAT(String ID, Type type) {
             this.ID = ID;
-//			this.number = number;
             this.type = type;
-//			this.description = description;
         }
 
         public String getID() {
             return ID;
         }
-//		public int getNumber() {
-//			return number;
-//		}
 
         public Type getType() {
             return type;
         }
-//		public String getDescription() {
-//			return description;
-//		}
     }
-//	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+    
     private double version = -1.0;
-//	private Date date;
     private String[] samples = new String[]{};
     private Map<String, String> metaMap = new HashMap<>();
     private Map<String, INFO> infoMap = new HashMap<>();
@@ -186,7 +161,9 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
                     line_count++;
                     continue;
                 } else if (line.length() > 0) {
-                    processDataLine(mainSym, seq, 0, Integer.MAX_VALUE, featureName, dataMap, graphDataMap, genotypeDataMap, line, line_count, combineGenotype);
+                    processDataLine(mainSym, seq, 0, Integer.MAX_VALUE, 
+                            featureName, dataMap, graphDataMap, genotypeDataMap, 
+                            line, line_count, combineGenotype);
                     line_count++;
                 }
             }
@@ -234,11 +211,9 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
                 } else {
                     gstate.setComboStyle(null, 0);
                 }
-//				gstate.getTierStyle().setHeight(combo_style.getHeight());
                 gstate.getTierStyle().setFloatTier(false); // ignored since combo_style is set
             } else {
                 gstate.setComboStyle(null, 0);
-//				gstate.getTierStyle().setHeight(combo_style.getHeight());
                 gstate.getTierStyle().setFloatTier(false); // ignored since combo_style is set
             }
             symlist.add(graphIntervalSym);
@@ -339,20 +314,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
     private INFO getInfo(String line) {
         String dataline = "," + line.substring(1, line.length() - 1) + ",";
-        int number = -1;
-        boolean onePerAllele = false;
-        boolean onePerGenotype = false;
-        String numberString = getNumberString(line);
-        if (numberString == null) {
-        } else if ("A".equals(numberString)) {
-            onePerAllele = true;
-        } else if ("G".equals(numberString)) {
-            onePerGenotype = true;
-        } else if (".".equals(numberString)) {
-        } else {
-            number = Integer.parseInt(numberString);
-        }
-        return new INFO(getID(dataline), number, getType(dataline), getDescription(dataline), onePerAllele, onePerGenotype);
+        return new INFO(getID(dataline), getType(dataline), getDescription(dataline));
     }
 
     private FILTER getFilter(String line) {
@@ -362,7 +324,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
 
     private FORMAT getFormat(String line) {
         String dataline = "," + line.substring(1, line.length() - 1) + ",";
-        return new FORMAT(getID(dataline), getNumber(dataline), getType(dataline), getDescription(dataline));
+        return new FORMAT(getID(dataline), getType(dataline));
     }
 
     private void processMetaInformationLine(String line) {
@@ -375,6 +337,12 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
                 case "VCFv4.1":
                     version = 4.1;
                     break;
+                case "VCFv4.2":
+                    version = 4.2;
+                    break;
+                case "VCFv4.3":
+                    version = 4.3;
+                    break;
                 default:
                     ErrorHandler.errorPanel("file version not supported " + format);
                     throw new UnsupportedOperationException("file version not supported " + format);
@@ -384,15 +352,7 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
             String format = line.substring("format=".length());
             ErrorHandler.errorPanel("file version not supported " + format);
             throw new UnsupportedOperationException("file version not supported " + format);
-        } //		else if (line.startsWith("fileDate=")) {
-        //			try {
-        //				date = DATE_FORMAT.parse(line.substring("fileDate=".length()));
-        //			}
-        //			catch (ParseException x) {
-        //				Logger.getLogger(this.getClass().getName()).log(
-        //					Level.WARNING, "Unable to process date " + line.substring("fileDate=".length()));
-        //			}
-        //		}
+        } 
         else if (line.startsWith("INFO=")) {
             INFO info = getInfo(line.substring("INFO=".length()));
             infoMap.put(info.getID(), info);
@@ -438,9 +398,10 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         return sb.toString();
     }
 
-    private BAMSym getBAMSym(String nameType, BioSeq seq, String id, int start, int end, int width, String qualString, String filter, String ref, String alt) {
+    private BAMSym getBAMSym(String nameType, BioSeq seq, String id, 
+            int start, int end, int width, 
+            String qualString, String filter, String ref, String alt) {
         Cigar cigar = null;
-// Cigar cigar = TextCigarCodec.getSingleton().decode(cigarString);
         boolean equal = false;
         boolean equalLength = false;
         boolean insertion = false;
@@ -532,10 +493,6 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         }
         if (fields.length > 8) {
             String[] format = fields[8].split(":");
-            // format[0] must be "GT"
-            if (!"GT".equals(format[0])) {
-                throw new IllegalStateException("vcf format error, line " + line_count + " first genotype field must be \"GT\"");
-            }
             for (int j = 9; j < fields.length; j++) {
                 String sample;
                 if (j - 9 >= samples.length || samples[j - 9].trim().length() == 0) {
@@ -646,7 +603,8 @@ public class VCF extends UnindexedSymLoader implements LineProcessor {
         IntArrayList wData = new IntArrayList();
     }
 
-    private void addGraphData(Map<String, GraphData> graphDataMap, String key, BioSeq seq, int pos, int width, float value) {
+    private void addGraphData(Map<String, GraphData> graphDataMap, String key, 
+            BioSeq seq, int pos, int width, float value) {
         GraphData graphData = graphDataMap.get(key);
         if (graphData == null) {
             graphData = new GraphData();

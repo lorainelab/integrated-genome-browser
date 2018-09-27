@@ -16,6 +16,7 @@ import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.HeadlessException;
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
@@ -98,16 +99,24 @@ public class SynonymsControlPanel {
                 try {
                     if (selectedFile != null) {
                         vsynonymFile.setText(selectedFile.getCanonicalPath());
-                        updateSynonymFile(vsynonymFile, genomeVersionSynonymLookup, PREF_VSYN_FILE_URL);
-                        suggestRestart();
+                        if(updateSynonymFile(vsynonymFile, genomeVersionSynonymLookup, PREF_VSYN_FILE_URL)){
+                            vsynonymFile.setForeground(Color.BLACK);
+                            vsynonymFile.setBackground(Color.WHITE);
+                            suggestRestart();
+                        }else{
+                            vsynonymFile.setForeground(Color.WHITE);
+                            vsynonymFile.setBackground(new Color(204, 102, 119));
+                        }
                     }
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
+            }else{
+                // Catch the case where the user removes the file
+                // but only if they activate this button, which could be misleading
+                updateSynonymFile(vsynonymFile, genomeVersionSynonymLookup, PREF_VSYN_FILE_URL);
             }
-            // Catch the case where the user removes the file
-            // but only if they activiate this button, which could be misleading
-            updateSynonymFile(vsynonymFile, genomeVersionSynonymLookup, PREF_VSYN_FILE_URL);
+
         };
 
         final ActionListener clistener = e -> {
@@ -116,17 +125,23 @@ public class SynonymsControlPanel {
                 try {
                     if (selectedFile != null) {
                         csynonymFile.setText(selectedFile.getCanonicalPath());
-                        updateSynonymFile(csynonymFile, chrSynLookup, PREF_CSYN_FILE_URL);                       
-                        suggestRestart();
+                        if(updateSynonymFile(csynonymFile, chrSynLookup, PREF_CSYN_FILE_URL)) {
+                            csynonymFile.setForeground(Color.BLACK);
+                            csynonymFile.setBackground(Color.WHITE);
+                            suggestRestart();
+                        }else{
+                            csynonymFile.setForeground(Color.WHITE);
+                            csynonymFile.setBackground(new Color(204, 102, 119));
+                        }
                     }
                 } catch (IOException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
+            }else{
+                // Catch the case where the user removes the file
+                // but only if they activate this button, which could be misleading
+                updateSynonymFile(csynonymFile, chrSynLookup, PREF_CSYN_FILE_URL);
             }
-
-            // Catch the case where the user removes the file
-            // but only if they activiate this button, which could be misleading
-            updateSynonymFile(csynonymFile, chrSynLookup, PREF_CSYN_FILE_URL);
         };
 
         vopenFile.setToolTipText("Open Local File");
@@ -157,40 +172,42 @@ public class SynonymsControlPanel {
 
     private static boolean loadSynonymFile(SynonymLookupService lookup, JRPTextField synonymFile) {
         File file = new File(synonymFile.getText());
-
+        boolean isSynonymFileValid = false;
         if (!file.isFile() || !file.canRead()) {
-            return false;
+            return isSynonymFileValid;
         }
 
         FileInputStream fis = null;
         try {
             synonymFile.setText(file.getCanonicalPath());
             fis = new FileInputStream(file);
-            lookup.loadSynonyms(fis);
+            isSynonymFileValid = lookup.loadSynonyms(fis);
         } catch (Throwable ex) {
             logger.warn(ex.getMessage(), ex);
-            return false;
+            return isSynonymFileValid;
         } finally {
             GeneralUtils.safeClose(fis);
         }
 
-        return true;
+        return isSynonymFileValid;
     }
 
-    private static void updateSynonymFile(JRPTextField xsynonymFile, SynonymLookupService synonymLookup, String PREF_FILE_URL_KEY) {
-        if (xsynonymFile.getText().isEmpty() || loadSynonymFile(synonymLookup, xsynonymFile)) {
+    private static boolean updateSynonymFile(JRPTextField xsynonymFile, SynonymLookupService synonymLookup, String PREF_FILE_URL_KEY) {
+        boolean synonymFileStatus = loadSynonymFile(synonymLookup, xsynonymFile);
+        if (xsynonymFile.getText().isEmpty() || synonymFileStatus) {
             PreferenceUtils.getLocationsNode().put(PREF_FILE_URL_KEY, xsynonymFile.getText());
-        } else {
-            ErrorHandler.errorPanel(
-                    "Unable to Load Personal Synonyms - " + PREF_FILE_URL_KEY,
-                    "Unable to load personal synonyms from " + xsynonymFile.getText() + ".", Level.SEVERE);
+        } else if(!synonymFileStatus) {
+            ErrorHandler.errorPanel("Unable to Load Personal Synonyms - " + PREF_FILE_URL_KEY,
+                    "Please select a valid synonym file.", Level.SEVERE);
+            return false;
         }
+        return true;
     }
     
     /*
-    IGBF-1187: Display messgae to restart IGB when chromosome file is selected
-    and user has already selected spacies. If user sets chromosome file
-    and then selectes spacies, then there is no need to restart IGB.
+    IGBF-1187: Display message to restart IGB when chromosome file is selected
+    and user has already selected species. If user sets chromosome file
+    and then selects species, then there is no need to restart IGB.
     */
     private static void suggestRestart() {
         String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();

@@ -267,7 +267,9 @@ public class DataProviderManager {
         String password = node.get(PASSWORD, null);
         int lp = node.getInt(LOAD_PRIORITY, -1);
         //status
-        dp.setStatus(ResourceStatus.fromName(status).get());
+        if(!Strings.isNullOrEmpty(status)) {
+            dp.setStatus(ResourceStatus.fromName(status).get());
+        }
         //username and password
         if (!Strings.isNullOrEmpty(login)) {
             dp.setLogin(login);

@@ -7,11 +7,11 @@
 image: 
   name: lorainelab/igb-maven-install4j:jre-1.8.0_152
 
-# There are two configurations available - default and branches. Branches configuration has 3 sub configurations. 
+# This file has two configurations - default and branches. Branche configurations has 3 sub-configurations. These are: 
 # 1. IGBF-*: Any topic branch with name starting IGBF-
 # 2. master
 # 3. release-*
-# On each commit to a branch specified in branches, Pipelines executes the scripts assigned to the branch
+# On each commit to a branch specified in the branches configurate, bitbucket pipelines executes the scripts assigned to the branch
 # Default will get triggered whenever there is a commit in a branch which is not mentioned under branches configuration.
 # To run pipelines manually go to branches -> hover on the brach on which you want to execute piplines-> click on ... -> select run pipeline for the branch-> select configuration
 pipelines:

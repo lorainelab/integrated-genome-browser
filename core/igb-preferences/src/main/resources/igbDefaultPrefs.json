@@ -54,7 +54,22 @@
                 "url": "http://lorainelab-quickload.scidas.org/bar",
                 "loadPriority": "1",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:7"
+            },
+            {
+                "factoryName": "quickload",
+                "name": "DNA-Seq",
+                "url": "http://lorainelab-quickload.scidas.org/dnaseq/",
+                "loadPriority": "1",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
+            },
+            {
+                "factoryName": "quickload",
+                "name": "ChIP-Seq",
+                "url": "http://lorainelab-quickload.scidas.org/chipseq/",
+                "loadPriority": "1",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
             }
+            
         ],
         "repository": [
             {

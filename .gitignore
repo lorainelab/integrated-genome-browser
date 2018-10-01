@@ -154,3 +154,6 @@ main/nb-configuration.xml
 /plugins/bed/target/
 /plugins/bam/target/
 /core/igb-javafx-util/target/
+
+.classpath
+.settings

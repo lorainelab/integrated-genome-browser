@@ -60,14 +60,14 @@
                 "name": "DNA-Seq",
                 "url": "http://lorainelab-quickload.scidas.org/dnaseq/",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:8"
             },
             {
                 "factoryName": "quickload",
                 "name": "ChIP-Seq",
                 "url": "http://lorainelab-quickload.scidas.org/chipseq/",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:9"
             }
             
         ],

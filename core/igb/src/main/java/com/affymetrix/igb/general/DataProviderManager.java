@@ -267,7 +267,14 @@ public class DataProviderManager {
         String password = node.get(PASSWORD, null);
         int lp = node.getInt(LOAD_PRIORITY, -1);
         //status
-        dp.setStatus(ResourceStatus.fromName(status).get());
+        /* IGBG-1415: There was no if condition on status. It takes value
+           null for the node when the preferences is reset. So when we were trying
+           to access ResourceStatus.fromName(status).get(), it would throw No value present
+           error.
+        */
+        if(!Strings.isNullOrEmpty(status)) {
+            dp.setStatus(ResourceStatus.fromName(status).get());
+        }
         //username and password
         if (!Strings.isNullOrEmpty(login)) {
             dp.setLogin(login);

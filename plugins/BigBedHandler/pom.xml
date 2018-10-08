@@ -16,7 +16,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.broad</groupId>
+            <groupId>org.broad.igv</groupId>
             <artifactId>bigwig</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -33,6 +33,11 @@
         <dependency>
             <groupId>org.broad</groupId>
             <artifactId>tribble-ext</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.samtools</groupId>
+            <artifactId>htsjdk</artifactId>
             <scope>provided</scope>
         </dependency>
         <!--Start of logging dependencies-->

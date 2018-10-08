@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.broad.tribble.readers.TabixReader;
+import htsjdk.tribble.readers.TabixReader;
 
 public class TbiZoomSymLoader extends IndexZoomSymLoader {
 
@@ -59,7 +59,7 @@ public class TbiZoomSymLoader extends IndexZoomSymLoader {
             }
             uriString = uriString.substring(0, uriString.length() - ".tbi".length());
             tabixReader = new TabixReader(uriString);
-            tabixReader.readIndex();
+//            tabixReader.readIndex();
         } catch (Exception x) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
                     "Could not read tabix for {0}.",

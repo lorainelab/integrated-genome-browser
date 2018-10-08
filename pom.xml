@@ -40,7 +40,7 @@
         <bindlib-version>2.4.0</bindlib-version>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
         <fusionVersion>1.0.1</fusionVersion>
-        <bigWigVersion>1.0</bigWigVersion>
+        <bigWigVersion>2.0.0</bigWigVersion>
         <commonsCompressVersion>1.5</commonsCompressVersion>
         <commonsCodecVersion>1.6</commonsCodecVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
@@ -763,6 +763,8 @@
 
             <!--End of additional provided dependencies-->
 
+
+
             <dependency>
                 <groupId>furbelow</groupId>
                 <artifactId>furbelow</artifactId>
@@ -1018,7 +1020,7 @@
                 <type>jar</type>
             </dependency>
             <dependency>
-                <groupId>org.broad</groupId>
+                <groupId>org.broad.igv</groupId>
                 <artifactId>bigwig</artifactId>
                 <version>${bigWigVersion}</version>
             </dependency>
@@ -1283,7 +1285,7 @@
             </plugin>
  
         </plugins>
-            </build>
+    </build>
 
 
 </project>

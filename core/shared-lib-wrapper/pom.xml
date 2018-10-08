@@ -168,7 +168,7 @@
                                     <version>${felix-bundlerepository-version}</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.broad</groupId>
+                                    <groupId>org.broad.igv</groupId>
                                     <artifactId>bigwig</artifactId>
                                     <version>${bigWigVersion}</version>
                                 </artifactItem>
@@ -360,8 +360,6 @@
                             org.apache.commons.net,
                             org.apache.commons.net.*,
                             org.jdom.*,
-                            org.broad.tribble,
-                            org.broad.tribble.*,
                             org.freehep,
                             org.freehep.*,
                             org.jdesktop.*,

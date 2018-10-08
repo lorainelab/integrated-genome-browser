@@ -69,6 +69,11 @@
             <id>repo3</id>
             <url>http://maven.bioviz.org/repo3</url>
         </repository>
+        <repository>
+            <id>maven-releases</id>
+            <name>maven-releases</name>
+            <url>https://nexus.bioviz.org/repository/maven-releases</url>
+        </repository>
     </repositories>
     
     <pluginRepositories>
@@ -76,13 +81,17 @@
             <id>repo3</id>
             <url>http://maven.bioviz.org/repo3</url>
         </pluginRepository>
+        <pluginRepository>
+            <id>maven-releases</id>
+            <url>https://nexus.bioviz.org/maven-releases</url>
+        </pluginRepository>
     </pluginRepositories>
   
     <distributionManagement>
         <repository>
             <id>maven-releases</id>
             <name>maven-releases</name>
-            <url>https://nexus.bioviz.org/repository/maven-releases/</url>
+            <url>https://nexus.bioviz.org/repository/maven-releases</url>
         </repository>
     </distributionManagement>
 

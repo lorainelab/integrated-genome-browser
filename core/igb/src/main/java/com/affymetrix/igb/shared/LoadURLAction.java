@@ -10,6 +10,7 @@ import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -74,13 +75,13 @@ public class LoadURLAction extends OpenURIAction {
         }
 
         pane.setMessage(new Object[]{"Enter URL", urlTextField});
-
         String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
         GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
 
         if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
             JDialog dialog = pane.createDialog(igbService.getApplicationFrame(), BUNDLE.getString("openURL"));
             dialog.setModal(true);
+            dialog.setMinimumSize(new Dimension(450,150));
             dialog.pack();
             dialog.setLocationRelativeTo(igbService.getApplicationFrame());
             dialog.setResizable(true);

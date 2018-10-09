@@ -145,8 +145,8 @@ public abstract class XAM extends SymLoader {
 
     protected static SymWithProps convertSAMRecordToSymWithProps(SAMRecord sr, BioSeq seq, String meth, boolean includeResidues) {
         SimpleSeqSpan span;
-        int start = sr.getAlignmentStart() - 1; // convert to interbase
-        int end = sr.getAlignmentEnd();
+        int start = getUnSoftClippedStart(sr) - 1; // convert to interbase
+        int end = getUnSoftClippedEnd(sr);
         if (!sr.getReadNegativeStrandFlag()) {
             span = new SimpleSeqSpan(start, end, seq);
         } else {
@@ -177,7 +177,7 @@ public abstract class XAM extends SymLoader {
             sblockMins[i] = softclipChildren.get(i).getMin() + span.getMin();
             sblockMaxs[i] = sblockMins[i] + softclipChildren.get(i).getLength();
         }
-
+        
         if (children.isEmpty()) {
             blockMins = new int[1];
             blockMins[0] = span.getStart();
@@ -255,6 +255,7 @@ public abstract class XAM extends SymLoader {
         int currentChildStart = 0;
         int currentChildEnd = 0;
         int celLength = 0;
+        int alignmentLength = getUnSoftClippedEnd(sr) - (getUnSoftClippedStart(sr) - 1);
         SeqSpan previousSpan = null;
 
         for (CigarElement cel : cigar.getCigarElements()) {
@@ -275,19 +276,19 @@ public abstract class XAM extends SymLoader {
                     }
                 } else if (cel.getOperator() == CigarOperator.M) {
                     // print matches
-                    currentChildEnd += celLength;
                     if (!isNegative) {
-                        if (previousSpan != null && previousSpan.getStart() == currentChildStart) {
+                        if (previousSpan != null && previousSpan.getStart() == currentChildEnd) {
                             results.remove(previousSpan);
                         }
-                        previousSpan = new SimpleSeqSpan(currentChildStart, currentChildEnd, seq);
+                        previousSpan = new SimpleSeqSpan(currentChildStart, alignmentLength, seq);
                     } else {
-                        if (previousSpan != null && previousSpan.getEnd() == currentChildStart) {
+                        if (previousSpan != null && previousSpan.getEnd() == currentChildEnd) {
                             results.remove(previousSpan);
-                        }
-                        previousSpan = new SimpleSeqSpan(currentChildEnd, currentChildStart, seq);
+                    }
+                        previousSpan = new SimpleSeqSpan(alignmentLength, currentChildStart, seq);
                     }
                     results.add(previousSpan);
+                    currentChildEnd += celLength;
                 } else if (cel.getOperator() == CigarOperator.N) {
                     currentChildStart = currentChildEnd + celLength;
                     currentChildEnd = currentChildStart;
@@ -296,11 +297,12 @@ public abstract class XAM extends SymLoader {
                     // print matches
                     currentChildEnd += celLength;
                 } else if (cel.getOperator() == CigarOperator.SOFT_CLIP) {
-                        if(currentChildEnd == 0){
-                            softclipChilds.add(new SimpleSeqSpan(currentChildEnd - celLength, currentChildEnd, seq));
-                        } else {
-                            softclipChilds.add(new SimpleSeqSpan(currentChildEnd, currentChildEnd + celLength, seq));
-                        }
+                    if (!isNegative) {
+                        softclipChilds.add(new SimpleSeqSpan(currentChildEnd, currentChildEnd + celLength, seq));
+                    } else {
+                        softclipChilds.add(new SimpleSeqSpan(currentChildEnd + celLength, currentChildEnd, seq));
+                    }
+                    currentChildEnd += celLength;
                 } else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
                     // hard clip can be ignored
                 }
@@ -395,5 +397,55 @@ public abstract class XAM extends SymLoader {
 
         return String.valueOf(sb);
     }
+    
+    
+    /**
+     * @param sr SAMRecord object
+     * @return alignment start adjusted for soft-clipped bases.
+     * For example, if the read has an alignment start of 100
+     * but the first 4 bases were clipped (soft only) then method returns 96
+     * Hard clips are ignored.
+     * Assumes all reads have a Match within CIGAR
+     */
+    protected static int getUnSoftClippedStart(SAMRecord sr) {
+        int unSoftClippedStart = sr.getAlignmentStart();
+        Cigar cigar = sr.getCigar();
+        for (final CigarElement cig : cigar.getCigarElements()) {
+            final CigarOperator op = cig.getOperator();
+            if (op == CigarOperator.SOFT_CLIP) {
+                unSoftClippedStart -= cig.getLength();
+            } else if(op == CigarOperator.MATCH_OR_MISMATCH){
+                break;
+            }
+        }
 
+        return unSoftClippedStart;
+    }
+
+    /**
+     * @param sr SAMRecord object
+     * @return alignment end adjusted for soft-clipped bases.
+     * For example, if the read has an alignment start of 100
+     * but the last 7 bases were clipped (soft only) then method returns 107
+     * Hard clips are ignored.
+     * Assumes all reads have a Match within CIGAR
+     */
+    protected static int getUnSoftClippedEnd(SAMRecord sr) {
+        int unSoftClippedEnd = sr.getAlignmentEnd();
+        Cigar cigar = sr.getCigar();
+        final List<CigarElement> cigs = cigar.getCigarElements();
+        for (int i = cigs.size() - 1; i >= 0; --i) {
+            final CigarElement cig = cigs.get(i);
+            final CigarOperator op = cig.getOperator();
+
+            if (op == CigarOperator.SOFT_CLIP) {
+                unSoftClippedEnd += cig.getLength();
+            } else if(op == CigarOperator.MATCH_OR_MISMATCH){
+                break;
+            }
+        }
+        
+        return unSoftClippedEnd;
+    }
+    
 }

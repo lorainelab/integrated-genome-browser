@@ -122,7 +122,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             return sblockMins.length;
         }
     }
-
+    
     public SeqSymmetry getInsChild(int index) {
         if (iblockMins == null || (iblockMins.length <= index)) {
             return null;
@@ -158,7 +158,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         }
         return softChildren[index];
     }
-
+    
     @Override
     public SeqSymmetry getChild(int index) {
         if (blockMins == null || index >= (blockMins.length)) {
@@ -199,7 +199,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     public static boolean isBamSoftChildType(SeqSymmetry sym) {
         return sym instanceof BamSoftChildSingletonSeqSym;
     }
-
+    
     class BamChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithBaseQuality {
 
         private BitSet residueMask;
@@ -464,7 +464,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             return super.clone(); //To change body of generated methods, choose Tools | Templates.
         }
     }
-
+    
     @Override
     public String getResidues() {
         if (residues != null) {
@@ -544,7 +544,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
     public void setSoftResidues(String residues) {
         this.softResidues = residues;
     }
-
+    
     public String getInsResidue(int childNo) {
         if (childNo > iblockMins.length) {
             return "";
@@ -572,7 +572,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
 
         return softResidues.substring(start, end);
     }
-
+    
     @Override
     public Map<String, Object> cloneProperties() {
         if (props == null) {
@@ -618,24 +618,11 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
         if (cigar == null || cigar.numCigarElements() == 0 || str == null || str.equals("*")) {
             return "";
         }
-        if(isSoft) {
-            int softSpan = (start < end ? end - start : start - end);
-            if(start <= txMin) {
-                start -= min;
-                end -= min;
-                start += softSpan;
-                end += softSpan;
-            } else {
-                start -= min;
-                end -= min;
-            }
-        } else {
             start = Math.max(start, txMin);
             end = Math.min(txMax, end);
 
             start -= min;
             end -= min;
-        }
 
         if (start > end) {
             return "";
@@ -667,8 +654,9 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
                     if (isSoft && currentPos == start) {
                         return str.substring(stringPtr, stringPtr + celLength);
                     } else {
-                        stringPtr += celLength;
-                        continue;
+                        tempArr = str.substring(stringPtr, stringPtr + celLength).toCharArray();
+                        stringPtr += celLength;	// print matches
+                        currentPos += celLength;
                     }
                 } else if (cel.getOperator() == CigarOperator.HARD_CLIP) {
                     continue;				// hard clip can be ignored
@@ -676,9 +664,9 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
                     Arrays.fill(tempArr, D);		// print deletion as '_'
                     currentPos += celLength;
                 } else if (cel.getOperator() == CigarOperator.M) {
-                    tempArr = str.substring(stringPtr, stringPtr + celLength).toCharArray();
-                    stringPtr += celLength;	// print matches
-                    currentPos += celLength;
+                        tempArr = str.substring(stringPtr, stringPtr + celLength).toCharArray();
+                        stringPtr += celLength;	// print matches
+                        currentPos += celLength;
                 } else if (cel.getOperator() == CigarOperator.N) {
                     Arrays.fill(tempArr, N);
                     currentPos += celLength;

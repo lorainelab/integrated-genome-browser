@@ -205,8 +205,10 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         if (firstChildPglyph.isPresent() && secondChildPglyph.isPresent()) {
             addChildren(sym1, firstChildPglyph.get());
             handleInsertionGlyphs(sym1, firstChildPglyph.get());
+            handleSoftClippingGlyphs(sym1, firstChildPglyph.get());
             addChildren(sym2, secondChildPglyph.get());
             handleInsertionGlyphs(sym2, secondChildPglyph.get());
+            handleSoftClippingGlyphs(sym2, secondChildPglyph.get());
             parentGlyph.addChild(firstChildPglyph.get());
             parentGlyph.addChild(secondChildPglyph.get());
         }
@@ -506,7 +508,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         if (softsym.getSoftChildCount() == 0) {
             return;
         }
-
+        
         BioSeq coordseq = seqMap.getViewSeq();
         SeqSymmetry psym = softsym;
         if (annotSeq != viewSeq) {
@@ -531,16 +533,9 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 
             SoftClippingSeqGlyph softClippingGlyph = new SoftClippingSeqGlyph();
             softClippingGlyph.setSelectable(true);
-            String residues;
-            
-            if(ispan.getMin()<softsym.getMin()) {
-                residues = softsym.getResidues(ispan.getMax() - 1, ispan.getMax() + 1);
-            } else {
-                residues = softsym.getResidues(ispan.getMin() - 1, ispan.getMin() + 1);
-            }
-            
-            softClippingGlyph.setResidues(residues);
-            softClippingGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin() - 1), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
+            String residues = softsym.getResidues(ispan.getMin(), ispan.getMax());  
+            softClippingGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin()), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
+            softClippingGlyph.setShowBackground(false);
             pglyph.addChild(softClippingGlyph);
             tierGlyph.setDataModelFromOriginalSym(softClippingGlyph, childsym);
         }

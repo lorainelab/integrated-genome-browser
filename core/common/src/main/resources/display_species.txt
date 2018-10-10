@@ -21,9 +21,10 @@ D_melanogaster.png
 M_musculus.png
 H_sapiens.png
 A_thaliana.png
-V_corymbosum.png
 O_sativa_japonica.png
+S_tuberosum_DM.png
 S_lycopersicum.png
+V_corymbosum.png
 P_trichocarpa.png
 Z_mays_B73.png
 G_max.png

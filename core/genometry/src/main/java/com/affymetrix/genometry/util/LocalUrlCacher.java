@@ -627,12 +627,12 @@ public final class LocalUrlCacher {
             is = new FileInputStream(new File(uri));
         } else if (scheme.startsWith(HTTP_PROTOCOL_SCHEME) || scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
             is = LocalUrlCacher.getInputStream(uri.toString());
-//            return HttpRequest.get(uri.toURL())
-//                    .acceptGzipEncoding()
-//                    .uncompress(true)
-//                    .trustAllCerts()
-//                    .trustAllHosts()
-//                    .followRedirects(true).buffer();
+            return HttpRequest.get(uri.toURL())
+                    .acceptGzipEncoding()
+                    .uncompress(true)
+                    .trustAllCerts()
+                    .trustAllHosts()
+                    .followRedirects(true).buffer();
         } else {
             logger.error("URL scheme: {} not recognized", scheme);
             return null;
@@ -659,11 +659,11 @@ public final class LocalUrlCacher {
                 return new BufferedInputStream(new FileInputStream(new File(uri)));
             } else if (scheme.startsWith(HTTP_PROTOCOL_SCHEME) || scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
                 is = LocalUrlCacher.getInputStream(uri.toString());
-//                return HttpRequest.get(uri.toURL())
-//                        .acceptGzipEncoding()
-//                        .trustAllCerts()
-//                        .trustAllHosts()
-//                        .followRedirects(true).buffer();
+                return HttpRequest.get(uri.toURL())
+                        .acceptGzipEncoding()
+                        .trustAllCerts()
+                        .trustAllHosts()
+                        .followRedirects(true).buffer();
             } else {
                 logger.error(
                         "URL scheme: {} not recognized", scheme);

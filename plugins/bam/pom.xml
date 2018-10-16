@@ -107,9 +107,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.samtools</groupId>
-            <artifactId>htsjdk</artifactId>
-            <version>${htsjdkVersion}</version>
+            <groupId>htsjdk-igb</groupId>
+            <artifactId>htsjdk-igb</artifactId>
+            <version>${htsjdk-igb-Version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

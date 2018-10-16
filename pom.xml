@@ -46,7 +46,7 @@
         <commonsPoolVersion>1.6</commonsPoolVersion>
         <tribbleVersion>1.111</tribbleVersion>
         <igb-picard-version>1.111</igb-picard-version>
-        <htsjdkVersion>2.16.0</htsjdkVersion>
+        <htsjdk-igb-Version>2.16.1</htsjdk-igb-Version>
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
         <slf4j-version>1.7.7</slf4j-version>
@@ -743,16 +743,12 @@
                 <version>6.0</version>
                 <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>com.github.samtools</groupId>
-                <artifactId>htsjdk</artifactId>
-                <version>${htsjdkVersion}</version>
-                <scope>provided</scope>
+                <artifactId>htsjdk-igb</artifactId>
+                <version>${htsjdk-igb-Version}</version>
             </dependency>
             <!--End of additional provided dependencies-->
-
-
 
             <dependency>
                 <groupId>furbelow</groupId>
@@ -1060,6 +1056,11 @@
                 <artifactId>org.osgi.service.remoteserviceadmin</artifactId>
                 <version>${org.osgi.service.remoteserviceadmin-version}</version>
             </dependency>
+            <dependency>
+                <groupId>htsjdk-igb</groupId>
+                <artifactId>htsjdk-igb</artifactId>
+                <version>${htsjdk-igb-Version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
@@ -1263,13 +1264,13 @@
                 </executions>
                 <configuration>
                     <serverId>maven-releases</serverId>
-                    <nexusUrl>https://nexus.bioviz.org/repository/maven-releases/</nexusUrl> 
+                    <nexusUrl>https://nexus.bioviz.org/repository/maven-releases/</nexusUrl>
                     <skipStaging>true</skipStaging>
                 </configuration>
             </plugin>
  
         </plugins>
-    </build>
+            </build>
 
 
 </project>

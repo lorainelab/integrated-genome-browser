@@ -280,12 +280,12 @@ public abstract class XAM extends SymLoader {
                         if (previousSpan != null && previousSpan.getStart() == currentChildEnd) {
                             results.remove(previousSpan);
                         }
-                        previousSpan = new SimpleSeqSpan(currentChildStart, alignmentLength, seq);
+                        previousSpan = new SimpleSeqSpan(currentChildEnd, currentChildEnd + celLength, seq);
                     } else {
                         if (previousSpan != null && previousSpan.getEnd() == currentChildEnd) {
                             results.remove(previousSpan);
                     }
-                        previousSpan = new SimpleSeqSpan(alignmentLength, currentChildStart, seq);
+                        previousSpan = new SimpleSeqSpan(currentChildEnd + celLength, currentChildEnd, seq);
                     }
                     results.add(previousSpan);
                     currentChildEnd += celLength;

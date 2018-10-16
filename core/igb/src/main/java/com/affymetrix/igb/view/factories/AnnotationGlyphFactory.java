@@ -173,7 +173,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                 } else {
                     addChildren(sym, parentGlyph.get());
                     handleInsertionGlyphs(sym, parentGlyph.get());
-                    handleSoftClippingGlyphs(sym, parentGlyph.get());
+                    handleSoftClippingGlyphs(sym, parentGlyph.get());  
                 }
             }
 
@@ -530,14 +530,28 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
             if (ispan == null || dspan == null) {
                 continue;
             }
-
-            SoftClippingSeqGlyph softClippingGlyph = new SoftClippingSeqGlyph();
-            softClippingGlyph.setSelectable(true);
-            String residues = softsym.getResidues(ispan.getMin(), ispan.getMax());  
-            softClippingGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin()), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
-            softClippingGlyph.setShowBackground(false);
-            pglyph.addChild(softClippingGlyph);
-            tierGlyph.setDataModelFromOriginalSym(softClippingGlyph, childsym);
+            
+            if(trackStyle.getShowSoftClipped() && false){
+                addAlignedResiduesGlyph(childsym, ispan, DEFAULT_CHILD_HEIGHT, pglyph);
+                String residues = softsym.getResidues(ispan.getMin(), ispan.getMax());
+                SoftClippingSeqGlyph softClippingGlyph = new SoftClippingSeqGlyph();  
+                softClippingGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin()), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
+                softClippingGlyph.setSelectable(true);
+                softClippingGlyph.setShowBackground(false);
+                pglyph.addChild(softClippingGlyph);
+                tierGlyph.setDataModelFromOriginalSym(softClippingGlyph, childsym);             
+            }
+            
+            if(trackStyle.getShowSoftClipped() && true){
+                String residues = softsym.getResidues(ispan.getMin(), ispan.getMax());
+                SoftClippingSeqGlyph softClippingGlyph = new SoftClippingSeqGlyph();  
+                softClippingGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin()), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
+                softClippingGlyph.setSelectable(true);
+                softClippingGlyph.setColor(trackStyle.getForeground());
+                softClippingGlyph.setResidues(residues);
+                pglyph.addChild(softClippingGlyph);
+                tierGlyph.setDataModelFromOriginalSym(softClippingGlyph, childsym);            
+            }      
         }
     }
     

@@ -137,6 +137,10 @@ public interface ITrackStyleExtended extends ITrackStyle {
     public boolean getShowResidueMask();
 
     public void setShowResidueMask(boolean showResidueMask);
+    
+    public boolean getShowSoftClipped();
+    
+    public void setShowSoftClipped(boolean showSoftClipped);
 
     public boolean getShadeBasedOnQualityScore();
 

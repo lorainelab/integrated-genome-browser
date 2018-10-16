@@ -45,6 +45,7 @@ import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.action.ToggleShowAsPairedAction;
 import com.affymetrix.igb.action.TrackOperationMenuItemAction;
 import com.affymetrix.igb.action.TrackOperationWithParametersAction;
+import com.affymetrix.igb.action.ShowSoftClipAction;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.LockTierHeightAction;
@@ -367,7 +368,38 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         useBaseQuality.setEnabled(anyAlignment);
         useBaseQuality.setSelected(anyAlignment && anyShadeBasedOnQuality);
         popup.add(useBaseQuality);
+        
+        //for now do not allow multiselect action for show as paired, but this can be added easily if desired
+        if (!handler.getSelectedTiers().isEmpty() && !coordinatesTrackSelected && handler.getSelectedTiers().size() == 1) {
+            boolean canShowAsPaired = false;
+            boolean canShowSoftClipped = false;
+            for (TierGlyph tierGlyph : handler.getSelectedTiers()) {
+                String methodName = tierGlyph.getAnnotStyle().getMethodName();
+                if (StringUtils.endsWithIgnoreCase(methodName, "bam") || StringUtils.endsWithIgnoreCase(methodName, "sam")) {
+                    canShowAsPaired = true;
+                    canShowSoftClipped=true;
+                }
+            }
+            if (canShowAsPaired) {
+                JCheckBoxMenuItem showAsPaired = new JCheckBoxMenuItem(ToggleShowAsPairedAction.getAction());
+                TierGlyph glyph = handler.getSelectedTiers().get(0);
+                showAsPaired.setSelected(glyph.getAnnotStyle().isShowAsPaired());
+                popup.add(showAsPaired);
+            }
+
+            if(canShowSoftClipped){
+                JMenu softClipped = new JMenu("Soft Clip");
+                JCheckBoxMenuItem residueString = new JCheckBoxMenuItem("Show residues");
+                JCheckBoxMenuItem showSoftClipped = new JCheckBoxMenuItem(ShowSoftClipAction.getAction());
+                TierGlyph glyph = handler.getSelectedTiers().get(0);
+                showSoftClipped.setSelected(glyph.getAnnotStyle().getShowSoftClipped());
+                softClipped.add(showSoftClipped);
+                softClipped.add(residueString);
+                popup.add(softClipped);
+            }
+        }
         popup.add(new JSeparator());
+        
         JMenuItem operationsMenu = addOperationMenuItem(Selections.rootSyms, coordinatesTrackSelected);
         popup.add(operationsMenu);
         if (operationsMenu instanceof JMenu) {
@@ -399,22 +431,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         saveTrack.setIcon(null);
         popup.add(saveTrack);
 
-        //for now do not allow multiselect action for show as paired, but this can be added easily if desired
-        if (!handler.getSelectedTiers().isEmpty() && !coordinatesTrackSelected && handler.getSelectedTiers().size() == 1) {
-            boolean canShowAsPaired = false;
-            for (TierGlyph tierGlyph : handler.getSelectedTiers()) {
-                String methodName = tierGlyph.getAnnotStyle().getMethodName();
-                if (StringUtils.endsWithIgnoreCase(methodName, "bam") || StringUtils.endsWithIgnoreCase(methodName, "sam")) {
-                    canShowAsPaired = true;
-                }
-            }
-            if (canShowAsPaired) {
-                JCheckBoxMenuItem showAsPaired = new JCheckBoxMenuItem(ToggleShowAsPairedAction.getAction());
-                TierGlyph glyph = handler.getSelectedTiers().get(0);
-                showAsPaired.setSelected(glyph.getAnnotStyle().isShowAsPaired());
-                popup.add(showAsPaired);
-            }
-        }
 
         popup.add(
                 new JSeparator());

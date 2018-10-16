@@ -331,5 +331,17 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
     public void setShowAsPaired(boolean showAsPaired) {
         this.showAsPaired = showAsPaired;
     }
+    
+    private boolean showSoftClipped;
+    
+    @Override
+    public boolean getShowSoftClipped() {
+        return showSoftClipped;
+    }
+    
+    @Override
+    public void setShowSoftClipped(boolean showSoftClipped) {
+        this.showSoftClipped = showSoftClipped;
+    }
 
 }

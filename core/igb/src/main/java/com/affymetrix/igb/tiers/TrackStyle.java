@@ -105,6 +105,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     private Color start_color = default_start;
     private Color end_color = default_end;
     private boolean showResidueMask = default_showResidueMask;
+    private boolean showSoftClipped = default_showSoftClipped;
     private boolean shadeBasedOnQualityScore = default_shadeBasedOnQualityScore;
     private String url = null;
     private String file_type = null;
@@ -1032,6 +1033,17 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         this.showResidueMask = showResidueMask;
         save(PREF_SHOW_RESIDUE_MASK, showResidueMask);
     }
+    
+    @Override
+    public boolean getShowSoftClipped() {
+        return showSoftClipped;
+    }
+    
+    @Override
+    public void setShowSoftClipped(boolean showSoftClipped) {
+        this.showSoftClipped = showSoftClipped;
+        save(PREF_SHOW_SOFT_CLIPPED, showSoftClipped);
+    }
 
     @Override
     public boolean getShadeBasedOnQualityScore() {
@@ -1089,6 +1101,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             this.setReverseColor((Color) value);
         } else if (PREF_SHOW_RESIDUE_MASK.equals(key) && value instanceof Boolean) {
             this.setShowResidueMask((Boolean) value);
+        }else if (PREF_SHOW_SOFT_CLIPPED.equals(key) && value instanceof Boolean) {
+            this.setShowSoftClipped((Boolean) value);
         } else if (PREF_SHADE_BASED_ON_QUALITY_SCORE.equals(key) && value instanceof Boolean) {
             this.setShadeBasedOnQualityScore((Boolean) value);
         }

@@ -366,7 +366,12 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
     }
 
     private void addAlignedResiduesGlyph(SeqSymmetry sym, SeqSpan span, double height, GlyphI pglyph) {
-        AlignedResidueGlyph alignResidueGlyph = getAlignedResiduesGlyph(sym, annotSeq, true);
+        AlignedResidueGlyph alignResidueGlyph;
+        if(BAMSym.isBamSoftChildType(sym)){
+            alignResidueGlyph = getAlignedResiduesGlyph(sym, annotSeq, false);
+        } else {
+            alignResidueGlyph = getAlignedResiduesGlyph(sym, annotSeq, true);
+        }
         if (alignResidueGlyph != null) {
             alignResidueGlyph.setCoords(span.getMin(), 0, span.getLength(), height);
             alignResidueGlyph.setBackgroundColor(Color.WHITE);
@@ -531,27 +536,25 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                 continue;
             }
             
-            if(trackStyle.getShowSoftClipped() && false){
-                addAlignedResiduesGlyph(childsym, ispan, DEFAULT_CHILD_HEIGHT, pglyph);
+            if(trackStyle.getShowSoftClipped()){
                 String residues = softsym.getResidues(ispan.getMin(), ispan.getMax());
-                SoftClippingSeqGlyph softClippingGlyph = new SoftClippingSeqGlyph();  
-                softClippingGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin()), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
-                softClippingGlyph.setSelectable(true);
-                softClippingGlyph.setShowBackground(false);
+                SoftClippingSeqGlyph softClippingGlyph = new SoftClippingSeqGlyph();
+                
+                if(trackStyle.getShowSoftClippedResidues()) {
+                    addAlignedResiduesGlyph(childsym, ispan, DEFAULT_CHILD_HEIGHT, pglyph);  
+                    softClippingGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin()), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
+                    softClippingGlyph.setSelectable(true);
+                    softClippingGlyph.setShowBackground(false);
+                } else {  
+                    softClippingGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin()), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
+                    softClippingGlyph.setSelectable(true);
+                    softClippingGlyph.setColor(trackStyle.getsoftClipColor());
+                    softClippingGlyph.setResidues(residues);
+                }
+                
                 pglyph.addChild(softClippingGlyph);
-                tierGlyph.setDataModelFromOriginalSym(softClippingGlyph, childsym);             
-            }
-            
-            if(trackStyle.getShowSoftClipped() && true){
-                String residues = softsym.getResidues(ispan.getMin(), ispan.getMax());
-                SoftClippingSeqGlyph softClippingGlyph = new SoftClippingSeqGlyph();  
-                softClippingGlyph.setCoords(Math.max(pspan.getMin(), dspan.getMin()), 0, residues.length(), DEFAULT_CHILD_HEIGHT);
-                softClippingGlyph.setSelectable(true);
-                softClippingGlyph.setColor(trackStyle.getForeground());
-                softClippingGlyph.setResidues(residues);
-                pglyph.addChild(softClippingGlyph);
-                tierGlyph.setDataModelFromOriginalSym(softClippingGlyph, childsym);            
-            }      
+                tierGlyph.setDataModelFromOriginalSym(softClippingGlyph, childsym);
+            }    
         }
     }
     

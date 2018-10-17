@@ -42,6 +42,8 @@ public interface TrackConstants {
     static final String PREF_SHOW_FULL_FILE_PATH_IN_TRACK = "Show Full File Path";//TK
     static final String PREF_SHOW_RESIDUE_MASK = "Show Residue Mask";
     static final String PREF_SHOW_SOFT_CLIPPED = "Show Soft Clipped";
+    static final String PREF_SOFT_CLIP_COLOR = "Soft Clip Color";
+    static final String PREF_SHOW_SOFT_CLIPPED_RESIDUES = "Show soft clipped residues";
     static final String PREF_SHADE_BASED_ON_QUALITY_SCORE = "Shade Based On Quality Score";
 
     static final boolean default_show = true;
@@ -59,6 +61,8 @@ public interface TrackConstants {
     static final boolean default_color_by_rgb = false;
     static final boolean default_showResidueMask = true;
     static final boolean default_showSoftClipped = true;
+    static final Color default_softClipColor = Color.GRAY;
+    static final boolean default_showSoftClippedResidues = true;
     static final boolean default_shadeBasedOnQualityScore = false;
     static final int default_max_depth = 10;
     static final Color default_foreground = Color.decode("0x0247FE"); //Blue Color;

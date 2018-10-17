@@ -141,6 +141,14 @@ public interface ITrackStyleExtended extends ITrackStyle {
     public boolean getShowSoftClipped();
     
     public void setShowSoftClipped(boolean showSoftClipped);
+    
+    public Color getsoftClipColor();
+    
+    public void setsoftClipColor(Color softClipColor);
+
+    public boolean getShowSoftClippedResidues();
+    
+    public void setShowSoftClippedResidues(boolean softClipColor);
 
     public boolean getShadeBasedOnQualityScore();
 

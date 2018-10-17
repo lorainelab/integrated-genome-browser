@@ -343,5 +343,29 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
     public void setShowSoftClipped(boolean showSoftClipped) {
         this.showSoftClipped = showSoftClipped;
     }
+    
+    private Color softClipColor;
+    
+    @Override
+    public Color getsoftClipColor() {
+        return softClipColor;
+    }
+    
+    @Override
+    public void setsoftClipColor(Color softClipColor) {
+        this.softClipColor = softClipColor;
+    }
+    
+    private boolean showSoftClipResidues;
+    
+    @Override
+    public boolean getShowSoftClippedResidues() {
+        return showSoftClipResidues;
+    }
+    
+    @Override
+    public void setShowSoftClippedResidues(boolean showSoftClipResidues) {
+        this.showSoftClipResidues = showSoftClipResidues;
+    }
 
 }

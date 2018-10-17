@@ -23,6 +23,7 @@ import com.affymetrix.igb.action.ChangeBackgroundColorAction;
 import com.affymetrix.igb.action.ChangeExpandMaxAction;
 import com.affymetrix.igb.action.ChangeFontSizeAction;
 import com.affymetrix.igb.action.ChangeForegroundColorAction;
+import com.affymetrix.igb.action.ChangeSoftClipColorAction;
 import com.affymetrix.igb.action.ChangeLabelColorAction;
 import com.affymetrix.igb.action.ChangeTierHeightAction;
 import com.affymetrix.igb.action.CloseTracksAction;
@@ -46,6 +47,7 @@ import com.affymetrix.igb.action.ToggleShowAsPairedAction;
 import com.affymetrix.igb.action.TrackOperationMenuItemAction;
 import com.affymetrix.igb.action.TrackOperationWithParametersAction;
 import com.affymetrix.igb.action.ShowSoftClipAction;
+import com.affymetrix.igb.action.ShowSoftClipResiduesAction;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.LockTierHeightAction;
@@ -388,13 +390,21 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             }
 
             if(canShowSoftClipped){
-                JMenu softClipped = new JMenu("Soft Clip");
-                JCheckBoxMenuItem residueString = new JCheckBoxMenuItem("Show residues");
+                JMenu softClipped = new JMenu("Soft-clipping");
+                JCheckBoxMenuItem showSoftClipResidues = new JCheckBoxMenuItem(ShowSoftClipResiduesAction.getAction());
                 JCheckBoxMenuItem showSoftClipped = new JCheckBoxMenuItem(ShowSoftClipAction.getAction());
+                JMenuItem change_softclip_color = new JRPMenuItemTLP(ChangeSoftClipColorAction.getAction());
+                
                 TierGlyph glyph = handler.getSelectedTiers().get(0);
+                
                 showSoftClipped.setSelected(glyph.getAnnotStyle().getShowSoftClipped());
+                showSoftClipResidues.setSelected(glyph.getAnnotStyle().getShowSoftClippedResidues());
+                
                 softClipped.add(showSoftClipped);
-                softClipped.add(residueString);
+                softClipped.add(showSoftClipResidues);
+                if(styledGlyph != null && !styledGlyph.getAnnotStyle().getShowSoftClippedResidues()) {
+                    softClipped.add(change_softclip_color);
+                }
                 popup.add(softClipped);
             }
         }

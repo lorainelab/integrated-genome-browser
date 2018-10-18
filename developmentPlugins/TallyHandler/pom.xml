@@ -36,11 +36,6 @@
             <artifactId>genometry</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.broad</groupId>
-            <artifactId>tribble-ext</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>

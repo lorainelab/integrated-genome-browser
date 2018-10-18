@@ -31,13 +31,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.broad</groupId>
-            <artifactId>tribble-ext</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.samtools</groupId>
-            <artifactId>htsjdk</artifactId>
+            <groupId>htsjdk-igb</groupId>
+            <artifactId>htsjdk-igb</artifactId>
             <scope>provided</scope>
         </dependency>
         <!--Start of logging dependencies-->

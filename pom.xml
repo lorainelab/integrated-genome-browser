@@ -44,7 +44,6 @@
         <commonsCompressVersion>1.5</commonsCompressVersion>
         <commonsCodecVersion>1.6</commonsCodecVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
-        <tribbleVersion>1.111</tribbleVersion>
         <igb-picard-version>1.111</igb-picard-version>
         <htsjdk-igb-Version>2.16.1</htsjdk-igb-Version>
         <commonsVfsVersion>2.0</commonsVfsVersion>
@@ -959,11 +958,6 @@
                 <groupId>net.sf</groupId>
                 <artifactId>igb-picard</artifactId>
                 <version>${igb-picard-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.broad</groupId>
-                <artifactId>tribble-ext</artifactId>
-                <version>${tribbleVersion}</version>
             </dependency>
             <dependency>
                 <groupId>net.sf</groupId>

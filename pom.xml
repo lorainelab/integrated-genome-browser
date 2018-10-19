@@ -41,7 +41,7 @@
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
         <fusionVersion>1.0.1</fusionVersion>
         <bigWigVersion>1.0</bigWigVersion>
-        <commonsCompressVersion>1.2</commonsCompressVersion>
+        <commonsCompressVersion>1.5</commonsCompressVersion>
         <commonsCodecVersion>1.6</commonsCodecVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
         <tribbleVersion>1.111</tribbleVersion>
@@ -738,16 +738,29 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-jexl</artifactId>
+                <version>2.1.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.github.kevinsawicki</groupId>
                 <artifactId>http-request</artifactId>
                 <version>6.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.github.samtools</groupId>
-                <artifactId>htsjdk-igb</artifactId>
-                <version>${htsjdk-igb-Version}</version>
+                <groupId>org.tukaani</groupId>
+                <artifactId>xz</artifactId>
+                <version>1.5</version>
+                <scope>provided</scope>
             </dependency>
+
             <!--End of additional provided dependencies-->
 
             <dependency>

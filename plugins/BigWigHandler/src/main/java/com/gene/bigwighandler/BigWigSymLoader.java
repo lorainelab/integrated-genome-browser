@@ -28,7 +28,7 @@ import org.broad.igv.bbfile.BPTreeLeafNodeItem;
 import org.broad.igv.bbfile.BPTreeNode;
 import org.broad.igv.bbfile.BigWigIterator;
 import org.broad.igv.bbfile.WigItem;
-import org.broad.tribble.util.SeekableStreamFactory;
+import htsjdk.samtools.seekablestream.SeekableStreamFactory;
 
 public class BigWigSymLoader extends SymLoader {
 
@@ -86,7 +86,7 @@ public class BigWigSymLoader extends SymLoader {
     private void initbbReader() {
         String uriString = GeneralUtils.fixFileName(uri.toString());
         try {
-            bbReader = new BBFileReader(uriString, SeekableStreamFactory.getStreamFor(uriString));
+            bbReader = new BBFileReader(uriString, SeekableStreamFactory.getInstance().getStreamFor(uriString));
         } catch (IOException x) {
             Logger.getLogger(BigWigSymLoader.class.getName()).log(Level.WARNING, x.getMessage());
             return;

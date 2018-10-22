@@ -82,11 +82,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.broad</groupId>
-            <artifactId>tribble-ext</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>synonym-lookup</artifactId>
             <scope>provided</scope>

@@ -16,7 +16,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.broad</groupId>
+            <groupId>org.broad.igv</groupId>
             <artifactId>bigwig</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -36,8 +36,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.broad</groupId>
-            <artifactId>tribble-ext</artifactId>
+            <groupId>htsjdk-igb</groupId>
+            <artifactId>htsjdk-igb</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

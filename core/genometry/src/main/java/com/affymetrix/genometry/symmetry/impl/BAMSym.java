@@ -454,7 +454,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
             tprops.put(ID, name);
             tprops.put(RESIDUES, getResidues());
             tprops.put(FORWARD, this.isForward());
-            tprops.put(FEATURE_TYPE, "soft clipped");
+            tprops.put(FEATURE_TYPE, "soft-clip");
             tprops.put(AVERAGE_QUALITY, getAverageQuality());
             return tprops;
         }

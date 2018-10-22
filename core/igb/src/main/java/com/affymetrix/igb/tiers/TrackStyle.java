@@ -108,6 +108,8 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     private boolean showSoftClipped = default_showSoftClipped;
     private Color softClipColor = default_softClipColor;
     private boolean showSoftClipResidues = default_showSoftClippedResidues;
+    private boolean showSoftClipDefaultColor = default_showSoftClipDefaultColor;
+    private boolean showSoftClipCustomColor = default_showSoftClipCustomColor;
     private boolean shadeBasedOnQualityScore = default_shadeBasedOnQualityScore;
     private String url = null;
     private String file_type = null;
@@ -1068,6 +1070,28 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         this.showSoftClipResidues = showSoftClipResidues;
         save(PREF_SHOW_SOFT_CLIPPED_RESIDUES, showSoftClipResidues);
     }
+    
+    @Override
+    public boolean getShowSoftClipDefaultColor() {
+        return showSoftClipDefaultColor;
+    }
+    
+    @Override
+    public void setShowSoftClipDefaultColor(boolean showSoftClipDefaultColor) {
+        this.showSoftClipDefaultColor = showSoftClipDefaultColor;
+        save(PREF_SHOW_SOFT_CLIPPED_DEFAULT_COLOR, showSoftClipDefaultColor);
+    }
+    
+    @Override
+    public boolean getShowSoftClipCustomColor() {
+        return showSoftClipCustomColor;
+    }
+    
+    @Override
+    public void setShowSoftClipCustomColor(boolean showSoftClipCustomColor) {
+        this.showSoftClipCustomColor = showSoftClipCustomColor;
+        save(PREF_SHOW_SOFT_CLIPPED_CUSTOM_COLOR, showSoftClipCustomColor);
+    }
 
     @Override
     public boolean getShadeBasedOnQualityScore() {
@@ -1131,6 +1155,10 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             this.setsoftClipColor((Color) value);
         }else if (PREF_SHOW_SOFT_CLIPPED_RESIDUES.equals(key) && value instanceof Boolean) {
             this.setShowSoftClippedResidues((Boolean) value);   
+        }else if (PREF_SHOW_SOFT_CLIPPED_DEFAULT_COLOR.equals(key) && value instanceof Boolean) {
+            this.setShowSoftClipDefaultColor((Boolean) value);
+        }else if (PREF_SHOW_SOFT_CLIPPED_CUSTOM_COLOR.equals(key) && value instanceof Boolean) {
+            this.setShowSoftClipCustomColor((Boolean) value);
         } else if (PREF_SHADE_BASED_ON_QUALITY_SCORE.equals(key) && value instanceof Boolean) {
             this.setShadeBasedOnQualityScore((Boolean) value);
         }

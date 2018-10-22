@@ -142,6 +142,14 @@ public interface ITrackStyleExtended extends ITrackStyle {
     
     public void setShowSoftClipped(boolean showSoftClipped);
     
+    public boolean getShowSoftClipDefaultColor();
+    
+    public void setShowSoftClipDefaultColor(boolean showSoftClipDefaultColor);
+    
+    public boolean getShowSoftClipCustomColor();
+    
+    public void setShowSoftClipCustomColor(boolean showSoftClipCustomColor);
+    
     public Color getsoftClipColor();
     
     public void setsoftClipColor(Color softClipColor);

@@ -536,7 +536,7 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
                 continue;
             }
             
-            if(trackStyle.getShowSoftClipped()){
+            if(!trackStyle.getShowSoftClipped()){
                 String residues = softsym.getResidues(ispan.getMin(), ispan.getMax());
                 SoftClippingSeqGlyph softClippingGlyph = new SoftClippingSeqGlyph();
                 

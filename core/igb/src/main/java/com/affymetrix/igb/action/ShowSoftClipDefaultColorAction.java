@@ -1,26 +1,30 @@
 package com.affymetrix.igb.action;
 
+
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
+
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import static com.affymetrix.igb.shared.Selections.allGlyphs;
+import com.affymetrix.igb.tiers.TrackConstants;
+
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ChangeSoftClipColorAction extends SeqMapViewActionA {
+public class ShowSoftClipDefaultColorAction extends SeqMapViewActionA {
 
-    private static final Logger logger = LoggerFactory.getLogger(ChangeSoftClipColorAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(ShowSoftClipDefaultColorAction.class);
     private static final long serialVersionUID = 1L;
-    private final static ChangeSoftClipColorAction changeSoftClipColorAction = new ChangeSoftClipColorAction();
+    private final static ShowSoftClipDefaultColorAction showSoftClipDefaultColorAction = new ShowSoftClipDefaultColorAction();
 
-    public static ChangeSoftClipColorAction getAction() {
-        return changeSoftClipColorAction;
+    public static ShowSoftClipDefaultColorAction getAction() {
+        return showSoftClipDefaultColorAction;
     }
 
-    private ChangeSoftClipColorAction() {
-        super(BUNDLE.getString("softClipColor"), null, null);
+    private ShowSoftClipDefaultColorAction() {
+        super(BUNDLE.getString("showSoftClipDefaultColor"), null, null);
         this.setSelected(true);
     }
 
@@ -32,11 +36,11 @@ public class ChangeSoftClipColorAction extends SeqMapViewActionA {
                 return;
             }
             if (((RootSeqSymmetry) glyph.getInfo()).getCategory() == FileTypeCategory.Alignment) {
-                SoftClipColorAction.getAction().actionPerformed(e);
-                glyph.getAnnotStyle().setShowSoftClipCustomColor(isSelected());
+                glyph.getAnnotStyle().setsoftClipColor(TrackConstants.default_softClipColor);
+                glyph.getAnnotStyle().setShowSoftClipDefaultColor(isSelected());
                 glyph.getAnnotStyle().setShowSoftClippedResidues(false);
                 glyph.getAnnotStyle().setShowSoftClipped(false);
-                glyph.getAnnotStyle().setShowSoftClipDefaultColor(false);
+                glyph.getAnnotStyle().setShowSoftClipCustomColor(false);
             }
         }
         refreshMap(false, false);

@@ -39,6 +39,9 @@ public class ShowSoftClipAction extends SeqMapViewActionA {
             }
             if (((RootSeqSymmetry) glyph.getInfo()).getCategory() == FileTypeCategory.Alignment) {
                 glyph.getAnnotStyle().setShowSoftClipped(isSelected());
+                glyph.getAnnotStyle().setShowSoftClippedResidues(false);
+                glyph.getAnnotStyle().setShowSoftClipDefaultColor(false);
+                glyph.getAnnotStyle().setShowSoftClipCustomColor(false);
             }
         }
         refreshMap(false, false);

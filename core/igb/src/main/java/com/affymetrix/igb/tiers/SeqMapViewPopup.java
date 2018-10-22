@@ -47,7 +47,9 @@ import com.affymetrix.igb.action.ToggleShowAsPairedAction;
 import com.affymetrix.igb.action.TrackOperationMenuItemAction;
 import com.affymetrix.igb.action.TrackOperationWithParametersAction;
 import com.affymetrix.igb.action.ShowSoftClipAction;
+import com.affymetrix.igb.action.ShowSoftClipDefaultColorAction;
 import com.affymetrix.igb.action.ShowSoftClipResiduesAction;
+import com.affymetrix.igb.action.SoftClipColorAction;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.LockTierHeightAction;
@@ -68,9 +70,11 @@ import java.util.Map;
 import java.util.TreeSet;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.border.Border;
 import org.apache.commons.lang3.StringUtils;
@@ -384,27 +388,38 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             }
             if (canShowAsPaired) {
                 JCheckBoxMenuItem showAsPaired = new JCheckBoxMenuItem(ToggleShowAsPairedAction.getAction());
+                showAsPaired.setEnabled(anyAlignment);
                 TierGlyph glyph = handler.getSelectedTiers().get(0);
                 showAsPaired.setSelected(glyph.getAnnotStyle().isShowAsPaired());
                 popup.add(showAsPaired);
             }
 
             if(canShowSoftClipped){
-                JMenu softClipped = new JMenu("Soft-clipping");
-                JCheckBoxMenuItem showSoftClipResidues = new JCheckBoxMenuItem(ShowSoftClipResiduesAction.getAction());
-                JCheckBoxMenuItem showSoftClipped = new JCheckBoxMenuItem(ShowSoftClipAction.getAction());
-                JMenuItem change_softclip_color = new JRPMenuItemTLP(ChangeSoftClipColorAction.getAction());
+                JMenu softClipped = new JMenu("Configure soft-clip");
+                softClipped.setEnabled(anyAlignment);
+                JRadioButton default_softclip_color = new JRadioButton(ShowSoftClipDefaultColorAction.getAction());
+                JRadioButton change_softclip_color = new JRadioButton(ChangeSoftClipColorAction.getAction());
+                JRadioButton showSoftClipResidues = new JRadioButton(ShowSoftClipResiduesAction.getAction());
+                JRadioButton showSoftClipped = new JRadioButton(ShowSoftClipAction.getAction());
+                
+                ButtonGroup buttonGroup = new ButtonGroup();
+                buttonGroup.add(default_softclip_color);
+                buttonGroup.add(change_softclip_color);
+                buttonGroup.add(showSoftClipResidues);
+                buttonGroup.add(showSoftClipped);
                 
                 TierGlyph glyph = handler.getSelectedTiers().get(0);
-                
-                showSoftClipped.setSelected(glyph.getAnnotStyle().getShowSoftClipped());
+                default_softclip_color.setSelected(glyph.getAnnotStyle().getShowSoftClipDefaultColor());
+                change_softclip_color.setSelected(glyph.getAnnotStyle().getShowSoftClipCustomColor());
                 showSoftClipResidues.setSelected(glyph.getAnnotStyle().getShowSoftClippedResidues());
+                showSoftClipped.setSelected(glyph.getAnnotStyle().getShowSoftClipped());
+
                 
-                softClipped.add(showSoftClipped);
+                softClipped.add(default_softclip_color);
+                softClipped.add(change_softclip_color);
                 softClipped.add(showSoftClipResidues);
-                if(styledGlyph != null && !styledGlyph.getAnnotStyle().getShowSoftClippedResidues()) {
-                    softClipped.add(change_softclip_color);
-                }
+                softClipped.add(showSoftClipped);
+                
                 popup.add(softClipped);
             }
         }

@@ -164,6 +164,16 @@
             <scope>runtime</scope> 
         </dependency>
         <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jexl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <scope>runtime</scope> 
@@ -173,11 +183,16 @@
             <artifactId>commons-pool</artifactId>
             <scope>runtime</scope> 
         </dependency>
-
         <dependency>
-            <groupId>com.github.samtools</groupId>
-            <artifactId>htsjdk</artifactId>
-            <scope>provided</scope>
+            <groupId>org.tukaani</groupId>
+            <artifactId>xz</artifactId>
+            <version>1.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>htsjdk-igb</groupId>
+            <artifactId>htsjdk-igb</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <!-- End of external bundle dependencies-->
 

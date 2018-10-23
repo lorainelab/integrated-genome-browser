@@ -14,6 +14,7 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.GFF_PROP_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.NARROW_PEAK_PROP_LIST;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.PSL_PROP_LIST;
 import static com.affymetrix.genometry.util.SeqUtils.isBamInsSym;
+import static com.affymetrix.genometry.util.SeqUtils.isBamSoftSym;
 import static com.affymetrix.genometry.util.SeqUtils.isBamSym;
 import static com.affymetrix.genometry.util.SeqUtils.isBedSym;
 import static com.affymetrix.genometry.util.SeqUtils.isGFFSym;
@@ -37,7 +38,7 @@ public class SelectionInfoUtils {
     public static Map<String, Object> orderProperties(Map<String, Object> properties, SymWithProps sym) {
         List<String> propertyKeys;
         if (isBamSym(sym)) {
-            if (isBamInsSym(sym)) {
+            if (isBamInsSym(sym) || isBamSoftSym(sym)) {
                 propertyKeys = BAM_INS_PROP_LIST;
                 return orderProperties(propertyKeys, properties, true);
             } else {

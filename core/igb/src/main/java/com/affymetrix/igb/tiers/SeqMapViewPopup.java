@@ -23,6 +23,7 @@ import com.affymetrix.igb.action.ChangeBackgroundColorAction;
 import com.affymetrix.igb.action.ChangeExpandMaxAction;
 import com.affymetrix.igb.action.ChangeFontSizeAction;
 import com.affymetrix.igb.action.ChangeForegroundColorAction;
+import com.affymetrix.igb.action.ChangeSoftClipColorAction;
 import com.affymetrix.igb.action.ChangeLabelColorAction;
 import com.affymetrix.igb.action.ChangeTierHeightAction;
 import com.affymetrix.igb.action.CloseTracksAction;
@@ -45,6 +46,10 @@ import com.affymetrix.igb.action.ShowPlusStrandAction;
 import com.affymetrix.igb.action.ToggleShowAsPairedAction;
 import com.affymetrix.igb.action.TrackOperationMenuItemAction;
 import com.affymetrix.igb.action.TrackOperationWithParametersAction;
+import com.affymetrix.igb.action.ShowSoftClipAction;
+import com.affymetrix.igb.action.ShowSoftClipDefaultColorAction;
+import com.affymetrix.igb.action.ShowSoftClipResiduesAction;
+import com.affymetrix.igb.action.SoftClipColorAction;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import com.affymetrix.igb.shared.ChangeExpandMaxOptimizeAction;
 import com.affymetrix.igb.shared.LockTierHeightAction;
@@ -65,9 +70,11 @@ import java.util.Map;
 import java.util.TreeSet;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.border.Border;
 import org.apache.commons.lang3.StringUtils;
@@ -367,7 +374,57 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         useBaseQuality.setEnabled(anyAlignment);
         useBaseQuality.setSelected(anyAlignment && anyShadeBasedOnQuality);
         popup.add(useBaseQuality);
+        
+        //for now do not allow multiselect action for show as paired, but this can be added easily if desired
+        if (!handler.getSelectedTiers().isEmpty() && !coordinatesTrackSelected && handler.getSelectedTiers().size() == 1) {
+            boolean canShowAsPaired = false;
+            boolean canShowSoftClipped = false;
+            for (TierGlyph tierGlyph : handler.getSelectedTiers()) {
+                String methodName = tierGlyph.getAnnotStyle().getMethodName();
+                if (StringUtils.endsWithIgnoreCase(methodName, "bam") || StringUtils.endsWithIgnoreCase(methodName, "sam")) {
+                    canShowAsPaired = true;
+                    canShowSoftClipped=true;
+                }
+            }
+            if (canShowAsPaired) {
+                JCheckBoxMenuItem showAsPaired = new JCheckBoxMenuItem(ToggleShowAsPairedAction.getAction());
+                showAsPaired.setEnabled(anyAlignment);
+                TierGlyph glyph = handler.getSelectedTiers().get(0);
+                showAsPaired.setSelected(glyph.getAnnotStyle().isShowAsPaired());
+                popup.add(showAsPaired);
+            }
+
+            if(canShowSoftClipped){
+                JMenu softClipped = new JMenu("Configure soft-clip");
+                softClipped.setEnabled(anyAlignment);
+                JRadioButton default_softclip_color = new JRadioButton(ShowSoftClipDefaultColorAction.getAction());
+                JRadioButton change_softclip_color = new JRadioButton(ChangeSoftClipColorAction.getAction());
+                JRadioButton showSoftClipResidues = new JRadioButton(ShowSoftClipResiduesAction.getAction());
+                JRadioButton showSoftClipped = new JRadioButton(ShowSoftClipAction.getAction());
+                
+                ButtonGroup buttonGroup = new ButtonGroup();
+                buttonGroup.add(default_softclip_color);
+                buttonGroup.add(change_softclip_color);
+                buttonGroup.add(showSoftClipResidues);
+                buttonGroup.add(showSoftClipped);
+                
+                TierGlyph glyph = handler.getSelectedTiers().get(0);
+                default_softclip_color.setSelected(glyph.getAnnotStyle().getShowSoftClipDefaultColor());
+                change_softclip_color.setSelected(glyph.getAnnotStyle().getShowSoftClipCustomColor());
+                showSoftClipResidues.setSelected(glyph.getAnnotStyle().getShowSoftClippedResidues());
+                showSoftClipped.setSelected(glyph.getAnnotStyle().getShowSoftClipped());
+
+                
+                softClipped.add(default_softclip_color);
+                softClipped.add(change_softclip_color);
+                softClipped.add(showSoftClipResidues);
+                softClipped.add(showSoftClipped);
+                
+                popup.add(softClipped);
+            }
+        }
         popup.add(new JSeparator());
+        
         JMenuItem operationsMenu = addOperationMenuItem(Selections.rootSyms, coordinatesTrackSelected);
         popup.add(operationsMenu);
         if (operationsMenu instanceof JMenu) {
@@ -399,22 +456,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         saveTrack.setIcon(null);
         popup.add(saveTrack);
 
-        //for now do not allow multiselect action for show as paired, but this can be added easily if desired
-        if (!handler.getSelectedTiers().isEmpty() && !coordinatesTrackSelected && handler.getSelectedTiers().size() == 1) {
-            boolean canShowAsPaired = false;
-            for (TierGlyph tierGlyph : handler.getSelectedTiers()) {
-                String methodName = tierGlyph.getAnnotStyle().getMethodName();
-                if (StringUtils.endsWithIgnoreCase(methodName, "bam") || StringUtils.endsWithIgnoreCase(methodName, "sam")) {
-                    canShowAsPaired = true;
-                }
-            }
-            if (canShowAsPaired) {
-                JCheckBoxMenuItem showAsPaired = new JCheckBoxMenuItem(ToggleShowAsPairedAction.getAction());
-                TierGlyph glyph = handler.getSelectedTiers().get(0);
-                showAsPaired.setSelected(glyph.getAnnotStyle().isShowAsPaired());
-                popup.add(showAsPaired);
-            }
-        }
 
         popup.add(
                 new JSeparator());

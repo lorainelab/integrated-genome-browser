@@ -331,5 +331,65 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
     public void setShowAsPaired(boolean showAsPaired) {
         this.showAsPaired = showAsPaired;
     }
+    
+    private boolean showSoftClipped;
+    
+    @Override
+    public boolean getShowSoftClipped() {
+        return showSoftClipped;
+    }
+    
+    @Override
+    public void setShowSoftClipped(boolean showSoftClipped) {
+        this.showSoftClipped = showSoftClipped;
+    }
+    
+    private Color softClipColor;
+    
+    @Override
+    public Color getsoftClipColor() {
+        return softClipColor;
+    }
+    
+    @Override
+    public void setsoftClipColor(Color softClipColor) {
+        this.softClipColor = softClipColor;
+    }
+    
+    private boolean showSoftClipResidues;
+    
+    @Override
+    public boolean getShowSoftClippedResidues() {
+        return showSoftClipResidues;
+    }
+    
+    @Override
+    public void setShowSoftClippedResidues(boolean showSoftClipResidues) {
+        this.showSoftClipResidues = showSoftClipResidues;
+    }
+    
+    private boolean showSoftClipDefaultColor;
+    
+    @Override
+    public boolean getShowSoftClipDefaultColor() {
+        return showSoftClipDefaultColor;
+    }
+    
+    @Override
+    public void setShowSoftClipDefaultColor(boolean showSoftClipDefaultColor) {
+        this.showSoftClipDefaultColor = showSoftClipDefaultColor;
+    }
+    
+    private boolean showSoftClipCustomColor;
+    
+    @Override
+    public boolean getShowSoftClipCustomColor() {
+        return showSoftClipCustomColor;
+    }
+    
+    @Override
+    public void setShowSoftClipCustomColor(boolean showSoftClipCustomColor) {
+        this.showSoftClipCustomColor = showSoftClipCustomColor;
+    }
 
 }

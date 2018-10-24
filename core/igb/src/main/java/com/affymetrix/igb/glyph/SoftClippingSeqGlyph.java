@@ -1,23 +1,17 @@
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
 import static com.affymetrix.genoviz.util.NeoConstants.default_bold_font;
-import static com.affymetrix.igb.view.SeqMapViewConstants.PREF_EDGE_MATCH_COLOR;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
 
 /**
- * Creating special class for BAM insertion glyph to be able to draw at low zoom.
+ * Creating special class for BAM soft-clipping glyph to be able to draw at low zoom.
  *
  * @author hiralv
  */
@@ -86,40 +80,26 @@ public class SoftClippingSeqGlyph extends SequenceGlyph {
     }
 
     @Override
-    protected void drawHorizontalResidues(Graphics g, double pixelsPerBase, String residueStr, int seqBegIndex, int seqEndIndex, int pixelStart) {
-        char[] charArray = residueStr.toCharArray();
-        drawResidueRectangles(g, pixelsPerBase, charArray, getPixelBox().x, getPixelBox().y, getPixelBox().height);
-        drawResidueStrings(g, pixelsPerBase, charArray, pixelStart);
-    }
-
-    private void drawResidueRectangles(Graphics g, double pixelsPerBase, char[] charArray, int x, int y, int height) {
-        int intPixelsPerBase = (int) Math.ceil(pixelsPerBase);
-        for (int j = 0; j < charArray.length; j++) {
-            g.setColor(g.getColor());
-            //Create a colored rectangle.
-            //We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
-            int offset = (int) (j * pixelsPerBase);
-            //ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
-            g.fillRect(x + offset, y, intPixelsPerBase, height);
-        }
-    }
-
-    private void drawResidueStrings(Graphics g, double pixelsPerBase, char[] charArray, int pixelStart) {
-        if (MIN_CHAR_PIX > pixelsPerBase) {
+    protected void drawHorizontalResidues(Graphics g, double pixelsPerBase, String residues, int seqBegIndex, int seqEndIndex, int pixelStart) {        
+        if (this.font_width > pixelsPerBase) {
             return;
         }
-        int index = (int) (pixelsPerBase > MAX_CHAR_PIX ? MAX_CHAR_PIX : pixelsPerBase);
-        Font xmax_font = xpix2fonts[index];
-        setFont(xmax_font);
-        // Ample room to draw residue letters.
+        
+        int baseline = (getPixelBox().y + (getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
         g.setFont(getResidueFont());
         g.setColor(getEffectiveContrastColor(g.getColor()));
-        int baseline = (this.getPixelBox().y + (this.getPixelBox().height / 2)) + this.fontmet.getAscent() / 2 - 1;
         int pixelOffset = (int) (pixelsPerBase - this.font_width);
         pixelOffset = pixelOffset > 2 ? pixelOffset / 2 : pixelOffset;
-        for (int i = 0; i < charArray.length; i++) {
-            g.drawChars(charArray, i, 1, pixelStart + (int) (i * pixelsPerBase) + pixelOffset, baseline);
-        }
+        
+        for (int i = seqBegIndex; i < seqEndIndex; i++) {
+            double f = i - seqBegIndex;
+            String str = String.valueOf(residues.charAt(i));
+            if (str != null) {
+                    g.drawString(str,
+                                    (pixelStart + (int) (f * pixelsPerBase) + pixelOffset),
+                                    baseline);
+            }
+        } 
     }
 
     @Override

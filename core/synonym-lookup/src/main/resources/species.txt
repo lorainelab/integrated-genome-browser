@@ -137,6 +137,7 @@ Setaria italica	Foxtail millet	S. italica	S_italica
 Sigmodon hispidus	Cotton rat	S_hispidus
 Sodalis glossinidius	S. glossinidius	S_glossinidius
 Solanum lycopersicum	Tomato	S_lycopersicum
+Solanum tuberosum Phureja	Potato	S_tuberosum_DM
 Sorex araneus	Eurasian shrew	S_araneus	sorAra	Sorex_araneus
 Sorghum bicolor	Sorghum	S_bicolor	
 Spermophilus tridecemlineatus	Thirteen-lined ground squirrel	S_tridecemlineatus	speTri	Spermophilus_tridecemlineatus

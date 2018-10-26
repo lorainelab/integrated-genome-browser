@@ -26,7 +26,7 @@ import org.broad.igv.bbfile.BPTreeLeafNodeItem;
 import org.broad.igv.bbfile.BPTreeNode;
 import org.broad.igv.bbfile.BedFeature;
 import org.broad.igv.bbfile.BigBedIterator;
-import org.broad.tribble.util.SeekableStreamFactory;
+import htsjdk.samtools.seekablestream.SeekableStreamFactory;
 
 public class BigBedSymLoader extends SymLoader {
 
@@ -50,7 +50,7 @@ public class BigBedSymLoader extends SymLoader {
     private void initbbReader() {
         String uriString = GeneralUtils.fixFileName(uri.toString());
         try {
-            bbReader = new BBFileReader(uriString, SeekableStreamFactory.getStreamFor(uriString));
+            bbReader = new BBFileReader(uriString, SeekableStreamFactory.getInstance().getStreamFor(uriString));
         } catch (IOException x) {
             Logger.getLogger(BigBedSymLoader.class.getName()).log(Level.WARNING, x.getMessage());
         }

@@ -40,13 +40,12 @@
         <bindlib-version>2.4.0</bindlib-version>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
         <fusionVersion>1.0.1</fusionVersion>
-        <bigWigVersion>1.0</bigWigVersion>
-        <commonsCompressVersion>1.2</commonsCompressVersion>
+        <bigWigVersion>2.0.0</bigWigVersion>
+        <commonsCompressVersion>1.5</commonsCompressVersion>
         <commonsCodecVersion>1.6</commonsCodecVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
-        <tribbleVersion>1.111</tribbleVersion>
         <igb-picard-version>1.111</igb-picard-version>
-        <htsjdkVersion>2.16.0</htsjdkVersion>
+        <htsjdk-igb-Version>2.16.1</htsjdk-igb-Version>
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
         <slf4j-version>1.7.7</slf4j-version>
@@ -738,18 +737,29 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-jexl</artifactId>
+                <version>2.1.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.github.kevinsawicki</groupId>
                 <artifactId>http-request</artifactId>
                 <version>6.0</version>
                 <scope>provided</scope>
             </dependency>
-
             <dependency>
-                <groupId>com.github.samtools</groupId>
-                <artifactId>htsjdk</artifactId>
-                <version>${htsjdkVersion}</version>
+                <groupId>org.tukaani</groupId>
+                <artifactId>xz</artifactId>
+                <version>1.5</version>
                 <scope>provided</scope>
             </dependency>
+
             <!--End of additional provided dependencies-->
 
 
@@ -950,11 +960,6 @@
                 <version>${igb-picard-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.broad</groupId>
-                <artifactId>tribble-ext</artifactId>
-                <version>${tribbleVersion}</version>
-            </dependency>
-            <dependency>
                 <groupId>net.sf</groupId>
                 <artifactId>image4j</artifactId>
                 <version>0.7</version>
@@ -1009,7 +1014,7 @@
                 <type>jar</type>
             </dependency>
             <dependency>
-                <groupId>org.broad</groupId>
+                <groupId>org.broad.igv</groupId>
                 <artifactId>bigwig</artifactId>
                 <version>${bigWigVersion}</version>
             </dependency>
@@ -1059,6 +1064,11 @@
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.service.remoteserviceadmin</artifactId>
                 <version>${org.osgi.service.remoteserviceadmin-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>htsjdk-igb</groupId>
+                <artifactId>htsjdk-igb</artifactId>
+                <version>${htsjdk-igb-Version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -1263,7 +1273,7 @@
                 </executions>
                 <configuration>
                     <serverId>maven-releases</serverId>
-                    <nexusUrl>https://nexus.bioviz.org/repository/maven-releases/</nexusUrl> 
+                    <nexusUrl>https://nexus.bioviz.org/repository/maven-releases/</nexusUrl>
                     <skipStaging>true</skipStaging>
                 </configuration>
             </plugin>

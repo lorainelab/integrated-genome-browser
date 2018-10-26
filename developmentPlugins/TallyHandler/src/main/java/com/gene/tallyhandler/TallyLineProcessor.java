@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.broad.tribble.readers.LineReader;
+import htsjdk.tribble.readers.LineReader;
 
 public class TallyLineProcessor implements LineProcessor {
 

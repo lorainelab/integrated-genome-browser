@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static org.lorainelab.igb.quickload.QuickloadConstants.GENOME_TXT;
 import org.lorainelab.igb.quickload.model.annots.QuickloadFile;
 import org.lorainelab.igb.quickload.util.QuickloadUtils;
@@ -56,7 +58,6 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     private final Map<String, Optional<String>> supportedGenomeVersionInfo;
     private final Map<String, Optional<Multimap<String, String>>> chromosomeSynonymReference;
     private static GenomeVersionSynonymLookup genomeVersionSynonymLookup;
-
     public QuickloadDataProvider(String url, String name, int loadPriority) {
         super(toExternalForm(url), name, loadPriority);
         supportedGenomeVersionInfo = Maps.newConcurrentMap();
@@ -257,7 +258,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
         if (dataSet.getProperties() != null && dataSet.getProperties().containsKey("url")) {
             String linkoutUrl = dataSet.getProperties().get("url");
             if (!Strings.isNullOrEmpty(linkoutUrl)) {
-                if (linkoutUrl.startsWith("http")) {
+            	if (Stream.of("http://","https://","file://","ftp://").anyMatch(protocol->linkoutUrl.startsWith(protocol))) {
                     return Optional.<String>of(linkoutUrl);
                 } else {
                     return Optional.<String>of(toExternalForm(url) + linkoutUrl);

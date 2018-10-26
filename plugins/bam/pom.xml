@@ -42,11 +42,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.broad</groupId>
-            <artifactId>tribble-ext</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>external-sort</artifactId>
             <scope>provided</scope>
@@ -107,9 +102,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.samtools</groupId>
-            <artifactId>htsjdk</artifactId>
-            <version>${htsjdkVersion}</version>
+            <groupId>htsjdk-igb</groupId>
+            <artifactId>htsjdk-igb</artifactId>
+            <version>${htsjdk-igb-Version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

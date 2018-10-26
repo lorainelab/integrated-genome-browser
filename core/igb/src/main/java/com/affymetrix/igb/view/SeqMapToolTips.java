@@ -95,7 +95,7 @@ public class SeqMapToolTips extends JWindow {
         tooltip.setText(null);
         if (properties != null && properties.size() > 0 && sym != null) {
             if (isBamSym(sym)) {
-                if (SeqUtils.isBamInsSym(sym)) {
+                if (SeqUtils.isBamInsSym(sym) || SeqUtils.isBamSoftSym(sym)) {
                     propList = ToolTipOperations.formatBamInsSymTooltip(properties);
                 } else {
                     propList = ToolTipOperations.formatBamSymTooltip(properties);

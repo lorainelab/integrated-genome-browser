@@ -1451,6 +1451,10 @@ public class SeqUtils {
     public static boolean isBamInsSym(SeqSymmetry sym) {
         return BAMSym.isBamInsChildType(sym);
     }
+    
+    public static boolean isBamSoftSym(SeqSymmetry sym) {
+        return BAMSym.isBamSoftChildType(sym);
+    }
 
     public static boolean isMultiStrandWrapperType(SeqSymmetry sym) {
         return (sym instanceof MultiTierSymWrapper);

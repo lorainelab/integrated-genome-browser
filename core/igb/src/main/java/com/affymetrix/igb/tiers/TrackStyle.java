@@ -105,6 +105,11 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
     private Color start_color = default_start;
     private Color end_color = default_end;
     private boolean showResidueMask = default_showResidueMask;
+    private boolean showSoftClipped = default_showSoftClipped;
+    private Color softClipColor = default_softClipColor;
+    private boolean showSoftClipResidues = default_showSoftClippedResidues;
+    private boolean showSoftClipDefaultColor = default_showSoftClipDefaultColor;
+    private boolean showSoftClipCustomColor = default_showSoftClipCustomColor;
     private boolean shadeBasedOnQualityScore = default_shadeBasedOnQualityScore;
     private String url = null;
     private String file_type = null;
@@ -1032,6 +1037,61 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         this.showResidueMask = showResidueMask;
         save(PREF_SHOW_RESIDUE_MASK, showResidueMask);
     }
+    
+    @Override
+    public boolean getShowSoftClipped() {
+        return showSoftClipped;
+    }
+    
+    @Override
+    public void setShowSoftClipped(boolean showSoftClipped) {
+        this.showSoftClipped = showSoftClipped;
+        save(PREF_SHOW_SOFT_CLIPPED, showSoftClipped);
+    }
+    
+    @Override
+    public Color getsoftClipColor() {
+        return softClipColor;
+    }
+    
+    @Override
+    public void setsoftClipColor(Color softClipColor) {
+        this.softClipColor = softClipColor;
+        save(PREF_SOFT_CLIP_COLOR, softClipColor);
+    }
+    
+    @Override
+    public boolean getShowSoftClippedResidues() {
+        return showSoftClipResidues;
+    }
+    
+    @Override
+    public void setShowSoftClippedResidues(boolean showSoftClipResidues) {
+        this.showSoftClipResidues = showSoftClipResidues;
+        save(PREF_SHOW_SOFT_CLIPPED_RESIDUES, showSoftClipResidues);
+    }
+    
+    @Override
+    public boolean getShowSoftClipDefaultColor() {
+        return showSoftClipDefaultColor;
+    }
+    
+    @Override
+    public void setShowSoftClipDefaultColor(boolean showSoftClipDefaultColor) {
+        this.showSoftClipDefaultColor = showSoftClipDefaultColor;
+        save(PREF_SHOW_SOFT_CLIPPED_DEFAULT_COLOR, showSoftClipDefaultColor);
+    }
+    
+    @Override
+    public boolean getShowSoftClipCustomColor() {
+        return showSoftClipCustomColor;
+    }
+    
+    @Override
+    public void setShowSoftClipCustomColor(boolean showSoftClipCustomColor) {
+        this.showSoftClipCustomColor = showSoftClipCustomColor;
+        save(PREF_SHOW_SOFT_CLIPPED_CUSTOM_COLOR, showSoftClipCustomColor);
+    }
 
     @Override
     public boolean getShadeBasedOnQualityScore() {
@@ -1089,6 +1149,16 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
             this.setReverseColor((Color) value);
         } else if (PREF_SHOW_RESIDUE_MASK.equals(key) && value instanceof Boolean) {
             this.setShowResidueMask((Boolean) value);
+        }else if (PREF_SHOW_SOFT_CLIPPED.equals(key) && value instanceof Boolean) {
+            this.setShowSoftClipped((Boolean) value);
+        }else if (PREF_SOFT_CLIP_COLOR.equals(key) && value instanceof Color) {
+            this.setsoftClipColor((Color) value);
+        }else if (PREF_SHOW_SOFT_CLIPPED_RESIDUES.equals(key) && value instanceof Boolean) {
+            this.setShowSoftClippedResidues((Boolean) value);   
+        }else if (PREF_SHOW_SOFT_CLIPPED_DEFAULT_COLOR.equals(key) && value instanceof Boolean) {
+            this.setShowSoftClipDefaultColor((Boolean) value);
+        }else if (PREF_SHOW_SOFT_CLIPPED_CUSTOM_COLOR.equals(key) && value instanceof Boolean) {
+            this.setShowSoftClipCustomColor((Boolean) value);
         } else if (PREF_SHADE_BASED_ON_QUALITY_SCORE.equals(key) && value instanceof Boolean) {
             this.setShadeBasedOnQualityScore((Boolean) value);
         }

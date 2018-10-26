@@ -34,10 +34,6 @@
             <artifactId>igb-picard</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.broad</groupId>
-            <artifactId>tribble-ext</artifactId>
-        </dependency>
-        <dependency>
             <groupId>colt</groupId>
             <artifactId>colt</artifactId>
         </dependency>
@@ -68,11 +64,6 @@
         <dependency>
             <groupId>com.github.kevinsawicki</groupId>
             <artifactId>http-request</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.samtools</groupId>
-            <artifactId>htsjdk</artifactId>
-            <version>${htsjdkVersion}</version>
         </dependency>
     </dependencies>
 
@@ -173,7 +164,7 @@
                                     <version>${felix-bundlerepository-version}</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.broad</groupId>
+                                    <groupId>org.broad.igv</groupId>
                                     <artifactId>bigwig</artifactId>
                                     <version>${bigWigVersion}</version>
                                 </artifactItem>
@@ -216,7 +207,8 @@
                                     <groupId>ch.qos.logback</groupId>
                                     <artifactId>logback-classic</artifactId>
                                     <version>1.1.2</version>
-                                </artifactItem>  
+                                </artifactItem>
+
                                 <!-- Start of development only bundles (i.e. they will not be included in main pom for igb_exe.jar)-->
                                 <artifactItem>
                                     <groupId>org.apache.felix</groupId>
@@ -364,8 +356,6 @@
                             org.apache.commons.net,
                             org.apache.commons.net.*,
                             org.jdom.*,
-                            org.broad.tribble,
-                            org.broad.tribble.*,
                             org.freehep,
                             org.freehep.*,
                             org.jdesktop.*,
@@ -375,9 +365,7 @@
                             com.boxysystems.jgoogleanalytics.*,
                             net.miginfocom.layout,
                             net.miginfocom.swing,
-                            com.github.kevinsawicki.http,
-                            htsjdk,
-                            htsjdk.*
+                            com.github.kevinsawicki.http
                         </Export-Package>
                     </instructions>
                     <archive>

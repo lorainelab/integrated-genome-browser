@@ -33,6 +33,7 @@ import htsjdk.tribble.readers.LineReader;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
 
@@ -62,13 +63,23 @@ public class SAM extends XAM implements LineProcessor {
                 String reachable_url = LocalUrlCacher.getReachableUrl(uri.toASCIIString());
 
                 if (reachable_url == null) {
-                    ErrorHandler.errorPanel("Url cannot be reached");
+                    ErrorHandler.errorPanel("The data set you requested could not be loaded as the URL cannot be reached. \n"
+                           + "Select Help > Show Console for more information");
                     this.isInitialized = false;
                     return ;
                 }
                 SeekableBufferedStream seekableStream = new SeekableBufferedStream(new SeekableHTTPStream(new URL(reachable_url)));
                 resource = SamInputResource.of(seekableStream);
                 reader = factory.open(resource);
+            }else if (scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
+                resource = SamInputResource.of(uri.toURL());
+                reader = factory.open(resource);
+            } else {
+                logger.error( "URL scheme: {0} not recognized", scheme);
+                ErrorHandler.errorPanel("The data set you requested could not be loaded as the URL cannot be reached. \n"
+                        + "Select Help > Show Console for more information");
+                this.isInitialized = false;
+                return ;
             }
             if (this.isInitialized) {
                 return;

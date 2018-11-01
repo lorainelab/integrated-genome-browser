@@ -134,7 +134,7 @@ public class SeqUtils {
             }
         }
     }
-
+    
     public static void collectSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs, int desired_leaf_depth) {
         int depth = SeqUtils.getDepthFor(sym);
         if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
@@ -149,7 +149,44 @@ public class SeqUtils {
             }
         }
     }
-
+    
+    /**
+     *  Traverse sym, finding each leaf. 
+     *  Add the start positions of the leaf sym (strand dependent) to the leafs ArrayList.
+     */
+    public static void collectStartSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs) {
+        if(sym.getChild(0) == null) {
+            SeqSpan span = sym.getSpan(seq);
+            if (span != null) {
+                leafs.add(span);
+            }
+        } else if (sym.getChild(0).getChild(0) != null) {
+            int childCount = sym.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                collectStartSpans(sym.getChild(i), seq, leafs);
+            }
+        } else if (sym.getChild(0) != null) {
+            int counter = 0;
+            if(sym.getChildCount() > 1) {
+                int symStart = sym.getChild(counter).getSpan(seq).getStart();
+                if(sym.getChild(counter).getSpan(seq).isForward()) {
+                    for(int index = 1; index < sym.getChildCount(); index++){
+                        if(sym.getChild(index).getSpan(seq).getStart() < symStart) {
+                            counter = index;
+                        }
+                    }
+                } else {
+                    for(int index = 1; index < sym.getChildCount(); index++){
+                        if(sym.getChild(index).getSpan(seq).getStart() > symStart) {
+                            counter = index;
+                        }
+                    }
+                }
+            }
+            collectStartSpans(sym.getChild(counter), seq, leafs);
+        }  
+    }
+    
     /**
      * Get a list of Start-Spans (exluding Soft-clippings)
      * @param sym

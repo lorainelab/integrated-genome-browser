@@ -1,5 +1,7 @@
 # Integrated Genome Browser
 
+## Release Branch release-9.0.2
+
 The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and highly interactive desktop genome browser ideal for exploring and understanding large-scale data sets from genomics. Originally developed at Affymetrix, IGB is now open source software. 
 
 IGB is also an extensible visual analytics platform. Developers can use IGB to create new interactive visualizations and visual analysis functions called IGB Apps.

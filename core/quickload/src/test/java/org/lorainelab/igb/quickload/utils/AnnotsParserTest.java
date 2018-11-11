@@ -11,7 +11,7 @@ import org.junit.Test;
  */
 public class AnnotsParserTest {
 
-    @Test
+    //@Test
     public void filesTagAsRoot() throws IOException {
         AnnotsParser parser = new AnnotsParser();
 //        Assert.assertEquals(3, parser.getQuickloadFileList(reader).size());

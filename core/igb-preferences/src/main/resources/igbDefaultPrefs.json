@@ -6,7 +6,7 @@
                 "name": "RNA-Seq",
                 "url": "http://igbquickload.org/rnaseq",
                 "loadPriority": "0",
-                "mirror": "http://quickload.bioviz.org/rnaseq"
+                "mirror": "http://quickload.bioviz.org/rnaseq",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:2"
             },
             {

@@ -24,9 +24,9 @@ public class QuickloadDataProviderTest {
     @BeforeClass
     public static void setup() throws InterruptedException {
         GenomeVersion genomeVersion = new GenomeVersion("Quickload sample");
-        dataProvider = new QuickloadDataProvider("http://igbquickload.org/", "igbquickload", 1);
+        dataProvider = new QuickloadDataProvider("http://igbquickload.org/quickload", "igbquickload", 1);
         Thread.sleep(1000);
-        dataProvider.setMirrorUrl("http://bioviz.org/quickload/");
+        dataProvider.setMirrorUrl("http://quickload.bioviz.org/quickload/");
         version = new GenomeVersion("A_thaliana_Jun_2009");
         dataProvider.initialize();
     }
@@ -62,7 +62,7 @@ public class QuickloadDataProviderTest {
     @Test
     public void checkMirrorUrl() {
         assertTrue(dataProvider.getMirrorUrl().isPresent());
-        assertTrue(dataProvider.getMirrorUrl().get().equals("http://bioviz.org/quickload/"));
+        assertTrue(dataProvider.getMirrorUrl().get().equals("http://quickload.bioviz.org/quickload/"));
     }
 
 }

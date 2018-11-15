@@ -17,7 +17,7 @@ public class QuickloadUtilsTest {
 
     @Test
     public void contentsTxtParserTest() throws IOException, URISyntaxException {
-        Assert.assertTrue(CharStreams.toString(new InputStreamReader(getInputStream(new URI("http://igbquickload.org/contents.txt")))).contains("A_thaliana_Jun_2009"));
+        Assert.assertTrue(CharStreams.toString(new InputStreamReader(getInputStream(new URI("http://quickload.bioviz.org/quickload/contents.txt")))).contains("A_thaliana_Jun_2009"));
     }
 
 }

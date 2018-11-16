@@ -117,7 +117,6 @@ public abstract class ErrorHandler implements DisplaysError {
     private static void errorPanel(final String title, String message, final List<Throwable> errs,
             final List<GenericAction> actions,
             Level level) {
-        LOG.warn("Cannot open file: Could not load index file for file:/home/dcnorris/Downloads/cold_control.mm.bam. An index file is required for BAM files.");
         errs.stream().forEach(error -> LOG.warn(error.getMessage(), error));
         displayHandler.showError(title, message, actions, level);
     }

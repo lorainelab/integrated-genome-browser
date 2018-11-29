@@ -84,7 +84,7 @@ public class BigWigSymLoader extends SymLoader {
     }
 
     private void initbbReader() {
-        String uriString = GeneralUtils.fixFileName(uri.toString());
+        String uriString = GeneralUtils.URLDecode(uri.toString());
         try {
             bbReader = new BBFileReader(uriString, SeekableStreamFactory.getInstance().getStreamFor(uriString));
         } catch (IOException x) {

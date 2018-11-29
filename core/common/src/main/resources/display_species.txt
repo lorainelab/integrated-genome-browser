@@ -17,8 +17,8 @@ E_coli_K12-MG1655.png
 C_elegans.png
 D_rerio.png
 S_cerevisiae.png
-D_melanogaster.png
 M_musculus.png
+D_melanogaster.png
 H_sapiens.png
 A_thaliana.png
 O_sativa_japonica.png

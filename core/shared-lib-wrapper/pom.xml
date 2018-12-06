@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.0.2</version>
+        <version>9.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>shared-lib-wrapper</artifactId>
@@ -208,7 +208,11 @@
                                     <artifactId>logback-classic</artifactId>
                                     <version>1.1.2</version>
                                 </artifactItem>
-
+                                <artifactItem>
+                                    <groupId>htsjdk-igb</groupId>
+                                    <artifactId>htsjdk-igb</artifactId>
+                                    <version>${htsjdk-igb-Version}</version>
+                                </artifactItem>
                                 <!-- Start of development only bundles (i.e. they will not be included in main pom for igb_exe.jar)-->
                                 <artifactItem>
                                     <groupId>org.apache.felix</groupId>

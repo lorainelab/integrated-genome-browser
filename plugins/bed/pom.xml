@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.0.2</version>
+        <version>9.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -93,7 +93,7 @@
         <dependency>
             <groupId>htsjdk-igb</groupId>
             <artifactId>htsjdk-igb</artifactId>
-            <version>2.16.1</version>
+            <version>2.16.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

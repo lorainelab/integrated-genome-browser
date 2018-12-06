@@ -785,13 +785,15 @@ public final class LocalUrlCacher {
 
                     if (url_reachable) {
                         return reachable_url;
+                    }else{
+                        logger.error("URL ({}) cannot be reached HTTP Status {}",urlString,http_status);
                     }
                 } else {
                     return urlString;
                 }
 
             } catch (Exception ex) {
-                logger.error(ex.getMessage(), ex);
+                logger.error("URL "+urlString+ "cannot be reached -->"+ex.getMessage(), ex);
             } finally {
                 GeneralUtils.safeClose(istr);
             }

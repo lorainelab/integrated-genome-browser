@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>igb-project</artifactId>
-    <version>9.0.2</version>
+    <version>9.1.0</version>
     <packaging>pom</packaging>
 
     <name>IGB Project</name>
@@ -45,7 +45,7 @@
         <commonsCodecVersion>1.6</commonsCodecVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
         <igb-picard-version>1.111</igb-picard-version>
-        <htsjdk-igb-Version>2.16.1</htsjdk-igb-Version>
+        <htsjdk-igb-Version>2.16.2</htsjdk-igb-Version>
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
         <slf4j-version>1.7.7</slf4j-version>

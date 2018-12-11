@@ -151,6 +151,38 @@ public class SeqUtils {
     }
 
     /**
+     * Get a list of Start-Spans (exluding Soft-clippings)
+     * @param sym
+     * @param seq
+     * @param leafs
+     * 
+     * Populate the passed list with Start-spans
+     * **/
+    public static void collectStartSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs) {
+    	SeqSymmetry parent = sym;
+    	SeqSymmetry symsContainer = sym;
+    	while(sym.getChildCount()>0) {	//get to the last level
+    		symsContainer = parent;
+    		parent=sym;
+    		sym=sym.getChild(0);
+    	}
+    	int length = symsContainer.getChildCount();
+    	
+    	for (int i = 0; i < length; i++) {
+    		addAsStartSpan(symsContainer.getChild(i), seq, leafs);
+        }
+    }
+    private static void  addAsStartSpan(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs) {
+    	while(sym.getChildCount()>0) {
+    		sym=sym.getChild(0);
+    	}
+    	SeqSpan span = sym.getSpan(seq);
+        if (span != null) {
+            leafs.add(span);
+        }
+    }
+    
+    /**
      * Get symmetries that are leaves of the given symmetry.
      *
      * @param sym

@@ -23,7 +23,7 @@ public class StartDepthOperator extends AbstractAnnotationTransformer implements
 
     @Override
     public SeqSymmetry operate(BioSeq aseq, List<SeqSymmetry> symList) {
-        return SeqSymSummarizer.getSymmetryStartSummary(symList, aseq, false, null, 2);
+        return SeqSymSummarizer.getSymmetryStartSummary(symList, aseq, false, null);
     }
 
     @Override

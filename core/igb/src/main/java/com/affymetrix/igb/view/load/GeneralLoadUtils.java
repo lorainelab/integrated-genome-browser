@@ -44,6 +44,7 @@ import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BAM_EXT;
@@ -82,6 +83,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipInputStream;
 import javax.swing.JLabel;
@@ -1056,6 +1058,12 @@ public final class GeneralLoadUtils {
                     } else {
                         ModalUtils.infoPanel(DataSet.LOAD_WARNING_MESSAGE,
                                 DataSet.show_how_to_load, DataSet.default_show_how_to_load);
+                        //IGBF-1509 : Check if genome sequence is loaded, if not give a warning message 
+                        BioSeq aseq = gmodel.getSelectedSeq().orElse(null);
+                        if(aseq!= null && aseq.getTypeList().isEmpty())                         
+                                ModalUtils.infoPanel(DataSet.NO_GENOME_WARNING_MESSAGE,
+                                DataSet.show_how_to_load, DataSet.default_show_how_to_load);
+                        //IGBF-1509 end
                     }
                 }
             }

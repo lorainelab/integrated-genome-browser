@@ -11,7 +11,6 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
-import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileDropHandler;
 import com.affymetrix.genometry.util.FileTracker;
@@ -28,7 +27,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
 import org.lorainelab.igb.javafx.FileChooserUtil;
@@ -106,8 +104,8 @@ public final class LoadFileAction extends OpenURIAction {
         if (!all_known_types.accept(new File(friendlyName))) {
             return false;
         }
-
         openURI(uri, friendlyName, mergeSelected, genomeVersion, genomeVersion.getSpeciesName(), false);//Always load as track
+
         return true;
     }
 

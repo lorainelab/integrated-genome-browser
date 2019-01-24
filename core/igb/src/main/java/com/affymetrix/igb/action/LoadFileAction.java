@@ -106,7 +106,9 @@ public final class LoadFileAction extends OpenURIAction {
         if (!all_known_types.accept(new File(friendlyName))) {
             return false;
         }
+
         openURI(uri, friendlyName, mergeSelected, genomeVersion, genomeVersion.getSpeciesName(), false);//Always load as track
+
         return true;
     }
 

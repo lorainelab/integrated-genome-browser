@@ -106,26 +106,7 @@ public final class LoadFileAction extends OpenURIAction {
         if (!all_known_types.accept(new File(friendlyName))) {
             return false;
         }
-        List<String> supportedExtensions = OpenURIAction.getSupportedFiles(FileTypeCategory.Sequence).stream()
-                .flatMap(filter -> filter.getExtensions().stream())
-                .map(ext -> "*." + ext).collect(Collectors.toList());
-        
-        //IGBF-1312 start: conditions to load genome sequence 
-        boolean isReferenceSequence = false;
-        String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
-        GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
-        
-        if (SELECT_SPECIES.equals(speciesName) && loadGroup == null) { //check if genome is not selected
-            
-            if(supportedExtensions.contains("*."+friendlyName.split("\\.")[1])) { 
-               //if the file is of supported extension assuming the genome sequence the available  
-               isReferenceSequence = true;
-            }
-        }
-        // For unsupported file extensions reference genome sequence will be not available or be loaded from selected genome
-        openURI(uri, friendlyName, mergeSelected, genomeVersion, genomeVersion.getSpeciesName(), isReferenceSequence);//Always load as track
-        //IGBF-1312 end
-              
+        openURI(uri, friendlyName, mergeSelected, genomeVersion, genomeVersion.getSpeciesName(), false);//Always load as track
         return true;
     }
 

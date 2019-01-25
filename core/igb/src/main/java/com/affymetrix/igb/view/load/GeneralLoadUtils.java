@@ -1304,7 +1304,11 @@ public final class GeneralLoadUtils {
                     loadSymLoader.loadAndAddAllSymmetries(dataSet);
                 } catch (Exception ex) {
                     LOG.error(ex.getMessage(), ex);
-                    removeFeatureAndRefresh(dataSet, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
+                    String message = "IGB is unable to load the data in your file. One problem might be that the file format does not match IGB expectations. <br>More information about what went wrong may be available in the Console. To get help, visit the ";
+                    String linkName = "IGB Help Page";
+                    String link = "https://bioviz.org/help.html";
+                    removeFeatureAndRefresh(dataSet, message, linkName, link);
+                    //removeFeatureAndRefresh(dataSet, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
                 }
                 return null;
             }

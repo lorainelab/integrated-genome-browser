@@ -69,7 +69,7 @@ import java.util.Map.Entry;
 public class FindJunctionOperator extends AbstractAnnotationTransformer implements Operator, IParameters, Style {
 
     public static final String COMPONENT_NAME = "FindJunctionOperator";
-    public static final String FLANK = "flank";
+    public static final String FLANK = "Enter minimum number of bases required to align on each side of the intron/junction:";
 
     /**
      * TopHat style flanking makes the junction flanks as long as the largest

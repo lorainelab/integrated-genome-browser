@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 public class TopHatFindJunctionOperator extends AbstractAnnotationTransformer implements Operator, IParameters, Style {
 
     public static final String COMPONENT_NAME = "TopHatFindJunctionOperator";
-    public static final String THRESHOLD = "threshold";
+    public static final String THRESHOLD = "Enter minimum number of bases required to align on each side of the intron/junction:";
     /**
      * TopHat style flanking makes the junction flanks as long as the largest
      * length of extrons from each side of a qualified intron.

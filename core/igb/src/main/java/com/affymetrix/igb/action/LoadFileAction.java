@@ -27,6 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.swing.TransferHandler;
@@ -170,23 +171,25 @@ public final class LoadFileAction extends OpenURIAction {
         }
         List<File> files = null;
         Optional<List<File>> selectedFiles;
-        if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
-            selectedFiles = FileChooserUtil.build().setContext(currDir).retrieveFilesFromFxChooser();
-            if (selectedFiles.isPresent()) {
-                files = selectedFiles.get();
-            }
-        } else {
-            ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"),
-                    BUNDLE.getString("noGenomeSelectedMessage"), Level.INFO);
+        selectedFiles = FileChooserUtil.build().setContext(currDir).retrieveFilesFromFxChooser();
+        if (selectedFiles.isPresent()) {
+            files = selectedFiles.get();
         }
         if (files == null || files.isEmpty()) {
             return;
         }
         load_dir_tracker.setFile(files.get(0).getParentFile());
-        for (File file : files) {
-            URI uri = file.toURI();
-            openURI(uri, file.getName(), true, loadGroup, speciesName, false);
+        if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
+            for (File file : files) {
+                URI uri = file.toURI();
+                openURI(uri, file.getName(), true, loadGroup, speciesName, false);
+            }
+        } else { 
+            ((FileDropHandler) fdh).openFileAction(files);             
         }
+        
+        
+        
     }
 
     @Override

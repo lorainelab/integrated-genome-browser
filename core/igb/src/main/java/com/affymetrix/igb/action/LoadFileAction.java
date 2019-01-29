@@ -27,7 +27,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.swing.TransferHandler;
@@ -171,6 +170,7 @@ public final class LoadFileAction extends OpenURIAction {
         }
         List<File> files = null;
         Optional<List<File>> selectedFiles;
+        //IGBF-1509 :  Open File... should work if no genome available
         selectedFiles = FileChooserUtil.build().setContext(currDir).retrieveFilesFromFxChooser();
         if (selectedFiles.isPresent()) {
             files = selectedFiles.get();
@@ -187,7 +187,7 @@ public final class LoadFileAction extends OpenURIAction {
         } else { 
             ((FileDropHandler) fdh).openFileAction(files);             
         }
-        
+        //IGBF-1509 end
         
         
     }

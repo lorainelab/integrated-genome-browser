@@ -218,9 +218,11 @@ public final class GeneralLoadView {
                         && !Thread.currentThread().isInterrupted()) {
                     if (!tryFull) {
                         if (show_error_panel) {
-                            ErrorHandler.errorPanel("Couldn't load partial sequence", "Couldn't locate the partial sequence.  Try loading the full sequence.", Level.INFO);
+                            //IGBF-1312 start : Improve error message in case genome is not available
+                            ErrorHandler.errorPanel("A genome sequence has not been selected", "A genome sequence has not been selected. Loading sequence data is not possible.", Level.INFO);
                         }
-                        Logger.getLogger(GeneralLoadViewGUI.class.getName()).log(Level.WARNING, "Unable to load partial sequence");
+                        Logger.getLogger(GeneralLoadViewGUI.class.getName()).log(Level.WARNING, "A genome sequence has not been selected");
+                        //IGBF-1312 end
                         return false;
                     } else {
                         SimpleSeqSpan simpleSeqSpan = new SimpleSeqSpan(0, viewspan.getLength(), viewspan.getBioSeq());

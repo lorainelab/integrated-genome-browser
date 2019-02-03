@@ -138,6 +138,7 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -175,6 +176,7 @@ import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
 import org.lorainelab.igb.menu.api.model.AnnotationContextEvent;
 import org.lorainelab.igb.menu.api.model.ContextMenuItem;
 import static org.lorainelab.igb.menu.api.util.MenuUtils.convertContextMenuItemToJMenuItem;
+import org.lorainelab.igb.menu.api.model.MenuItem;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -1822,6 +1824,7 @@ public class SeqMapView extends JPanel
                                     jMenu.setText(menuItem.getMenuLabel());
                                     menuItem.getSubMenuItems()
                                             .stream()
+                                            .sorted(Comparator.comparing(MenuItem::getMenuLabel)) //Sorting the menuitems before converting them to JMenuItems
                                             .map(contextMenuItem -> convertContextMenuItemToJMenuItem(contextMenuItem))
                                             .forEach(jMenuItem -> {
                                                 jMenu.add(jMenuItem);

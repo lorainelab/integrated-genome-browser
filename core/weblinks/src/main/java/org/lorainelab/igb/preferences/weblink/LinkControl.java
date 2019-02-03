@@ -112,6 +112,7 @@ public class LinkControl implements AnnotationContextMenuProvider {
             name = "Search Web";
             ContextMenuItem parentContextMenu = new ContextMenuItem(name, childMenuItems);
             parentContextMenu.setMenuSection(ContextMenuSection.INFORMATION);
+            parentContextMenu.setWeight(1); // Setting weight=1 to keep the main menu consistent
             try (InputStream resourceAsStream = LinkControl.class.getClassLoader().getResourceAsStream(SEARCH_WEB_ICONPATH)) {
                 parentContextMenu.setMenuIcon(new MenuIcon(resourceAsStream));
             } catch (Exception ex) {

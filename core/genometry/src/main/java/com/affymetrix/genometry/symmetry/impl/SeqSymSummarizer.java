@@ -538,7 +538,7 @@ public final class SeqSymSummarizer {
             return getSpanStartSummary(leaf_spans, binary_depth, id);
         }
     }
-
+    
     /**
      * GetSpanSummary. General idea is that this will make getUnion(),
      * getIntersection(), etc. easier and more efficient.

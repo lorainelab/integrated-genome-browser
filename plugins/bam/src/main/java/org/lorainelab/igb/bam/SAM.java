@@ -36,6 +36,7 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
+import java.util.Iterator;
 
 /**
  *
@@ -165,7 +166,12 @@ public class SAM extends XAM implements LineProcessor {
                 iter.close();
             }
             if (!errList.isEmpty()) {
-                ErrorHandler.errorPanel("SAM exception", "Ignoring " + errList.size() + " records", errList, Level.WARNING);
+                Iterator<Throwable> error = errList.iterator();
+                String errMessage = "";
+                while(error.hasNext()) {
+                    errMessage += error.next() +"<br>";
+                }
+                ErrorHandler.errorPanel("SAM exception", errMessage +"<br>Ignoring " + errList.size() + " records <br>", errList, Level.WARNING);
             }
         }
     }

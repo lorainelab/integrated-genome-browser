@@ -148,7 +148,10 @@ public abstract class ErrorHandler implements DisplaysError {
             }
         });
         JScrollPane scroller = new JScrollPane(text);
-        scroller.setPreferredSize(new java.awt.Dimension(500, 200));
+        if(helpMessage.length() >500)
+            scroller.setPreferredSize(new java.awt.Dimension(500, 200)); 
+        else 
+            scroller.setPreferredSize(new java.awt.Dimension(400, 100));
         return scroller;
     }
 

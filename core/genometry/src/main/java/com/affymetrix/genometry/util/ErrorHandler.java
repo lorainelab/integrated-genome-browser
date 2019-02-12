@@ -127,7 +127,7 @@ public abstract class ErrorHandler implements DisplaysError {
     }
 
     private static JScrollPane makeScrollPane(String message) {
-        // Add a link to hel page in case of error while loading a file
+        // Add a link to help page in case of error while loading a file
         String linkName = "IGB Help Page";
         String link = "https://bioviz.org/help.html";
         String helpMessage = message+"<br>More information about what went wrong may be available in the Console. <br>To get help, visit the <a href=" + link +">" + linkName +"</a>.";

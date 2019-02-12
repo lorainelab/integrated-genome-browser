@@ -93,7 +93,10 @@ public class ModalUtils {
     
     // It show hyperlink in the JOptionPan. inputs are message, linkName and link
     public static boolean confirmPanel(String message,String linkName,String link) {
-        JEditorPane jep = new JEditorPane("text/html", message + "<a href=" + link +">" + linkName +"</a>. <br><br> Would you like to remove this file from the list?");
+        //IGBF-1518 : Change font of message to Arial
+        JEditorPane jep = new JEditorPane("text/html", "<body style=\"font-family:Arial, Helvetica, sans-serif;\">"+ 
+                message + "<a href=" + link +">" + linkName +"</a>. <br><br> Would you like to remove this file from the list? </body>");
+        //IGBF-1518 end
         jep.setEditable(false);
         jep.setOpaque(false);
         jep.addHyperlinkListener(new HyperlinkListener() {

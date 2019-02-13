@@ -61,6 +61,7 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
     public static final String TAB_NAME = BUNDLE.getString("dataSourceTabName");
     private static final int TAB_POSITION = 4;
     private static final Icon REFRESH_ICON = CommonUtils.getInstance().getIcon("16x16/actions/refresh.png");
+    private static final Icon INFO_ICON = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
     private static final String SERVER_CREDENTIALS = BUNDLE.getString("serverCredentials");
     private final String EDIT_DATA_SOURCE = BUNDLE.getString("editDataSource");
     private final String ADD_DATA_SOURCE = BUNDLE.getString("addDataSource");
@@ -251,6 +252,11 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
                 case Type:
                     column.setPreferredWidth(40);
                     break;
+                case Info:
+                    column.setMaxWidth(20);
+                    column.setCellRenderer(getInfoRenderer());
+                    column.setCellEditor(new ButtonTableCellEditor(INFO_ICON));
+                    break;
             }
         });
         dataSourcesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -265,6 +271,21 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         authBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1 && dataSourcesTable.isCellEditable(dataSourcesTable.getSelectedRow(), 1));
         editBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1 && dataSourcesTable.isCellEditable(dataSourcesTable.getSelectedRow(), 1));
         removeBtn.setEnabled(dataSourcesTable.getSelectedRowCount() == 1 && dataSourcesTable.isCellEditable(dataSourcesTable.getSelectedRow(), 1));
+    }
+
+
+    private TableCellRenderer getInfoRenderer(){
+        TableCellRenderer infoRenderer = new LabelTableCellRenderer(INFO_ICON,true){
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col)
+            {
+                int modelRow = table.convertRowIndexToModel(row);
+                int enabledColumnIndex = dataProviderTableModel.getColumnIndex(DataProviderTableColumn.Enabled);
+                this.setEnabled((Boolean) dataProviderTableModel.getValueAt(modelRow, enabledColumnIndex));
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+            }
+        };
+        return infoRenderer;
     }
 
     private TableCellRenderer getRefreshRenderer() {
@@ -360,9 +381,14 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
 
         DefaultTableCellRenderer renderer;
         DefaultTableCellRenderer iconRenderer;
+        DefaultTableCellRenderer infoIconRenderer;
 
         public HeaderRenderer(JTable dataSourcesTable) {
             renderer = (DefaultTableCellRenderer) dataSourcesTable.getTableHeader().getDefaultRenderer();
+            infoIconRenderer = new DefaultTableCellRenderer();
+            infoIconRenderer.setIcon(INFO_ICON);
+            infoIconRenderer.setToolTipText("Click to show internal properties for this data source");
+            infoIconRenderer.setHorizontalAlignment(JLabel.CENTER);
             iconRenderer = new DefaultTableCellRenderer();
             iconRenderer.setIcon(REFRESH_ICON);
             iconRenderer.setHorizontalAlignment(JLabel.CENTER);
@@ -373,6 +399,9 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
             if (col == 0) {
                 return iconRenderer;
+            }
+            else  if(col == 5){
+                return infoIconRenderer;
             }
             return renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
         }

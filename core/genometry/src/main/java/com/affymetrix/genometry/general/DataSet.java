@@ -33,9 +33,6 @@ public final class DataSet {
     public static final String REFERENCE_SEQUENCE_LOAD_MESSAGE = GenometryConstants.BUNDLE.getString("howToLoadReferenceSequence");
     public static final String show_how_to_load = GenometryConstants.BUNDLE.getString("show_how_to_load");
     public static final boolean default_show_how_to_load = true;
-    //IGBF-1509 : Fetch no_genome_select message from properties file
-    public static final String NO_GENOME_WARNING_MESSAGE = GenometryConstants.BUNDLE.getString("noGenomeSelectedMessage");
-    //IGBF-1509 end
 
     private static final String WHOLE_GENOME = "Whole Sequence";
 

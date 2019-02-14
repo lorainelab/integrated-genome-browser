@@ -13,6 +13,10 @@ import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.OKAction;
 import com.affymetrix.genometry.event.ReportBugAction;
 import java.awt.Component;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,13 +127,31 @@ public abstract class ErrorHandler implements DisplaysError {
     }
 
     private static JScrollPane makeScrollPane(String message) {
+        // Add a link to help page in case of error while loading a file
+        String linkName = "IGB Help Page";
+        String link = "https://bioviz.org/help.html";
+        String helpMessage = message+"<br>More information about what went wrong may be available in the Console. <br>To get help, visit the <a href=" + link +">" + linkName +"</a>.";
+        
         JTextPane text = new JTextPane();
-        text.setContentType("text/plain");
-        text.setText(message);
+        text.setContentType("text/html");
+        text.setText("<font style=\"font-family:Arial, Helvetica, sans-serif;\" size=\"3\">"+helpMessage+"</font>");
         text.setEditable(false);
         text.setCaretPosition(0); // scroll to the top
+        text.addHyperlinkListener((HyperlinkEvent hle) -> {
+            if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
+                try {
+                    Desktop.getDesktop().browse(new URI(link));
+                }
+                catch (IOException | URISyntaxException e1) {
+                    LOG.error(null, e1);
+                }
+            }
+        });
         JScrollPane scroller = new JScrollPane(text);
-        scroller.setPreferredSize(new java.awt.Dimension(400, 100));
+        if(helpMessage.length() >500)
+            scroller.setPreferredSize(new java.awt.Dimension(500, 200)); 
+        else 
+            scroller.setPreferredSize(new java.awt.Dimension(400, 100));
         return scroller;
     }
 

@@ -1069,12 +1069,6 @@ public final class GeneralLoadUtils {
                     } else {
                         ModalUtils.infoPanel(DataSet.LOAD_WARNING_MESSAGE,
                                 DataSet.show_how_to_load, DataSet.default_show_how_to_load);
-                        //IGBF-1509 : Check if genome sequence is loaded, if not give a warning message 
-                        BioSeq aseq = gmodel.getSelectedSeq().orElse(null);
-                        if(aseq!= null && aseq.getTypeList().isEmpty())                         
-                                ModalUtils.infoPanel(DataSet.NO_GENOME_WARNING_MESSAGE,
-                                DataSet.show_how_to_load, DataSet.default_show_how_to_load);
-                        //IGBF-1509 end
                     }
                 }
             }

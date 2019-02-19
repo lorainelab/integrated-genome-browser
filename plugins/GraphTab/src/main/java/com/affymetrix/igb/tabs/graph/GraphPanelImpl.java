@@ -239,6 +239,9 @@ public class GraphPanelImpl extends GraphPanel implements Selections.RefreshSele
                     case HEAT_MAP:
                         getGraphStyleHeatMapRadioButton().setSelected(true);
                         break;
+                    case FILL_BAR_GRAPH:
+                        getGraphStyleFilledBarRadioButton().setSelected(true);
+                        break;
                 }
             }
         } else {

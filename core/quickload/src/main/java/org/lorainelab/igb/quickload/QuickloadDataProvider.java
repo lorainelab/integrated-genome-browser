@@ -250,7 +250,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
 
     @Override
     public Optional<String> getPrimaryLinkoutUrl() {
-        return Optional.of(url);
+        return Optional.of(useMirror?mirrorUrl:url); //IGBF-1503/IGBF-1504: Using the flag to determine if the mirror site is being used.
     }
 
     @Override
@@ -261,7 +261,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
             	if (Stream.of("http://","https://","file://","ftp://").anyMatch(protocol->linkoutUrl.startsWith(protocol))) {
                     return Optional.<String>of(linkoutUrl);
                 } else {
-                    return Optional.<String>of(toExternalForm(url) + linkoutUrl);
+                    return Optional.<String>of(toExternalForm(useMirror?mirrorUrl:url) + linkoutUrl); //IGBF-1503/IGBF-1504: Using the flag to determine if the mirror site is being used.
                 }
             }
         }

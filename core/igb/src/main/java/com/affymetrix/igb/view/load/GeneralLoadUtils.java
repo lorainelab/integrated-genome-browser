@@ -998,14 +998,25 @@ public final class GeneralLoadUtils {
 
             @Override
             protected Boolean runInBackground() {
+                String message = "IGB is unable to load the data in your file.";
+                String helpMessage ="<br>More information about what went wrong may be available in the Console. To get help, visit the ";
+                String linkName = "IGB Help Page";
+                String link = "https://bioviz.org/help.html";
                 try {
                     for (BioSeq seq : dataSet.getSymL().getChromosomeList()) {
                         loadGroup.addSeq(seq.getId(), seq.getLength(), dataSet.getSymL().uri.toString());
                     }
                     return true;
-                } catch (Exception ex) {
+                } catch (NumberFormatException nfe) {
+                    ((QuickLoadSymLoader) dataSet.getSymL()).logException(nfe); 
+                   
+                    featureRemoved = removeFeatureAndRefresh(dataSet, message + "The input string "+nfe.getMessage().split(":")[1]+" should be numberic. " +helpMessage, linkName, link);
+                    return featureRemoved;
+                    
+                }catch (Exception ex) {
                     ((QuickLoadSymLoader) dataSet.getSymL()).logException(ex);
-                    featureRemoved = removeFeatureAndRefresh(dataSet, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
+                    
+                    featureRemoved = removeFeatureAndRefresh(dataSet, message+ex.getMessage()+helpMessage, linkName, link);
                     return featureRemoved;
                 }
 
@@ -1061,6 +1072,14 @@ public final class GeneralLoadUtils {
             }
         };
         CThreadHolder.getInstance().execute(dataSet, worker);
+    }
+    
+    private static boolean removeFeatureAndRefresh(DataSet gFeature, String msg, String linkName, String link) {
+        if (ModalUtils.confirmPanel(msg,linkName,link)) {
+            GeneralLoadView.getLoadView().removeDataSet(gFeature, true);
+            return true;
+        }
+        return false;
     }
 
     private static boolean removeFeatureAndRefresh(DataSet gFeature, String msg) {
@@ -1293,7 +1312,11 @@ public final class GeneralLoadUtils {
                     loadSymLoader.loadAndAddAllSymmetries(dataSet);
                 } catch (Exception ex) {
                     LOG.error(ex.getMessage(), ex);
-                    removeFeatureAndRefresh(dataSet, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
+                    String message = "IGB is unable to load the data in your file. One problem might be that the file format does not match IGB expectations. <br>More information about what went wrong may be available in the Console. To get help, visit the ";
+                    String linkName = "IGB Help Page";
+                    String link = "https://bioviz.org/help.html";
+                    removeFeatureAndRefresh(dataSet, message, linkName, link);
+                    //removeFeatureAndRefresh(dataSet, "Unable to load data set for this file. \nWould you like to remove this file from the list?");
                 }
                 return null;
             }

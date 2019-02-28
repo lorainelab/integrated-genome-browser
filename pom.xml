@@ -149,6 +149,7 @@
         <module>plugins/narrowpeak</module>
         <module>plugins/bed</module>
         <module>plugins/bam</module>
+        <module>plugins/AppStore</module>
     </modules>
 
     <profiles>
@@ -616,6 +617,12 @@
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>bam</artifactId>
                 <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lorainelab.igb</groupId>
+                <artifactId>appstore</artifactId>
+                <version>${project.parent.version}</version>
+                <scope>provided</scope>
             </dependency>
             <!--End of plugin module dependencies-->
             

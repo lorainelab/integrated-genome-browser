@@ -162,7 +162,7 @@ public class BundleInfoManager {
         }
     }
 
-    Bundle getLatestBundle(Bundle bundle) {
+    public Bundle getLatestBundle(Bundle bundle) {
         if (isUpdateable(bundle)) {
             List<Bundle> updateableVersions = repositoryManagedBundles.stream()
                     .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName()))
@@ -177,7 +177,7 @@ public class BundleInfoManager {
         return bundle;
     }
 
-    String getBundleVersion(Bundle bundle) {
+    public String getBundleVersion(Bundle bundle) {
         Optional<Bundle> installedBundleMatch = Arrays.asList(bundleContext.getBundles()).stream().filter(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName())).findFirst();
         if (installedBundleMatch.isPresent()) {
             return installedBundleMatch.get().getVersion().toString();

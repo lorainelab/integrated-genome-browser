@@ -342,6 +342,11 @@
             <artifactId>bam</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>appstore</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!--End of plugin module dependencies--> 
         <dependency> 
             <groupId>com.jidesoft</groupId>

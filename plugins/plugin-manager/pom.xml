@@ -149,7 +149,7 @@
                 <configuration>
                     <instructions>    
                         <Import-Package>*</Import-Package>
-                        <Export-Package/>                        
+                        <Export-Package>org.lorainelab.igb.plugin.manager.*</Export-Package>
                         <Bundle-Description>An IgbTabPanel for managing OSGi OBR repositories for installing IGB plugins</Bundle-Description>
                         <Service-Component>*</Service-Component>
                     </instructions>

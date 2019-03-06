@@ -561,4 +561,14 @@ public class AppManagerFxPanel extends JFXPanel {
             updateWebContent();
         });
     }
+    //IGBF-1608 : Update the installation status in the Local App Store
+    /**
+     * This method will return the list of Apps available in IGB to the Web App Manager
+     * 
+     * @return ListView<PluginListItemMetaData>
+     */
+    public ListView<PluginListItemMetadata> getListView() {
+        return listView;
+    }
+    //IGBF-1608 : end
 }

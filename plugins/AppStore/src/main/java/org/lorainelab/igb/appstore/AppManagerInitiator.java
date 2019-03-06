@@ -3,24 +3,21 @@ package org.lorainelab.igb.appstore;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import org.lorainelab.igb.services.IgbService;
 import org.osgi.framework.BundleContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kkorey
  */
-@Component(immediate = true, provide = {AppManagerInitiator.class})
+//@Component(immediate = true, provide = {AppManagerInitiator.class})
 public class AppManagerInitiator {
-
-    private IgbService igbService;
-    private BundleContext bundleContext;
+/**
+    
     private WebAppManager webAppManager;
-
-    @Reference
-    public void setIgbService(IgbService igbService) {
-        this.igbService = igbService;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(AppManagerInitiator.class);
 
     @Reference
     public void setWebAppManager(WebAppManager webAppManager) {
@@ -29,11 +26,12 @@ public class AppManagerInitiator {
 
     @Activate
     public void activate(BundleContext context) {
-        this.bundleContext = context;
         //TODO: Get the port from config file
-        SimpleAppMangerServer.setServerPort("7086");
-        SimpleAppMangerServer.init(igbService,webAppManager);
+        logger.info("activate START");
+        //IgbAppServerLauncher.setServerPort("7090");
+        logger.info(webAppManager.toString());
+        IgbAppServerLauncher.startServer(webAppManager);
+        logger.info("activate DONE");
     }
-
-
+*/
 }

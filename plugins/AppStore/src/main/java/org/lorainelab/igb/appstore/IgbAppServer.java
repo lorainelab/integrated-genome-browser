@@ -80,6 +80,7 @@ class IgbAppServer extends NanoHTTPD {
             case INSTALL_APP:
                 logger.info("contextRoot: {}",contextRoot);
                 response = installApp(session);
+                break; //IGBF-1608 : Add break statement to prevent getting default message always
             default:
                 response = new Response("Igb is running.");
                 response.setStatus(Response.Status.OK);
@@ -103,10 +104,17 @@ class IgbAppServer extends NanoHTTPD {
         
         if(StringUtils.isNotBlank(queryParams.get("symbolicName"))) {
             String symbolicName = queryParams.get("symbolicName");
-            webAppManager.installApp(symbolicName); // how to check that it worked?
-            String outcome = String.format("Installed %s",symbolicName);
-            toReturn = new Response(outcome);
-            toReturn.setStatus(Response.Status.OK);
+            boolean isAppInstalled = webAppManager.installApp(symbolicName); // how to check that it worked?
+            //IGBF-1608 : Send more informative response to the app installation request
+            if(isAppInstalled) {
+                String outcome = String.format("Installed %s",symbolicName);
+                toReturn = new Response(outcome);
+                toReturn.setStatus(Response.Status.OK);
+            } else {
+                toReturn = new Response("App not found");
+                toReturn.setStatus(Response.Status.NOT_FOUND);
+            }
+            //IGBF-1608 : end
         }
         else {
             toReturn = new Response("No symbolic name.");

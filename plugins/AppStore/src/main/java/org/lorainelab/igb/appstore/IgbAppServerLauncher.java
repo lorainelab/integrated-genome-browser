@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.SwingUtilities;
 import java.io.IOException;
 import org.osgi.framework.BundleContext;
+import org.lorainelab.igb.plugin.manager.service.PluginManagerService;
 
 /**
  * Launches IgbAppServer in a new thread to avoid blocking GUI. 
@@ -36,23 +37,22 @@ import org.osgi.framework.BundleContext;
  * Question: Do we really need to pass App version to REST endpoint for
  * everything to work properly? Maybe not.
  */
-@Component(immediate=true)
+@Component(immediate=true, provide = {IgbAppServerLauncher.class})
 public final class IgbAppServerLauncher {
 
     private static final Logger logger = LoggerFactory.getLogger(IgbAppServerLauncher.class);
 
     // injected by service component run-time (SCR)
-    WebAppManager webAppManager;
+    //    WebAppManager webAppManager;
+    PluginManagerService pluginManagerService;
     
-    /**
-     * Lets the SCR know that this Component requires one of these.
-     * @param webAppManager 
-     */
+    
     @Reference
-    private void setWebAppManager(WebAppManager webAppManager) {
-        this.webAppManager = webAppManager;
+    private void setPluginManagerService(PluginManagerService pluginManagerService) {
+        logger.info("setPlugingManagerService START");
+        this.pluginManagerService = pluginManagerService;
+        logger.info("setPluginManagerService DONE");
     }
-    
     
     /**
      * Invoked when the SCR container starts the bundle. The above Component
@@ -62,11 +62,9 @@ public final class IgbAppServerLauncher {
      */
     @Activate
     public void activate(BundleContext context) {
-        //TODO: Get the port from config file
         logger.info("activate START");
-        //IgbAppServerLauncher.setServerPort("7090");
-        logger.info(webAppManager.toString());
-        startServer(webAppManager);
+        logger.info(pluginManagerService.toString());
+        startServer(pluginManagerService);
         logger.info("activate DONE");
     }
     
@@ -81,11 +79,11 @@ public final class IgbAppServerLauncher {
      * an interface, not implementation. If we do this properly, we can easily
      * test just the methods of this bundle. 
      */
-    protected static void startServer(WebAppManager webAppManager) {
+    protected static void startServer(PluginManagerService pluginManagerService) {
         Runnable r;
         r = () -> {
             IgbAppServer server = new IgbAppServer();
-            server.setWebAppManager(webAppManager);
+            server.setPluginManagerService(pluginManagerService);
             //server.setWebApp(webApp);
             try {
                 server.start();

@@ -6,9 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
 
-// OSGi dependency injection annotations
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.lorainelab.igb.plugin.manager.service.PluginManagerService;
 
 /**
  * HTTP server that implements REST services for installing IGB Apps.
@@ -30,15 +28,21 @@ class IgbAppServer extends NanoHTTPD {
     private static final Logger logger = LoggerFactory.getLogger(IgbAppServer.class);
     
 
-    private WebAppManager webAppManager;
+    PluginManagerService pluginManagerService;
     
     public IgbAppServer() {
         super(PORT);
     }
     
     //@Reference
+    /**
     protected void setWebAppManager(WebAppManager app) {
         this.webAppManager=app;
+    }
+    */
+    
+    protected void setPluginManagerService(PluginManagerService pluginManagerService) {
+        this.pluginManagerService = pluginManagerService;
     }
 
     @Override
@@ -104,7 +108,7 @@ class IgbAppServer extends NanoHTTPD {
         
         if(StringUtils.isNotBlank(queryParams.get("symbolicName"))) {
             String symbolicName = queryParams.get("symbolicName");
-            boolean isAppInstalled = webAppManager.installApp(symbolicName); // how to check that it worked?
+            boolean isAppInstalled = pluginManagerService.installApp(symbolicName); // how to check that it worked?
             //IGBF-1608 : Send more informative response to the app installation request
             if(isAppInstalled) {
                 String outcome = String.format("Installed %s",symbolicName);

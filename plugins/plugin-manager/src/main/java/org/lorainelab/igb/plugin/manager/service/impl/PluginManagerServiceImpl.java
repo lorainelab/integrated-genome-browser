@@ -1,33 +1,39 @@
-package org.lorainelab.igb.appstore;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.lorainelab.igb.plugin.manager.service.impl;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import org.lorainelab.igb.plugin.manager.BundleActionManager;
-import org.lorainelab.igb.plugin.manager.model.PluginListItemMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.function.Function;
 import org.lorainelab.igb.plugin.manager.AppManagerFxPanel;
+import org.lorainelab.igb.plugin.manager.BundleActionManager;
+import org.lorainelab.igb.plugin.manager.model.PluginListItemMetadata;
+import org.lorainelab.igb.plugin.manager.service.PluginManagerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Re-factor this class to become a service interface offered by the Plugin
- * Manager bundle. 
- */
-/**
+/*
+ * This annotation declares the class as an SCR component and specifies
+ * that it should be immediately activated once its dependencies have been
+ * satisfied. Additionally, because this class implements an interface, it will 
+ * automatically be registered as a provider of the PluginManagerService interface.
+ * 
+ * Alternatively, if we could have explicitly declared the provided interface using
+ * the 'provide' annotation parameter (e.g. @Component(immediate = true, provide = GreetingService.class))
  *
- * @author kkorey
+ * @author Ann Loraine, Riddhi Patil
  */
-@Component(name ="WebAppManager",immediate = true, provide = {WebAppManager.class})
-public class WebAppManager {
+@Component(immediate = true)
+public class PluginManagerServiceImpl implements PluginManagerService {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebAppManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(PluginManagerServiceImpl.class);
 
-    // provided by Plugin Manager module
     private BundleActionManager bundleActionManager; 
     
-    //IGBF-1608 : Reference for AppManager      
     private AppManagerFxPanel appManagerFxPanel;
-    //IGBF-1608
     
     @Reference
     public void setBundleActionManager(BundleActionManager bundleActionManager) {
@@ -38,16 +44,9 @@ public class WebAppManager {
     public void setAppManagerFxPanel(AppManagerFxPanel appManagerFxPanel) {
         this.appManagerFxPanel = appManagerFxPanel;
     }
-    /**
-     * 
-     * This method fetches the plugin from the plugins list stored in AppManagerFxPanel, 
-     * installs that plugin and displays installed status in local App Store.
-     * 
-     * @param symbolicName
-     * @return isAppInstalled
-     */
-    public boolean installApp(String symbolicName){
-        //IGBF-1608 : Refactored code and added callback mechanism       
+    
+    @Override
+    public boolean installApp(String symbolicName) {
         final PluginListItemMetadata plugin = appManagerFxPanel.getListView().getItems().stream()
             .filter(plugins ->plugins.getBundle().getSymbolicName().equals(symbolicName)).findAny()    
             .orElse(null);
@@ -68,6 +67,6 @@ public class WebAppManager {
             return true;
         }
         return false;
-        //IGBF-1608 : end
     }
+    
 }

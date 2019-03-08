@@ -148,8 +148,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>    
-                        <Import-Package>*</Import-Package>
-                        <Export-Package>org.lorainelab.igb.plugin.manager.*</Export-Package>
+                        <Import-Package>!${project.artifactId},*</Import-Package>
+                        <Export-Package>org.lorainelab.igb.plugin.manager.service</Export-Package>
                         <Bundle-Description>An IgbTabPanel for managing OSGi OBR repositories for installing IGB plugins</Bundle-Description>
                         <Service-Component>*</Service-Component>
                     </instructions>

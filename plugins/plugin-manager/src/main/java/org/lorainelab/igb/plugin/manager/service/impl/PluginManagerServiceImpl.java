@@ -11,10 +11,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.Gson;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 =======
 >>>>>>> IBGF-1624 : Rest service to manage the lifecycle of app
+=======
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+>>>>>>> IGBF-1624 : Process callbacks received while managing app lifecycle
 import java.util.function.Function;
 import java.util.logging.Level;
 import org.lorainelab.igb.plugin.manager.AppManagerFxPanel;
@@ -229,62 +234,134 @@ public class PluginManagerServiceImpl implements PluginManagerService {
         
     }
 
+    /**
+     * 
+     * @param plugin
+     * @return Response
+     * 
+     *  - Calls the BundleActionManager installBundle api to install the plugin
+     *  - Once the bundle is installed and the callback is processed we will 
+     *    return the Response ( Installed or Error ) back to the client. This is 
+     *    achieved by using FutureTask which will prevent returning the Response 
+     *    until callback is processed.
+     */
     private String installApp(PluginListItemMetadata plugin) {
-        final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
-            logger.debug("Callback called for bundle with symbolic name: {}", plugin.getBundle().getSymbolicName());
-            plugin.setIsInstalled(Boolean.TRUE);
-            plugin.setIsBusy(Boolean.FALSE);
-            appManagerFxPanel.getListView().setItems(appManagerFxPanel.getListView().getItems());
-            return Void.TYPE;
-        };
+        try {
+            final FutureTask<Object> ft = new FutureTask<>(() -> {}, new Object());
+            final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
+                if(t) {
+                    logger.debug("Callback called for installed bundle with symbolic name: {}", plugin.getBundle().getSymbolicName());
+                    plugin.setIsInstalled(Boolean.TRUE);
+                    plugin.setIsBusy(Boolean.FALSE);                    
+                    appManagerFxPanel.getListView().setItems(appManagerFxPanel.getListView().getItems());
+                    
+                } 
+                ft.run();
+                return Void.TYPE;
+            };
             
-        bundleActionManager.installBundle(plugin,functionCallback); 
-        logger.info("Installed App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
-        plugin.getRepository());
-        if(plugin.getIsInstalled().getValue())
-            return createManageAppResponse(AppStatus.INSTALLED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
-        else 
-            return createManageAppResponse(AppStatus.ERROR.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
-       
+            bundleActionManager.installBundle(plugin,functionCallback);
+            ft.get();
+            logger.info("Installed App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
+                    plugin.getRepository());
+            if(plugin.getIsInstalled().getValue())
+                return createManageAppResponse(AppStatus.INSTALLED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
+            
+        } catch (InterruptedException | ExecutionException ex) {
+            java.util.logging.Logger.getLogger(PluginManagerServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       return createManageAppResponse(AppStatus.ERROR.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
     }
     
+    /**
+     * 
+     * @param plugin
+     * @return Response
+     * 
+     *  - Calls the BundleActionManager uninstallBundle api to uninstall the plugin
+     *  - Once the bundle is uninstalled and the callback is processed we will 
+     *    return the Response ( Uninstalled or Error ) back to the client. This is 
+     *    achieved by using FutureTask which will prevent returning the Response 
+     *    until callback is processed.
+     */
     private String uninstallApp(PluginListItemMetadata plugin) {
-       final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {            
-            logger.debug("Callback called for bundle with symbolic name: {}", plugin.getBundle().getSymbolicName());
-            plugin.setIsBusy(Boolean.FALSE);
-            plugin.setIsInstalled(Boolean.FALSE);
-            plugin.setIsUpdatable(Boolean.FALSE);               
-           
-            return Void.TYPE;
-        };
-           
-        bundleActionManager.uninstallBundle(plugin, functionCallback);
-        logger.info("Uninstalled App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
-        plugin.getRepository());
-        if(!plugin.getIsInstalled().getValue())
-            return createManageAppResponse(AppStatus.UNINSTALLED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
-        else 
-            return createManageAppResponse(AppStatus.ERROR.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
+       
+        try {
+            final FutureTask<Object> ft = new FutureTask<>(() -> {}, new Object());
+            final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
+                if(t) {
+                    
+                    logger.debug("Callback called for uninstalled bundle with symbolic name: {}", plugin.getBundle().getSymbolicName());
+                    plugin.setIsBusy(Boolean.FALSE);
+                    plugin.setIsInstalled(Boolean.FALSE);
+                    plugin.setIsUpdatable(Boolean.FALSE);
+                                      
+                }
+                ft.run();
+                return Void.TYPE;
+            };
+            
+            bundleActionManager.uninstallBundle(plugin, functionCallback);
+            ft.get();
+            logger.info("Uninstalled App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
+                    plugin.getRepository());
+            if(!plugin.getIsInstalled().getValue())
+                return createManageAppResponse(AppStatus.UNINSTALLED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
+            
+        } catch (InterruptedException | ExecutionException ex) {
+            java.util.logging.Logger.getLogger(PluginManagerServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return createManageAppResponse(AppStatus.ERROR.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
+        
     }
     
+    /**
+     * 
+     * @param plugin
+     * @return Response
+     * 
+     *  - Calls the BundleActionManager updateBundle api to update the plugin
+     *  - Once the bundle is updated and the callback is processed we will 
+     *    return the Response ( Updated or Error ) back to the client. This is 
+     *    achieved by using FutureTask which will prevent returning the Response 
+     *    until callback is processed.
+     */
     private String updateApp(PluginListItemMetadata plugin) {
-        final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
-            logger.debug("Callback called for bundle with symbolic name: {}", plugin.getBundle().getSymbolicName());
-            plugin.setIsBusy(Boolean.FALSE);              
+        try {
+            final FutureTask<Object> ft = new FutureTask<>(() -> {}, new Object());
+            final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
+                if(t) {
+                    logger.debug("Callback called for update bundle with symbolic name: {}", plugin.getBundle().getSymbolicName());
+                    plugin.setIsBusy(Boolean.FALSE);                    
+                }
+                ft.run();
+                return Void.TYPE;
+            };
             
-            return Void.TYPE;
-        };
+            bundleActionManager.updateBundle(plugin, functionCallback);
+            ft.get();
+            logger.info("Updated App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
+                    plugin.getRepository());
+            if(!plugin.getIsInstalled().getValue())
+                return createManageAppResponse(AppStatus.UPDATED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
             
-        bundleActionManager.updateBundle(plugin, functionCallback);
-        logger.info("Updated App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
-        plugin.getRepository());
-        if(!plugin.getIsInstalled().getValue())
-            return createManageAppResponse(AppStatus.UPDATED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
-        else 
-            return createManageAppResponse(AppStatus.ERROR.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
+        } catch (InterruptedException | ExecutionException ex) {
+            java.util.logging.Logger.getLogger(PluginManagerServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return createManageAppResponse(AppStatus.ERROR.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
     }
          
+<<<<<<< HEAD
 >>>>>>> IBGF-1624 : Rest service to manage the lifecycle of app
+=======
+    /**
+     * 
+     * @param plugin
+     * @return Response
+     * 
+     * Returns the status of the app, whether it is installed or uninstalled
+     */
+>>>>>>> IGBF-1624 : Process callbacks received while managing app lifecycle
     private String getAppInfo(PluginListItemMetadata plugin) {
         if(plugin.getIsInstalled().getValue()) {
             return createManageAppResponse(AppStatus.INSTALLED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());

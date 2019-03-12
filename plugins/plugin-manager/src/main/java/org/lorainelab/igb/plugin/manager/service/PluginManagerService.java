@@ -19,10 +19,14 @@ public interface PluginManagerService {
      *
      * @param payload
 <<<<<<< HEAD
+<<<<<<< HEAD
      * @return ManageAppResponse
 =======
      * @return isAppInstalled
 >>>>>>> IBGF-1624 : Rest service to manage the lifecycle of app
+=======
+     * @return ManageAppResponse
+>>>>>>> IGBF-1624 : Process callbacks received while managing app lifecycle
      */
     String manageApp(String payload);
     

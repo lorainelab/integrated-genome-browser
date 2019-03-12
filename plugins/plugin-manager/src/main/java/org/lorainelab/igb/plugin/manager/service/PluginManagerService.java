@@ -18,7 +18,7 @@ public interface PluginManagerService {
      * has a listing of available App bundles.
      *
      * @param payload
-     * @return isAppInstalled
+     * @return ManageAppResponse
      */
     String manageApp(String payload);
     

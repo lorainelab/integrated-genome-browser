@@ -1,7 +1,10 @@
 package org.lorainelab.igb.appstore;
 
+
+
 import fi.iki.elonen.NanoHTTPD;
-import org.apache.commons.lang3.StringUtils;
+import java.io.IOException;
+import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
@@ -20,8 +23,7 @@ import org.lorainelab.igb.plugin.manager.service.PluginManagerService;
 class IgbAppServer extends NanoHTTPD {
 
     private static final int PORT = 7090;
-    private static final String IGB_STATUS_CHECK = "igbStatusCheck";
-    private static final String INSTALL_APP = "installApp";
+    private static final String MANAGE_APP = "manageApp";
     private static final String ACCESS_CONTROL_HEADER_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     private static final String ACCESS_CONTROL_ALLOW_HEADER = "Access-Control-Allow-Headers";
     private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
@@ -47,20 +49,29 @@ class IgbAppServer extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
-        Response response;
+        Response response = null;
         Method method = session.getMethod();
-        if (method.equals(Method.GET)) {
-            response = processRequest(session);
-        } else {
-            response = new Response(getNotSupportedMessage(method));
-            response.setStatus(Response.Status.METHOD_NOT_ALLOWED);
+        switch(method) {
+            case GET:
+            case POST:
+                response = processRequest(session);
+                break;
+            case PUT:
+            case DELETE:
+            case HEAD:
+            default :
+                break;
         }
-        response.addHeader(ACCESS_CONTROL_HEADER_ALLOW_ORIGIN, "*");
-        response.addHeader(ACCESS_CONTROL_ALLOW_HEADER, "Origin, Content-Type");
-        response.addHeader(ACCESS_CONTROL_ALLOW_METHODS, "GET");
+        if(response != null) {
+            response.setMimeType("application/json; charset=UTF-8");
+            response.addHeader(ACCESS_CONTROL_HEADER_ALLOW_ORIGIN, "*");
+            response.addHeader(ACCESS_CONTROL_ALLOW_HEADER, "Origin, Content-Type");
+            response.addHeader(ACCESS_CONTROL_ALLOW_METHODS, method.name());
+        }
         return response;
     }
 
+    
     private String getNotSupportedMessage(Method method) {
         StringBuilder msg = new StringBuilder("<html><body>");
         msg.append("<h2 style='display:inline-block'>");
@@ -81,9 +92,9 @@ class IgbAppServer extends NanoHTTPD {
         String contextRoot = session.getUri().substring(1); //removes prefixed /
         Response response;
         switch (contextRoot) {
-            case INSTALL_APP:
+            case MANAGE_APP:
                 logger.info("contextRoot: {}",contextRoot);
-                response = installApp(session);
+                response = manageApp(session);
                 break; //IGBF-1608 : Add break statement to prevent getting default message always
             default:
                 response = new Response("Igb is running.");
@@ -95,35 +106,28 @@ class IgbAppServer extends NanoHTTPD {
     /**
      * Identify which App our user wants to install and install it.
      * Note that IGB should already "know" about the requested App,
-     * which should also be availabnle to install or un-install via
+     * which should also be available to install or un-install via
      * the IGB App Manager GUI.
      * 
      * @param session - HTTP request triggering this action
      * @return Response with code OK if App was installed without
      * error, BAD_REQUEST if not. 
      */
-    private Response installApp(final IHTTPSession session){
+    private Response manageApp(final IHTTPSession session){
         Response toReturn;
-        Map<String, String> queryParams = session.getParms();
-        
-        if(StringUtils.isNotBlank(queryParams.get("symbolicName"))) {
-            String symbolicName = queryParams.get("symbolicName");
-            boolean isAppInstalled = pluginManagerService.installApp(symbolicName); // how to check that it worked?
-            //IGBF-1608 : Send more informative response to the app installation request
-            if(isAppInstalled) {
-                String outcome = String.format("Installed %s",symbolicName);
-                toReturn = new Response(outcome);
-                toReturn.setStatus(Response.Status.OK);
-            } else {
-                toReturn = new Response("App not found");
-                toReturn.setStatus(Response.Status.NOT_FOUND);
-            }
-            //IGBF-1608 : end
+        Map<String, String> requestParams = new HashMap<>();
+        try {
+            session.parseBody(requestParams);
+        } catch (IOException ioe) {
+            return new Response(Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
+        } catch (ResponseException re) {
+            return new Response(re.getStatus(), MIME_PLAINTEXT, re.getMessage());
         }
-        else {
-            toReturn = new Response("No symbolic name.");
-            toReturn.setStatus(Response.Status.BAD_REQUEST);
-        }
+    
+        String outcome = pluginManagerService.manageApp(session.getQueryParameterString()); 
+                 
+        toReturn = new Response(outcome);
+        toReturn.setStatus(Response.Status.OK);
         return toReturn;
     }
     

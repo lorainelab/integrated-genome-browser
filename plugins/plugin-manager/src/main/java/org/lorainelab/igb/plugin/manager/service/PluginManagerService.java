@@ -17,9 +17,9 @@ public interface PluginManagerService {
      * identified using its symbolic name. It is assumed that IGB already
      * has a listing of available App bundles.
      *
-     * @param symbolicName
+     * @param payload
      * @return isAppInstalled
      */
-    boolean installApp(String symbolicName);
+    String manageApp(String payload);
     
 }

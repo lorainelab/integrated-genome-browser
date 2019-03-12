@@ -53,10 +53,14 @@ public class PluginManagerServiceImpl implements PluginManagerService {
 
     enum AppStatus {
 <<<<<<< HEAD
+<<<<<<< HEAD
         INSTALLED, UPDATED, UNINSTALLED, APP_NOT_FOUND, ERROR;
 =======
         INSTALLED, UPDATED, UNINSTALLED, NOT_FOUND, ERROR;
 >>>>>>> IBGF-1624 : Rest service to manage the lifecycle of app
+=======
+        INSTALLED, UPDATED, UNINSTALLED, APP_NOT_FOUND, ERROR;
+>>>>>>> IGBF-1624 Fix update action issue
     }
 
     private BundleActionManager bundleActionManager; 
@@ -99,6 +103,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
 
             }
         }
+<<<<<<< HEAD
 <<<<<<< HEAD
         return createManageAppResponse(AppStatus.APP_NOT_FOUND.toString(), "-", symbolicName);
         
@@ -231,6 +236,9 @@ public class PluginManagerServiceImpl implements PluginManagerService {
      */
 =======
         return createManageAppResponse(AppStatus.NOT_FOUND.toString(), "-", symbolicName);
+=======
+        return createManageAppResponse(AppStatus.APP_NOT_FOUND.toString(), "-", symbolicName);
+>>>>>>> IGBF-1624 Fix update action issue
         
     }
 
@@ -305,7 +313,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
             ft.get();
             logger.info("Uninstalled App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
                     plugin.getRepository());
-            if(!plugin.getIsInstalled().getValue())
+            if(!plugin.getIsUpdatable().getValue())
                 return createManageAppResponse(AppStatus.UNINSTALLED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
             
         } catch (InterruptedException | ExecutionException ex) {
@@ -332,7 +340,8 @@ public class PluginManagerServiceImpl implements PluginManagerService {
             final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
                 if(t) {
                     logger.debug("Callback called for update bundle with symbolic name: {}", plugin.getBundle().getSymbolicName());
-                    plugin.setIsBusy(Boolean.FALSE);                    
+                    plugin.setIsBusy(Boolean.FALSE); 
+                    plugin.setIsUpdatable(Boolean.FALSE); 
                 }
                 ft.run();
                 return Void.TYPE;
@@ -342,7 +351,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
             ft.get();
             logger.info("Updated App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
                     plugin.getRepository());
-            if(!plugin.getIsInstalled().getValue())
+            if(!plugin.getIsUpdatable().getValue())
                 return createManageAppResponse(AppStatus.UPDATED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
             
         } catch (InterruptedException | ExecutionException ex) {

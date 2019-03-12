@@ -44,7 +44,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
     private static final String UNKNOWN_ACTION = "UNKNOWN_ACTION";
 
     enum AppStatus {
-        INSTALLED, UPDATED, UNINSTALLED, NOT_FOUND, ERROR;
+        INSTALLED, UPDATED, UNINSTALLED, APP_NOT_FOUND, ERROR;
     }
 
     private BundleActionManager bundleActionManager; 
@@ -87,7 +87,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
 
             }
         }
-        return createManageAppResponse(AppStatus.NOT_FOUND.toString(), "-", symbolicName);
+        return createManageAppResponse(AppStatus.APP_NOT_FOUND.toString(), "-", symbolicName);
         
     }
 
@@ -162,7 +162,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
             ft.get();
             logger.info("Uninstalled App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
                     plugin.getRepository());
-            if(!plugin.getIsInstalled().getValue())
+            if(!plugin.getIsUpdatable().getValue())
                 return createManageAppResponse(AppStatus.UNINSTALLED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
             
         } catch (InterruptedException | ExecutionException ex) {
@@ -189,7 +189,8 @@ public class PluginManagerServiceImpl implements PluginManagerService {
             final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
                 if(t) {
                     logger.debug("Callback called for update bundle with symbolic name: {}", plugin.getBundle().getSymbolicName());
-                    plugin.setIsBusy(Boolean.FALSE);                    
+                    plugin.setIsBusy(Boolean.FALSE); 
+                    plugin.setIsUpdatable(Boolean.FALSE); 
                 }
                 ft.run();
                 return Void.TYPE;
@@ -199,7 +200,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
             ft.get();
             logger.info("Updated App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
                     plugin.getRepository());
-            if(!plugin.getIsInstalled().getValue())
+            if(!plugin.getIsUpdatable().getValue())
                 return createManageAppResponse(AppStatus.UPDATED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
             
         } catch (InterruptedException | ExecutionException ex) {

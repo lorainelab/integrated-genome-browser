@@ -10,8 +10,11 @@ import aQute.bnd.annotation.component.Reference;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.Gson;
+<<<<<<< HEAD
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+=======
+>>>>>>> IBGF-1624 : Rest service to manage the lifecycle of app
 import java.util.function.Function;
 import java.util.logging.Level;
 import org.lorainelab.igb.plugin.manager.AppManagerFxPanel;
@@ -44,7 +47,11 @@ public class PluginManagerServiceImpl implements PluginManagerService {
     private static final String UNKNOWN_ACTION = "UNKNOWN_ACTION";
 
     enum AppStatus {
+<<<<<<< HEAD
         INSTALLED, UPDATED, UNINSTALLED, APP_NOT_FOUND, ERROR;
+=======
+        INSTALLED, UPDATED, UNINSTALLED, NOT_FOUND, ERROR;
+>>>>>>> IBGF-1624 : Rest service to manage the lifecycle of app
     }
 
     private BundleActionManager bundleActionManager; 
@@ -87,6 +94,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
 
             }
         }
+<<<<<<< HEAD
         return createManageAppResponse(AppStatus.APP_NOT_FOUND.toString(), "-", symbolicName);
         
     }
@@ -216,6 +224,67 @@ public class PluginManagerServiceImpl implements PluginManagerService {
      * 
      * Returns the status of the app, whether it is installed or uninstalled
      */
+=======
+        return createManageAppResponse(AppStatus.NOT_FOUND.toString(), "-", symbolicName);
+        
+    }
+
+    private String installApp(PluginListItemMetadata plugin) {
+        final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
+            logger.debug("Callback called for bundle with symbolic name: {}", plugin.getBundle().getSymbolicName());
+            plugin.setIsInstalled(Boolean.TRUE);
+            plugin.setIsBusy(Boolean.FALSE);
+            appManagerFxPanel.getListView().setItems(appManagerFxPanel.getListView().getItems());
+            return Void.TYPE;
+        };
+            
+        bundleActionManager.installBundle(plugin,functionCallback); 
+        logger.info("Installed App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
+        plugin.getRepository());
+        if(plugin.getIsInstalled().getValue())
+            return createManageAppResponse(AppStatus.INSTALLED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
+        else 
+            return createManageAppResponse(AppStatus.ERROR.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
+       
+    }
+    
+    private String uninstallApp(PluginListItemMetadata plugin) {
+       final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {            
+            logger.debug("Callback called for bundle with symbolic name: {}", plugin.getBundle().getSymbolicName());
+            plugin.setIsBusy(Boolean.FALSE);
+            plugin.setIsInstalled(Boolean.FALSE);
+            plugin.setIsUpdatable(Boolean.FALSE);               
+           
+            return Void.TYPE;
+        };
+           
+        bundleActionManager.uninstallBundle(plugin, functionCallback);
+        logger.info("Uninstalled App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
+        plugin.getRepository());
+        if(!plugin.getIsInstalled().getValue())
+            return createManageAppResponse(AppStatus.UNINSTALLED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
+        else 
+            return createManageAppResponse(AppStatus.ERROR.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
+    }
+    
+    private String updateApp(PluginListItemMetadata plugin) {
+        final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
+            logger.debug("Callback called for bundle with symbolic name: {}", plugin.getBundle().getSymbolicName());
+            plugin.setIsBusy(Boolean.FALSE);              
+            
+            return Void.TYPE;
+        };
+            
+        bundleActionManager.updateBundle(plugin, functionCallback);
+        logger.info("Updated App {} version {} from {}",plugin.getBundle().getSymbolicName(),plugin.getVersion(),
+        plugin.getRepository());
+        if(!plugin.getIsInstalled().getValue())
+            return createManageAppResponse(AppStatus.UPDATED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
+        else 
+            return createManageAppResponse(AppStatus.ERROR.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());
+    }
+         
+>>>>>>> IBGF-1624 : Rest service to manage the lifecycle of app
     private String getAppInfo(PluginListItemMetadata plugin) {
         if(plugin.getIsInstalled().getValue()) {
             return createManageAppResponse(AppStatus.INSTALLED.toString(), plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName());

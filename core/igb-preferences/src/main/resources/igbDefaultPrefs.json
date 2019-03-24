@@ -110,7 +110,7 @@
                 "description": "Any RefSeq mRNA alignment"
             },
             {
-                "annot_type_regex": "^rs\d+$",
+                "annot_type_regex": "^rs\\d+$",
                 "name": "NCBI dbSNP",
                 "description": "",
                 "url": "https://www.ncbi.nlm.nih.gov/snp/$$",

@@ -74,13 +74,19 @@
         "repository": [
             {
                 "name": "BioViz",
-                "url": "http://bioviz.org/igbserver",
+                "url": "https://bioviz.org/igbserver",
                 "enabled": "true",
                 "default": "true"
             },
             {
                 "name": "BioViz development",
                 "url": "http://eos.transvar.org/igb_plugins",
+                "enabled": "false",
+                "default": "true"
+            },
+            {
+                "name": "Test App Store",
+                "url": "https://apps.bioviz.org/obr",
                 "enabled": "false",
                 "default": "true"
             }
@@ -95,13 +101,22 @@
                 "description": "Always support Google searching"
             },
             {
-                "annot_type_regex": "(EST)|(mRNA)|(RefGene)|(RefSeq)",
+                "annot_type_regex": "(EST)|(mRNA)|(RefGene)|(RefSeq)|(RefSeq Curated)",
                 "name": "NCBI",
                 "description": "",
                 "url": "http://www.ncbi.nlm.nih.gov/nuccore/$$",
                 "type": "default",
                 "image_icon_path": "ncbi.png",
                 "description": "Any RefSeq mRNA alignment"
+            },
+            {
+                "annot_type_regex": "^rs\d+$",
+                "name": "NCBI dbSNP",
+                "description": "",
+                "url": "https://www.ncbi.nlm.nih.gov/snp/$$",
+                "type": "default",
+                "image_icon_path": "ncbi.png",
+                "description": "Any dbSNP record"
             },
             {
                 "annot_id_regex": "^AT[1-5CM]G\\d{5,}\\.\\d+$",
@@ -189,6 +204,7 @@
                 "name": "Entrez",
                 "url": "http://www.ncbi.nlm.nih.gov/gene/$$",
                 "type": "default",
+                "image_icon_path": "ncbi.png",
                 "description": "Entrez"
             },
             {
@@ -196,6 +212,7 @@
                 "name": "Entrez cross-database search",
                 "url": "http://www.ncbi.nlm.nih.gov/gquery?term=$$",
                 "type": "default",
+                "image_icon_path": "ncbi.png",
                 "description": "Entrez cross-database search"
             }
         ]

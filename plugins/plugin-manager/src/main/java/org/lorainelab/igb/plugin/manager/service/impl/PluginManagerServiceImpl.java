@@ -12,6 +12,12 @@ import com.google.gson.JsonParser;
 import com.google.gson.Gson;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+>>>>>>> IGBF-1624 : Code changes to provide igb version in the response to manage app request from AppStore
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 =======
@@ -50,6 +56,19 @@ public class PluginManagerServiceImpl implements PluginManagerService {
     private static final String UPDATE_APP = "update";
     private static final String APP_INFO = "getInfo";
     private static final String UNKNOWN_ACTION = "UNKNOWN_ACTION";
+    private String igbVersion;
+
+    public PluginManagerServiceImpl() {
+        Properties commonProps = new Properties();
+        try {
+            commonProps.load(new FileInputStream("core/common/target/classes/common.properties"));
+            igbVersion = (String) commonProps.get("appVersion");
+        }catch(IOException e) {
+            logger.error("Unable to read from configuration file",e); 
+        }
+    }
+    
+    
 
     enum AppStatus {
 <<<<<<< HEAD
@@ -381,12 +400,13 @@ public class PluginManagerServiceImpl implements PluginManagerService {
     
     private String createManageAppResponse(String appStatus, String version, String symbolicName) {
        
-        JsonObject respose = new JsonObject();
-        respose.addProperty("status", appStatus);
-        respose.addProperty("version", version);
-        respose.addProperty("symbolicName", symbolicName);
+        JsonObject response = new JsonObject();
+        response.addProperty("status", appStatus);
+        response.addProperty("appVersion", version);
+        response.addProperty("symbolicName", symbolicName);  
+        response.addProperty("igbVersion", igbVersion);
         
-        return new Gson().toJson(respose);
+        return new Gson().toJson(response);
     }
-       
+
 }

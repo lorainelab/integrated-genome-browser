@@ -3,6 +3,7 @@ package org.lorainelab.igb.appstore;
 
 
 import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.Response.Status;
 import java.io.IOException;
 import java.util.HashMap;
 import org.slf4j.Logger;
@@ -25,8 +26,9 @@ class IgbAppServer extends NanoHTTPD {
     private static final int PORT = 7090;
     private static final String MANAGE_APP = "manageApp";
     private static final String ACCESS_CONTROL_HEADER_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
-    private static final String ACCESS_CONTROL_ALLOW_HEADER = "Access-Control-Allow-Headers";
+    private static final String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
     private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
+    private static final String ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age";
     private static final Logger logger = LoggerFactory.getLogger(IgbAppServer.class);
     
 
@@ -52,6 +54,9 @@ class IgbAppServer extends NanoHTTPD {
         Response response = null;
         Method method = session.getMethod();
         switch(method) {
+            case OPTIONS: 
+                response = new NanoHTTPD.Response(Status.OK, MIME_PLAINTEXT ,"");
+                break;
             case GET:
             case POST:
                 response = processRequest(session);
@@ -63,22 +68,12 @@ class IgbAppServer extends NanoHTTPD {
                 break;
         }
         if(response != null) {
-            response.setMimeType("application/json; charset=UTF-8");
-            response.addHeader(ACCESS_CONTROL_HEADER_ALLOW_ORIGIN, "*");
-            response.addHeader(ACCESS_CONTROL_ALLOW_HEADER, "Origin, Content-Type");
-            response.addHeader(ACCESS_CONTROL_ALLOW_METHODS, method.name());
+        response.addHeader(ACCESS_CONTROL_HEADER_ALLOW_ORIGIN, "*");
+        response.addHeader(ACCESS_CONTROL_MAX_AGE, "3628800");
+        response.addHeader(ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS");
+        response.addHeader(ACCESS_CONTROL_ALLOW_HEADERS, "*");
         }
         return response;
-    }
-
-    
-    private String getNotSupportedMessage(Method method) {
-        StringBuilder msg = new StringBuilder("<html><body>");
-        msg.append("<h2 style='display:inline-block'>");
-        msg.append(method.name().toUpperCase());
-        msg.append(" is not supported!</h2>");
-        msg.append("</body></html>\n");
-        return msg.toString();
     }
 
     /**

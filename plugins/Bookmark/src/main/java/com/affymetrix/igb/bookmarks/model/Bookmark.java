@@ -53,6 +53,7 @@ public final class Bookmark implements Serializable {
     public static final String DAS2_SERVER_URL = "das2_server";
     public static final String QUERY_URL = "query_url";
     public static final String SERVER_URL = "server_url";
+    public static final String CYVERSE_DATA = "cyverse_data";
     /**
      * Optional paramater can be used to give the filetype extensions, such as
      * ".gff" of each of the urls given with {@link #DATA_URL}. If these

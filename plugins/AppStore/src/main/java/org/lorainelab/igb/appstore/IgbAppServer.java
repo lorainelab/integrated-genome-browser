@@ -2,6 +2,8 @@ package org.lorainelab.igb.appstore;
 
 
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response.Status;
 import java.io.IOException;
@@ -109,7 +111,6 @@ class IgbAppServer extends NanoHTTPD {
      * error, BAD_REQUEST if not. 
      */
     private Response manageApp(final IHTTPSession session){
-        Response toReturn;
         Map<String, String> requestParams = new HashMap<>();
         try {
             session.parseBody(requestParams);
@@ -118,12 +119,9 @@ class IgbAppServer extends NanoHTTPD {
         } catch (ResponseException re) {
             return new Response(re.getStatus(), MIME_PLAINTEXT, re.getMessage());
         }
-    
-        String outcome = pluginManagerService.manageApp(session.getQueryParameterString()); 
-                 
-        toReturn = new Response(outcome);
-        toReturn.setStatus(Response.Status.OK);
-        return toReturn;
+        JsonObject body = new JsonParser().parse(session.getQueryParameterString()).getAsJsonObject();
+        return pluginManagerService.manageApp(body); 
+       
     }
     
 }

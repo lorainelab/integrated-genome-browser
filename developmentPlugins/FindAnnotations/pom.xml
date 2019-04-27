@@ -38,11 +38,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.sf</groupId>
-            <artifactId>igb-picard</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>genometry</artifactId>
             <scope>provided</scope>

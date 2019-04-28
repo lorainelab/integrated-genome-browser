@@ -30,10 +30,6 @@
             <artifactId>image4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.sf</groupId>
-            <artifactId>igb-picard</artifactId>
-        </dependency>
-        <dependency>
             <groupId>colt</groupId>
             <artifactId>colt</artifactId>
         </dependency>
@@ -355,8 +351,6 @@
                             cern.colt.*,
                             net.sf.image4j,
                             net.sf.image4j.*,
-                            net.sf.picard,
-                            net.sf.picard.*,
                             org.apache.commons.net,
                             org.apache.commons.net.*,
                             org.jdom.*,

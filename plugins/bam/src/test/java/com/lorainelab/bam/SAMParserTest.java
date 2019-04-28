@@ -79,9 +79,5 @@ public class SAMParserTest {
         assertEquals("0", sym.getID());
         assertEquals(51119999, sym.getSpan(seq).getMin());
         assertEquals(51120035, sym.getSpan(seq).getMax());
-
-        for (SeqSymmetry symOut : result) {
-            System.out.println(symOut.getID() + " " + symOut.getSpan(seq).getStart() + " " + symOut.getSpan(seq).getEnd());
-        }
     }
 }

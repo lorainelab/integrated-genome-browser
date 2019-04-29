@@ -5,6 +5,9 @@
  */
 package org.lorainelab.igb.plugin.manager.service;
 
+import com.google.gson.JsonObject;
+import fi.iki.elonen.NanoHTTPD.Response;
+
 /**
  *
  * @author Ann Loraine
@@ -17,9 +20,9 @@ public interface PluginManagerService {
      * identified using its symbolic name. It is assumed that IGB already
      * has a listing of available App bundles.
      *
-     * @param symbolicName
-     * @return isAppInstalled
+     * @param requestBody
+     * @return ManageAppResponse
      */
-    boolean installApp(String symbolicName);
+    Response manageApp(JsonObject requestBody);
     
 }

@@ -20,7 +20,7 @@
         <dependency>
             <groupId>fi.iki.elonen</groupId>
             <artifactId>NanoHTTPD</artifactId>
-            <scope>compile</scope><!-- to-do: change to provided -->
+            <scope>provided</scope><!-- to-do: change to provided -->
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
@@ -47,6 +47,11 @@
             <artifactId>plugins-manager</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -63,7 +68,6 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Import-Package>*</Import-Package>
                         <Export-Package/>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>

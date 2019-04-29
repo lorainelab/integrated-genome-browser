@@ -61,6 +61,10 @@
             <groupId>com.github.kevinsawicki</groupId>
             <artifactId>http-request</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fi.iki.elonen</groupId>
+            <artifactId>NanoHTTPD</artifactId>		
+        </dependency>
     </dependencies>
 
     
@@ -363,7 +367,8 @@
                             com.boxysystems.jgoogleanalytics.*,
                             net.miginfocom.layout,
                             net.miginfocom.swing,
-                            com.github.kevinsawicki.http
+                            com.github.kevinsawicki.http,
+                            fi.iki.elonen
                         </Export-Package>
                     </instructions>
                     <archive>

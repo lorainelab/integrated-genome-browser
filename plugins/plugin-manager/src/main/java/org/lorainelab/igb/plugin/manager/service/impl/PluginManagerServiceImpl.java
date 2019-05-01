@@ -232,7 +232,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
         responseString.addProperty("status", appStatus);
         responseString.addProperty("appVersion", version);
         responseString.addProperty("symbolicName", symbolicName);  
-        responseString.addProperty("igbVersion", CommonUtils.getInstance().getAppVersion());
+        responseString.addProperty("igbVersion", CommonUtils.getInstance().getIgbVersion());
         
         Response response = new Response(new Gson().toJson(responseString));
         response.setStatus(status);

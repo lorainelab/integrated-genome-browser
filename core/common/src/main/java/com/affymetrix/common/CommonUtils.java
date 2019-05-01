@@ -29,9 +29,9 @@ public class CommonUtils {
     private static final CommonUtils instance = new CommonUtils();
     private String igbDataHome;
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("common");
-    public static final String APP_NAME = BUNDLE.getString("appName");
-    public static final String APP_NAME_SHORT = BUNDLE.getString("appNameShort");
-    public static final String APP_VERSION = BUNDLE.getString("appVersion");
+    public static final String IGB_NAME = BUNDLE.getString("igbName");
+    public static final String IGB_ABBREVIATION = BUNDLE.getString("igbAbbreviation");
+    public static final String IGB_VERSION = BUNDLE.getString("igbVersion");
     private static final String GOOGLE_ANALYTICS_ID = BUNDLE.getString("googleAnalyticsId");
     final public static boolean IS_WINDOWS
             = System.getProperty("os.name").toLowerCase().contains("windows");
@@ -52,8 +52,8 @@ public class CommonUtils {
     public String getUserAgent() {
         return MessageFormat.format(
                 "{0}/{1}; {2}/{3} ({4}); {5};",
-                APP_NAME_SHORT,
-                APP_VERSION,
+                IGB_ABBREVIATION,
+                IGB_VERSION,
                 System.getProperty("os.name"),
                 System.getProperty("os.version"),
                 System.getProperty("os.arch"),
@@ -83,8 +83,8 @@ public class CommonUtils {
      *
      * @return the IGB version
      */
-    public String getAppVersion() {
-        return APP_VERSION;
+    public String getIgbVersion() {
+        return IGB_NAME;
     }
 
     public String getGoogleAnalyticsId() {

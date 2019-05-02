@@ -26,10 +26,12 @@ import org.slf4j.LoggerFactory;
 /*
  * This annotation declares the class as an SCR component and specifies
  * that it should be immediately activated once its dependencies have been
- * satisfied. Additionally, because this class implements an interface, it will 
- * automatically be registered as a provider of the PluginManagerService interface.
+ * satisfied. 
+ *
+ * Because this class implements an interface, it will automatically be registered as
+ * a provider of the PluginManagerService interface.
  * 
- * Alternatively, if we could have explicitly declared the provided interface using
+ * Alternatively, we could have explicitly declared the provided interface using
  * the 'provide' annotation parameter (e.g. @Component(immediate = true, provide = GreetingService.class))
  *
  * @author Ann Loraine, Riddhi Patil
@@ -58,6 +60,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
         this.bundleActionManager = bundleActionManager;
     }
     
+    // IGB creates the App Manager GUI during start-up
     @Reference
     public void setAppManagerFxPanel(AppManagerFxPanel appManagerFxPanel) {
         this.appManagerFxPanel = appManagerFxPanel;

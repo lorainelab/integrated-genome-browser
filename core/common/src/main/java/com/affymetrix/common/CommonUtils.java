@@ -84,7 +84,7 @@ public class CommonUtils {
      * @return the IGB version
      */
     public String getIgbVersion() {
-        return IGB_NAME;
+        return IGB_VERSION;
     }
 
     public String getGoogleAnalyticsId() {

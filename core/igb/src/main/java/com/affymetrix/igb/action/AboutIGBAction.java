@@ -1,7 +1,7 @@
 package com.affymetrix.igb.action;
 
 import com.affymetrix.common.CommonUtils;
-import static com.affymetrix.common.CommonUtils.APP_NAME;
+import static com.affymetrix.common.CommonUtils.IGB_NAME;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.common.PreferenceUtils;
@@ -48,7 +48,7 @@ public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
     }
 
     private AboutIGBAction() {
-        super(MessageFormat.format(BUNDLE.getString("about"), APP_NAME), null,
+        super(MessageFormat.format(BUNDLE.getString("about"), IGB_NAME), null,
                 "16x16/actions/about_igb.png",
                 "22x22/actions/about_igb.png",
                 KeyEvent.VK_A, null, false);
@@ -119,7 +119,7 @@ public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
             dataDirInfo.append("</p>");
             replace(DATA_DIR_COMMENT, dataDirInfo.toString(), sb);
         }
-        replace(VERSION_COMMENT, CommonUtils.getInstance().getAppVersion(), sb);
+        replace(VERSION_COMMENT, CommonUtils.getInstance().getIgbVersion(), sb);
         return sb.toString();
     }
 

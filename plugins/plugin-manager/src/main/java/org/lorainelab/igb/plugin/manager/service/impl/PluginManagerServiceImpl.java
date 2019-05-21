@@ -46,7 +46,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
     private static final String UNKNOWN_ACTION = "UNKNOWN_ACTION";
 
     enum AppStatus {
-        INSTALLED, UPDATED, UNINSTALLED, APP_NOT_FOUND, ERROR;
+        INSTALLED, UPDATED, UNINSTALLED, APP_NOT_FOUND,TO_UPDATE, ERROR;
     }
 
     private BundleActionManager bundleActionManager; 
@@ -217,8 +217,10 @@ public class PluginManagerServiceImpl implements PluginManagerService {
      * Returns the status of the app, whether it is installed or uninstalled
      */
     private Response getAppInfo(PluginListItemMetadata plugin) {
-        
-        String appStatus = plugin.getIsInstalled().getValue().equals(true) ? AppStatus.INSTALLED.toString() : AppStatus.UNINSTALLED.toString();
+       
+        String appStatus = plugin.getIsUpdatable().getValue().equals(true) ? AppStatus.TO_UPDATE.toString() : 
+                (plugin.getIsInstalled().getValue().equals(true) ? AppStatus.INSTALLED.toString() : 
+                AppStatus.UNINSTALLED.toString());
         return createManageAppResponse(appStatus, plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName(), Status.OK);
        
     }

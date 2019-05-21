@@ -11,7 +11,7 @@ ext.commonProps = new Properties()
 ext.commonProps.load(new FileInputStream('core/common/target/classes/common.properties'))
 
 //remove minor version portion of version string
-version = commonProps.get('appVersion')
+version = commonProps.get('igbVersion')
 
 //securely read in keystore info from disk
 ext.props = new Properties()

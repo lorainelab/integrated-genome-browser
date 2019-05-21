@@ -26,12 +26,10 @@ import org.slf4j.LoggerFactory;
 /*
  * This annotation declares the class as an SCR component and specifies
  * that it should be immediately activated once its dependencies have been
- * satisfied. 
- *
- * Because this class implements an interface, it will automatically be registered as
- * a provider of the PluginManagerService interface.
+ * satisfied. Additionally, because this class implements an interface, it will 
+ * automatically be registered as a provider of the PluginManagerService interface.
  * 
- * Alternatively, we could have explicitly declared the provided interface using
+ * Alternatively, if we could have explicitly declared the provided interface using
  * the 'provide' annotation parameter (e.g. @Component(immediate = true, provide = GreetingService.class))
  *
  * @author Ann Loraine, Riddhi Patil
@@ -48,7 +46,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
     private static final String UNKNOWN_ACTION = "UNKNOWN_ACTION";
 
     enum AppStatus {
-        INSTALLED, UPDATED, UNINSTALLED, APP_NOT_FOUND, ERROR;
+        INSTALLED, UPDATED, UNINSTALLED, APP_NOT_FOUND,TO_UPDATE, ERROR;
     }
 
     private BundleActionManager bundleActionManager; 
@@ -60,7 +58,6 @@ public class PluginManagerServiceImpl implements PluginManagerService {
         this.bundleActionManager = bundleActionManager;
     }
     
-    // IGB creates the App Manager GUI during start-up
     @Reference
     public void setAppManagerFxPanel(AppManagerFxPanel appManagerFxPanel) {
         this.appManagerFxPanel = appManagerFxPanel;
@@ -220,8 +217,10 @@ public class PluginManagerServiceImpl implements PluginManagerService {
      * Returns the status of the app, whether it is installed or uninstalled
      */
     private Response getAppInfo(PluginListItemMetadata plugin) {
-        
-        String appStatus = plugin.getIsInstalled().getValue().equals(true) ? AppStatus.INSTALLED.toString() : AppStatus.UNINSTALLED.toString();
+       
+        String appStatus = plugin.getIsUpdatable().getValue().equals(true) ? AppStatus.TO_UPDATE.toString() : 
+                (plugin.getIsInstalled().getValue().equals(true) ? AppStatus.INSTALLED.toString() : 
+                AppStatus.UNINSTALLED.toString());
         return createManageAppResponse(appStatus, plugin.getVersion().getValue(), plugin.getBundle().getSymbolicName(), Status.OK);
        
     }
@@ -232,7 +231,7 @@ public class PluginManagerServiceImpl implements PluginManagerService {
         responseString.addProperty("status", appStatus);
         responseString.addProperty("appVersion", version);
         responseString.addProperty("symbolicName", symbolicName);  
-        responseString.addProperty("igbVersion", CommonUtils.getInstance().getAppVersion());
+        responseString.addProperty("igbVersion", CommonUtils.getInstance().getIgbVersion());
         
         Response response = new Response(new Gson().toJson(responseString));
         response.setStatus(status);

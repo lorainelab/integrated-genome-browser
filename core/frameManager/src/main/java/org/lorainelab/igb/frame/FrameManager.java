@@ -1,8 +1,8 @@
 package org.lorainelab.igb.frame;
 
 import aQute.bnd.annotation.component.Component;
-import static com.affymetrix.common.CommonUtils.APP_NAME;
-import static com.affymetrix.common.CommonUtils.APP_VERSION;
+import static com.affymetrix.common.CommonUtils.IGB_NAME;
+import static com.affymetrix.common.CommonUtils.IGB_VERSION;
 import com.affymetrix.common.PreferenceUtils;
 import org.lorainelab.igb.frame.api.FrameManagerService;
 import java.awt.Rectangle;
@@ -18,7 +18,7 @@ public class FrameManager implements FrameManagerService {
     private static final int DEFAULT_FRAME_WIDTH = 1165;
 
     public FrameManager() {
-        igbMainFrame = new JFrame(APP_NAME + " " + APP_VERSION);
+        igbMainFrame = new JFrame(IGB_NAME + " " + IGB_VERSION);
         initializeWindowSize();
         igbMainFrame.setLayout(new MigLayout("fill"));
     }

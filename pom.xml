@@ -53,6 +53,46 @@
         <nano-httpd-version>2.0.5</nano-httpd-version>
         <!-- End of external bundle version declarations -->
         
+        <!-- Functional Dependencies Decleration -->
+        <commonsLoggingVersion>1.2</commonsLoggingVersion>
+        <commonsJexl>2.1.1</commonsJexl>
+        <felixLog>1.0.1</felixLog>
+        <gitKevinsawickiHttpReq>6.0</gitKevinsawickiHttpReq>
+        <xzVersion>1.5</xzVersion>
+        <furbelowVersion>1.0</furbelowVersion>
+        <jacksonMapperVersion>1.7.9</jacksonMapperVersion>
+        <felixRuntimeVersion>0.16.2</felixRuntimeVersion>
+        <felixGogoShellVersion>0.12.0</felixGogoShellVersion>
+        <felixGogoCommandVersion>0.16.0</felixGogoCommandVersion>
+        <felixShellRemoteVersion>1.1.2</felixShellRemoteVersion>
+        <osgiFelixObrVersion>1.0.2</osgiFelixObrVersion>
+        <felixBundleRepoVersion>2.0.10</felixBundleRepoVersion>
+        <feluxMainVersion>5.2.0</feluxMainVersion>
+        <llRemoteServHttpVersion>1.0.0</llRemoteServHttpVersion>
+        <felixDependencyManagerVersion>3.2.0</felixDependencyManagerVersion>
+        <felixDependencyManagerShellVersion>3.2.0</felixDependencyManagerShellVersion>
+        <jacksonCoreVersion>2.3.5</jacksonCoreVersion>
+        <jacksonAnnotationVersion>2.3.5</jacksonAnnotationVersion>
+        <jacksonDatabindVersion>2.3.5</jacksonDatabindVersion>
+        <jflowVersion>1.0</jflowVersion>
+        <swingAllVersion>1.6.4</swingAllVersion>
+        <swingLayoutVersion>1.0.3</swingLayoutVersion>
+        <freehepGraphicSvgVersion>2.4</freehepGraphicSvgVersion>
+        <jdomVersion>1.1.3</jdomVersion>
+        <image4jVersion>0.7</image4jVersion>
+        <googleAnalyticsVersion>0.4</googleAnalyticsVersion>
+        <commonsPoolVersion>1.6</commonsPoolVersion>
+        <commonsConfigVersion>1.9</commonsConfigVersion>
+        <coltVersion>1.2.0</coltVersion>
+        <jlfgrVersion>1.0</jlfgrVersion>
+        <commonsNetVersion>2.0</commonsNetVersion>
+        <junitVersion>4.8.2</junitVersion>
+        <luceneCoreVersion>3.6.0</luceneCoreVersion>
+        <tangoIconVersion>0.8.90</tangoIconVersion>
+        <felixHttpServletApiVerison>1.1.2</felixHttpServletApiVerison>
+        <felixJettyVersion>2.2.2</felixJettyVersion>
+        
+        
     </properties>
 
     <repositories>
@@ -746,24 +786,24 @@
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
-                <version>1.2</version>
+                <version>${commonsLoggingVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-jexl</artifactId>
-                <version>2.1.1</version>
+                <version>${commonsJexl}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.github.kevinsawicki</groupId>
                 <artifactId>http-request</artifactId>
-                <version>6.0</version>
+                <version>${gitKevinsawickiHttpReq}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.tukaani</groupId>
                 <artifactId>xz</artifactId>
-                <version>1.5</version>
+                <version>${xzVersion}</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -774,12 +814,12 @@
             <dependency>
                 <groupId>furbelow</groupId>
                 <artifactId>furbelow</artifactId>
-                <version>1.0</version>
+                <version>${furbelowVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-mapper-lgpl</artifactId>
-                <version>1.7.9</version>
+                <version>${jacksonMapperVersion}</version>
             </dependency>
             
             <dependency>
@@ -812,22 +852,22 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.gogo.runtime</artifactId>
-                <version>0.16.2</version>
+                <version>${felixRuntimeVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.gogo.shell</artifactId>
-                <version>0.12.0</version>
+                <version>${felixGogoShellVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.gogo.command</artifactId>
-                <version>0.16.0</version>
+                <version>${felixGogoCommandVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.shell.remote</artifactId>
-                <version>1.1.2</version>
+                <version>${felixShellRemoteVersion}</version>
             </dependency>
             <!--            <dependency>
                 <groupId>org.amdatu</groupId>
@@ -847,17 +887,17 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.osgi.service.obr</artifactId>
-                <version>1.0.2</version>
+                <version>${osgiFelixObrVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.bundlerepository</artifactId>
-                <version>2.0.10</version>
+                <version>${felixBundleRepoVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.main</artifactId>
-                <version>5.2.0</version>
+                <version>${felixMainVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
@@ -877,32 +917,32 @@
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>org.lorainelab.igb.remote.services.distribution.provider.http</artifactId>
-                <version>1.0.0</version>
+                <version>${llRemoteServHttpVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.dependencymanager</artifactId>
-                <version>3.2.0</version>
+                <version>${felixDependencyManagerVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.dependencymanager.shell</artifactId>
-                <version>3.2.0</version>
+                <version>${felixDependencyManagerShellVersion}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>2.3.5</version>
+                <version>${jacksonCoreVersion}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.3.5</version>
+                <version>${jacksonAnnotationVersion}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.3.5</version>
+                <version>${jacksonDatabindVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
@@ -917,18 +957,18 @@
             <dependency>
                 <groupId>be.pwnt</groupId>
                 <artifactId>jflow</artifactId>
-                <version>1.0</version>
+                <version>${jflowVersion}</version>
                 <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>org.swinglabs.swingx</groupId>
                 <artifactId>swingx-all</artifactId>
-                <version>1.6.4</version>
+                <version>${swingAllVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.swinglabs</groupId>
                 <artifactId>swing-layout</artifactId>
-                <version>1.0.3</version>
+                <version>${swingLayoutVersion}</version>
             </dependency>
             <dependency>
                 <groupId>com.miglayout</groupId>
@@ -949,12 +989,12 @@
             <dependency>
                 <groupId>org.freehep</groupId>
                 <artifactId>freehep-graphicsio-svg</artifactId>
-                <version>2.4</version>
+                <version>${freehepGraphicSvgVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>
                 <artifactId>jdom</artifactId>
-                <version>1.1.3</version>
+                <version>${jdomVersion}</version>
             </dependency>
             <dependency>
                 <groupId>com.affymetrix</groupId>
@@ -964,32 +1004,32 @@
             <dependency>
                 <groupId>net.sf</groupId>
                 <artifactId>image4j</artifactId>
-                <version>0.7</version>
+                <version>${image4jVersion}</version>
             </dependency>
             <dependency>
                 <groupId>com.boxysystems</groupId>
                 <artifactId>jgoogleanalytics</artifactId>
-                <version>0.4</version>
+                <version>${googleAnalyticsVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.directory.studio</groupId>
                 <artifactId>org.apache.commons.pool</artifactId>
-                <version>1.6</version>
+                <version>${commonsPoolVersion}</version>
             </dependency>
             <dependency>
                 <groupId>commons-configuration</groupId>
                 <artifactId>commons-configuration</artifactId>
-                <version>1.9</version>
+                <version>${commonsConfigVersion}</version>
             </dependency>
             <dependency>
                 <groupId>colt</groupId>
                 <artifactId>colt</artifactId>
-                <version>1.2.0</version>
+                <version>${coltVersion}</version>
             </dependency>
             <dependency>
                 <groupId>javax.jlfgr</groupId>
                 <artifactId>jlfgr</artifactId>
-                <version>1.0</version>
+                <version>${jlfgrVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -1023,7 +1063,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.8.2</version>
+                <version>${junitVersion}</version>
                 <scope>test</scope>
                 <type>jar</type>
             </dependency>
@@ -1035,12 +1075,12 @@
             <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-core</artifactId>
-                <version>3.6.0</version>
+                <version>${luceneCoreVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.freedesktop.tango</groupId>
                 <artifactId>tango-icon-theme</artifactId>
-                <version>0.8.90</version>
+                <version>${tangoIconVersion}</version>
             </dependency>
             <dependency>
                 <groupId>com.jidesoft</groupId>
@@ -1055,12 +1095,12 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.http.servlet-api</artifactId>
-                <version>1.1.2</version>
+                <version>${felixHttpServletApiVerison}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.http.jetty</artifactId>
-                <version>2.2.2</version>
+                <version>${felixJettyVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>

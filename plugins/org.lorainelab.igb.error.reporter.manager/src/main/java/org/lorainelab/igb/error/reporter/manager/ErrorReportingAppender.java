@@ -1,6 +1,6 @@
 package org.lorainelab.igb.error.reporter.manager;
 
-import static com.affymetrix.common.CommonUtils.APP_VERSION;
+import static com.affymetrix.common.CommonUtils.IGB_VERSION;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.RateLimiter;
@@ -75,7 +75,7 @@ public final class ErrorReportingAppender {
 
     private void initializeEnvironmentInfo() {
         String memoryInfo = humanReadableByteCount(Runtime.getRuntime().maxMemory(), true);
-        environmentInfo = new EnvironmentInfo(APP_VERSION, System.getProperty("os.name"), memoryInfo);
+        environmentInfo = new EnvironmentInfo(IGB_VERSION, System.getProperty("os.name"), memoryInfo);
     }
 
     //credit http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java

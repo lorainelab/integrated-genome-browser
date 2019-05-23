@@ -355,8 +355,11 @@ public class GenomeView extends JPanel implements MouseListener, ComponentListen
         this.setLayout(new BorderLayout());
 
         JPanel p = initPanel();
-        initPropertiesTab();
+       
+        //Changed the tab init function calling order | by Prutha K | For IFBF-937 | 22-May-2019
         initInterProScanTab();
+        initPropertiesTab();
+        
         initListerners();
 
         EventBus eventBus = eventService.getEventBus();

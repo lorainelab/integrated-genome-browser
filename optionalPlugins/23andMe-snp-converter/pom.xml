@@ -11,6 +11,7 @@
 
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>23andMe-snp-converter</artifactId>
+    <version>9.1.0</version>
     <packaging>bundle</packaging>
     
     <name>23andMe SNP Converter</name>

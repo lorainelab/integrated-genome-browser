@@ -9,6 +9,7 @@
     </parent>
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>igb-command-socket</artifactId>
+    <version>9.1.0</version>
     <packaging>bundle</packaging>
 
     <name>igb-command-socket</name>

@@ -10,8 +10,7 @@
 
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>geometric-mean</artifactId>
-    
-    
+    <version>9.1.0</version>
     <packaging>bundle</packaging>
 
     <name>Geometric Mean Graph Operator</name>

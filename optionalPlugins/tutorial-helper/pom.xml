@@ -10,7 +10,7 @@
 
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>tutorial-helper</artifactId>
-    
+    <version>9.1.0</version>
     <packaging>bundle</packaging>
 
     <name>tutorial-helper</name>

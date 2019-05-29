@@ -10,7 +10,7 @@
 
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>merge-annotation-operator</artifactId>
-    
+    <version>9.1.0</version>
     <packaging>bundle</packaging>
 
     <name>Merge Annotation Track Operator</name>

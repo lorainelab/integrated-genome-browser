@@ -9,6 +9,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import static com.affymetrix.igb.shared.OpenURIAction.getFriendlyName;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -20,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -33,6 +35,7 @@ public class LoadURLAction extends OpenURIAction {
 
     private static final long serialVersionUID = 1L;
     private static final LoadURLAction ACTION = new LoadURLAction();
+    private boolean mergeSelected = false;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -56,7 +59,7 @@ public class LoadURLAction extends OpenURIAction {
         super.actionPerformed(e);
         loadURL();
     }
-
+    
     private void loadURL() {
         JOptionPane pane = new JOptionPane("Enter URL", JOptionPane.QUESTION_MESSAGE,
                 JOptionPane.OK_CANCEL_OPTION);
@@ -75,22 +78,18 @@ public class LoadURLAction extends OpenURIAction {
         }
 
         pane.setMessage(new Object[]{"Enter URL", urlTextField});
-        String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
-        GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
+        String speciesName = getSpeciesName();
+        GenomeVersion loadGroup = getGenomeVersion();
 
-        if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
-            JDialog dialog = pane.createDialog(igbService.getApplicationFrame(), BUNDLE.getString("openURL"));
-            dialog.setModal(true);
-            dialog.setMinimumSize(new Dimension(450,150));
-            dialog.pack();
-            dialog.setLocationRelativeTo(igbService.getApplicationFrame());
-            dialog.setResizable(true);
-            dialog.setVisible(true);
-        } else {
-            ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"),
-                    BUNDLE.getString("noGenomeSelectedMessage"), Level.INFO);
-        }
-
+        // IGBF-1620 Start
+        JDialog dialog = pane.createDialog(igbService.getApplicationFrame(), BUNDLE.getString("openURL"));
+        dialog.setModal(true);
+        dialog.setMinimumSize(new Dimension(450,150));
+        dialog.pack();
+        dialog.setLocationRelativeTo(igbService.getApplicationFrame());
+        dialog.setResizable(true);
+        dialog.setVisible(true);
+        
         String urlStr = urlTextField.getText();
 
         int result = JOptionPane.CANCEL_OPTION;
@@ -115,16 +114,42 @@ public class LoadURLAction extends OpenURIAction {
             ErrorHandler.errorPanel("Invalid URL", "The URL " + urlStr + " is not valid.  Please enter a valid URL", Level.SEVERE);
             return;
         }
-
+        
+        boolean isReferenceSequence = false;   
+        
         String friendlyName = getFriendlyName(urlStr);
 
         if ((!all_known_types.accept(new File(friendlyName)))) {
             ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url, Level.WARNING);
             return;
         }
-
-        openURI(uri, friendlyName, true, loadGroup, speciesName, false);
-
+ 
+        openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName, isReferenceSequence);
     }
-
+    
+    /* 
+    IGBF-1620 - Pulled from LoadFileAction to Deal with Null
+    Genome Version when a Reference Genome is not selected before import
+    */
+    private GenomeVersion getGenomeVersion() {
+        GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
+        if (genomeVersion == null) {
+            mergeSelected = false;
+            genomeVersion = gmodel.addGenomeVersion(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER);
+        } else {
+            mergeSelected = true;
+        }
+        return genomeVersion;
+    }
+    
+    // To get the Species Name When a Genome is not specified
+    private String getSpeciesName() {
+        String speciesName = igbService.getSelectedSpecies();
+        if (SELECT_SPECIES.equals(speciesName)) {
+            speciesName = UNKNOWN_SPECIES_PREFIX + " " + CUSTOM_GENOME_COUNTER;
+        }
+        return speciesName;
+    }
+    // IGBF-1620 End
 }
+

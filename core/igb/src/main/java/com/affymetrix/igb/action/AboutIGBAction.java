@@ -16,8 +16,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.Properties;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.event.HyperlinkEvent;
@@ -38,6 +40,7 @@ public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
     private static final String DATA_DIR_COMMENT = "<!-- dataDir -->";
     private static final String VERSION_COMMENT = "<!-- igbVersion -->";
     private static final String PERIOD = ".";
+    private static final String BUILD_COMMENT = "<!-- build_comment-->";
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -77,7 +80,7 @@ public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
         pane.setMargin(new Insets(10, 10, 10, 10));
         JFrame j = new JFrame("About Integrated Genome Browser");
         j.add(pane);
-        j.setSize(new Dimension(1000, 500));
+        j.setSize(new Dimension(1000, 540));
         j.setVisible(true);
     }
 
@@ -120,6 +123,18 @@ public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
             replace(DATA_DIR_COMMENT, dataDirInfo.toString(), sb);
         }
         replace(VERSION_COMMENT, CommonUtils.getInstance().getIgbVersion(), sb);
+        try {
+            InputStream input = this.getClass().getClassLoader().getResourceAsStream("git.properties");
+            Properties prop = new Properties();
+            prop.load(input);
+            StringBuilder buildInfo = new StringBuilder();
+            buildInfo.append("<p>").append("The current Branch Name : ").append(prop.getProperty("git.branch")).append("</p>");
+            buildInfo.append("<p>").append("The build date/time : ").append(prop.getProperty("git.build.time")).append("</p>");
+            buildInfo.append("<p>").append("The latest commit id : ").append(prop.getProperty("git.commit.id")).append("</p>");              
+            replace(BUILD_COMMENT, buildInfo.toString(), sb);   
+        } catch(IOException ex) {
+            logger.error("An error has occured while reading git.properties files :",ex);
+        }    
         return sb.toString();
     }
 

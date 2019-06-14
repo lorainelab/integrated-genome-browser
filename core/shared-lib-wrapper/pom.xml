@@ -184,6 +184,16 @@
                                     <version>${commonsPoolVersion}</version>
                                 </artifactItem>
                                 <artifactItem>
+                                    <groupId>commons-logging</groupId>
+                                    <artifactId>commons-logging</artifactId>
+                                    <version>${commonsLoggingVersion}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.commons</groupId>
+                                    <artifactId>commons-jexl</artifactId>
+                                    <version>${commonsJexl}</version>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>com.jidesoft</groupId>
                                     <artifactId>jide-ultimate</artifactId>
                                     <version>${jide.version}</version>

@@ -90,7 +90,7 @@
         <luceneCoreVersion>3.6.0</luceneCoreVersion>
         <tangoIconVersion>0.8.90</tangoIconVersion>
         <felixHttpServletApiVerison>1.1.2</felixHttpServletApiVerison>
-        <felixJettyVersion>2.2.2</felixJettyVersion>
+        <felixJettyVersion>4.0.10</felixJettyVersion>
         
         
     </properties>

@@ -19,6 +19,8 @@ import org.lorainelab.igb.services.IgbService;
 import fi.iki.elonen.NanoHTTPD;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +32,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
     private final IgbService igbService;
     private static final String IGB_STATUS_CHECK = "igbStatusCheck";
     private static final String FOCUS_IGB_COMMAND = "bringIGBToFront";
+    private static final String GET_SPECIES_VERSION_LIST = "getSpeciesVersionList";
     private static final String ACCESS_CONTROL_HEADER_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     private static final String ACCESS_CONTROL_ALLOW_HEADER = "Access-Control-Allow-Headers";
     private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
@@ -93,6 +96,10 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
                 response = new Response("OK");
                 bringIgbToFront();
                 response.setStatus(Response.Status.NO_CONTENT);
+                return response;
+            case GET_SPECIES_VERSION_LIST:
+                response = new Response(getSpeciesVersionList());
+                response.setStatus(Response.Status.OK);
                 return response;
             case IGB_STATUS_CHECK:
                 response = new Response(handleStatusCheckRequests(session));
@@ -210,6 +217,16 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
         f.requestFocus();
         f.repaint();
         f.setAlwaysOnTop(tmp);
+    }
+
+    private String getSpeciesVersionList(){
+        Map<String, List<String>> map = new HashMap<>();
+        List<String> speciesList = igbService.getSpeciesList();
+        for(int i = 0; i <speciesList.size(); i++) {
+            List<String> versionListForSpecies = igbService.getAllVersions(speciesList.get(i));
+            map.put(speciesList.get(i), versionListForSpecies);
+        }
+        return map.toString();
     }
 
 }

@@ -339,22 +339,17 @@
                                 <artifactItem>
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.webconsole</artifactId>
-                                    <version>4.3.12</version>
+                                    <version>${felix-webconsole-version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>commons-fileupload</groupId>
                                     <artifactId>commons-fileupload</artifactId>
-                                    <version>1.4</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>commons-io</groupId>
-                                    <artifactId>commons-io</artifactId>
-                                    <version>2.4</version>
+                                    <version>${commonsFileUpload}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.eventadmin</artifactId>
-                                    <version>1.5.0</version>
+                                    <version>${felix-eventadmin-version}</version>
                                 </artifactItem>
                                 <!-- End of Apache Felix Web Console bundles -->
                             </artifactItems>

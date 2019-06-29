@@ -396,12 +396,12 @@ public class DataProviderManagementGui extends JRPJPanel implements PreferencesP
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-            if (col == 0) {
-                return iconRenderer;
-            }
-            else  if(col == 5){
-                return infoIconRenderer;
-            }
+//            if (col == 0) {
+//                return iconRenderer;
+//            }
+//            else  if(col == 5){
+//                return infoIconRenderer;
+//            }
             return renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
         }
     }

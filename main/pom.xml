@@ -197,6 +197,24 @@
         </dependency>
         <!-- End of external bundle dependencies-->
 
+        <!-- Start of Apache Felix Web Console bundles-->
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.webconsole</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.eventadmin</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- End of Apache Felix Web Console bundles -->
+
         <!--Start of plugin module dependencies-->
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

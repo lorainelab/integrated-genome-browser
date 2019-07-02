@@ -528,4 +528,12 @@ public class IgbServiceImpl implements IgbService {
         };
         dependencyTracker.open();
     }
+
+    public List<String> getSpeciesList(){
+        return GeneralLoadUtils.getSpeciesList();
+    }
+
+    public List<String> getAllVersions(String species){
+        return SeqGroupView.getInstance().getAllVersions(species);
+    }
 }

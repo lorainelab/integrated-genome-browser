@@ -184,6 +184,16 @@
                                     <version>${commonsPoolVersion}</version>
                                 </artifactItem>
                                 <artifactItem>
+                                    <groupId>commons-logging</groupId>
+                                    <artifactId>commons-logging</artifactId>
+                                    <version>${commonsLoggingVersion}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.commons</groupId>
+                                    <artifactId>commons-jexl</artifactId>
+                                    <version>${commonsJexl}</version>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>com.jidesoft</groupId>
                                     <artifactId>jide-ultimate</artifactId>
                                     <version>${jide.version}</version>
@@ -324,7 +334,24 @@
                                     <artifactId>jackson-databind</artifactId>
                                     <version>${jacksonDatabindVersion}</version>
                                 </artifactItem>
-                                <!-- End of development only bundles -->                                                                      
+                                <!-- End of development only bundles -->
+                                <!-- Start of Apache Felix Web Console bundles-->
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.webconsole</artifactId>
+                                    <version>${felix-webconsole-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>commons-fileupload</groupId>
+                                    <artifactId>commons-fileupload</artifactId>
+                                    <version>${commonsFileUpload}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.eventadmin</artifactId>
+                                    <version>${felix-eventadmin-version}</version>
+                                </artifactItem>
+                                <!-- End of Apache Felix Web Console bundles -->
                             </artifactItems>
                             <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>
                             <overWriteReleases>true</overWriteReleases>

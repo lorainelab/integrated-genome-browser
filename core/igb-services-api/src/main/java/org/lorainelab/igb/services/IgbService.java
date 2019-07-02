@@ -244,4 +244,8 @@ public interface IgbService {
 
     @Deprecated
     public void addParentMenuBarEntry(JMenu parentMenu, int weight);
+
+    public List<String> getSpeciesList();
+
+    public List<String> getAllVersions(String species);
 }

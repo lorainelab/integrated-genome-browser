@@ -231,6 +231,11 @@
             <artifactId>annotation-tab</artifactId>
             <scope>runtime</scope>           
         </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>console-tab</artifactId>
+            <scope>runtime</scope>           
+        </dependency>
         <dependency> 
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>bigBedHandler</artifactId>

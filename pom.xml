@@ -160,6 +160,7 @@
         <module>core/context-menu-service</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
+        <module>plugins/ConsoleTab</module>
         <module>plugins/track-operations-panel</module>
         <module>plugins/BigBedHandler</module>
         <module>plugins/BigWigHandler</module>
@@ -446,6 +447,12 @@
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>annotation-tab</artifactId>
+                <version>${project.parent.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.lorainelab.igb</groupId>
+                <artifactId>console-tab</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>

@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="2"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="stackHeightPanel" min="-2" max="-2" attributes="0"/>
+                  <Component id="trackHeightPanel" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+              <Component id="annotationsPanel" max="32767" attributes="1"/>
+              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="annotationsPanel" max="32767" attributes="1"/>
+                  <Group type="102" attributes="0">
+                      <Component id="stackHeightPanel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                      <Component id="trackHeightPanel" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="annotationsPanel">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Labels and Strand"/>
+          </Border>
+        </Property>
+        <Property name="toolTipText" type="java.lang.String" value="Use this to configure how IGB displays labels and strand information."/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="labelFieldLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="strandsLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          <Component id="labelFieldComboBox" pref="143" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="strandsArrowCheckBox" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Component id="strandsColorCheckBox" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <EmptySpace min="0" pref="76" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="strands2TracksCheckBox" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                                  <Component id="strandsForwardColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                                  <Component id="strandsForwardColorLabel" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="strandsReverseColorComboBox" min="-2" pref="20" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                                  <Component id="strandsReverseColorLabel" min="-2" pref="9" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <EmptySpace pref="107" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="labelFieldLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelFieldComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                  <Component id="strandsLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="strands2TracksCheckBox" alignment="3" min="-2" pref="15" max="-2" attributes="0"/>
+                      <Component id="strandsArrowCheckBox" alignment="3" min="-2" pref="15" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                  <Component id="strandsColorCheckBox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="strandsForwardColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="strandsForwardColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="strandsReverseColorComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="strandsReverseColorLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="labelFieldLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Label Field:"/>
+            <Property name="toolTipText" type="java.lang.String" value="Choose a feature property to label features within the track."/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="labelFieldComboBox">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Choose a feature property to label features within the track."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="labelFieldComboBoxActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="strands2TracksCheckBox">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="+/-"/>
+            <Property name="toolTipText" type="java.lang.String" value="Show + and - strand features the same track."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strands2TracksCheckBoxActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="strandsArrowCheckBox">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Arrow"/>
+            <Property name="toolTipText" type="java.lang.String" value="Show strand using arrows."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strandsArrowCheckBoxActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="strandsColorCheckBox">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Color by Strand:"/>
+            <Property name="toolTipText" type="java.lang.String" value="Show strand using different colors for + and - strand features."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strandsColorCheckBoxActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="strandsLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Strand:"/>
+            <Property name="toolTipText" type="java.lang.String" value="Configure how IGB represents strand."/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="strandsForwardColorLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="+"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="strandsReverseColorLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="-"/>
+          </Properties>
+        </Component>
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="strandsReverseColorComboBox">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                <LineBorder roundedCorners="true">
+                  <Color PropertyName="color" blue="ff" green="ff" red="ff" type="rgb"/>
+                </LineBorder>
+              </Border>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Choose color for - strand features."/>
+            <Property name="buttonVisible" type="boolean" value="false"/>
+            <Property name="colorValueVisible" type="boolean" value="false"/>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[150, 20]"/>
+            </Property>
+            <Property name="stretchToFit" type="boolean" value="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strandsReverseColorComboBoxActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="strandsForwardColorComboBox">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                <LineBorder roundedCorners="true">
+                  <Color PropertyName="color" blue="ff" green="ff" red="ff" type="rgb"/>
+                </LineBorder>
+              </Border>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Choose color for + strand features."/>
+            <Property name="buttonVisible" type="boolean" value="false"/>
+            <Property name="colorValueVisible" type="boolean" value="false"/>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[150, 20]"/>
+            </Property>
+            <Property name="stretchToFit" type="boolean" value="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strandsForwardColorComboBoxActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="stackHeightPanel">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Stack Height"/>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Component id="stackDepthTextField" min="-2" pref="62" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Component id="stackDepthGoButton" min="-2" pref="66" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Component id="stackDepthAllButton" pref="81" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="stackDepthTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="stackDepthGoButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="stackDepthAllButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JTextField" name="stackDepthTextField">
+          <Properties>
+            <Property name="horizontalAlignment" type="int" value="4"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthTextFieldActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPTextField(&quot;trackPreference_maxDepth&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="((javax.swing.text.AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="stackDepthGoButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Go"/>
+            <Property name="toolTipText" type="java.lang.String" value="Click to run operation on selected tracks."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthGoButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="stackDepthAllButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Optimize"/>
+            <Property name="toolTipText" type="java.lang.String" value="Set stack height to show everything. "/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stackDepthAllButtonActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JButton()"/>
+          </AuxValues>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="trackHeightPanel">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Track Height"/>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="lockTierHeightCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="setHeightInPxLabel" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Component id="setPxHeightTextBox" min="-2" pref="62" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                                  <Component id="pxGoButton" min="-2" pref="64" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="lockTierHeightCheckBox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <Component id="setHeightInPxLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="setPxHeightTextBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="pxGoButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JCheckBox" name="lockTierHeightCheckBox">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Lock Track Height (Pixels)"/>
+            <Property name="toolTipText" type="java.lang.String" value="Lock track height to the value entered below. "/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lockTierHeightCheckBoxActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="setHeightInPxLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Set Height (Pixels):"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="setPxHeightTextBox">
+          <Properties>
+            <Property name="horizontalAlignment" type="int" value="4"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setPxHeightTextBoxActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JRPTextField(&quot;trackPreference_tierHeight&quot;)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="((javax.swing.text.AbstractDocument)setPxHeightTextBox.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="pxGoButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Go"/>
+            <Property name="toolTipText" type="java.lang.String" value="Click to run operation on selected tracks."/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pxGoButtonActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>

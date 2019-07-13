@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public class RepositoryInfoManager {
 
     private static final Logger logger = LoggerFactory.getLogger(RepositoryInfoManager.class);
-    private static final String REPOSITORY_XML_FILE_PATH = "/repository.xml";
+    private static final String REPOSITORY_XML_FILE_PATH = "repository.xml";
     private static final String DEFAULT_REPO_INFO = "Local";
 
     private BundleInfoManager bundleInfoManager;
@@ -56,7 +56,10 @@ public class RepositoryInfoManager {
             @Override
             protected Void runInBackground() {
                 try {
-                    repoAdmin.addRepository(new URL(url + REPOSITORY_XML_FILE_PATH));
+                    if (url.lastIndexOf("/") == (url.length()-1))
+                        {repoAdmin.addRepository(new URL(url + REPOSITORY_XML_FILE_PATH));}
+                    else
+                        {repoAdmin.addRepository(new URL(url + "/" + REPOSITORY_XML_FILE_PATH));}
                     externalRepositories.add(pluginRepository);
                 } catch (ConnectException ex) {
                     logger.error(ex.getMessage(), ex);
@@ -80,7 +83,10 @@ public class RepositoryInfoManager {
     public void removePluginRepository(PluginRepository pluginRepository) {
         String url = pluginRepository.getUrl();
         try {
-            repoAdmin.removeRepository(new URL(url + REPOSITORY_XML_FILE_PATH).toURI().toString());
+            if (url.lastIndexOf("/") == (url.length()-1))
+                {repoAdmin.removeRepository(new URL(url + REPOSITORY_XML_FILE_PATH).toURI().toString());}
+            else
+                {repoAdmin.removeRepository(new URL(url + "/" + REPOSITORY_XML_FILE_PATH).toURI().toString());}
             externalRepositories.remove(pluginRepository);
             bundleInfoManager.reloadRepositoryBundles();
         } catch (MalformedURLException | URISyntaxException ex) {

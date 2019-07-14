@@ -6,11 +6,9 @@
 #     match regex IGBF-* or release-*
 #   * require read access to private repository with digital assets needed for Install4J
 #     installer software to package IGB and jre into an installer
+#
 # default pipeline:
-#   * runs when branch names do not match above
-#   * runs by default and should not fail
-#   * suggestion: use this pipeline if you are not working on a feature or bug fix not
-#     tracked in team Jira project management site
+#   * runs when branch name does not match above
 #
 # Note: the build system creates a 32-bit installer for Windows systems, but since we
 #       are not releasing this anymore, it is not copied to Downloads.

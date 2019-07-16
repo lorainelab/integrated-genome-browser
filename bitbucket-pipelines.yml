@@ -1,109 +1,84 @@
-# Integrated Genome Browser bitbucket-pipelines.yml file
-# Author: Sanket Patil (spatil26@uncc.edu)
-# Team: IGB (http://bioviz.org)
-# Only use spaces to indent your .yml configuration.
-# -----
-#  Image refers to the docker image hosted at docker hub.
-image: 
+# Used by Bitbucket pipelines to trigger build of IGB project when you push to a fork or
+# approve a pull request. 
+#
+# branch pipelines:
+#   * run when a commit is made to master or topic branches, where topic branch names
+#     match regex IGBF-* or release-*
+#   * require read access to private repository with digital assets needed for Install4J
+#     installer software to package IGB and jre into an installer
+#
+# default pipeline:
+#   * runs when branch name does not match above
+#
+# Note: the build system creates a 32-bit installer for Windows systems, but since we
+#       are not releasing this anymore, it is not copied to Downloads.
+#
+#       See Install4J configuration file, version-controlled in the project.
+# 
+
+# Image is hosted at Docker hub.
+# Dockerfile: https://bitbucket.org/lorainelab/integrated-genome-browser-docker
+image:
   name: lorainelab/igb-maven-install4j:jre-1.8.0_191
 
-# This file has two configurations - default and branches. Branche configurations has 3 sub-configurations. These are: 
-# 1. IGBF-*: Any topic branch with name starting IGBF-
-# 2. master
-# 3. release-*
-# On each commit to a branch specified in the branches configurate, bitbucket pipelines executes the scripts assigned to the branch
-# Default will get triggered whenever there is a commit in a branch which is not mentioned under branches configuration.
-# To run pipelines manually go to branches -> hover on the brach on which you want to execute piplines-> click on ... -> select run pipeline for the branch-> select configuration
-pipelines:
-  default:
-    - step:
-        caches:
-          - maven
-        script: 
-          - echo "This script runs on a commit/change to the branches which are not mentioned in branch workflow.
-          # Executes maven command on the IGB project
-          - mvn clean install -D skipTests=false
-          # Posts igb_exe.jar file under Download section of repository
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$BITBUCKET_BRANCH.jar"
-  
-  branches:
-    IGBF-*:
-      - step:
-          caches:
-            - maven
-          script:
-            - echo "This script runs on a commit/change to the topic branch having name starting with IGBF"
-            # Getting Windows and Mac Keystore for signing Windows installer. Bitbucket pipeline environment variables used here for security purpose
+definitions:
+  steps:
+     - step: &build-and-copy-installers-for-branch
+         name: Build and copy Windows, MacOS, and Linux installers and excutable jar file for master or IGBF-labeled topic branch. 
+         caches:
+           - maven
+         script:
             - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $WINDOWS_KEYSTORE_LINK -P /opt/igb
             - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $MAC_KEYSTORE_LINK -P /opt/igb
-            # Replacing Keywords with actual passwords using bitbucket pipeline environment variables
             - sed -i "s/_INSTALL4jLICENSE_/${INSTALL4J_LICENSE}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - sed -i "s/_WINKEYSTOREPASSWORD_/${WIN_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - sed -i "s/_MACKEYSTOREPASSWORD_/${MAC_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
-            # Performing maven clean install goal. Note that we are using here Profile 'release' which generates installers and additional plugins
+            - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
             - mvn clean install -P release-bitbucket-pipelines
-            # Creating a .zip file containing igb_exe.jar and other reference materials releted to IGB project
-            - zip -r -j igb /opt/atlassian/pipelines/agent/build/igb_exe.jar /opt/atlassian/pipelines/agent/build/LICENSE.html /opt/atlassian/pipelines/agent/build/NOTICES.txt /opt/atlassian/pipelines/agent/build/README.md /opt/atlassian/pipelines/agent/build/run_igb.bat /opt/atlassian/pipelines/agent/build/run_igb.command /opt/atlassian/pipelines/agent/build/run_igb.sh 
-            # Posting all required files under download section of the repository
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$BITBUCKET_BRANCH.jar"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_unix_9_1_0.sh; filename=IGB-$BITBUCKET_BRANCH.sh"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_windows_9_1_0.exe; filename=IGB-$BITBUCKET_BRANCH.exe"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_windows-x64_9_1_0.exe; filename=IGB-$BITBUCKET_BRANCH-x64.exe"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_macos_9_1_0.dmg; filename=IGB-$BITBUCKET_BRANCH.dmg"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-unix-$version.sh; filename=IGB-$BITBUCKET_BRANCH.sh"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-x64-$version.exe; filename=IGB-$BITBUCKET_BRANCH.exe"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-macos-$version.dmg; filename=IGB-$BITBUCKET_BRANCH.dmg"
+     - step: &build-and-copy-artifacts-for-release
+         name: Build and copy Windows, MacOS, and Linux installers, executable jar file, updates.xml, and md5sums file for release to user community.
+         caches:
+           - maven
+         script:
+            - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $WINDOWS_KEYSTORE_LINK -P /opt/igb
+            - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $MAC_KEYSTORE_LINK -P /opt/igb
+            - sed -i "s/_INSTALL4jLICENSE_/${INSTALL4J_LICENSE}/" /opt/atlassian/pipelines/agent/build/pom.xml
+            - sed -i "s/_WINKEYSTOREPASSWORD_/${WIN_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
+            - sed -i "s/_MACKEYSTOREPASSWORD_/${MAC_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
+            - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+            - mvn clean install -P release-bitbucket-pipelines
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$version.jar"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-unix-$version.sh"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-$version.exe"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-macos-$version.dmg"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/md5sums"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/updates.xml"
 
+pipelines:
+  default:
+    - step:
+        name: Build and copy jar file with IGB code and required libraries for branch not named IGBF-*, releaes-*, or master.
+        caches:
+          - maven
+        script:
+          - mvn clean install -D skipTests=false
+          - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          - githash=$(git rev-parse --short HEAD)
+          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$version-$githash.jar"
+  branches:
     master:
-    - step:
-        caches:
-          - maven
-        script: 
-          - echo "This script runs on a commit/change to master branch."
-          # Getting Windows and Mac Keystore for signing Windows installer. Bitbucket pipeline environment variables used here for security purpose
-          - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $WINDOWS_KEYSTORE_LINK -P /opt/igb
-          - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $MAC_KEYSTORE_LINK -P /opt/igb
-          # Replacing Keywords with actual passwords using bitbucket pipeline environment variables
-          - sed -i "s/_INSTALL4jLICENSE_/${INSTALL4J_LICENSE}/" /opt/atlassian/pipelines/agent/build/pom.xml
-          - sed -i "s/_WINKEYSTOREPASSWORD_/${WIN_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
-          - sed -i "s/_MACKEYSTOREPASSWORD_/${MAC_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
-          # Performing maven clean install goal. Note that we are using here Profile 'release' which generates installers and additional plugins
-          - mvn clean install -P release-bitbucket-pipelines
-          # Creating a .zip file containing igb_exe.jar and other reference materials releted to IGB project
-          - zip -r -j igb /opt/atlassian/pipelines/agent/build/igb_exe.jar /opt/atlassian/pipelines/agent/build/LICENSE.html /opt/atlassian/pipelines/agent/build/NOTICES.txt /opt/atlassian/pipelines/agent/build/README.md /opt/atlassian/pipelines/agent/build/run_igb.bat /opt/atlassian/pipelines/agent/build/run_igb.command /opt/atlassian/pipelines/agent/build/run_igb.sh 
-           # Posting all required files under download section of the repository
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$BITBUCKET_BRANCH.jar"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_unix_9_1_0.sh; filename=IGB-$BITBUCKET_BRANCH.sh"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_windows_9_1_0.exe; filename=IGB-$BITBUCKET_BRANCH.exe"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_windows-x64_9_1_0.exe; filename=IGB-$BITBUCKET_BRANCH-x64.exe"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_macos_9_1_0.dmg; filename=IGB-$BITBUCKET_BRANCH.dmg"
- 
+      - step: *build-and-copy-installers-for-branch
+    IBGF-*: 
+      - step: *build-and-copy-installers-for-branch
     release-*:
-    - step:
-        caches:
-          - maven
-        script: 
-          - echo "This script runs on a commit/change to release branch."
-          # Getting Windows and Mac Keystore for signing Windows installer. Bitbucket pipeline environment variables used here for security purpose
-          - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $WINDOWS_KEYSTORE_LINK -P /opt/igb
-          - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $MAC_KEYSTORE_LINK -P /opt/igb
-          # Replacing Keywords with actual passwords using bitbucket pipeline environment variables
-          - sed -i "s/_INSTALL4jLICENSE_/${INSTALL4J_LICENSE}/" /opt/atlassian/pipelines/agent/build/pom.xml
-          - sed -i "s/_WINKEYSTOREPASSWORD_/${WIN_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
-          - sed -i "s/_MACKEYSTOREPASSWORD_/${MAC_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
-          # Performing maven clean install goal. Note that we are using here Profile 'release' which generates installers and additional plugins
-          - mvn clean install -P release-bitbucket-pipelines
-          # Creating a .zip file containing igb_exe.jar and other reference materials releted to IGB project
-          - zip -r -j igb /opt/atlassian/pipelines/agent/build/igb_exe.jar /opt/atlassian/pipelines/agent/build/LICENSE.html /opt/atlassian/pipelines/agent/build/NOTICES.txt /opt/atlassian/pipelines/agent/build/README.md /opt/atlassian/pipelines/agent/build/run_igb.bat /opt/atlassian/pipelines/agent/build/run_igb.command /opt/atlassian/pipelines/agent/build/run_igb.sh 
-          # Posting all required files under download section of the repository
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb.zip"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_unix_9_1_0.sh"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_windows_9_1_0.exe"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_windows-x64_9_1_0.exe"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB_macos_9_1_0.dmg"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/md5sums"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/updates.xml"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"extbundles/repository.xml"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"extbundles/optional/23andMe-snp-converter-9.1.0.jar"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"extbundles/optional/geometric-mean-9.1.0.jar"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"extbundles/optional/merge-annotation-operator-9.1.0.jar"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"extbundles/optional/igb-command-socket-9.1.0.jar"
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"extbundles/optional/protannot-9.1.0.jar"
+      - step: *build-and-copy-artifacts-for-release
+
+            
+
+
+
+

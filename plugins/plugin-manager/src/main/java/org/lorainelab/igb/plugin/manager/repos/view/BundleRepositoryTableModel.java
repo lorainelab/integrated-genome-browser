@@ -106,6 +106,10 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
                 return true;
             case REFRESH_COLOMN:
                 return Boolean.valueOf(pluginRepository.getEnabled());
+            //IGBF-1902 Make URL Column editable
+            case URL_COLOMN:
+                return true;
+            //end of IGBF-1902
         }
 
         return false;

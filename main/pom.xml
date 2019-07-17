@@ -568,9 +568,6 @@
                                         <exclude name="org.apache.felix.main-*.jar"/>
                                         <exclude name="org.apache.felix.framework*.jar"/>                                                
                                     </fileset>
-                                    <fileset dir="${basedir}/../bundles">
-                                        <include name="*.json"/>                                               
-                                    </fileset>
                                 </jar>
                             </target>
                         </configuration>

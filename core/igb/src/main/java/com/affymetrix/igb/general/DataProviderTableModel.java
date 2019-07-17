@@ -198,7 +198,14 @@ public final class DataProviderTableModel extends AbstractTableModel {
     }
 
     public boolean isEditable(DataProvider dataProvider, int columnIndex) {
-        boolean isEditable = PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).getBoolean(DataProviderPrefKeys.IS_EDITABLE, true);
+        //IGBF-1502  Make default datasources in Preferences uneditable.
+        boolean isEditable = false;
+        if (dataProvider.useMirrorUrl()) {
+            isEditable = PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).getBoolean(DataProviderPrefKeys.IS_EDITABLE, false);
+        } else {
+            isEditable = PreferenceUtils.getDataProviderNode(dataProvider.getUrl()).getBoolean(DataProviderPrefKeys.IS_EDITABLE, true);
+        }
+        //END IGBF-1502
         switch (tableColumns.get(columnIndex)) {
             case Refresh: {
                 return dataProvider.getStatus() != ResourceStatus.Disabled;

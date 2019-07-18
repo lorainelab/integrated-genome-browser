@@ -16,15 +16,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <!-- As a best pratice, all versions will be controlled via properties -->
-        
-        <!-- Start of external bundle version declarations -->        
+        <!-- Dependency versions controlled via properties -->
+        <!-- Define properties as [artifactId].version -->        
+        <!-- External bundle version declarations -->        
         <log4jVersion>2.0-rc1</log4jVersion>
         <guavaVersion>16.0.1</guavaVersion>
         <gsonVersion>2.3.1</gsonVersion>
         <commonsLangVersion>3.4</commonsLangVersion>
         <commonsCsvVersion>1.2</commonsCsvVersion>
         <commonsIoVersion>2.4</commonsIoVersion>
+        <commons-net.version>2.0</commons-net.version>
         <commons-fileupload-version>1.3.1</commons-fileupload-version>
         <genovizVersion>1.1.8</genovizVersion>
         <felixMainVersion>5.2.0</felixMainVersion>
@@ -48,13 +49,14 @@
         <htsjdk-igb-Version>2.16.2</htsjdk-igb-Version>
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
-        <slf4j-version>1.7.7</slf4j-version>
+        <slf4j-api.version>1.7.7</slf4j-api.version>
+        <logback-core.version>1.1.2</logback-core.version>
+        <logback-classic.version>1.1.2</logback-classic.version>
         <felix-file-install-version>3.5.0</felix-file-install-version>
         <miglayout-version>4.2</miglayout-version>
         <nano-httpd-version>2.0.5</nano-httpd-version>
         <!-- End of external bundle version declarations -->
-        
-        <!-- Functional Dependencies Decleration -->
+        <!-- Start of functional dependencies declarations -->
         <commonsLoggingVersion>1.2</commonsLoggingVersion>
         <commonsJexl>2.1.1</commonsJexl>
         <felixLog>1.0.1</felixLog>
@@ -90,13 +92,10 @@
         <junitVersion>4.8.2</junitVersion>
         <luceneCoreVersion>3.6.0</luceneCoreVersion>
         <tangoIconVersion>0.8.90</tangoIconVersion>
-        <felixHttpServletApiVerison>1.1.2</felixHttpServletApiVerison>
+        <org.apache.felix.http.servlet-api.version>1.1.2</org.apache.felix.http.servlet-api.version>
         <felixJettyVersion>4.0.10</felixJettyVersion>
         <commonsFileUpload>1.4</commonsFileUpload>
-        
-        
     </properties>
-
     <repositories>
         <repository>
             <id>repo1</id>
@@ -116,7 +115,6 @@
             <url>https://nexus.bioviz.org/repository/maven-releases</url>
         </repository>
     </repositories>
-    
     <pluginRepositories>
         <pluginRepository>
             <id>repo3</id>
@@ -127,7 +125,6 @@
             <url>https://nexus.bioviz.org/maven-releases</url>
         </pluginRepository>
     </pluginRepositories>
-  
     <distributionManagement>
         <repository>
             <id>maven-releases</id>
@@ -135,7 +132,6 @@
             <url>https://nexus.bioviz.org/repository/maven-releases</url>
         </repository>
     </distributionManagement>
-
     <modules>
 <!--        <module>core/taglets</module>-->
         <module>core/heatmap-editor</module>
@@ -194,7 +190,6 @@
         <module>plugins/bam</module>
         <module>plugins/AppStore</module>
     </modules>
-
     <profiles>
         <profile>
             <id>default</id>
@@ -231,74 +226,6 @@
                 <module>main</module>
             </modules>
         </profile>
-
-        <profile> <!-- profile for lorainelab build server jenkins AWS -->
-            <id>development</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>optionalPlugins/merge-annotation-operator</module>
-                <module>optionalPlugins/geometric-mean</module>
-                <module>optionalPlugins/igb-command-socket</module> 
-                <module>optionalPlugins/23andMe-snp-converter</module>
-                <module>optionalPlugins/protannot</module>
-                <module>developmentPlugins/FindAnnotations</module>
-                <module>developmentPlugins/OverlapAnnotationOperator</module>                
-                <module>developmentPlugins/SampleSelection</module>
-                <module>developmentPlugins/SearchModeSymmetryFilter</module>
-                <module>developmentPlugins/TallyHandler</module>
-                <module>developmentPlugins/TranscriptIsoform</module>               
-                <module>developmentPlugins/ParentOperators</module>
-                <module>developmentPlugins/NCBIPrimer</module>
-                <module>developmentPlugins/SearchModeLucene</module>
-                
-                <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
-            </modules>            
-        </profile>
-        <profile> <!-- profile for lorainelab build server jenkins AWS -->
-            <id>release</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>optionalPlugins/merge-annotation-operator</module>
-                <module>optionalPlugins/geometric-mean</module>
-                <module>optionalPlugins/igb-command-socket</module>
-                <module>optionalPlugins/23andMe-snp-converter</module>
-                <module>optionalPlugins/protannot</module>
-                <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
-            </modules>            
-        </profile>
-        <profile>
-            <id>development-bitbucket-pipelines</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <install4j.home>/opt/install4j7/</install4j.home>
-                <install4j.licenseKey>_INSTALL4jLICENSE_</install4j.licenseKey>
-                <install4j.winKeystorePassword>_WINKEYSTOREPASSWORD_</install4j.winKeystorePassword>
-                <install4j.macKeystorePassword>_MACKEYSTOREPASSWORD_</install4j.macKeystorePassword>
-            </properties>
-            <modules>
-                <module>optionalPlugins/merge-annotation-operator</module>
-                <module>optionalPlugins/geometric-mean</module>
-                <module>optionalPlugins/igb-command-socket</module> 
-                <module>optionalPlugins/23andMe-snp-converter</module>
-                <module>optionalPlugins/protannot</module>
-                <module>developmentPlugins/FindAnnotations</module>
-                <module>developmentPlugins/OverlapAnnotationOperator</module>                
-                <module>developmentPlugins/SampleSelection</module>
-                <module>developmentPlugins/SearchModeSymmetryFilter</module>
-                <module>developmentPlugins/TallyHandler</module>
-                <module>developmentPlugins/TranscriptIsoform</module>               
-                <module>developmentPlugins/ParentOperators</module>
-                <module>developmentPlugins/NCBIPrimer</module>
-                <module>developmentPlugins/SearchModeLucene</module>
-                <module>main</module>   <!-- declared last because this module builds the ext bundles obr xml-->
-            </modules>
-        </profile>
         <profile>
             <id>release-bitbucket-pipelines</id>
             <activation>
@@ -311,20 +238,12 @@
                 <install4j.macKeystorePassword>_MACKEYSTOREPASSWORD_</install4j.macKeystorePassword>
             </properties>
             <modules>
-                <module>optionalPlugins/merge-annotation-operator</module>
-                <module>optionalPlugins/geometric-mean</module>
-                <module>optionalPlugins/igb-command-socket</module>
-                <module>optionalPlugins/23andMe-snp-converter</module>
-                <module>optionalPlugins/protannot</module>
-                <module>main</module>  <!-- declared last because this module builds the ext bundles obr xml-->
+                <module>main</module>  
             </modules>            
         </profile>
     </profiles>
-
-
     <dependencyManagement>
         <dependencies>
-            
             <!--Start of core module dependencies-->
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
@@ -392,7 +311,6 @@
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>quickload</artifactId>
@@ -436,7 +354,6 @@
                 <scope>provided</scope>
             </dependency>
             <!--End of core module dependencies-->
-
             <!--Start of plugin module dependencies-->
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
@@ -595,12 +512,6 @@
             </dependency>
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
-                <artifactId>23andMe-snp-converter</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>console-gui</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
@@ -643,12 +554,6 @@
             </dependency>
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
-                <artifactId>protannot</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>feedback</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
@@ -675,90 +580,21 @@
             </dependency>
             <!--End of plugin module dependencies-->
             
-            <!-- Start of development plugins -->
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>findAnnotations</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency> 
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>geometric-mean</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency> 
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>merge-annotation-operator</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>ncbiPrimer</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency> 
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>overlapAnnotationOperator</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency> 
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>parentOperators</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>sampleSelection</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>searchModeSymetryFilter</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency> 
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>talleyHandler</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency> 
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>transcriptIsoForm</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency> 
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>searchModeLucene</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <!-- End of development plugins -->
-  
             <!--Start of logging dependencies-->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.7</version>
+                <version>${slf4j-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.1.2</version>
+                <version>${logback-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.1.2</version>
+                <version>${logback-classic.version}</version>
             </dependency>
             <!--End of logging dependencies-->
 
@@ -779,6 +615,7 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>${gsonVersion}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -796,6 +633,7 @@
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>${commonsLoggingVersion}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -878,21 +716,6 @@
                 <artifactId>org.apache.felix.shell.remote</artifactId>
                 <version>${felixShellRemoteVersion}</version>
             </dependency>
-            <!--            <dependency>
-                <groupId>org.amdatu</groupId>
-                <artifactId>org.amdatu.configurator.api</artifactId>
-                <version>1.0.1</version>
-            </dependency>-->
-            <!--            <dependency>
-                <groupId>org.amdatu</groupId>
-                <artifactId>org.amdatu.configurator.properties</artifactId>
-                <version>1.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.amdatu</groupId>
-                <artifactId>org.amdatu.configurator.shell</artifactId>
-                <version>1.0.1</version>
-            </dependency>-->
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.osgi.service.obr</artifactId>
@@ -1044,25 +867,21 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-csv</artifactId>
                 <version>${commonsCsvVersion}</version>
-                <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>${commonsCodecVersion}</version>
-                <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commonsIoVersion}</version>
-                <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
-                <version>2.0</version>
-                <type>jar</type>
+                <version>${commons-net.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.broad.igv</groupId>
@@ -1074,7 +893,6 @@
                 <artifactId>junit</artifactId>
                 <version>${junitVersion}</version>
                 <scope>test</scope>
-                <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -1104,7 +922,7 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.http.servlet-api</artifactId>
-                <version>${felixHttpServletApiVerison}</version>
+                <version>${org.apache.felix.http.servlet-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
@@ -1247,11 +1065,6 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.lorainelab</groupId>
-                    <artifactId>bundle-markdown-encoder</artifactId>
-                    <version>1.0.0</version>
-                </plugin>
-                <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.10.3</version>
                     <configuration>
@@ -1299,22 +1112,6 @@
                             </includes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
-                        <fileset>
-                            <directory>${basedir}/extbundles</directory>
-                            <includes>
-                                <include>*.jar</include>
-                                <include>repository.xml</include>
-                            </includes>
-                            <followSymlinks>false</followSymlinks>
-                        </fileset>
-                        <fileset>
-                            <directory>${basedir}/extbundles/optional</directory>
-                            <includes>
-                                <include>*.jar</include>
-                                <include>repository.xml</include>
-                            </includes>
-                            <followSymlinks>false</followSymlinks>
-                        </fileset>
                         <!--Added fileset to delete users local cache folder for windows and unix system-->
                         <fileset>
                             <directory>${cacheDirectory}</directory>
@@ -1345,9 +1142,6 @@
                     <skipStaging>true</skipStaging>
                 </configuration>
             </plugin>
- 
         </plugins>
     </build>
-
-
 </project>

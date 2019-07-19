@@ -14,7 +14,7 @@
 
     <name>Plugin Manager</name>
     
-    <dependencies>     
+    <dependencies> 
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb</artifactId>
@@ -64,7 +64,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -132,6 +132,16 @@
             <artifactId>igb-javafx-util</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>fi.iki.elonen</groupId>
+            <artifactId>NanoHTTPD</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -147,9 +157,10 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <instructions>    
-                        <Import-Package>*</Import-Package>
-                        <Export-Package/>                        
+                    <instructions>   
+                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency> 
+                        <Import-Package>!${project.artifactId},*</Import-Package>
+                        <Export-Package>org.lorainelab.igb.plugin.manager.service</Export-Package>
                         <Bundle-Description>An IgbTabPanel for managing OSGi OBR repositories for installing IGB plugins</Bundle-Description>
                         <Service-Component>*</Service-Component>
                     </instructions>

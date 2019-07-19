@@ -10,7 +10,6 @@ See:
 
 * [BioViz Web site](http://www.bioviz.org) with platform-specific installers
 * Searchable on-line [User's Guide](https://wiki.transvar.org/display/igbman/Home)
-* [Developers Guide](https://wiki.transvar.org/display/igbdevelopers/Home) explains IGB development and IGB Apps
 * IGB programming [on-line class](https://canvas.instructure.com/courses/1164217)
 * [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg) with video tutorials and demos
 * [IGB Jira Issue Tracker site](http://jira.transvar.org) describes development plans
@@ -27,7 +26,7 @@ To build and run from the command line:
 3. Build IGB using maven. Skip tests to save time.
 4. Run IGB using the run_igb script for your platform.
 
-**Note**: Instructions above assume you have Java installed on your computer. See Download section for platform-specific installers, which come with IGB and Java. 
+**Note**: Instructions above assume you have Java installed on your computer. See Download section for platform-specific installers, which come with IGB and Java together. 
 
 Ex)
 

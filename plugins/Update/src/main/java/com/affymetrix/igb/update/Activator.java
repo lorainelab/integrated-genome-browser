@@ -40,7 +40,7 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
             //for testing only
             // String updateXml = Resources.toString(Activator.class.getClassLoader().getResource("updates.xml"), Charsets.UTF_8);
             if (StringUtils.isNotBlank(updateXml)) {
-                final Version CURRENT_VERSION = new Version(CommonUtils.getInstance().getAppVersion());
+                final Version CURRENT_VERSION = new Version(CommonUtils.getInstance().getIgbVersion());
                 final List<Update> updates = UpdateParser.parse(updateXml);
                 Collections.sort(updates, new Comparator<Update>() {
                     public int compare(Update o1, Update o2) {

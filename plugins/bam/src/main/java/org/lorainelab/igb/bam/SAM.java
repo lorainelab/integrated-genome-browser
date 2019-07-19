@@ -3,7 +3,6 @@ package org.lorainelab.igb.bam;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symloader.LineProcessor;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.ErrorHandler;
@@ -36,6 +35,7 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL
 import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL_SCHEME;
 import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
+import java.util.Iterator;
 
 /**
  *
@@ -165,7 +165,12 @@ public class SAM extends XAM implements LineProcessor {
                 iter.close();
             }
             if (!errList.isEmpty()) {
-                ErrorHandler.errorPanel("SAM exception", "Ignoring " + errList.size() + " records", errList, Level.WARNING);
+                Iterator<Throwable> error = errList.iterator();
+                String errMessage = "";
+                while(error.hasNext()) {
+                    errMessage += error.next() +"<br>";
+                }
+                ErrorHandler.errorPanel("SAM exception", errMessage +"<br>Ignoring " + errList.size() + " records <br>", errList, Level.WARNING);
             }
         }
     }

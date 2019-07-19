@@ -11,6 +11,7 @@ package com.affymetrix.igb.action;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileDropHandler;
 import com.affymetrix.genometry.util.FileTracker;
@@ -27,6 +28,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
 import org.lorainelab.igb.javafx.FileChooserUtil;
@@ -104,7 +106,25 @@ public final class LoadFileAction extends OpenURIAction {
         if (!all_known_types.accept(new File(friendlyName))) {
             return false;
         }
-        openURI(uri, friendlyName, mergeSelected, genomeVersion, genomeVersion.getSpeciesName(), false);//Always load as track
+        //IGBF-1509 : conditions to load genome sequence 
+        List<String> supportedExtensions = OpenURIAction.getSupportedFiles(FileTypeCategory.Sequence).stream()
+                .flatMap(filter -> filter.getExtensions().stream())
+                .map(ext -> "*." + ext).collect(Collectors.toList());
+		
+		boolean isReferenceSequence = false;
+        String speciesName = GeneralLoadView.getLoadView().getSelectedSpecies();
+        GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
+        
+        if (SELECT_SPECIES.equals(speciesName) && loadGroup == null) { //check if genome is not selected
+            
+            if(supportedExtensions.contains("*."+friendlyName.split("\\.")[1])) { 
+               //if the file is of supported extension assume the genome sequence is available  
+               isReferenceSequence = true;
+            }
+        }
+        // For unsupported file extensions reference genome sequence will be not available 
+        openURI(uri, friendlyName, mergeSelected, genomeVersion, genomeVersion.getSpeciesName(), isReferenceSequence);//Always load as track
+        //IGBF-1509 end
 
         return true;
     }
@@ -150,23 +170,26 @@ public final class LoadFileAction extends OpenURIAction {
         }
         List<File> files = null;
         Optional<List<File>> selectedFiles;
-        if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
-            selectedFiles = FileChooserUtil.build().setContext(currDir).retrieveFilesFromFxChooser();
-            if (selectedFiles.isPresent()) {
-                files = selectedFiles.get();
-            }
-        } else {
-            ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"),
-                    BUNDLE.getString("noGenomeSelectedMessage"), Level.INFO);
+        //IGBF-1509 :  Open File... should work if no genome available
+        selectedFiles = FileChooserUtil.build().setContext(currDir).retrieveFilesFromFxChooser();
+        if (selectedFiles.isPresent()) {
+            files = selectedFiles.get();
         }
         if (files == null || files.isEmpty()) {
             return;
         }
         load_dir_tracker.setFile(files.get(0).getParentFile());
-        for (File file : files) {
-            URI uri = file.toURI();
-            openURI(uri, file.getName(), true, loadGroup, speciesName, false);
+        if (!SELECT_SPECIES.equals(speciesName) && loadGroup != null) {
+            for (File file : files) {
+                URI uri = file.toURI();
+                openURI(uri, file.getName(), true, loadGroup, speciesName, false);
+            }
+        } else { 
+            ((FileDropHandler) fdh).openFileAction(files);             
         }
+        //IGBF-1509 end
+        
+        
     }
 
     @Override

@@ -15,7 +15,6 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
-import com.affymetrix.genometry.util.SeekableFTPStream;
 import org.lorainelab.igb.cache.api.CacheStatus;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -31,7 +30,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import net.sf.picard.sam.BuildBamIndex;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SamReaderFactory;
@@ -433,30 +431,6 @@ public final class BAM extends XAM implements Das2SliceSupport {
             }
         }
         throw new BamIndexNotFoundException();
-    }
-
-    //Can be used later. Do not remove.
-    //Moving to a new plugin project BAMIndexer -KTS
-    @SuppressWarnings("unused")
-    static private File createIndexFile(File bamfile) throws IOException {
-        File indexfile = File.createTempFile(bamfile.getName(), ".bai");
-
-        if (!indexfile.exists()) {
-            ErrorHandler.errorPanel("Unable to create file.");
-            return null;
-        }
-
-        if (DEBUG) {
-            System.out.println("Creating new bam index file -> " + indexfile);
-        }
-
-        String input = "INPUT=" + bamfile.getAbsolutePath();
-        String output = "OUTPUT=" + indexfile.getAbsolutePath();
-        String quiet = "QUIET=" + !DEBUG;
-        BuildBamIndex buildIndex = new BuildBamIndex();
-        buildIndex.instanceMain(new String[]{input, output, quiet});
-
-        return indexfile;
     }
 
     public String getMimeType() {

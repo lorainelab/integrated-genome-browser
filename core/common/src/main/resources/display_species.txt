@@ -10,13 +10,13 @@ O_aries.png
 P_troglodytes.png
 T_rubripes.png
 X_tropicalis.png
-R_norvegicus.png
 G_gallus.png
 A_gambiae.png
 E_coli_K12-MG1655.png
 C_elegans.png
 D_rerio.png
 S_cerevisiae.png
+R_norvegicus.png
 D_melanogaster.png
 M_musculus.png
 H_sapiens.png

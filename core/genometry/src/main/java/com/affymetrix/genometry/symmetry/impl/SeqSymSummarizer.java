@@ -526,11 +526,11 @@ public final class SeqSymSummarizer {
         return psym;
     }
 
-    public static GraphSym getSymmetryStartSummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id, int desired_leaf_depth) {
+    public static GraphSym getSymmetryStartSummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id) {
         int symcount = syms.size();
         List<SeqSpan> leaf_spans = new ArrayList<>(symcount);
         for (SeqSymmetry sym : syms) {
-            SeqUtils.collectSpans(sym, seq, leaf_spans, desired_leaf_depth);
+            SeqUtils.collectStartSpans(sym, seq, leaf_spans);
         }
         if (leaf_spans.isEmpty()) {
             return null;
@@ -538,7 +538,7 @@ public final class SeqSymSummarizer {
             return getSpanStartSummary(leaf_spans, binary_depth, id);
         }
     }
-
+    
     /**
      * GetSpanSummary. General idea is that this will make getUnion(),
      * getIntersection(), etc. easier and more efficient.

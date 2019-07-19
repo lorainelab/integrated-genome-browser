@@ -13,7 +13,14 @@ import java.util.prefs.Preferences;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JEditorPane;
 import javax.swing.Timer;
+import java.net.URI;
+import java.net.URISyntaxException;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import java.awt.Desktop;
+import java.io.IOException;
 
 /**
  *
@@ -83,6 +90,42 @@ public class ModalUtils {
 
         return false;
     }
+    
+    // It show hyperlink in the JOptionPan. inputs are message, linkName and link
+    public static boolean confirmPanel(String message,String linkName,String link) {
+        //IGBF-1518 : Change font of message to Arial
+        JEditorPane jep = new JEditorPane("text/html", "<body style=\"font-family:Arial, Helvetica, sans-serif;\">"+ 
+                message + "<a href=" + link +">" + linkName +"</a>. <br><br> Would you like to remove this file from the list? </body>");
+        //IGBF-1518 end
+        jep.setEditable(false);
+        jep.setOpaque(false);
+        jep.addHyperlinkListener(new HyperlinkListener() {
+        public void hyperlinkUpdate(HyperlinkEvent hle) {
+            if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
+                try {
+                    Desktop.getDesktop().browse(new URI(link));
+                    }
+                catch (IOException | URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        });
+        return JOptionPane.YES_OPTION == showConfirmDialog(getActiveWindow(), jep);
+    }
+    // showConfirmdialog for accepting JeditorPane as argument
+    private static int showConfirmDialog(final Component comp, JEditorPane jep) {
+        JOptionPane pane = new JOptionPane(jep, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, CommonUtils.getInstance().getApplicationSmallIcon());
+        javax.swing.JDialog dialog = pane.createDialog(comp, "Confirm");
+        dialog.setVisible(true);
+
+        Object value = pane.getValue();
+        if (value == null) {
+            return JOptionPane.NO_OPTION;
+        }
+        return (Integer) value;
+    }
+    
 
     private static int showConfirmDialog(final Component comp, Object[] params) {
         JOptionPane pane = new JOptionPane(params, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, CommonUtils.getInstance().getApplicationSmallIcon());

@@ -69,7 +69,7 @@ public class BundleActionManager {
         repoAdmin = repositoryAdmin;
     }
 
-    protected void updateBundle(PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {
+    public void updateBundle(PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {
         CompletableFuture.supplyAsync(() -> {
             Bundle bundle = plugin.getBundle();
             Optional<Bundle> installedBundled = Arrays.asList(bundleContext.getBundles()).stream()

@@ -1,8 +1,6 @@
 package com.affymetrix.igb.tabs.console;
 
-import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import javax.swing.text.DefaultCaret;
@@ -13,11 +11,11 @@ import org.slf4j.LoggerFactory;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.OutputStreamAppender;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import javax.swing.JScrollPane;
 import net.miginfocom.swing.MigLayout;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 
@@ -34,8 +32,10 @@ public class ConsoleLogPanel extends IgbTabPanel {
     private static final int MAX_CONSOLE_LENGTH = 1000;
     // Variables declaration - do not modify  
     private javax.swing.JButton copyToClipboardBtn;
+    private javax.swing.JButton clearTxtBtn;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea consoleTextArea;
+    private javax.swing.JPanel panel;
     
     // End of variables declaration 
     private MigLayout layout;
@@ -48,20 +48,32 @@ public class ConsoleLogPanel extends IgbTabPanel {
     }
     
     private void initComponents() {
-        layout  = new MigLayout("wrap 1", "", "[grow 1,fill][grow 99,fill]");
+        layout  = new MigLayout("wrap 1", "", "[grow 99,fill][grow 1,fill]");
         
         jScrollPane1 = new javax.swing.JScrollPane();
         consoleTextArea = new javax.swing.JTextArea();
         copyToClipboardBtn = new javax.swing.JButton();
         copyToClipboardBtn.setSize(new java.awt.Dimension(100, 30));
         copyToClipboardBtn.setBounds(0, 0, 100, 30);
+        clearTxtBtn = new javax.swing.JButton();
+        copyToClipboardBtn.setSize(new java.awt.Dimension(100, 30));
+        clearTxtBtn.setBounds(110, 0, 50, 30);
+        panel = new javax.swing.JPanel(new GridLayout(1, 2));
+        panel.add(copyToClipboardBtn);
+        panel.add(clearTxtBtn);
+        
         jScrollPane1.setViewportView(consoleTextArea);
-        copyToClipboardBtn.setText("Copy To Clipboard");
-
-        this.add(copyToClipboardBtn, "top, left, split");
+        copyToClipboardBtn.setText("Copy All To Clipboard");
+        clearTxtBtn.setText("Clear");
         this.add(jScrollPane1, "grow, wrap");
+//        this.add(copyToClipboardBtn, "bottom, left, split");
+//        this.add(clearTxtBtn, "bottom, left, split");
+        this.add(panel, "bottom, left, split");
         this.setLayout(layout);
         copyToClipboardBtn.addActionListener(this::copyToClipboardBtnActionPerformed);
+        clearTxtBtn.addActionListener(this::clearTxtBtnActionPerformed);
+        
+        
     }
     
     private void copyToClipboardBtnActionPerformed(ActionEvent evt) {
@@ -69,11 +81,11 @@ public class ConsoleLogPanel extends IgbTabPanel {
         Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
         clpbrd.setContents(stringSelection, null);
     }
+    
+    private void clearTxtBtnActionPerformed(ActionEvent evt){
+        consoleTextArea.setText(null);
+    }
 
-//    @Activate
-//    public void activate() {   
-////        initialiseConsoleLogs();
-//    }
 
     private void initialiseConsoleLogs(){
         try {

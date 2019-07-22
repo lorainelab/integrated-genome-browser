@@ -71,6 +71,12 @@
             <artifactId>org.lorainelab.igb.menu.api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>frameManager</artifactId>
+            <version>9.1.0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>

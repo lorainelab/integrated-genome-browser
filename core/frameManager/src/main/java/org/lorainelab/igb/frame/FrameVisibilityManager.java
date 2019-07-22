@@ -135,4 +135,9 @@ public class FrameVisibilityManager {
     public void setConsolePanel(IgbTabPanelI consolePanel) {
         this.consolePanel = consolePanel;
     }
+    
+    public IgbTabPanelI getConsolePanel() {
+        return this.consolePanel;
+    }
+    
 }

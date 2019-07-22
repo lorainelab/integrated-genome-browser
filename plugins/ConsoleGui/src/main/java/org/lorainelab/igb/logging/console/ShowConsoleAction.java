@@ -11,12 +11,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import org.lorainelab.igb.frame.FrameVisibilityManager;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
+import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 
 @Component(name = ShowConsoleAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, MenuBarEntryProvider.class})
 public class ShowConsoleAction extends GenericAction implements MenuBarEntryProvider {
@@ -50,11 +52,16 @@ public class ShowConsoleAction extends GenericAction implements MenuBarEntryProv
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         consoleGui.showConsole();
+        
+//        WindowServiceDefaultImpl win = new WindowServiceDefaultImpl();
+        
     }
 
     @Override
     public Optional<List<MenuItem>> getMenuItems() {
         MenuItem showConsoleActionMenuItem = new MenuItem(BUNDLE.getString("showConsole"), (Void t) -> {
+            FrameVisibilityManager frm = new FrameVisibilityManager();
+            IgbTabPanel igbTab = frm.getConsolePanel().getIgbTabPanel();
             consoleGui.showConsole();
             return t;
         });

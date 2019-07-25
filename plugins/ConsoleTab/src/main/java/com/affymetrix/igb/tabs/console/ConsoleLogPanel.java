@@ -36,7 +36,6 @@ public class ConsoleLogPanel extends IgbTabPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea consoleTextArea;
     private javax.swing.JPanel panel;
-    
     // End of variables declaration 
     private MigLayout layout;
     
@@ -66,8 +65,6 @@ public class ConsoleLogPanel extends IgbTabPanel {
         copyToClipboardBtn.setText("Copy All To Clipboard");
         clearTxtBtn.setText("Clear");
         this.add(jScrollPane1, "grow, wrap");
-//        this.add(copyToClipboardBtn, "bottom, left, split");
-//        this.add(clearTxtBtn, "bottom, left, split");
         this.add(panel, "bottom, left, split");
         this.setLayout(layout);
         copyToClipboardBtn.addActionListener(this::copyToClipboardBtnActionPerformed);
@@ -75,6 +72,7 @@ public class ConsoleLogPanel extends IgbTabPanel {
         
         
     }
+   
     
     private void copyToClipboardBtnActionPerformed(ActionEvent evt) {
         StringSelection stringSelection = new StringSelection(consoleTextArea.getText());

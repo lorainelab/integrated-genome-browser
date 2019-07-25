@@ -21,22 +21,12 @@
         </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
-            <artifactId>genometry</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-services</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>igbSwingExt</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>genoviz</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -56,11 +46,6 @@
             <scope>provided</scope>
         </dependency>
         <!--End of logging dependencies-->
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>igb-genoviz-extensions</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>bndlib</artifactId>

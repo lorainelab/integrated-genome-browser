@@ -597,7 +597,7 @@ public final class BookmarkUnibrowControlServlet {
             try {
                 String urlToLoad = query_urls.get(0);
                 GenomeVersion loadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
-                igbService.openURI(new URI(urlToLoad), urlToLoad, loadGroup, "Custom Genome", false);
+                igbService.openURI(new URI(urlToLoad.replace(" ", "%20")), urlToLoad, loadGroup, "Custom Genome", false);
             } catch (URISyntaxException ex) {
                 logger.error("Invalid bookmark syntax.", ex);
             }

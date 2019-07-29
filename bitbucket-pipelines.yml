@@ -19,7 +19,7 @@
 # Image is hosted at Docker hub.
 # Dockerfile: https://bitbucket.org/lorainelab/integrated-genome-browser-docker
 image:
-  name: lorainelab/igb-maven-install4j:jre-1.8.0_191
+  name: lorainelab/igb-maven-install4j:jre-1.8.0_212
 
 definitions:
   steps:

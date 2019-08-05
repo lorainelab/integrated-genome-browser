@@ -26,7 +26,7 @@ public class ExternalViewer extends IgbTabPanel implements ItemListener {
 
     private static final long serialVersionUID = 1L;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("external");
-    private static final int TAB_POSITION = 6;
+    private static final int TAB_POSITION = 7;
 
     private static final String[] names = {UCSCView.viewName, EnsemblView.viewName};
     private JRPComboBox ucscBox;

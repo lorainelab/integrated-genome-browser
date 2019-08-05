@@ -26,13 +26,13 @@ public class ShowConsoleAction extends GenericAction implements MenuBarEntryProv
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private static final int CONSOLE_MENU_ITEM_WEIGHT = 10;
     private ConsoleLogger consoleGui;
-
+    
     public ShowConsoleAction() {
         super(BUNDLE.getString("showConsole"), null,
                 "16x16/actions/console.png",
                 "22x22/actions/console.png",
                 KeyEvent.VK_C, null, false);
-
+        
         setKeyStrokeBinding("ctrl shift C");
     }
 
@@ -40,7 +40,7 @@ public class ShowConsoleAction extends GenericAction implements MenuBarEntryProv
     public void activate() {
         this.ordinal = 150;
     }
-
+  
     @Reference
     public void setConsoleGui(ConsoleLogger consoleGui) {
         this.consoleGui = consoleGui;

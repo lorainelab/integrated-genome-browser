@@ -59,6 +59,8 @@ D_ananassae_Aug_2005	droAna2
 D_ananassae_Jul_2004	droAna1
 D_erecta_Aug_2005	droEre1
 D_grimshawi_Aug_2005	droGri1
+D_magna_Apr_2010	Daphnia magna Xinb3 v2.4
+D_magna_Jan_2019	Daphnia magna SK v1.0
 D_melanogaster_Apr_2004	Drosophila_Apr_2004	BDGP Release 4	dm2	dm:Apr_2004	Dm:Apr_2004	Dm:R4	Dm:BDGPv4	Dm;BDGPv4	Dm:BDGPv4h	Dm;BDGPv4h
 D_melanogaster_Apr_2006	Drosophila_Apr_2006	BDGP Release 5	dm3	dm:Apr_2006	Dm:Apr_2006	Dm:R5	Dm:BDGPv5	Dm;BDGPv5	Dm:BDGPv5h	Dm;BDGPv5h
 D_melanogaster_Jan_2003	Drosophila_Jan_2003	Drosophila jan2003	dm1		dm:Jan_2003	Dm:Jan_2003	Dm:R3	Dm:BDGPv3	Dm;BDGPv3
@@ -70,6 +72,8 @@ D_ordii_Jul_2008	dipOrd1	Dipodomys_ordii.dipOrd1.reference
 D_persimilis_Oct_2005	droPer1
 D_pseudoobscura_Nov_2004	dp3
 D_pseudoobscura_Aug_2003	dp2
+D_pulex_Feb_2011	Daphnia pulex TCO v1.0
+D_pulex_Sep_2016	Daphnia pulex PA42 v3.0
 D_rerio_Jul_2010	danRer7
 D_rerio_Dec_2008	danRer6	Zv8	Zebrafish_Dec_2008	Danio_rerio.Zv8.reference
 D_rerio_Jul_2007	danRer5	Zv7	Zebrafish_Jul_2007

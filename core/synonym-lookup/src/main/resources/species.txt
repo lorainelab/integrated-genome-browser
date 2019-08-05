@@ -38,6 +38,8 @@ Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi
 Cricetulus griseus	Chinese hamster	C_griseus	criGri
 Cucumis sativus	Cucumber	C_sativus
 Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio
+Daphnia magna	water flea	D_magna
+Daphnia pulex	water flea	D_pulex
 Dasypus novemcinctus	Nine-banded armadillo	D_novemcinctus	dasNov	Dasypus_novemcinctus
 Dictyostelium discoideum	slime mold	D_discoideum
 Drosophila ananassae	D. ananassae (fruit fly)	D_ananassae	droAna

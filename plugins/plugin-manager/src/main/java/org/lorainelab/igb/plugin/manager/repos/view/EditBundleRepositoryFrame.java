@@ -14,6 +14,8 @@ import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -21,6 +23,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -33,6 +37,7 @@ public class EditBundleRepositoryFrame extends JFrame {
     private static final long serialVersionUID = 1L;
     private static final String REPOSITORY_XML_FILE_PATH = "repository.xml";
 
+    private static final Logger logger = LoggerFactory.getLogger(EditBundleRepositoryFrame.class);
     private JPanel parent;
     private PluginRepository currentRepo;
     private PluginRepositoryList pluginRepositoryList;
@@ -216,21 +221,35 @@ public class EditBundleRepositoryFrame extends JFrame {
      */
     private boolean isValidRepositoryUrl(String url) {
         try {
-            String repositoryXmlUrl =  (url.lastIndexOf("/") == (url.length()-1)) ? 
+                String repositoryXmlUrl =  (url.lastIndexOf("/") == (url.length()-1)) ? 
                         url + REPOSITORY_XML_FILE_PATH : url + "/" + REPOSITORY_XML_FILE_PATH;
+                
             if (isLocalFile(new URI(repositoryXmlUrl))){
                 File file = new File(new URL(repositoryXmlUrl).getFile());
                 if (!file.exists()) {
                     throw new Exception("File not Found!");
                 }
                 return true;
-                }
-            HttpURLConnection.setFollowRedirects(false);
-            HttpURLConnection con = (HttpURLConnection) new URL(repositoryXmlUrl).openConnection();
-            con.setRequestMethod("HEAD");
-            return con.getResponseCode() == HttpURLConnection.HTTP_OK;
+            }
+            
+            int responseCode = 0;
+            
+            if ( repositoryXmlUrl.contains("https")) {
+               HttpsURLConnection con = (HttpsURLConnection) new URL(repositoryXmlUrl).openConnection();
+               responseCode = con.getResponseCode();
+            } else {
+               HttpURLConnection con = (HttpURLConnection) new URL(repositoryXmlUrl).openConnection();
+               responseCode = con.getResponseCode();
+            }
+            
+            if (responseCode != HttpsURLConnection.HTTP_OK) {
+                 throw new Exception("Malformed URL.");
+            }
+            
+            return true;
         } catch ( Exception e) {
             this.setVisible(true);
+            logger.debug("Exception has occured", e);
             showTextMessage("Url is Invalid...Try Again!");
             return false;
         }

@@ -45,6 +45,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
     private PluginRepositoryList pluginRepositoryList;
     private final Icon refresh_icon;
     private AddBundleRepositoryFrame addBundleRepositoryFrame;
+    private EditBundleRepositoryFrame editBundleRepositoryFrame;
     private StyledJTable table;
     private IgbService igbService;
     private static final Logger logger = LoggerFactory.getLogger(BundleRepositoryPrefsView.class);
@@ -59,6 +60,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
         tableModel = pluginRepositoryList.getBundleRepositoryTableModel();
         initializeTable();
         addBundleRepositoryFrame = new AddBundleRepositoryFrame(this, pluginRepositoryList);
+        editBundleRepositoryFrame = new EditBundleRepositoryFrame(this, pluginRepositoryList);
         initComponents();
         initializeSelectionListener();
     }
@@ -177,6 +179,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
         removeButton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
         done = new javax.swing.JButton();
+        editButton = new javax.swing.JButton();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Plugin Repositories"));
 
@@ -204,6 +207,13 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
             }
         });
 
+        editButton.setText("Edit");
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -211,6 +221,8 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(editButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(addButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(removeButton)
@@ -226,7 +238,8 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(removeButton)
                     .addComponent(addButton)
-                    .addComponent(done))
+                    .addComponent(done)
+                    .addComponent(editButton))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -246,9 +259,16 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
         igbService.dismissPreferences();
     }//GEN-LAST:event_doneActionPerformed
 
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        if (tableModel.getSelectedPluginRepository() != null) {
+            editBundleRepositoryFrame.init(tableModel.getSelectedPluginRepository());
+        }
+    }//GEN-LAST:event_editButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton done;
+    private javax.swing.JButton editButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable pluginRepositoryTable;
     private javax.swing.JButton removeButton;

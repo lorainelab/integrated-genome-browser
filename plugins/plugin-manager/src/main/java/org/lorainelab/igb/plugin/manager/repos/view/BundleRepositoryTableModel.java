@@ -100,8 +100,6 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
         PluginRepository pluginRepository = pluginRepositories.get(row);
 
         switch (getColumnName(columnIndex)) {
-            case NAME_COLOMN:
-                return true;
             case ENABLED_COLOMN:
                 return true;
             case REFRESH_COLOMN:

@@ -1,10 +1,11 @@
 package com.affymetrix.igb.tabs.console;
 
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import javax.swing.text.DefaultCaret;
-import static org.lorainelab.igb.services.ServiceComponentNameReference.CONSOLE_PANEL_TAB;
+import static org.lorainelab.igb.services.ServiceComponentNameReference.CONSOLE_TAB;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +18,14 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import net.miginfocom.swing.MigLayout;
+import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 
 /**
  *
  * @author pruthakulkarni
  */
-@Component(name = CONSOLE_PANEL_TAB, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = CONSOLE_TAB, provide = IgbTabPanelI.class, immediate = true)
 public class ConsoleLogPanel extends IgbTabPanel {
     private static final Logger logger = LoggerFactory.getLogger(ConsoleLogPanel.class);
     private static final long serialVersionUID = 1L;
@@ -38,7 +40,7 @@ public class ConsoleLogPanel extends IgbTabPanel {
     private javax.swing.JPanel panel;
     // End of variables declaration 
     private MigLayout layout;
-    
+    private IgbService igbService;
     
     public ConsoleLogPanel() {
         super(BUNDLE.getString("consoleTab"), BUNDLE.getString("consoleTab"), "", false, TAB_POSITION);
@@ -51,6 +53,7 @@ public class ConsoleLogPanel extends IgbTabPanel {
         
         jScrollPane1 = new javax.swing.JScrollPane();
         consoleTextArea = new javax.swing.JTextArea();
+        consoleTextArea.setPreferredSize(new java.awt.Dimension(1200,200));
         copyToClipboardBtn = new javax.swing.JButton();
         copyToClipboardBtn.setSize(new java.awt.Dimension(100, 30));
         copyToClipboardBtn.setBounds(0, 0, 100, 30);
@@ -73,6 +76,12 @@ public class ConsoleLogPanel extends IgbTabPanel {
         
     }
    
+    
+    @Reference(optional = false)
+    public void setIgbService(IgbService igbService) {
+        this.igbService = igbService;
+    }
+
     
     private void copyToClipboardBtnActionPerformed(ActionEvent evt) {
         StringSelection stringSelection = new StringSelection(consoleTextArea.getText());

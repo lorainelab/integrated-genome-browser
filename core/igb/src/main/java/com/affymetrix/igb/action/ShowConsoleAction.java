@@ -7,9 +7,6 @@ import com.affymetrix.igb.IGB;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JViewport;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +31,10 @@ public class ShowConsoleAction extends GenericAction {
     }
 
     private ShowConsoleAction() {
-        super(BUNDLE.getString("showConsole"), null,
-                "16x16/actions/cosole.png",
-                "22x22/actions/cosole.png",
-                KeyEvent.VK_A, null, false);
-        this.ordinal = 100;
+        super(BUNDLE.getString("showConsole"),
+                "16x16/actions/console.png",
+                "22x22/actions/console.png");
+        this.ordinal = 120;
     }
 
     @Override

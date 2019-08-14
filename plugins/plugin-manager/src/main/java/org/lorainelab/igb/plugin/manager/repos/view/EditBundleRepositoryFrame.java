@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
  * @author noorzahara
  * 
  * IGBF-1902 - Add Edit Button to edit the URL/ Name.
+ * The file is created similar to AddBundleRepositoryFrame.java
+ * 
  */
 public class EditBundleRepositoryFrame extends JFrame {
     

@@ -14,7 +14,6 @@ import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -191,10 +190,10 @@ public class EditBundleRepositoryFrame extends JFrame {
 	}
 
 	private void addServerButtonActionPerformed(java.awt.event.ActionEvent evt) {   
-            currentRepo.setName(nameText.getText());
             if (!isValidRepositoryUrl(urlText.getText())) {
                 return;
             }
+            currentRepo.setName(nameText.getText());
             currentRepo.setUrl(urlText.getText());
             pluginRepositoryList.updatePluginRepoPrefs(currentRepo);
             this.setVisible(false);

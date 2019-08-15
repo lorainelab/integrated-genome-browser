@@ -23,7 +23,7 @@ public class ServiceComponentNameReference {
     public static final String SEARCH_VIEW_TAB = "SEARCH_VIEW_TAB";
     public static final String APP_MANAGER_TAB = "APP_MANAGER_TAB";
     public static final String SEQ_GROUP_TAB = "SEQ_GROUP_TAB";
-    public static final String CONSOLE_PANEL_TAB = "CONSOLE_PANEL_TAB";
+    public static final String CONSOLE_TAB = "CONSOLE_TAB";
 
     private ServiceComponentNameReference() {
     }

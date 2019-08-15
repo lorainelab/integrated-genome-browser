@@ -271,11 +271,16 @@ public final class GeneralUtils {
         List<ICOImage> icoImages = null;
         try {
             BufferedInputStream bufferedInputStream;
+            File file = new File(iconURL.getFile());
             if (dataProvider.getLogin().isPresent()) {
                 bufferedInputStream = HttpRequest.get(iconURL).followRedirects(true).trustAllCerts().basic(dataProvider.getLogin().get(), dataProvider.getPassword().get()).buffer();
+            } else if(LocalUrlCacher.isLocalFile(iconURL.toURI())) {
+                //IGBF-1939 set favicon.ico for local quickload files.
+                bufferedInputStream =  new BufferedInputStream(new FileInputStream(file));
             } else {
-                bufferedInputStream = HttpRequest.get(iconURL).followRedirects(true).trustAllCerts().buffer();
+                bufferedInputStream = HttpRequest.get(iconURL).followRedirects(true).trustAllCerts().buffer();   
             }
+
             icoImages = ICODecoder.readExt(bufferedInputStream);
         } catch (Exception ex) {
             return null;

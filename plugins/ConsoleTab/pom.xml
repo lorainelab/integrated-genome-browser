@@ -14,9 +14,36 @@
     <name>Console Tab</name>
 
     <dependencies>
+        <!--Start of logging dependencies-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--End of logging dependencies-->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
-            <artifactId>igb</artifactId>
+            <artifactId>genometry</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -30,35 +57,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.jidesoft</groupId>
-            <artifactId>jide-ultimate</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>track-operations-panel</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!--Start of logging dependencies-->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!--End of logging dependencies-->
-        <dependency>
-            <groupId>biz.aQute.bnd</groupId>
-            <artifactId>bndlib</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>affymetrix-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-core</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -67,6 +67,7 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -81,14 +82,16 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Embed-Transitive>true</Embed-Transitive>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
-                        <Export-Package/>
+                        <Export-Package>
+                            com.affymetrix.igb.tabs.console.*                           
+                        </Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>

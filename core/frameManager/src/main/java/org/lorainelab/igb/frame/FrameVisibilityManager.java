@@ -20,7 +20,7 @@ import static org.lorainelab.igb.services.ServiceComponentNameReference.RESTRICT
 import static org.lorainelab.igb.services.ServiceComponentNameReference.SEARCH_VIEW_TAB;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.SELECTION_INFO_TAB;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.SEQ_GROUP_TAB;
-import static org.lorainelab.igb.services.ServiceComponentNameReference.CONSOLE_PANEL_TAB;
+import static org.lorainelab.igb.services.ServiceComponentNameReference.CONSOLE_TAB;
  
 import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.event.ActionEvent;
@@ -131,7 +131,7 @@ public class FrameVisibilityManager {
         this.annotationTrackPanel = annotationTrackPanel;
     }
     
-    @Reference(target = "(&(component.name=" + CONSOLE_PANEL_TAB + "))")
+    @Reference(target = "(&(component.name=" + CONSOLE_TAB + "))")
     public void setConsolePanel(IgbTabPanelI consolePanel) {
         this.consolePanel = consolePanel;
     }

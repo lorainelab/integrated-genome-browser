@@ -33,11 +33,6 @@ public class IgbServiceDependencyManager {
         logger.info("Igb Module Service Dependencies are now available.");
     }
 
-    @Reference(target = "(&(component.name=ShowConsoleAction))")
-    public void trackConsoleService(MenuBarEntryProvider consoleService) {
-        logger.info("Console Service now available.");
-    }
-
     //This isn't strictly necessary, but waiting for this will prevent brief opportunity in the ui for users to click on genome icons before providers are initialized
     @Reference(target = "(&(component.name=QuickloadFactory))")
     public void trackQuickloadDataProviderFactory(DataProviderFactory quickloadFactory) {

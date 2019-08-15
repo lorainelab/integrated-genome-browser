@@ -22,6 +22,7 @@ import com.affymetrix.igb.action.PreferencesAction;
 import com.affymetrix.igb.action.RemoveFeatureAction;
 import com.affymetrix.igb.action.RunScriptAction;
 import com.affymetrix.igb.action.ShowAllVisualToolsAction;
+import com.affymetrix.igb.action.ShowConsoleAction;
 import com.affymetrix.igb.action.ShowFilterMarkAction;
 import com.affymetrix.igb.action.ShowFullFilePathInTrack;
 import com.affymetrix.igb.action.ShowIGBTrackMarkAction;
@@ -210,6 +211,7 @@ public class MenuBarManager {
         helpMenu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
         helpMenuEntries.put(1, new JMenuItem(AboutIGBAction.getAction()));
         helpMenuEntries.put(5, new JMenuItem(DocumentationAction.getAction()));
+        helpMenuEntries.put(10, new JMenuItem(ShowConsoleAction.getAction()));
     }
 
     @Reference(optional = true, multiple = true, unbind = "removeAMenuItem", dynamic = true)

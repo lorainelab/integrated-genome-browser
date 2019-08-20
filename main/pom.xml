@@ -61,11 +61,6 @@
         </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
-            <artifactId>console-gui</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
             <artifactId>session-manager</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -218,6 +213,11 @@
         <dependency> 
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>annotation-tab</artifactId>
+            <scope>runtime</scope>           
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>console-tab</artifactId>
             <scope>runtime</scope>           
         </dependency>
         <dependency> 

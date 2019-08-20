@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.lorainelab.igb.logging.console;
+package com.affymetrix.igb.tabs.console;
 
 import com.google.common.base.Charsets;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import javax.swing.JTextArea;
  * Adamson. This is from hack #95. This sort of use of the code is allowed (even
  * without attribution). See the preface of their book for details.
  */
-public class JTextAreaOutputStream extends OutputStream {
+public class JTxtAreaOutputStream extends OutputStream {
 
     JTextArea ta;
     PrintStream original;
@@ -29,7 +29,7 @@ public class JTextAreaOutputStream extends OutputStream {
      * will also by written. Thus you can send System.out to a text area and
      * also still send an echo to the original System.out.
      */
-    public JTextAreaOutputStream(JTextArea t, PrintStream echo) {
+    public JTxtAreaOutputStream(JTextArea t, PrintStream echo) {
         this.ta = t;
         this.original = echo;
     }

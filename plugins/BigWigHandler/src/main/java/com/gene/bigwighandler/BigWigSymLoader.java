@@ -165,7 +165,7 @@ public class BigWigSymLoader extends SymLoader {
         int[] xList = Arrays.copyOf(xData.elements(), dataSize);
         float[] yList = Arrays.copyOf(yData.elements(), dataSize);
         int[] wList = Arrays.copyOf(wData.elements(), dataSize);
-        GraphIntervalSym graphIntervalSym = new GraphIntervalSym(xList, wList, yList, featureName, seq);
+        GraphIntervalSym graphIntervalSym = new GraphIntervalSym(xList, wList, yList, uri.toString(), seq);
         List<SeqSymmetry> symList = new ArrayList<>();
         symList.add(graphIntervalSym);
         return symList;

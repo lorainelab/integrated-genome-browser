@@ -8,10 +8,10 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.lorainelab.igb</groupId>
-    <artifactId>console-gui</artifactId>
+    <artifactId>console-tab</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Console Gui</name>
+    <name>Console Tab</name>
 
     <dependencies>
         <!--Start of logging dependencies-->
@@ -66,11 +66,6 @@
             <artifactId>miglayout-swing</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>org.lorainelab.igb.menu.api</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -89,6 +84,9 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
+                        <Export-Package>
+                            com.affymetrix.igb.tabs.console.*                           
+                        </Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

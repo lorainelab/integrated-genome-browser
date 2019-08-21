@@ -1,4 +1,4 @@
-package org.lorainelab.igb.logging.console;
+package com.affymetrix.igb.tabs.console;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -9,13 +9,13 @@ import javax.swing.text.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConsoleLogDocumentListener implements DocumentListener {
+public class ConsoleLogDocListener implements DocumentListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConsoleLogDocumentListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConsoleLogDocListener.class);
 
     private final int maximumLines;
 
-    public ConsoleLogDocumentListener(int maximumLines) {
+    public ConsoleLogDocListener(int maximumLines) {
         this.maximumLines = maximumLines;
     }
 

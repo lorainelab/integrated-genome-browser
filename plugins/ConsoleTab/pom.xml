@@ -8,27 +8,12 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.lorainelab.igb</groupId>
-    <artifactId>image-exporter</artifactId>
+    <artifactId>console-tab</artifactId>
     <packaging>bundle</packaging>
 
-    <name>image-exporter</name>
+    <name>Console Tab</name>
 
     <dependencies>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>genoviz</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>igb-genoviz-extensions</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>affymetrix-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <!--Start of logging dependencies-->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -37,6 +22,11 @@
         </dependency>
         <!--End of logging dependencies-->
         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <scope>provided</scope>
@@ -44,6 +34,11 @@
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>bndlib</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -57,42 +52,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-graphicsio-svg</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.miglayout</groupId>
-            <artifactId>miglayout-swing</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.swinglabs</groupId>
-            <artifactId>swing-layout</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>igbSwingExt</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>igb-javafx-util</artifactId>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-core</artifactId>
             <scope>provided</scope>
         </dependency>
-          <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>org.lorainelab.igb.menu.api</artifactId>
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -113,7 +84,9 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
-                        <Export-Package>org.lorainelab.igb.image.exporter.service</Export-Package>
+                        <Export-Package>
+                            com.affymetrix.igb.tabs.console.*                           
+                        </Export-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

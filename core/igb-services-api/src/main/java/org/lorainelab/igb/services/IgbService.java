@@ -161,6 +161,14 @@ public interface IgbService {
      * @param panel the IGBTabPanel
      */
     public void selectTab(IgbTabPanel panel);
+    
+    /**
+     * write a custom message to IGB Console 
+     *
+     * @param Msg String
+     * @param MsgType String
+     */
+    public void writeCustomMsgToIGBConsoleTab(String Msg, String MsgType);
 
     public void packMap(boolean fitx, boolean fity);
 
@@ -244,4 +252,8 @@ public interface IgbService {
 
     @Deprecated
     public void addParentMenuBarEntry(JMenu parentMenu, int weight);
+
+    public List<String> getSpeciesList();
+
+    public List<String> getAllVersions(String species);
 }

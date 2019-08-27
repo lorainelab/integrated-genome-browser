@@ -22,7 +22,7 @@ import javax.swing.JScrollPane;
 public class SeqGroupViewGUI extends IgbTabPanel {
 
     private static final long serialVersionUID = 1L;
-    private static final int TAB_POSITION = 7;
+    private static final int TAB_POSITION = 8;
     private JRPStyledTable seqtable;
     private SeqGroupView seqGroupView;
     static final Cursor defaultCursor, openHandCursor, closedHandCursor;

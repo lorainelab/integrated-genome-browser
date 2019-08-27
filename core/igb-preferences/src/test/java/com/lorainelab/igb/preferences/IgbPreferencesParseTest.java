@@ -77,7 +77,7 @@ public class IgbPreferencesParseTest {
         list.add(server);
         prefs.setDataProviders(list);
         jsonWrapper.setPrefs(prefs);
-        logger.info(igbPreferencesParser.toJson(jsonWrapper));
+        //logger.info(igbPreferencesParser.toJson(jsonWrapper));
     }
 
     @Test

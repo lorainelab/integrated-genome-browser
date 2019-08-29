@@ -27,13 +27,11 @@ public class RemoteBlastNCBITest {
         RemoteBlastNCBI blast = new RemoteBlastNCBI(blastType, new RemoteBlastNCBI.BlastOptions());
         Sequence seq = new Sequence(id, residue);
         String url = blast.runAnalysis(sf, seq, 1);
-        System.out.println(residue);//can be used for direct input in NCBI
-        System.out.println(url);//To analyse the url
+        
 
         int parameterIndex = url.indexOf("?");
         int firstParamenterEndIndex = url.indexOf("&");
         String firstParameter = url.substring(parameterIndex + 1, firstParamenterEndIndex);
-        System.out.println(firstParameter);
         String[] parameterValue = firstParameter.split("\\=");
         String rid = "";
         if (parameterValue[0].equalsIgnoreCase("rid")) {

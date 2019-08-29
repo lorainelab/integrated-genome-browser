@@ -301,7 +301,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         softClipColor = (Color) load(PREF_SOFT_CLIP_COLOR, this.getsoftClipColor());
         showSoftClipResidues = (Boolean) load(PREF_SHOW_SOFT_CLIPPED_RESIDUES, this.getShowSoftClippedResidues());
         showSoftClipDefaultColor = (Boolean) load(PREF_SHOW_SOFT_CLIPPED_DEFAULT_COLOR, this.getShowSoftClipDefaultColor());
-        showSoftClipCustomColor = (Boolean) load(PREF_SHOW_SOFT_CLIPPED_CUSTOM_COLOR, this.getShowSoftClipDefaultColor());
+        showSoftClipCustomColor = (Boolean) load(PREF_SHOW_SOFT_CLIPPED_CUSTOM_COLOR, this.getShowSoftClipCustomColor());
     }
 
     public PropertyMap getProperties() {
@@ -324,7 +324,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         props.put(PREF_SOFT_CLIP_COLOR, String.valueOf(getsoftClipColor()));
         props.put(PREF_SHOW_SOFT_CLIPPED_RESIDUES, String.valueOf(getShowSoftClippedResidues()));
         props.put(PREF_SHOW_SOFT_CLIPPED_DEFAULT_COLOR, String.valueOf(getShowSoftClipDefaultColor()));
-        props.put(PREF_SHOW_SOFT_CLIPPED_CUSTOM_COLOR, String.valueOf(getShowSoftClipDefaultColor()));
+        props.put(PREF_SHOW_SOFT_CLIPPED_CUSTOM_COLOR, String.valueOf(getShowSoftClipCustomColor()));
         return props;
     }
 

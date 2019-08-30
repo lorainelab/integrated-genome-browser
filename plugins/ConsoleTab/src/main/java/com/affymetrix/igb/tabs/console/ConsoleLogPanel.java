@@ -13,13 +13,11 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.OutputStreamAppender;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import javax.swing.BoxLayout;
-import net.miginfocom.swing.MigLayout;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 

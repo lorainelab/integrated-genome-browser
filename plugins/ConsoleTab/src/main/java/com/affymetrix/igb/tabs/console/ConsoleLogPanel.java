@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.OutputStreamAppender;
-import java.awt.GridLayout;
+import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import net.miginfocom.swing.MigLayout;
+import javax.swing.BoxLayout;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 
@@ -39,7 +39,6 @@ public class ConsoleLogPanel extends IgbTabPanel {
     private javax.swing.JTextArea consoleTextArea;
     private javax.swing.JPanel panel;
     // End of variables declaration 
-    private MigLayout layout;
     private IgbService igbService;
     
     public ConsoleLogPanel() {
@@ -49,30 +48,25 @@ public class ConsoleLogPanel extends IgbTabPanel {
     }
     
     private void initComponents() {
-        layout  = new MigLayout("wrap 1", "", "[grow 99,fill][grow 1,fill]");
+        this.setLayout(new BorderLayout());
         
-        jScrollPane1 = new javax.swing.JScrollPane();
         consoleTextArea = new javax.swing.JTextArea();
-        consoleTextArea.setPreferredSize(new java.awt.Dimension(1200,200));
+        jScrollPane1 = new javax.swing.JScrollPane(consoleTextArea);
+        this.add(jScrollPane1, BorderLayout.CENTER);
         copyToClipboardBtn = new javax.swing.JButton();
-        copyToClipboardBtn.setSize(new java.awt.Dimension(100, 30));
-        copyToClipboardBtn.setBounds(0, 0, 100, 30);
         clearTxtBtn = new javax.swing.JButton();
-        copyToClipboardBtn.setSize(new java.awt.Dimension(100, 30));
-        clearTxtBtn.setBounds(110, 0, 50, 30);
-        panel = new javax.swing.JPanel(new GridLayout(1, 2));
+        panel = new javax.swing.JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.add(copyToClipboardBtn);
         panel.add(clearTxtBtn);
         
-        jScrollPane1.setViewportView(consoleTextArea);
         copyToClipboardBtn.setText("Copy All To Clipboard");
         clearTxtBtn.setText("Clear");
-        this.add(jScrollPane1, "grow, wrap");
-        this.add(panel, "bottom, left, split");
-        this.setLayout(layout);
+
+        this.add(panel, BorderLayout.SOUTH);
+        
         copyToClipboardBtn.addActionListener(this::copyToClipboardBtnActionPerformed);
         clearTxtBtn.addActionListener(this::clearTxtBtnActionPerformed);
-        
         
     }
    

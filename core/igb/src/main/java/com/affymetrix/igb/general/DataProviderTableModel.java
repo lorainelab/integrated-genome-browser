@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
@@ -328,12 +329,15 @@ public final class DataProviderTableModel extends AbstractTableModel {
 
         JFrame messageFrame = new JFrame();
         JTable infoDsTable = buildQuickLoadTableDetails(dataProvider);
-        JScrollPane scroll_pane = new JScrollPane(infoDsTable);
+        JScrollPane scroll_pane = new JScrollPane(infoDsTable,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         messageFrame.add(scroll_pane);
         messageFrame.setTitle(dataProvider.getName());
-        messageFrame.setSize(new Dimension(300, 50));
-        messageFrame.setMinimumSize(new Dimension(400, 50));
-        messageFrame.setMaximumSize(new Dimension(400, 50));
+        messageFrame.setSize(new Dimension(450, 50));
+        messageFrame.setMinimumSize(new Dimension(450, 50));
+        infoDsTable.getColumnModel().getColumn(0).setMinWidth(150);
+        infoDsTable.getColumnModel().getColumn(1).setMinWidth(350);
+
+        infoDsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         messageFrame.pack();
         messageFrame.setLocationRelativeTo(IGB.getInstance().getFrame());
         messageFrame.setVisible(true);
@@ -358,6 +362,18 @@ public final class DataProviderTableModel extends AbstractTableModel {
             StyledJTable infoDsTable = new StyledJTable(row,column){
                 public boolean isCellEditable(int row, int column){
                     return false;
+                }
+                public String getToolTipText(MouseEvent e) {
+                    String tip = null;
+                    java.awt.Point p = e.getPoint();
+                    int rowIndex = rowAtPoint(p);
+                    int colIndex = columnAtPoint(p);
+                    try {
+                        tip = getValueAt(rowIndex, colIndex).toString();
+                    } catch (RuntimeException e1) {
+                        //catch null pointer exception if mouse is over an empty line
+                    }
+                    return tip;
                 }
             };
             infoDsTable.setBackground(infoDsTable.getBackground());
@@ -399,7 +415,5 @@ public final class DataProviderTableModel extends AbstractTableModel {
 
         return dataSourceInfo;
     }
-
-
 
 }

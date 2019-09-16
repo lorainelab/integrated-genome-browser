@@ -1,7 +1,5 @@
 package org.lorainelab.igb.plugin.manager.repos.view;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.lorainelab.igb.plugin.manager.repos.PluginRepositoryList;
 import org.lorainelab.igb.preferences.model.PluginRepository;
 import java.util.ArrayList;
@@ -82,9 +80,6 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        if(rowIndex >= pluginRepositories.size()){
-            return "";
-        }
         PluginRepository pluginRepository = pluginRepositories.get(rowIndex);
         switch (getColumnName(columnIndex)) {
             case REFRESH_COLOMN:
@@ -102,22 +97,13 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int columnIndex) {
-        if(row >= pluginRepositories.size()){
-            return false;
-        }
         PluginRepository pluginRepository = pluginRepositories.get(row);
 
         switch (getColumnName(columnIndex)) {
-            case NAME_COLOMN:
-                return true;
             case ENABLED_COLOMN:
                 return true;
             case REFRESH_COLOMN:
                 return Boolean.valueOf(pluginRepository.getEnabled());
-            //IGBF-1902 Make URL Column editable
-            case URL_COLOMN:
-                return true;
-            //end of IGBF-1902
         }
 
         return false;
@@ -125,9 +111,6 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if(rowIndex >= pluginRepositories.size()){
-            return;
-        }
         PluginRepository pluginRepository = pluginRepositories.get(rowIndex);
         switch (getColumnName(columnIndex)) {
             case REFRESH_COLOMN:
@@ -139,33 +122,9 @@ public class BundleRepositoryTableModel extends AbstractTableModel {
             case ENABLED_COLOMN:
                 pluginRepository.setEnabled(!Boolean.valueOf(pluginRepository.getEnabled()));
                 pluginRepositoryList.pluginRepoAvailabilityChanged(pluginRepository);
-             //IGBF-1902 Update modified URL Value in pluginRepository
-               break;
-            case URL_COLOMN:
-                if (isValidUrl(aValue.toString())) {
-                    pluginRepository.setUrl(aValue.toString());
-                }
-                break;
-             //end of IGBF-1902
-               
         }
         pluginRepositoryList.updatePluginRepoPrefs(pluginRepository);
         this.fireTableDataChanged();
-    }
-    
-    /**
-     * The function checks if the given string is a valid url.
-     * 
-     * @param url
-     * @return 
-     */
-    public boolean isValidUrl(String url) {
-        try {
-             new URL(url);
-             return true;
-        } catch (MalformedURLException e) {
-            return false;
-        }
     }
 
 }

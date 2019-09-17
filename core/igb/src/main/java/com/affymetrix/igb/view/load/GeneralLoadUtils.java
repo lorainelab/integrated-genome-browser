@@ -122,6 +122,7 @@ public final class GeneralLoadUtils {
 
     static final Map<String, String> versionName2species
             = new HashMap<>();	// the species associated with the given version.
+    static Map<String, Integer> assemblyInfo = new HashMap<>();
 
     final static Comparator<DataContainer> DATA_CONTAINER_PRIORITY_COMPARATOR = (DataContainer o1, DataContainer o2) -> {
         DataProviderComparator dataProviderComparator = new DataProviderComparator();
@@ -132,6 +133,9 @@ public final class GeneralLoadUtils {
 
     public static Map<String, String> getVersionName2Species() {
         return versionName2species;
+    }
+    public static Map<String, Integer> getAssemblyInfo() {
+        return assemblyInfo;
     }
 
     /**
@@ -267,7 +271,7 @@ public final class GeneralLoadUtils {
                         chromosomeLookup.addSynonyms(Sets.newConcurrentHashSet(chromosomeSynonyms.get(key)));
                     });
                 });
-                Map<String, Integer> assemblyInfo = assemblyProvider.getAssemblyInfo(dataContainer.getGenomeVersion());
+                assemblyInfo = assemblyProvider.getAssemblyInfo(dataContainer.getGenomeVersion());
                 GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
                 assemblyInfo.entrySet().stream().forEach(entry -> {
                     genomeVersion.addSeq(entry.getKey(), entry.getValue());

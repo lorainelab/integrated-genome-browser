@@ -99,15 +99,15 @@
     <repositories>
         <repository>
             <id>repo1</id>
-            <url>http://maven.bioviz.org/repo1</url>
+            <url>https://maven.bioviz.org/repo1</url>
         </repository>
         <repository>
             <id>repo2</id>
-            <url>http://maven.bioviz.org/repo2</url>
+            <url>https://maven.bioviz.org/repo2</url>
         </repository>
         <repository>
             <id>repo3</id>
-            <url>http://maven.bioviz.org/repo3</url>
+            <url>https://maven.bioviz.org/repo3</url>
         </repository>
         <repository>
             <id>maven-releases</id>
@@ -118,7 +118,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>repo3</id>
-            <url>http://maven.bioviz.org/repo3</url>
+            <url>https://maven.bioviz.org/repo3</url>
         </pluginRepository>
         <pluginRepository>
             <id>maven-releases</id>
@@ -156,6 +156,7 @@
         <module>core/context-menu-service</module>
         <module>plugins/ApolloLibrary</module>
         <module>plugins/AnnotationTab</module>
+        <module>plugins/ConsoleTab</module>
         <module>plugins/track-operations-panel</module>
         <module>plugins/BigBedHandler</module>
         <module>plugins/BigWigHandler</module>
@@ -174,8 +175,7 @@
         <module>plugins/Thresholding</module>
         <module>plugins/Update</module>
         <module>plugins/plugin-manager</module>
-        <module>plugins/PairedEndDataPreprocessor</module>        
-        <module>plugins/ConsoleGui</module>
+        <module>plugins/PairedEndDataPreprocessor</module> 
         <module>plugins/image-exporter</module>
         <module>plugins/session-manager</module>               
         <module>plugins/Keybinding-registry</module>
@@ -368,6 +368,12 @@
             </dependency>
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
+                <artifactId>console-tab</artifactId>
+                <version>${project.parent.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>track-operations-panel</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
@@ -500,12 +506,6 @@
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>igb-command-socket</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>console-gui</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>

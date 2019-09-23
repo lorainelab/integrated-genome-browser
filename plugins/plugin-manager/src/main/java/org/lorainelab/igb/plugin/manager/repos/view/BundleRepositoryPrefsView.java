@@ -41,7 +41,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
     public static final String COMPONENT_NAME = "BundleRepositoryPrefsView";
     public static final String TAB_NAME = "App Repositories";
     private static final int TAB_POSITION = 7;
-    private BundleRepositoryTableModel tableModel;
+    public BundleRepositoryTableModel tableModel;
     private PluginRepositoryList pluginRepositoryList;
     private final Icon refresh_icon;
     private AddBundleRepositoryFrame addBundleRepositoryFrame;
@@ -207,7 +207,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
             }
         });
 
-        editButton.setText("Edit");
+        editButton.setText("Edit...");
         editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editButtonActionPerformed(evt);

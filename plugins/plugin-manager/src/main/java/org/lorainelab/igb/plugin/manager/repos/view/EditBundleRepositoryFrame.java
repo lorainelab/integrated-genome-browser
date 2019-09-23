@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * The file is now created using GUI Builder and keeping AddBundleRepositoryFrame.java as a reference
  * 
  */
-public class EditBundleRepositoryFrame extends javax.swing.JFrame {
+public class EditBundleRepositoryFrame extends JFrame {
     
     private static final long serialVersionUID = 1L;
     private static final String REPOSITORY_XML_FILE_PATH = "repository.xml";
@@ -55,7 +55,6 @@ public class EditBundleRepositoryFrame extends javax.swing.JFrame {
         initComponents();
         DocumentListener dl = new MyDocumentListener();
         nameText.getDocument().addDocumentListener(dl);
-        logger.info("This is documented : "+nameText.getText());
         urlText.getDocument().addDocumentListener(dl);
     }
     
@@ -233,8 +232,6 @@ public class EditBundleRepositoryFrame extends javax.swing.JFrame {
         if (!isValidRepositoryUrl(urlText.getText())) {
             return;
         }
-        //    logger.info("Iable model method called. PluginRepositorieslist: "+tableModel.tableModel.getRowCount());
-        //    logger.info("Pluginrepositorieslist size : "+pluginRepositoryList);
         currentRepo.setName(nameText.getText());
         currentRepo.setUrl(urlText.getText());
         pluginRepositoryList.updatePluginRepoPrefs(currentRepo);
@@ -292,7 +289,6 @@ public class EditBundleRepositoryFrame extends javax.swing.JFrame {
             }
             
             int responseCode = 0;
-            logger.info("Repository.xml URL : "+repositoryXmlUrl);
             if ( repositoryXmlUrl.contains("https")) {
                HttpsURLConnection con = (HttpsURLConnection) new URL(repositoryXmlUrl).openConnection();
                responseCode = con.getResponseCode();

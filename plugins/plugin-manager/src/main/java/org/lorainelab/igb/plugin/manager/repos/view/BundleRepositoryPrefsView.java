@@ -41,7 +41,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
     public static final String COMPONENT_NAME = "BundleRepositoryPrefsView";
     public static final String TAB_NAME = "App Repositories";
     private static final int TAB_POSITION = 7;
-    public BundleRepositoryTableModel tableModel;
+    private BundleRepositoryTableModel tableModel;
     private PluginRepositoryList pluginRepositoryList;
     private final Icon refresh_icon;
     private AddBundleRepositoryFrame addBundleRepositoryFrame;

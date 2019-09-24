@@ -35,6 +35,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.primitives.Ints;
+import java.io.UnsupportedEncodingException;
 import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
@@ -43,6 +44,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -584,9 +586,14 @@ public final class BookmarkUnibrowControlServlet {
             trackLabel = DataSetUtils.extractNameFromPath(urlToLoad);
         }
         try {
-            igbService.openURI(new URI(urlToLoad), trackLabel, genomeVersion, genomeVersion.getSpeciesName(), false);
+            //IGBF-32 Handle special characters in the url.
+            String encodedFileName = URLEncoder.encode(trackLabel, "UTF-8");
+            urlToLoad =  urlToLoad.replace(trackLabel, encodedFileName);
+            igbService.openURI(new URI(urlToLoad.replaceAll("\\+", "%20")), trackLabel, genomeVersion, genomeVersion.getSpeciesName(), false);
         } catch (URISyntaxException ex) {
             logger.error("Invalid bookmark syntax.", ex);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -597,9 +604,15 @@ public final class BookmarkUnibrowControlServlet {
             try {
                 String urlToLoad = query_urls.get(0);
                 GenomeVersion loadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
-                igbService.openURI(new URI(urlToLoad), urlToLoad, loadGroup, "Custom Genome", false);
+                //IGBF-32 Handle special characters in the url.
+                String trackLabel = DataSetUtils.extractNameFromPath(urlToLoad);
+                String encodedFileName = URLEncoder.encode(trackLabel, "UTF-8");
+                urlToLoad =  urlToLoad.replace(trackLabel, encodedFileName);
+                igbService.openURI(new URI(urlToLoad.replaceAll("\\+", "%20")), trackLabel, loadGroup, "Custom Genome", false);
             } catch (URISyntaxException ex) {
                 logger.error("Invalid bookmark syntax.", ex);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

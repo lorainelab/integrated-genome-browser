@@ -5,6 +5,7 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import java.io.UnsupportedEncodingException;

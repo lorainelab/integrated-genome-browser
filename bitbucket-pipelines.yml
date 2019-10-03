@@ -15,11 +15,11 @@
 #
 #       See Install4J configuration file, version-controlled in the project.
 # 
-
-# Image is hosted at Docker hub.
+#
+# Image: https://hub.docker.com/r/lorainelab/igb-maven-install4j
 # Dockerfile: https://bitbucket.org/lorainelab/integrated-genome-browser-docker
 image:
-  name: lorainelab/igb-maven-install4j:jre-1.8.0_212
+  name: lorainelab/igb-maven-install4j:jre-1.8.0-212-mvn-deploy
 
 definitions:
   steps:
@@ -28,8 +28,8 @@ definitions:
          caches:
            - maven
          script:
-            - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $WINDOWS_KEYSTORE_LINK -P /opt/igb
-            - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $MAC_KEYSTORE_LINK -P /opt/igb
+            - wget --user $BITBUCKET_REPO_OWNER --password $BITBUCKET_PASSWORD $WINDOWS_KEYSTORE_LINK -P /opt/igb
+            - wget --user $BITBUCKET_REPO_OWNER --password $BITBUCKET_PASSWORD $MAC_KEYSTORE_LINK -P /opt/igb
             - sed -i "s/_INSTALL4jLICENSE_/${INSTALL4J_LICENSE}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - sed -i "s/_WINKEYSTOREPASSWORD_/${WIN_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - sed -i "s/_MACKEYSTOREPASSWORD_/${MAC_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
@@ -44,8 +44,8 @@ definitions:
          caches:
            - maven
          script:
-            - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $WINDOWS_KEYSTORE_LINK -P /opt/igb
-            - wget --user $BITBUCKET_USERNAME --password $BITBUCKET_PASSWORD $MAC_KEYSTORE_LINK -P /opt/igb
+            - wget --user $BITBUCKET_REPO_OWNER --password $BITBUCKET_PASSWORD $WINDOWS_KEYSTORE_LINK -P /opt/igb
+            - wget --user $BITBUCKET_REPO_OWNER --password $BITBUCKET_PASSWORD $MAC_KEYSTORE_LINK -P /opt/igb
             - sed -i "s/_INSTALL4jLICENSE_/${INSTALL4J_LICENSE}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - sed -i "s/_WINKEYSTOREPASSWORD_/${WIN_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - sed -i "s/_MACKEYSTOREPASSWORD_/${MAC_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
@@ -61,7 +61,7 @@ definitions:
 pipelines:
   default:
     - step:
-        name: Build and copy jar file with IGB code and required libraries for branch not named IGBF-*, releaes-*, or master.
+        name: Build and copy jar file with IGB code and required libraries for branch not named IGBF-*, release-*, or master.
         caches:
           - maven
         script:

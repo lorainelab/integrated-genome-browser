@@ -34,11 +34,11 @@ definitions:
             - sed -i "s/_WINKEYSTOREPASSWORD_/${WIN_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - sed -i "s/_MACKEYSTOREPASSWORD_/${MAC_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-            - mvn -B verify -P release-bitbucket-pipelines
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$BITBUCKET_BRANCH.jar"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-unix-$version.sh; filename=IGB-$BITBUCKET_BRANCH.sh"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-x64-$version.exe; filename=IGB-$BITBUCKET_BRANCH.exe"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-macos-$version.dmg; filename=IGB-$BITBUCKET_BRANCH.dmg"
+            - mvn -B install -P release-bitbucket-pipelines
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=$BITBUCKET_BRANCH.jar"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-unix-$version.sh; filename=$BITBUCKET_BRANCH.sh"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-x64-$version.exe; filename=$BITBUCKET_BRANCH.exe"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-macos-$version.dmg; filename=$BITBUCKET_BRANCH.dmg"
      - step: &build-and-copy-artifacts-for-release
          name: Build and copy Windows, MacOS, and Linux installers, executable jar file, updates.xml, and md5sums file for release to user community.
          caches:
@@ -50,7 +50,7 @@ definitions:
             - sed -i "s/_WINKEYSTOREPASSWORD_/${WIN_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - sed -i "s/_MACKEYSTOREPASSWORD_/${MAC_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-            - mvn clean install -P release-bitbucket-pipelines
+            - mvn -B install -P release-bitbucket-pipelines
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$version.jar"
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-unix-$version.sh"
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-$version.exe"
@@ -65,7 +65,7 @@ pipelines:
         caches:
           - maven
         script:
-          - mvn clean install -D skipTests=false
+          - mvn -B install -P release-bitbucket-pipelines 
           - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           - githash=$(git rev-parse --short HEAD)
           - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$version-$githash.jar"

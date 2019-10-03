@@ -115,12 +115,6 @@
             <url>https://nexus.bioviz.org/repository/maven-releases</url>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>maven-releases</id>
-            <url>https://nexus.bioviz.org/repository/maven-releases/</url>
-        </pluginRepository>
-    </pluginRepositories>
     <modules>
 <!--        <module>core/taglets</module>-->
         <module>core/heatmap-editor</module>

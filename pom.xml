@@ -118,7 +118,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>maven-releases</id>
-            <url>https://nexus.bioviz.org/maven-releases</url>
+            <url>https://nexus.bioviz.org/repository/maven-releases/</url>
         </pluginRepository>
     </pluginRepositories>
     <modules>

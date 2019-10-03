@@ -230,9 +230,9 @@
             </activation>            
             <distributionManagement>
                 <repository>
-                    <id>maven-releases</id>
-                    <name>maven-releases</name>
-                    <url>https://nexus.bioviz.org/repository/maven-releases</url>
+                    <id>test-maven2</id>
+                    <name>test-maven2</name>
+                    <url>https://nexus.bioviz.org/repository/test-maven2</url>
                 </repository>
             </distributionManagement> 
         </profile>

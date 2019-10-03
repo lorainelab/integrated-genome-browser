@@ -222,13 +222,19 @@
             <modules>
                 <module>main</module>  
             </modules>         
+        </profile>
+        <profile>
+            <id>release-to-nexus.bioviz.org</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>            
             <distributionManagement>
                 <repository>
                     <id>maven-releases</id>
                     <name>maven-releases</name>
                     <url>https://nexus.bioviz.org/repository/maven-releases</url>
                 </repository>
-            </distributionManagement>   
+            </distributionManagement> 
         </profile>
     </profiles>
     <dependencyManagement>

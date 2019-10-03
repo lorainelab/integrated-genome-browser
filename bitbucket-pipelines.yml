@@ -76,6 +76,13 @@ pipelines:
       - step: *build-and-copy-installers-for-branch
     release-*:
       - step: *build-and-copy-artifacts-for-release
+  custom:
+    release-to-nexus.bioviz.org:
+        - step:
+           caches:
+               - maven
+           script:
+               - mvn deploy -P release-to-nexus.bioviz.org -s /root/.m2/settings.xml -Drepo.username=${NEXUS_USER} -Drepo.password=${NEXUS_PASSWORD} -Drepo.id=${NEXUS_REPOSITORY_ID}
 
             
 

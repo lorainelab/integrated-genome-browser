@@ -72,7 +72,7 @@ pipelines:
   branches:
     master:
       - step: *build-and-copy-installers-for-branch
-    IBGF-*: 
+    IGBF-*: 
       - step: *build-and-copy-installers-for-branch
     release-*:
       - step: *build-and-copy-artifacts-for-release

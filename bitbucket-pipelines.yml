@@ -34,7 +34,7 @@ definitions:
             - sed -i "s/_WINKEYSTOREPASSWORD_/${WIN_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - sed -i "s/_MACKEYSTOREPASSWORD_/${MAC_KEYSTORE_PASSWORD}/" /opt/atlassian/pipelines/agent/build/pom.xml
             - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-            - mvn clean install -P release-bitbucket-pipelines
+            - mvn -B verify -P release-bitbucket-pipelines
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$BITBUCKET_BRANCH.jar"
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-unix-$version.sh; filename=IGB-$BITBUCKET_BRANCH.sh"
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-x64-$version.exe; filename=IGB-$BITBUCKET_BRANCH.exe"

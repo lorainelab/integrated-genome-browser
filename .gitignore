@@ -1,5 +1,6 @@
 *~
 *#
+*git.properties
 .DS_Store 
 target
 main/sample_dnaseq.xml

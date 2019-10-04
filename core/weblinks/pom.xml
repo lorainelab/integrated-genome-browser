@@ -152,21 +152,7 @@
                         <Bundle-Description>${bundleDescription}</Bundle-Description>
                     </instructions>
                 </configuration>
-            </plugin>  
-            <plugin>
-                <groupId>org.lorainelab</groupId>
-                <artifactId>bundle-markdown-encoder</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>encodeMarkdown</goal>
-                        </goals>
-                    </execution> 
-                </executions>
-                <configuration>
-                    <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                </configuration>
-            </plugin>       
+            </plugin>    
         </plugins>
     </build>
 </project>

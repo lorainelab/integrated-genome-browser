@@ -213,11 +213,12 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <!-- passed to mvn using environment variables, e.g., mvn -D install4j.macKeystorePassword=${MACKPW} -->
             <properties>
-                <install4j.home>/opt/install4j7/</install4j.home>
-                <install4j.licenseKey>_INSTALL4jLICENSE_</install4j.licenseKey>
-                <install4j.winKeystorePassword>_WINKEYSTOREPASSWORD_</install4j.winKeystorePassword>
-                <install4j.macKeystorePassword>_MACKEYSTOREPASSWORD_</install4j.macKeystorePassword>
+                <install4j.home>/opt/install4j7/</install4j.home> <!-- exists in Docker image --> 
+                <install4j.licenseKey>${INSTALL4J_LICENSE}</install4j.licenseKey>
+                <install4j.winKeystorePassword>${WIN_KEYSTORE_PASSWORD}</install4j.winKeystorePassword>
+                <install4j.macKeystorePassword>${MAC_KEYSTORE_PASSWORD}</install4j.macKeystorePassword>
             </properties>
             <modules>
                 <module>main</module>  

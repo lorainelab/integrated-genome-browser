@@ -34,12 +34,11 @@
           <entry location=".git" fileType="regular" />
           <entry location="run_igb.sh" fileType="regular" />
           <entry location="nbactions-development.xml" fileType="regular" />
+          <entry location="README.md" fileType="regular" />
+          <entry location="bitbucket-pipelines.yml" fileType="regular" />
           <entry location="core" fileType="regular" />
-          <entry location="main" fileType="regular" />
-          <entry location=".gitignore" fileType="regular" />
           <entry location="pom.xml" fileType="regular" />
           <entry location="distribution" fileType="regular" />
-          <entry location="bitbucket-pipelines.yml" fileType="regular" />
         </exclude>
       </dirEntry>
     </entries>

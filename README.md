@@ -66,7 +66,8 @@ To contribute to the IGB code base, please use a fork-and-branch workflow:
 
 # Other info
 
-* Once IGB has started, you can view the status of its component OSGi bundles by visiting the [Felix Web console](http://localhost:7080/system/console/bundles) on your local computer. You can use the web console to reload bundles after rebuilding them. 
+* Once IGB has started, you can view the status of its component OSGi bundles by visiting the [Felix Web console](http://localhost:7080/system/console/bundles) on your local computer. You can use the web console to reload bundles after rebuilding them.  
+**Note: ** If you are accessing Felix Web Console for the first time then after accessing the link, login using Username: admin, Password: admin
 * IGB uses the [Genoviz SDK](https://bitbucket.org/lorainelab/genoviz-sdk), an open source Java Swing-based library of "widgets" designed for genomic data visualization that was first developed at UC Berkeley. 
 
 *** 

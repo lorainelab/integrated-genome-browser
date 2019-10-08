@@ -2,13 +2,13 @@
 
 The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and highly interactive desktop genome browser ideal for exploring and understanding large-scale data sets from genomics. Originally developed at Affymetrix, IGB is now open source software. 
 
-IGB is also an extensible visual analytics platform. Developers can use IGB to create new interactive visualizations and visual analysis functions called IGB Apps.
+IGB is also an extensible visual analytics platform. Developers can use IGB to create new visual analysis functions called IGB Apps.
 
-To get IGB, clone this repository or download an [IGB installer for your platform](http://bioviz.org/download.html).
+To get IGB, clone this repository or download an [IGB installer for your platform](https://bioviz.org/download.html).
 
 See:
 
-* [BioViz Web site](http://www.bioviz.org) with platform-specific installers
+* [BioViz Web site](https://www.bioviz.org) for platform-specific installers
 * Searchable on-line [User's Guide](https://wiki.transvar.org/display/igbman/Home)
 * IGB programming [on-line class](https://canvas.instructure.com/courses/1164217)
 * [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg) with video tutorials and demos
@@ -17,53 +17,60 @@ See:
 
 ***
 
-# Command-line quick start 
+# Build and run IGB
 
-To build and run from the command line:
+1. Install Java on your computer. IGB requires Java 1.8. 
+2. Install Apache mvn, required to build IGB.
+3. Clone the [team repository](https://bitbucket.org/lorainelab/integrated-genome-browser) to your desktop.  
+4. Inside the local copy, check out the branch you wish to build. Review branch names to identify currently released version of IGB. 
+5. Build IGB using maven. Skip tests to save time.
+6. Run IGB using the run_igb script for your platform.
 
-1. Clone the [team repository](https://bitbucket.org/lorainelab/integrated-genome-browser) to your desktop.  
-2. Inside the local copy, check out the branch you wish to build. Review branch names to identify currently released version of IGB. 
-3. Build IGB using maven. Skip tests to save time.
-4. Run IGB using the run_igb script for your platform.
-
-**Note**: Instructions above assume you have Java installed on your computer. See Download section for platform-specific installers, which come with IGB and Java together. 
-
-Ex)
+### Example:
+  
+  
 
 ```
+
 git clone https://bitbucket.org/lorainelab/integrated-genome-browser
 cd integrated-genome-browser
 mvn clean install -DskipTests=true
 ./run_igb.sh
 ```
 
-The preceding commands:
-
-* Create IGB executable igb_exe.jar, used by the run scripts to run IGB. Contains all dependencies, including third party libraries, required to run IGB.
-* Copy IGB jar files (artifacts) to your local maven cache, useful you are developing IGB Apps.
-* Run IGB
-
-***
-
-# To get help
-
-Visit the [Bioviz help page](http://bioviz.org/help.html)
-
 ***
 
 # Developing IGB Apps
 
-IGB runs in an OSGi container, which supports adding and removing pluggable Apps while IGB is running. 
-For OSGi tutorials written by IGB Developer alumni, see: 
+IGB runs in an OSGi container, which supports adding and removing pluggable Apps while IGB is running.
+For details and advice on how to write IGB Apps, see:
 
-* Stackleader.com [blog posts on OSGI](https://blog.stackleader.com/tags/osgi/)
+* [Developing IGB Apps](https://wiki.transvar.org/display/igbdevelopers/Developing+IGB+Apps) in the IGB Developer's Guide
+* [OSGi tutorials](https://blog.stackleader.com/tags/osgi/) by IGB core developer alumni at [Stackleader.com](https://stackleader.com)
+
+The IGB core developers are working on a new IGB App Store, where you can upload and distribute Apps to IGB users. We are aiming to release it in December 2019.
 
 ***
 
-# To contribute
+# How to contribute
 
-Use fork-and-branch workflow:
+IGB is an open source project, and the core development group welcomes your contributions. If you would like to contribute a new feature or improvements of any kind, please do!
 
-1. Fork the [team repository](http://www.bitbucket.org/lorainelab/integrated-genome-browser).
+To contribute to the IGB code base, please use a fork-and-branch workflow:
+
+1. Fork the [team repository](https://www.bitbucket.org/lorainelab/integrated-genome-browser).
 2. Create branches specific to the changes you want to make, push to your fork.
 3. Issue pull requests to the team repository's master branch from the branch on your fork.
+
+***
+
+# Other info
+
+* Once IGB has started, you can view the status of its component OSGi bundles by visiting the [Felix Web console](http://localhost:7080/system/console/bundles) on your local computer. You can use the web console to reload bundles after rebuilding them. 
+* IGB uses the [Genoviz SDK](https://bitbucket.org/lorainelab/genoviz-sdk), an open source Java Swing-based library of "widgets" designed for genomic data visualization that was first developed at UC Berkeley. 
+
+*** 
+
+# Questions? 
+
+Visit the [Bioviz help page](http://bioviz.org/help.html)

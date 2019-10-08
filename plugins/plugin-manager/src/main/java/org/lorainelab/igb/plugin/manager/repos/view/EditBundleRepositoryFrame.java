@@ -5,7 +5,7 @@
  */
 package org.lorainelab.igb.plugin.manager.repos.view;
 
-import com.affymetrix.genometry.util.FileTracker;
+import com.affymetrix.genometry.util.FileTracker; 
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.google.common.base.Strings;

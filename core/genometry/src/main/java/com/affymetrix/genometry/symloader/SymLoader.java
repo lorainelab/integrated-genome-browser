@@ -87,6 +87,19 @@ public abstract class SymLoader {
         strategyList.add(LoadStrategy.GENOME);
     }
 
+    /**
+     * A SymLoader contains business logic that transforms a genomic data file into
+     * visualizations on the IGB screen.
+     * When a user opens a file in IGB, a Symloader for that file is created and 
+     * persists for as long as the file is being viewed.
+     * The Symloader keeps tracks of what data have been loaded thus far, and also
+     * keeps track of any chromosome names contained in the file.
+     *
+     * @param uri - location of the genomic data file to be loaded (target file)
+     * @param indexUri - index file that maps genomic location to bytes in the target data file
+     * @param featureName - track name once the data are loaded into a track in IGB
+     * @param genomeVersion - mapping of chromosome names to sizes
+     */
     public SymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
         final Bundle bundle = FrameworkUtil.getBundle(SymLoader.class);
         if (bundle != null) { // this could happen in unit tests
@@ -96,6 +109,7 @@ public abstract class SymLoader {
         this.uri = uri;
         this.featureName = featureName;
         this.genomeVersion = genomeVersion;
+        // IGB depends on the file extension suffix to determine data file format
         extension = getExtension(uri);
         if (indexUri.isPresent()) {
             this.indexUri = indexUri.get();

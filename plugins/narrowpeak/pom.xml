@@ -12,9 +12,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>narrowpeak</artifactId>
     <packaging>bundle</packaging>
-
-    <name>narrowpeak</name>
-
+    <name>Plugin - Narrowpeak data format handler</name>
     <dependencies>
         <dependency>
             <groupId>ch.qos.logback</groupId>

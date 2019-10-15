@@ -9,11 +9,13 @@
     </parent>
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>apollo-library</artifactId>
-
     <packaging>bundle</packaging>
-
-    <name>Apollo Library</name>
-
+    <!-- This code came orginally from the Apollo project, a 
+         genome browser that was also an editor. Biologists
+         used it to create gene model annotations interactively,
+         from data.
+     -->
+    <name>Plugin - Apollo Library</name>
     <dependencies>
         <!--Start of logging dependencies-->
         <dependency>

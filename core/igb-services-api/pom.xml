@@ -12,7 +12,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>IGB Services</name>
+    <name>Core - IGB Services API</name>
 
     <dependencies>
         <dependency>

@@ -10,10 +10,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>bigBedHandler</artifactId>
     <packaging>bundle</packaging>
-
-    <name>BigBedHandler</name>
-
-
+    <name>Plugin - Bigbed data format handler</name>
     <dependencies>
         <dependency>
             <groupId>org.broad.igv</groupId>

@@ -100,7 +100,6 @@ public class DasServerUtils {
                 .trustAllCerts()
                 .trustAllHosts()
                 .followRedirects(true);
-        logger.info(remoteHttpRequest.toString());
         try (InputStream inputStream = remoteHttpRequest.buffer()) {
             if (dasEpContext == null) {
                 dasEpContext = JAXBContext.newInstance(DasEp.class);

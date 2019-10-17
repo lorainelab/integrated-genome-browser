@@ -14,7 +14,7 @@
     <artifactId>appstore</artifactId>
     <packaging>bundle</packaging>
 
-    <name>App Store</name>
+    <name>Plugin - App Store REST API</name>
 
     <dependencies>
         <dependency>

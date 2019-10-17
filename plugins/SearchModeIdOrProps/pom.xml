@@ -7,13 +7,10 @@
         <version>9.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>searchModelIdOrProps</artifactId>
     <packaging>bundle</packaging>
-
-    <name>searchModelIdOrProps</name>
-
+    <name>Plugin - Search Id or Props</name>
     <dependencies>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

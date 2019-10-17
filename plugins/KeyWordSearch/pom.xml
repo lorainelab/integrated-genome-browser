@@ -11,9 +11,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>keyWordSearch</artifactId>
     <packaging>bundle</packaging>
-
-    <name>KeyWord Search</name>
-
+    <name>Plugin - Keyword Search</name>
     <dependencies>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

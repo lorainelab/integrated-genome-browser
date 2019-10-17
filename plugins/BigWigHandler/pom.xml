@@ -10,10 +10,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>bigWigHandler</artifactId>
     <packaging>bundle</packaging>
-
-
-    <name>BigWigHandler</name>
-
+    <name>Plugin - Bigwig data format handler</name>
     <dependencies>
         <dependency>
             <groupId>org.broad.igv</groupId>

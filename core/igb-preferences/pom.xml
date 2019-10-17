@@ -10,9 +10,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>igb-preferences</artifactId>
     <packaging>bundle</packaging>
-
-    <name>IGB Preferences</name>
-
+    <name>Core - Preferences</name>
     <dependencies>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>

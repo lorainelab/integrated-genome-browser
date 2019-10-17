@@ -12,7 +12,7 @@
     <artifactId>sequenceViewer</artifactId>
     <packaging>bundle</packaging>
 
-    <name>sequenceViewer</name>
+    <name>Plugin - Sequence Viewer GUI</name>
     
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

@@ -10,7 +10,7 @@
     <artifactId>window-service</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Window Service</name>
+    <name>Core - Window Service</name>
 
     <dependencies>
         <dependency>

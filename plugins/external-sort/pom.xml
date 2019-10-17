@@ -12,9 +12,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>external-sort</artifactId>
     <packaging>bundle</packaging>
-
-    <name>external-sort</name>
-
+    <name>Plugin - Sorting API and Impl</name>
     <dependencies>
         <dependency>
             <groupId>ch.qos.logback</groupId>

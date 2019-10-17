@@ -10,10 +10,8 @@
 
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>igbScript</artifactId>
-
     <packaging>bundle</packaging>
-
-    <name>IGB Script</name>
+    <name>Plugin - Script handler</name>
     <dependencies>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

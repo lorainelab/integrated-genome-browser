@@ -10,8 +10,9 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>main</artifactId>
     <packaging>jar</packaging>
+    <name>IGB Main (run me)</name>
     <properties>
-        <name>main</name>
+        <name>IGB</name>
     </properties>
     <dependencies>
         <dependency>

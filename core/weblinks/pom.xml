@@ -11,7 +11,7 @@
     <artifactId>weblinks</artifactId>
     <packaging>bundle</packaging>
 
-    <name>WebLinks</name>
+    <name>Core - Web Links</name>
     
     <dependencies>
         <dependency>

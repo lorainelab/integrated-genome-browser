@@ -11,9 +11,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>externalView</artifactId>
     <packaging>bundle</packaging>
-
-    <name>External View</name>
-
+    <name>Plugin - External View</name>
     <dependencies>        
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

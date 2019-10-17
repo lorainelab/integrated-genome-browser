@@ -7,13 +7,10 @@
         <version>9.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>survey</artifactId>
     <packaging>bundle</packaging>
-
-    <name>survey</name>
-
+    <name>Plugin - Survey GUI</name>
     <dependencies>         
         <dependency>
             <groupId>org.apache.felix</groupId>

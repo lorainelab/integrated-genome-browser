@@ -10,9 +10,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>synonym-lookup</artifactId>
     <packaging>bundle</packaging>
-
-    <name>SynonymLookup</name>
-
+    <name>Core - Synonym Lookup</name>
     <dependencies>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>

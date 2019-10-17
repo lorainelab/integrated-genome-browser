@@ -124,7 +124,6 @@ public class TwoBitNewTest {
     }
 
     private void testACase(URI uri, int start, int end) throws IOException {
-        System.out.println("Testing :" + uri + " start :" + start + " end :" + end);
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         boolean result = TwoBitParser.parse(uri, start, end, outStream);
         if (start < end) {

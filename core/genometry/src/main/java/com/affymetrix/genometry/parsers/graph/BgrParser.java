@@ -58,7 +58,6 @@ public final class BgrParser implements GraphParser {
      */
     public static boolean writeBgrFormat(GraphSym graf, OutputStream ostr)
             throws IOException {
-        System.out.println("writing graph: " + graf);
         BufferedOutputStream bos = new BufferedOutputStream(ostr);
         try (DataOutputStream dos = new DataOutputStream(bos)) {
             Map<String, Object> headers = graf.getProperties();
@@ -111,7 +110,6 @@ public final class BgrParser implements GraphParser {
                 dos.writeUTF((String) headers.get("control_group_name"));
             }
             writeGraphPoints(graf, dos);
-            //      dos.flush();
         }
         return true;
     }
@@ -147,9 +145,6 @@ public final class BgrParser implements GraphParser {
         props.put("control_group_name", control_group_name);
 
         int total_points = dis.readInt();
-        System.out.println("loading graph from binary file, name = " + seq_name
-                + ", release = " + release_name
-                + ", total_points = " + total_points);
         int[] xcoords = new int[total_points];
         float[] ycoords = new float[total_points];
         int largest_x = 0; // assume the x-values are sorted, so the max is the last one read.
@@ -162,7 +157,6 @@ public final class BgrParser implements GraphParser {
 
         BioSeq seq = seq_group.getSeq(seq_name);
         if (seq == null) {
-            //System.out.println("seq not found, creating new seq: '"+seq_name+"'");
             seq = seq_group.addSeq(seq_name, largest_x, stream_name);
         }
 
@@ -184,7 +178,6 @@ public final class BgrParser implements GraphParser {
         }
         GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
         graf.setProperties(props);
-        System.out.println("loaded graf, total points = " + count);
         return graf;
     }
 

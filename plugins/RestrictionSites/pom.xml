@@ -11,9 +11,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>restrictionSites</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Restriction Sites</name>
-
+    <name>Plugin - Restriction Sites tab</name>
     <dependencies> 
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

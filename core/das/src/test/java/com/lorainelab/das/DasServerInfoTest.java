@@ -1,4 +1,4 @@
-package org.lorainelab.igb.das;
+package com.lorainelab.das;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.util.Optional;
 import org.junit.Ignore;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,8 @@ public class DasServerInfoTest {
     public void retrieveDnaTest() {
         String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
         SeqSpan seqSpan = getTestSeqSpan();
-        logger.info(DasServerUtils.retrieveDna(contextRoot, seqSpan));
+        String result = DasServerUtils.retrieveDna(contextRoot, seqSpan);
+        assertEquals(result,testSeqSpanDnaString);
     }
 
     @Ignore
@@ -88,6 +90,7 @@ public class DasServerInfoTest {
         }
     }
 
+    private final String testSeqSpanDnaString = "cggagcgctgtcctgtcgggccgagtcgcgggcctgggcacggaactcacgctcactccgagctcccgacgtgcacacggctcccatgcgttgtcttccgagcgtcaggccgcccctacccgtgctttctgctctgcagaccctcttcccagacctccgtcctttgtcccatcgctgccttcccctcaagctcagggccaagctgtccgccagcctcggctcctccgggcagcccttgcccggggtgcgccccggggcaggacccccagcccaggcccagggcccgcccctgccctccagccctacgccttgacccgctttcctgcgtctctcagcctacctgaccttgtctttacctctgtgggcagctcccttgtgatctgcttagttcccacccccctttaagaattaaatagagaagccagacgcaaaactacagatatcgtatgagtccagttttgtgaagtgcctagaatagtcaaaattcacagagacagaagc";
     private SeqSpan getTestSeqSpan() {
         SeqSpan seqSpan = new SeqSpan() {
 

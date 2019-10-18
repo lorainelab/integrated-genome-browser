@@ -12,7 +12,7 @@
     <artifactId>plugins-manager</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Plugin Manager</name>
+    <name>Plugin - App Manager GUI</name>
     
     <dependencies> 
         <dependency>

@@ -10,9 +10,12 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>annotation-tab</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Annotation Tab</name>
-
+    <!-- This project shows the Annotation Tab GUI in IGB's
+         tabbed panel display.
+         Note: To work on the GUI, you must use NetBeans
+         GUI builder.
+     -->
+    <name>Plugin - Annotation Tab</name>
     <dependencies>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

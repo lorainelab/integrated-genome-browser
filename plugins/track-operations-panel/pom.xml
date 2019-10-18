@@ -10,9 +10,13 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>track-operations-panel</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Track Operations</name>
-
+    <!-- 
+         Used in both the Annotation tab and the Graph tab,
+         this plugin lets App developers add new visual analytics 
+         functions to IGB. Also, this uses the Netbeans GUI
+         builder. 
+    -->
+    <name>Plugin - Track Operations API, GUI</name>
     <dependencies>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

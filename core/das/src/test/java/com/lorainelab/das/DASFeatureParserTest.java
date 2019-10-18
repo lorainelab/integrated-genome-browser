@@ -1,10 +1,10 @@
 /*
- * Das1FeatureSaxParserTest.java
+ * DasFeatureParserTest.java
  * JUnit based test
  *
  * Created on October 6, 2006, 3:19 PM
  */
-package org.lorainelab.igb.das;
+package com.lorainelab.das;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;

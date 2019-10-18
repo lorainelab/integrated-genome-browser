@@ -11,8 +11,8 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>update</artifactId>
     <packaging>bundle</packaging>
-
-    <name>update</name>
+    
+    <name>Plugin - Update</name>
 
     <dependencies>
         <dependency>

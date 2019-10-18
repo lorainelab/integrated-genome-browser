@@ -187,7 +187,7 @@ public abstract class SearchModeIDOrProps implements ISearchModeSym {
                     i1 = i1 < j1 ? i1 : j1;
                     i2 = i2 < j2 ? i2 : j2;
                 }
-                return (i2 < i1) ? 1 : -1;
+                return i1 - i2;
             });
         } else {
             Collections.sort(localSymList, (SeqSymmetry o1, SeqSymmetry o2) -> {

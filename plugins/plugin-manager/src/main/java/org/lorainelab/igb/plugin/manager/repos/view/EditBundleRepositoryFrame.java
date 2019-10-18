@@ -91,8 +91,8 @@ public class EditBundleRepositoryFrame extends JFrame {
         nameText.setText(pluginRepository.getName());
         urlText.setText(pluginRepository.getUrl());
         addServerButton.setText("Save Changes");
-        jTextArea2.setText("");
-        jTextArea2.setVisible(false);
+        errorMsg.setText("");
+        errorMsg.setVisible(false);
         display();
     }
 
@@ -121,8 +121,7 @@ public class EditBundleRepositoryFrame extends JFrame {
         cancelButton = new javax.swing.JButton();
         addServerButton = new javax.swing.JButton();
         openDir = new JRPButton("DataLoadPrefsView_openDir", "\u2026");
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        errorMsg = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -151,18 +150,9 @@ public class EditBundleRepositoryFrame extends JFrame {
             }
         });
 
-        jTextArea2.setBackground(new java.awt.Color(240, 240, 240));
-        jTextArea2.setColumns(20);
-        jTextArea2.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
-        jTextArea2.setLineWrap(true);
-        jTextArea2.setRows(2);
-        jTextArea2.setWrapStyleWord(true);
-        jTextArea2.setAutoscrolls(false);
-        jTextArea2.setBorder(null);
-        jTextArea2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jTextArea2.setHighlighter(null);
-        jTextArea2.setOpaque(false);
-        jScrollPane2.setViewportView(jTextArea2);
+        errorMsg.setIconTextGap(1);
+        errorMsg.setInheritsPopupMenu(false);
+        errorMsg.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -183,13 +173,13 @@ public class EditBundleRepositoryFrame extends JFrame {
                             .addComponent(urlText)
                             .addComponent(nameText)))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(32, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(errorMsg, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(32, 32, 32)
-                                .addComponent(addServerButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(addServerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(8, 8, 8))
         );
         layout.setVerticalGroup(
@@ -205,9 +195,9 @@ public class EditBundleRepositoryFrame extends JFrame {
                     .addComponent(urlText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(openDir)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addComponent(errorMsg, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addServerButton)
                     .addComponent(cancelButton))
@@ -302,14 +292,14 @@ public class EditBundleRepositoryFrame extends JFrame {
         } catch ( Exception e) {
             this.setVisible(true);
             logger.debug("Exception has occured", e);
-            showTextMessage("The changes made seem to have a problem... Please try Again!");
+            showTextMessage("<html>The changes made seem to have a problem...<BR>Please try Again!</html>");
             return false;
         }
     }
      
-     private void showTextMessage(String message) {  
-            jTextArea2.setVisible(true);
-            jTextArea2.setText(message);
+     private void showTextMessage(String message) {
+            errorMsg.setVisible(true);
+            errorMsg.setText(message);
 	}
      
      /**
@@ -325,8 +315,7 @@ public class EditBundleRepositoryFrame extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addServerButton;
     private static javax.swing.JButton cancelButton;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JLabel errorMsg;
     private static javax.swing.JLabel nameLabelField;
     private static javax.swing.JTextField nameText;
     private static javax.swing.JButton openDir;

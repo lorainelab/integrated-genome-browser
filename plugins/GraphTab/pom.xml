@@ -7,13 +7,10 @@
         <version>9.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>graphTab</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Graph Tab</name>
-
+    <name>Plugin - Graph Tab</name>
     <dependencies>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

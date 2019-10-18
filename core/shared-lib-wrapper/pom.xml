@@ -7,6 +7,18 @@
         <version>9.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+    <!-- 
+
+    This module has two jobs:
+    
+    1) Build a big bundle containing all non-OSGi bundle 
+       dependency jar files and export their packages so
+       the other bundles can use them.
+    2) When running in "development mode," copy all the bundles
+       to the "bundles" directory in the project root directory.
+
+    -->
+    <name>Core - Bundle wrapper, deployer</name>
     <artifactId>shared-lib-wrapper</artifactId>
     
     <packaging>bundle</packaging>

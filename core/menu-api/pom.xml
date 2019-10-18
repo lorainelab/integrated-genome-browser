@@ -10,9 +10,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>org.lorainelab.igb.menu.api</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Menu API</name>
-    
+    <name>Core - Menu API</name>
     <dependencies>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>

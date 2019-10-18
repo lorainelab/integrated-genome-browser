@@ -12,7 +12,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>igb</name>
+    <name>Core - IGB</name>
 
     <dependencies>
         <dependency>

@@ -30,31 +30,30 @@ fi
 
 PREFIX=`dirname $PREFIX`
 
-# File Locations
-ICON="$PREFIX/common/resources/images/igb.png"
-
 # Do our best to find java
 test -z "$JAVACMD" -a -n "$JAVA_HOME" && JAVACMD=$JAVA_HOME/bin/java
 test -z "$JAVACMD" -a -n "$JRE_HOME"  && JAVACMD=$JRE_HOME/bin/java
 test -z "$JAVACMD" && JAVACMD=`which java` 2> /dev/null
 test -z "$JAVACMD" && echo "$0: could not find java" >&2 && exit 127
 
-# Sort VM arguments from program arguments
-while (( "$#" )); do
-	echo $1 | grep -q '^-J'
-	if [ $? -eq 0 ]; then
-		VMARGS[${#VMARGS[*]}]=`echo $1 | sed -e 's/^-J//'`
+# Find VM arguments 
+while (( "$#" )); do # for each command line argument
+        echo $1 | grep -q '^-D' # does it start with -D ? 
+	if [ $? -eq 0 ]; then # if grep found -D
+		VMARGS[${#VMARGS[*]}]=$1 # add to the VM arguments
 	else
-		ARGS[${#ARGS[*]}]=$1
+		ARGS[${#ARGS[*]}]=$1 # add to the ordinary options, arguments
 	fi
 	shift
 done
 
-# Some Apple Specific settings. Should there be a way to override these?
+# For Apple computers
 if [[ `uname -s` == "Darwin" ]]; then
+        # put the menu at the top of the screen, not on IGB itself
 	VMARGS[${#VMARGS[*]}]="-Dapple.laf.useScreenMenuBar=true"
+        # display IGB's name at the top of the screen, not "main"
 	VMARGS[${#VMARGS[*]}]="-Xdock:name=Integrated Genome Browser"
-	VMARGS[${#VMARGS[*]}]="-Xdock:icon=$ICON"
+        # assume 64 bit environment
 	VMARGS[${#VMARGS[*]}]="-d64"
 fi
 

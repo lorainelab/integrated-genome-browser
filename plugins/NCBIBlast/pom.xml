@@ -7,14 +7,10 @@
         <version>9.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>ncbiBlast</artifactId>
     <packaging>bundle</packaging>
-
-
-    <name>NCBI Blast</name>
-
+    <name>Plugin - NCBI Blast</name>
     <dependencies>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

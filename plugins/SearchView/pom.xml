@@ -11,10 +11,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>searchView</artifactId>
     <packaging>bundle</packaging>
-
-
-    <name>searchView</name>
-
+    <name>Plugin - Advanced Search Tab</name>
     <dependencies>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

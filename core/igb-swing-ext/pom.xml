@@ -11,7 +11,7 @@
 	
     <packaging>bundle</packaging>
 
-    <name>igbSwingExt</name>
+    <name>Core - IGB Swing Extensions</name>
 
     <dependencies>
         <dependency>

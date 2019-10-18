@@ -10,8 +10,11 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>console-tab</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Console Tab</name>
+    <!-- 
+        This shows the output from IGB logging in
+        a tabbed panel display.
+    -->
+    <name>Plugin - Console Tab</name>
 
     <dependencies>
         <!--Start of logging dependencies-->

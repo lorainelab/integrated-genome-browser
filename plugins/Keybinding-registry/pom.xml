@@ -11,8 +11,10 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>keybinding-registry</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Keybinding-registry</name>
+    <!-- Used to configure the toolbar and associate
+         key board shortcuts with actions
+     -->
+    <name>Plugin - Toolbar Preferences GUI</name>
     
     <dependencies>
         <dependency>

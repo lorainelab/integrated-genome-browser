@@ -1,9 +1,10 @@
-package org.lorainelab.igb.das;
+package com.lorainelab.das;
 
 import com.affymetrix.genometry.GenomeVersion;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.lorainelab.igb.das.DasDataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,6 @@ public class DasDataProviderTest {
     @BeforeClass
     public static void setup() {
         dasDataProvider = new DasDataProvider(UCSC_DAS_URL, "UCSC", 1);
-
     }
 
     @Test

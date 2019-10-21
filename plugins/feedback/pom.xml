@@ -13,7 +13,7 @@
     <artifactId>feedback</artifactId>
     <packaging>bundle</packaging>
 
-    <name>feedback</name>
+    <name>Plugin - Feedback</name>
 
     <dependencies>
         <dependency>

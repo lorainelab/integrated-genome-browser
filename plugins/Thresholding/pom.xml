@@ -7,14 +7,10 @@
         <version>9.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>thresholding</artifactId>
-
     <packaging>bundle</packaging>
-
-    <name>thresholding</name>
-
+    <name>Plugin - Graph thresholding visual analytics</name>
     <dependencies>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

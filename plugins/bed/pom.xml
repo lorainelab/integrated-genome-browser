@@ -13,7 +13,7 @@
     <artifactId>bed</artifactId>
     <packaging>bundle</packaging>
 
-    <name>bed</name>
+    <name>Plugin - BED file format handler</name>
 
     <dependencies>
         <dependency>

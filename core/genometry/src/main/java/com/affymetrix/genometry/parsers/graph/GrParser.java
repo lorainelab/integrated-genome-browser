@@ -33,8 +33,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class GrParser implements GraphParser {
+
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GrParser.class);
 
     private GenometryModel gmodel;
 
@@ -83,7 +87,7 @@ public final class GrParser implements GraphParser {
         // check first line, may be a header for column labels...
         line = br.readLine();
         if (line == null) {
-            System.out.println("can't find any data in file!");
+            logger.warn("Can't find data.");
             return null;
         }
 
@@ -97,7 +101,7 @@ public final class GrParser implements GraphParser {
                 firstx = Integer.parseInt(line.substring(0, line.indexOf('\t')));
                 firsty = Float.parseFloat(line.substring(line.indexOf('\t') + 1));
             } else {
-                System.out.println("format not recognized");
+                logger.warn("Format not recognized");
                 return null;
             }
             xlist.add(firstx);
@@ -107,7 +111,7 @@ public final class GrParser implements GraphParser {
             // if first line does not parse as numbers, must be a header...
             // set header flag, don't count as a line...
             headerstr = line;
-            System.out.println("Found header on graph file: " + line);
+            logger.debug("Found header on graph file: " + line);
             hasHeader = true;
         }
         int x = 0;
@@ -140,14 +144,14 @@ public final class GrParser implements GraphParser {
         ylist = null;
 
         if (!sorted) {
-            System.err.println("input graph not sorted, sorting by base coord");
+            logger.info("Graph not sorted. Sorting by base coord");
             sortXYDataOnX(xcoords, ycoords);
         }
         if (ensure_unique_id) {
             name = GenomeVersion.getUniqueGraphID(name, aseq);
         }
         graf = new GraphSym(xcoords, ycoords, name, aseq);
-        System.out.println("loaded graph data, total points = " + count);
+        logger.info("Loaded graph data, total points = " + count);
         return graf;
     }
 

@@ -13,7 +13,7 @@
     <artifactId>bam</artifactId>
     <packaging>bundle</packaging>
 
-    <name>bam</name>
+    <name>Plugin - BAM data format handler</name>
 
     <dependencies>
         <dependency>

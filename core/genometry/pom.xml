@@ -12,7 +12,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>genometry</name>
+    <name>Core - Genometry (Data Models)</name>
 
     <dependencies>
         <dependency>

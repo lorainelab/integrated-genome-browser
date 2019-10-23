@@ -10,9 +10,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>context-menu-service</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Context Menu Service</name>
-    
+    <name>Core - Context Menu Service</name>
     <dependencies>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>

@@ -10,7 +10,7 @@
     
     <artifactId>affymetrix-common</artifactId>
     
-    <name>Affymetrix Common</name>
+    <name>Core - Affymetrix Common</name>
 
     <packaging>bundle</packaging>
     <dependencies>

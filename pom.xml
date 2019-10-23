@@ -115,23 +115,6 @@
             <url>https://nexus.bioviz.org/repository/maven-releases</url>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repo3</id>
-            <url>https://maven.bioviz.org/repo3</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>maven-releases</id>
-            <url>https://nexus.bioviz.org/maven-releases</url>
-        </pluginRepository>
-    </pluginRepositories>
-    <distributionManagement>
-        <repository>
-            <id>maven-releases</id>
-            <name>maven-releases</name>
-            <url>https://nexus.bioviz.org/repository/maven-releases</url>
-        </repository>
-    </distributionManagement>
     <modules>
 <!--        <module>core/taglets</module>-->
         <module>core/heatmap-editor</module>
@@ -230,15 +213,29 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
+            <!-- passed to mvn using environment variables, e.g., mvn -D install4j.macKeystorePassword=${MACKPW} -->
             <properties>
-                <install4j.home>/opt/install4j7/</install4j.home>
-                <install4j.licenseKey>_INSTALL4jLICENSE_</install4j.licenseKey>
-                <install4j.winKeystorePassword>_WINKEYSTOREPASSWORD_</install4j.winKeystorePassword>
-                <install4j.macKeystorePassword>_MACKEYSTOREPASSWORD_</install4j.macKeystorePassword>
+                <install4j.home>/opt/install4j7/</install4j.home> <!-- exists in Docker image --> 
+                <install4j.licenseKey>${INSTALL4J_LICENSE}</install4j.licenseKey>
+                <install4j.winKeystorePassword>${WIN_KEYSTORE_PASSWORD}</install4j.winKeystorePassword>
+                <install4j.macKeystorePassword>${MAC_KEYSTORE_PASSWORD}</install4j.macKeystorePassword>
             </properties>
             <modules>
                 <module>main</module>  
-            </modules>            
+            </modules>         
+        </profile>
+        <profile>
+            <id>release-to-nexus.bioviz.org</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>            
+            <distributionManagement>
+                <repository>
+                    <id>maven-releases</id>
+                    <name>maven-releases</name>
+                    <url>https://nexus.bioviz.org/repository/maven-releases</url>
+                </repository>
+            </distributionManagement> 
         </profile>
     </profiles>
     <dependencyManagement>
@@ -1114,25 +1111,6 @@
                             <followSymlinks>false</followSymlinks>
                         </fileset>
                     </filesets>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.3</version>
-                <executions>
-                    <execution>
-                        <id>default-deploy</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <serverId>maven-releases</serverId>
-                    <nexusUrl>https://nexus.bioviz.org/repository/maven-releases/</nexusUrl>
-                    <skipStaging>true</skipStaging>
                 </configuration>
             </plugin>
         </plugins>

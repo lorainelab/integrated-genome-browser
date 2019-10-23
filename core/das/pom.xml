@@ -10,9 +10,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>das</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Das</name>
-
+    <name>Core - DAS (data source)</name>
     <dependencies>
         <dependency>
             <groupId>htsjdk-igb</groupId>

@@ -663,7 +663,7 @@ public class BAMSym extends BasicSeqSymmetry implements SymWithBaseQuality, Sear
                 } else if (cel.getOperator() == CigarOperator.DELETION) {
                     Arrays.fill(tempArr, D);		// print deletion as '_'
                     currentPos += celLength;
-                } else if (cel.getOperator() == CigarOperator.M) {
+                } else if (cel.getOperator() == CigarOperator.M || cel.getOperator() == CigarOperator.X || cel.getOperator() == CigarOperator.EQ) {
                         tempArr = str.substring(stringPtr, stringPtr + celLength).toCharArray();
                         stringPtr += celLength;	// print matches
                         currentPos += celLength;

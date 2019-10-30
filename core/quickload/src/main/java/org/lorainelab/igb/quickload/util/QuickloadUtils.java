@@ -5,6 +5,8 @@ import static com.affymetrix.genometry.util.UriUtils.getInputStream;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import java.io.File;
+import java.io.FileNotFoundException;
 import org.lorainelab.igb.quickload.QuickloadConstants;
 import static org.lorainelab.igb.quickload.QuickloadConstants.ANNOTS_XML;
 import org.lorainelab.igb.quickload.model.annots.QuickloadFile;
@@ -27,7 +29,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
+import java.net.URL;
+import java.net.MalformedURLException;
 /**
  *
  * @author dcnorris

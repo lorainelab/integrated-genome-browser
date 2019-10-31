@@ -9,8 +9,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBException;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,12 +77,4 @@ public class IgbPreferencesParseTest {
         jsonWrapper.setPrefs(prefs);
         //logger.info(igbPreferencesParser.toJson(jsonWrapper));
     }
-
-    @Test
-    public void readXmlIgbPrefs() throws JAXBException {
-        Reader reader = new InputStreamReader(IgbPreferencesParseTest.class.getClassLoader().getResourceAsStream("igbDefaultPrefs.xml"));
-        IgbPreferences prefs = igbPreferencesParser.fromXml(reader).get();
-        assertEquals("IGB Quickload", prefs.getDataProviders().get(0).getName());
-    }
-
 }

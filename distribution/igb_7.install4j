@@ -32,7 +32,7 @@
           <entry location="bundles" fileType="regular" />
           <entry location="core" fileType="regular" />
           <entry location="distribution" fileType="regular" />
-          <entry location="docs" fileType="regular" />
+          <entry location="doc" fileType="regular" />
           <entry location="main" fileType="regular" />
           <entry location="plugins" fileType="regular" />
           <entry location="bitbucket-pipelines.yml" fileType="regular" />

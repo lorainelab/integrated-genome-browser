@@ -28,10 +28,11 @@
       <dirEntry mountPoint="26" file="${compiler:projectHomeDirectory}" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="integrated-genome-browser" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".git" fileType="regular" />
+          <entry location=".gitignore" fileType="regular" />
           <entry location="bundles" fileType="regular" />
           <entry location="core" fileType="regular" />
           <entry location="distribution" fileType="regular" />
-          <entry location="docs" fileType="regular" />
+          <entry location="doc" fileType="regular" />
           <entry location="main" fileType="regular" />
           <entry location="plugins" fileType="regular" />
           <entry location="bitbucket-pipelines.yml" fileType="regular" />

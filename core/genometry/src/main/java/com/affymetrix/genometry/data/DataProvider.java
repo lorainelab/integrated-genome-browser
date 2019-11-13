@@ -118,4 +118,10 @@ public interface DataProvider {
         return Optional.empty();
     }
     
+    public default Optional<String> getId() {
+        return Optional.empty();
+    }
+    
+    public void setId(String id);
+    
 }

@@ -404,14 +404,14 @@ public final class DataProviderTableModel extends AbstractTableModel {
             dataSourceInfo.add(new String[][]{{DataSourceInfoTableColumn.mirroURL.toString(), dataProvider.getMirrorUrl().get()}});
         dataSourceInfo.add(new String[][]{{DataSourceInfoTableColumn.loadPriority.toString(),dataProvider.getLoadPriority()+""}});
 
-        if(dataProvider.getSpeciesInfo().get().size() > 0)
+        if(dataProvider.getSpeciesInfo().isPresent() && dataProvider.getSpeciesInfo().get().size() > 0)
             dataSourceInfo.add(new String[][]{{DataSourceInfoTableColumn.speciesInfo.toString(),dataProvider.getSpeciesInfo().get().toString()}});
         if(!dataProvider.getSupportedGenomeVersionNames().isEmpty())
             dataSourceInfo.add(new String[][]{{DataSourceInfoTableColumn.supportedGenomeVersionInfo.toString(),dataProvider.getSupportedGenomeVersionNames().toString()}});
-        if(dataProvider.getGenomeVersionSynonyms().get().size() > 0)
+        if(dataProvider.getGenomeVersionSynonyms().isPresent() && dataProvider.getGenomeVersionSynonyms().get().size() > 0)
             dataSourceInfo.add(new String[][]{{DataSourceInfoTableColumn.genomeVersionSynonyms.toString(),dataProvider.getGenomeVersionSynonyms().get().toString()}});
-        if(((BaseDataProvider)dataProvider) != null)
-            dataSourceInfo.add(new String[][]{{DataSourceInfoTableColumn.defaultDataProviderId.toString(),((BaseDataProvider)dataProvider).getId()}});
+        if(dataProvider.getId().isPresent())
+            dataSourceInfo.add(new String[][]{{DataSourceInfoTableColumn.defaultDataProviderId.toString(),dataProvider.getId().toString()}});
 
         return dataSourceInfo;
     }

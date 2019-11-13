@@ -354,6 +354,11 @@
         </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
+            <artifactId>bai</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
             <artifactId>appstore</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -580,6 +585,7 @@
                     <plugin>
                         <groupId>org.sonatype.install4j</groupId>
                         <artifactId>install4j-maven-plugin</artifactId>
+                        <version>1.1.1</version>
                         <executions>
                             <execution>
                                 <id>install-license</id>

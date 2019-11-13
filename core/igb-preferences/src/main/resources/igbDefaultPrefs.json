@@ -79,15 +79,9 @@
                 "default": "true"
             },
             {
-                "name": "BioViz development",
-                "url": "http://eos.transvar.org/igb_plugins",
-                "enabled": "false",
-                "default": "true"
-            },
-            {
-                "name": "Test App Store",
-                "url": "https://apps.bioviz.org/obr",
-                "enabled": "false",
+                "name": "App Store",
+                "url": "https://apps.bioviz.org/obr/releases/",
+                "enabled": "true",
                 "default": "true"
             }
         ],

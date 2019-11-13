@@ -46,7 +46,7 @@
         <commonsCompressVersion>1.5</commonsCompressVersion>
         <commonsCodecVersion>1.6</commonsCodecVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
-        <htsjdk-igb-Version>2.16.2</htsjdk-igb-Version>
+        <htsjdk-igb-Version>2.16.3</htsjdk-igb-Version>
         <commonsVfsVersion>2.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
         <slf4j-api.version>1.7.7</slf4j-api.version>
@@ -170,6 +170,7 @@
         <module>plugins/narrowpeak</module>
         <module>plugins/bed</module>
         <module>plugins/bam</module>
+        <module>plugins/bai</module>
         <module>plugins/AppStore</module>
     </modules>
     <profiles>
@@ -202,7 +203,7 @@
                 <os><family>unix</family></os>
             </activation>
             <properties>
-                <cacheDirectory>${user.home}/.igb/bundles/v${version}-bundle-cache</cacheDirectory>
+                <cacheDirectory>${user.home}/.igb/bundles/v${project.version}-bundle-cache</cacheDirectory>
             </properties>
             <modules>
                 <module>main</module>
@@ -560,6 +561,11 @@
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>bam</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lorainelab.igb</groupId>
+                <artifactId>bai</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>

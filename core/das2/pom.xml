@@ -10,9 +10,7 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>das2</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Das 2</name>
-
+    <name>Core - Das 2 (data source)</name>
     <dependencies>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>

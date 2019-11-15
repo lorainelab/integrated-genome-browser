@@ -1,1 +1,0 @@
-The Merge Annotation Track Operator will add an additional "multi-track" operation to the "Operations" section of the Annotation panel. 

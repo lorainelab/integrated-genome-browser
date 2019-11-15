@@ -11,9 +11,11 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>paired-data-preprocessor</artifactId>
     <packaging>bundle</packaging>
-
-
-    <name>Paired End Data Preprocessor</name>
+    <!-- 
+         Used to display BAM format data as paired 
+         reads.
+     -->
+    <name>Plugin - Paired-end Read Preprocessor</name>
 
     <dependencies>
         <dependency>

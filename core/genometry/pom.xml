@@ -12,7 +12,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>genometry</name>
+    <name>Core - Genometry (Data Models)</name>
 
     <dependencies>
         <dependency>
@@ -53,11 +53,6 @@
         <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>fusion</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.sf</groupId>
-            <artifactId>igb-picard</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -126,7 +121,6 @@
         <dependency>
             <groupId>htsjdk-igb</groupId>
             <artifactId>htsjdk-igb</artifactId>
-            <version>2.16.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -184,9 +178,7 @@
                             com.affymetrix.genometry.tooltip,
                             com.affymetrix.genometry.search,
                             com.affymetrix.genometry.data,
-                            com.affymetrix.genometry.data.*,
-                            htsjdk,
-                            htsjdk.*
+                            com.affymetrix.genometry.data.*
                         </Export-Package>
                         <Import-Package>com.apple.laf,*;resolution:=optional</Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

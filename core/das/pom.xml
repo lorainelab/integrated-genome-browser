@@ -10,10 +10,13 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>das</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Das</name>
-
+    <name>Core - DAS (data source)</name>
     <dependencies>
+        <dependency>
+            <groupId>htsjdk-igb</groupId>
+            <artifactId>htsjdk-igb</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>bndlib</artifactId>

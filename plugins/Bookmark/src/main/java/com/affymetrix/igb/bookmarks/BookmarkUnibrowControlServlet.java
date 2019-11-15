@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2001-2007 Affymetrix, Inc.
- *
+ * <p>
  * Licensed under the Common Public License, Version 1.0 (the "License"). A copy of the license must be included with
  * any distribution of this source code. Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
- *
+ * <p>
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb.bookmarks;
@@ -35,13 +35,16 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.primitives.Ints;
+import java.io.UnsupportedEncodingException;
 import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +54,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -107,7 +111,7 @@ public final class BookmarkUnibrowControlServlet {
      *
      * @param igbService
      * @param parameters Must be a Map where the only values are String and String[] objects. For example, this could be
-     * the Map returned by {@link javax.servlet.ServletRequest#getParameterMap()}.
+     *                   the Map returned by {@link javax.servlet.ServletRequest#getParameterMap()}.
      */
     public void goToBookmark(final IgbService igbService, final ListMultimap<String, String> parameters, final boolean isGalaxyBookmark) {
         String batchFileStr = getFirstValueEntry(parameters, IgbService.SCRIPTFILETAG);
@@ -134,6 +138,7 @@ public final class BookmarkUnibrowControlServlet {
                     String select_start_param = getFirstValueEntry(parameters, Bookmark.SELECTSTART);
                     String select_end_param = getFirstValueEntry(parameters, Bookmark.SELECTEND);
                     boolean loadResidue = Boolean.valueOf(getFirstValueEntry(parameters, Bookmark.LOADRESIDUES));
+                    boolean cyverseData = Boolean.valueOf(getFirstValueEntry(parameters, Bookmark.CYVERSE_DATA));
                     // For historical reasons, there are two ways of specifying graphs in a bookmark
                     // Eventually, they should be treated more similarly, but for now some
                     // differences remain
@@ -152,7 +157,8 @@ public final class BookmarkUnibrowControlServlet {
                     int end = 0;
 
                     //missing seqid or start or end? Attempt to set to current view
-                    if (missingString(new String[]{seqid, start_param, end_param})) {
+
+                    if (missingString(new String[]{seqid, start_param, end_param}) && cyverseData != true) {
                         boolean pickOne = false;
                         //get GenomeVersion for bookmark
                         String preferredVersionName = LOOKUP.getPreferredName(version);
@@ -215,11 +221,18 @@ public final class BookmarkUnibrowControlServlet {
                         dataProivders = loadServers(igbService, server_urls, version);
                     }
 
-                    final BioSeq seq = goToBookmark(igbService, seqid, version, start, end).orNull();
-
+                    final BioSeq seq;
+                    if (cyverseData == true) {
+                        seq = null;
+                    } else {
+                        seq = goToBookmark(igbService, seqid, version, start, end).orNull();
+                    }
                     if (seq == null) {
                         if (isGalaxyBookmark) {
                             loadUnknownData(parameters, igbService);
+                            return null;
+                        } else if (cyverseData) {
+                            loadCyverseData(parameters, igbService);
                             return null;
                         }
                         return null;
@@ -322,7 +335,7 @@ public final class BookmarkUnibrowControlServlet {
     }
 
     private List<DataSet> loadData(final IgbService igbService, final GenomeVersion genomeVersion, final List<DataProvider> dataProivders, final List<String> query_urls, int start, int end,
-            final ListMultimap<String, String> parameters) {
+                                   final ListMultimap<String, String> parameters) {
         List<DataSet> gFeatures = new ArrayList<>();
         int i = 0;
         for (String queryUrl : query_urls) {
@@ -466,7 +479,7 @@ public final class BookmarkUnibrowControlServlet {
     }
 
     private List<Integer> initializeIntValues(String start_param, String end_param,
-            String select_start_param, String select_end_param) {
+                                              String select_start_param, String select_end_param) {
 
         Integer start = 0;
         Integer end = 0;
@@ -558,24 +571,29 @@ public final class BookmarkUnibrowControlServlet {
     private void directlyLoadUrls(GenomeVersion genomeVersion, final ListMultimap<String, String> parameters, IgbService igbService) {
         List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
         /*~kiran:IGBF-1287: Making use of sym_name for track labels*/
-        List<String> trackLabels= parameters.get(SYM.NAME + "0");
+        List<String> trackLabels = parameters.get(SYM.NAME + "0");
         Map<String, String> trackLabelsMap = IntStream.range(0, query_urls.size()).boxed()
-                .collect(Collectors.toMap(i -> (trackLabels !=null && trackLabels.size()>i) ?trackLabels.get(i): DataSetUtils.extractNameFromPath(query_urls.get(i)), i -> query_urls.get(i)));
-        trackLabelsMap.forEach((trackLabel,urlToLoad) -> {
+                .collect(Collectors.toMap(i -> (trackLabels != null && trackLabels.size() > i) ? trackLabels.get(i) : DataSetUtils.extractNameFromPath(query_urls.get(i)), i -> query_urls.get(i)));
+        trackLabelsMap.forEach((trackLabel, urlToLoad) -> {
             directlyLoadFile(urlToLoad, trackLabel, igbService, genomeVersion);
         });
 
     }
 
-    private void directlyLoadFile(String urlToLoad,String trackLabel, IgbService igbService, GenomeVersion genomeVersion) {
+    private void directlyLoadFile(String urlToLoad, String trackLabel, IgbService igbService, GenomeVersion genomeVersion) {
         /*~kiran:IGBF-1287: Using filename if trackLabel is null*/
-        if(trackLabel==null){
+        if (trackLabel == null) {
             trackLabel = DataSetUtils.extractNameFromPath(urlToLoad);
         }
         try {
-            igbService.openURI(new URI(urlToLoad), trackLabel, genomeVersion, genomeVersion.getSpeciesName(), false);
+            //IGBF-32 Handle special characters in the url.
+            String encodedFileName = URLEncoder.encode(trackLabel, "UTF-8");
+            urlToLoad =  urlToLoad.replace(trackLabel, encodedFileName);
+            igbService.openURI(new URI(urlToLoad.replaceAll("\\+", "%20")), trackLabel, genomeVersion, genomeVersion.getSpeciesName(), false);
         } catch (URISyntaxException ex) {
             logger.error("Invalid bookmark syntax.", ex);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -586,7 +604,33 @@ public final class BookmarkUnibrowControlServlet {
             try {
                 String urlToLoad = query_urls.get(0);
                 GenomeVersion loadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
-                igbService.openURI(new URI(urlToLoad), urlToLoad, loadGroup, "Custom Genome", false);
+                //IGBF-32 Handle special characters in the url.
+                String trackLabel = DataSetUtils.extractNameFromPath(urlToLoad);
+                String encodedFileName = URLEncoder.encode(trackLabel, "UTF-8");
+                urlToLoad =  urlToLoad.replace(trackLabel, encodedFileName);
+                igbService.openURI(new URI(urlToLoad.replaceAll("\\+", "%20")), trackLabel, loadGroup, "Custom Genome", false);
+            } catch (URISyntaxException ex) {
+                logger.error("Invalid bookmark syntax.", ex);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void loadCyverseData(final ListMultimap<String, String> parameters, IgbService igbService) {
+        List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
+        //These bookmarks should only contain one url
+        if (!query_urls.isEmpty()) {
+            try {
+                String urlToLoad = query_urls.get(0);
+                String speciesName = igbService.getSelectedSpecies();
+                GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
+                if(StringUtils.isNotEmpty(speciesName) && loadGroup!=null){
+                    igbService.openURI(new URI(urlToLoad), urlToLoad, loadGroup, speciesName, false);
+                }else{
+                    GenomeVersion customLoadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
+                    igbService.openURI(new URI(urlToLoad), urlToLoad, customLoadGroup, "Custom Genome", false);
+                }
             } catch (URISyntaxException ex) {
                 logger.error("Invalid bookmark syntax.", ex);
             }

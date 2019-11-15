@@ -52,7 +52,9 @@ import java.awt.print.PrinterException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -60,6 +62,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JViewport;
 import javax.swing.event.ListSelectionListener;
 import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
@@ -70,6 +75,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
+
 
 /**
  * implementation of the IgbService, using the IGB instance for all of the
@@ -527,5 +533,23 @@ public class IgbServiceImpl implements IgbService {
 
         };
         dependencyTracker.open();
+    }
+
+    public List<String> getSpeciesList(){
+        return GeneralLoadUtils.getSpeciesList();
+    }
+
+    public List<String> getAllVersions(String species){
+        return SeqGroupView.getInstance().getAllVersions(species);
+    }
+
+    @Override
+    public void writeCustomMsgToIGBConsoleTab(String Msg, String MsgType) {
+        JTextArea consoleTab;
+        Timestamp ts;
+        
+        ts = new Timestamp((new Date()).getTime());
+        consoleTab = (JTextArea)((JViewport)((JScrollPane) (IGB.getInstance()).getViewByDisplayName("Console").getComponent(0)).getViewport()).getView();
+        consoleTab.append("\n" + ts.toString().split("\\s+")[1] + " " + MsgType + " " + Msg);
     }
 }

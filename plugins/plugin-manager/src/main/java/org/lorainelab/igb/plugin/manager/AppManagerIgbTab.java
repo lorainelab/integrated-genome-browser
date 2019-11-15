@@ -24,7 +24,7 @@ public class AppManagerIgbTab extends IgbTabPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(AppManagerIgbTab.class);
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("plugins");
-    private static final int TAB_POSITION = 7;
+    private static final int TAB_POSITION = 8;
     private AppManagerFrame frame;
 
     public AppManagerIgbTab() {

@@ -7,14 +7,10 @@
         <version>9.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>igb-genoviz-extensions</artifactId>
     <packaging>bundle</packaging>
-
-
-    <name>IGB Genoviz Extensions</name>
-
+    <name>Core - Genoviz Extensions</name>
     <dependencies>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

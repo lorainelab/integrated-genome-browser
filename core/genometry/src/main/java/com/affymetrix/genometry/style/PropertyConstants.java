@@ -29,6 +29,11 @@ public interface PropertyConstants {
     static final String PROP_END_COLOR = "end_color";
     static final String PROP_VIEW_MODE = "view_mode";
     static final String PROP_COLOR_BY_RGB = "color_by_rgb";
+    static final String PROP_SHOW_SOFT_CLIPPED = "Hide soft-clipping";
+    static final String PROP_SOFT_CLIP_COLOR = "Show as custom color";
+    static final String PROP_SHOW_SOFT_CLIPPED_RESIDUES = "Show as mismatches";
+    static final String PROP_SHOW_SOFT_CLIPPED_DEFAULT_COLOR = "Show as default color";
+    static final String PROP_SHOW_SOFT_CLIPPED_CUSTOM_COLOR = "Show as custom color...";
 
     static final String TRUE = "true";
     static final String FALSE = "false";

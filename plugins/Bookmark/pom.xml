@@ -10,14 +10,12 @@
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>bookmark</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Bookmark</name>
-
+    <name>Plugin - Bookmarks and REST API</name>
     <dependencies>
         <dependency>
             <groupId>fi.iki.elonen</groupId>
             <artifactId>NanoHTTPD</artifactId>	
-            <scope>compile</scope>		
+            <scope>provided</scope>		
         </dependency>		
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
@@ -100,6 +98,11 @@
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-javafx-util</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

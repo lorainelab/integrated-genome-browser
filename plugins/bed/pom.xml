@@ -13,7 +13,7 @@
     <artifactId>bed</artifactId>
     <packaging>bundle</packaging>
 
-    <name>bed</name>
+    <name>Plugin - BED file format handler</name>
 
     <dependencies>
         <dependency>
@@ -93,7 +93,6 @@
         <dependency>
             <groupId>htsjdk-igb</groupId>
             <artifactId>htsjdk-igb</artifactId>
-            <version>2.16.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

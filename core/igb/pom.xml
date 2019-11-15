@@ -12,7 +12,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>igb</name>
+    <name>Core - IGB</name>
 
     <dependencies>
         <dependency>
@@ -181,6 +181,29 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.1.4</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>**/*.properties</include>
+                    </includes>
+                    <verbose>false</verbose>
+                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+                    <dateFormat>MM-dd-yyyy HH:mm:ss</dateFormat>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>       
+                    <generateGitPropertiesFilename>src/main/resources/git.properties</generateGitPropertiesFilename>
+                    <failOnNoGitDirectory>true</failOnNoGitDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
             </plugin>
             <plugin>
@@ -205,7 +228,8 @@
                         </Import-Package>
                         <Bundle-Activator>com.affymetrix.igb.Activator</Bundle-Activator>
                         <Export-Package>
-                            com.affymetrix.igb.shared
+                            com.affymetrix.igb.shared,
+                            com.affymetrix.igb.view.load
                         </Export-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.view.load.GeneralLoadViewGUI,com.affymetrix.igb.view.SeqGroupViewGUI,com.affymetrix.igb.view.AltSpliceView</Bundle-Category>

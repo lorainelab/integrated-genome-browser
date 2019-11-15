@@ -12,7 +12,7 @@
     <artifactId>session-manager</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Session Manager</name>
+    <name>Plugin - Save Session Manager</name>
     
     <dependencies>
         <dependency>

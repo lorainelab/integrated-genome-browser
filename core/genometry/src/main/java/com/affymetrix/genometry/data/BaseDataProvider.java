@@ -233,12 +233,14 @@ public abstract class BaseDataProvider implements DataProvider {
         return true;
     }
 
+    @Override
     public void setId(String id){
         this.defaultDataProviderId = id;
     }
 
-    public String getId(){
-        return defaultDataProviderId;
+    @Override
+    public Optional<String> getId(){
+        return Optional.ofNullable(defaultDataProviderId);
     }
     
     

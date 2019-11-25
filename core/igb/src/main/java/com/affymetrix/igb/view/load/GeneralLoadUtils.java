@@ -1002,8 +1002,8 @@ public final class GeneralLoadUtils {
 
             @Override
             protected Boolean runInBackground() {
-                String message = "IGB is unable to load the data in your file.";
-                String helpMessage ="<br>More information about what went wrong may be available in the Console. To get help, visit the ";
+                String message = "IGB is unable to load the data in your file.<br>Error message: ";
+                String helpMessage ="<br>More information about what went wrong may be available in the Console. <br>To get help, visit the ";
                 String linkName = "IGB Help Page";
                 String link = "https://bioviz.org/help.html";
                 try {
@@ -1014,7 +1014,7 @@ public final class GeneralLoadUtils {
                 } catch (NumberFormatException nfe) {
                     ((QuickLoadSymLoader) dataSet.getSymL()).logException(nfe); 
                    
-                    featureRemoved = removeFeatureAndRefresh(dataSet, message + "The input string "+nfe.getMessage().split(":")[1]+" should be numberic. " +helpMessage, linkName, link);
+                    featureRemoved = removeFeatureAndRefresh(dataSet, message + "The input string "+nfe.getMessage().split(":")[1]+" should be numeric." +helpMessage, linkName, link);
                     return featureRemoved;
                     
                 }catch (Exception ex) {

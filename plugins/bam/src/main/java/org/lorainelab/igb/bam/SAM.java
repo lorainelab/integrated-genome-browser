@@ -170,7 +170,7 @@ public class SAM extends XAM implements LineProcessor {
                 while(error.hasNext()) {
                     errMessage += error.next() +"<br>";
                 }
-                ErrorHandler.errorPanel("SAM exception", errMessage +"<br>Ignoring " + errList.size() + " records <br>", errList, Level.WARNING);
+                ErrorHandler.errorPanel("SAM exception", "Error message:<br><br>" + errMessage +"<br>Ignoring " + errList.size() + " record(s). <br>", errList, Level.WARNING);
             }
         }
     }

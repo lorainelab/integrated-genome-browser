@@ -1,5 +1,10 @@
 package org.lorainelab.igb.bai;
 
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FTP_PROTOCOL_SCHEME;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTPS_PROTOCOL_SCHEME;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL_SCHEME;
+import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.io.File;
 import java.net.URI;
@@ -19,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -30,6 +36,7 @@ public class BaiToBedgraphConverter{
     
     ArrayList<Chromosomes> chromosomeList = new ArrayList<>();
     SamReader samReader = null;
+    File bedGraphFile = null;
     
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BaiToBedgraphConverter.class);
     
@@ -47,13 +54,29 @@ public class BaiToBedgraphConverter{
      * Gets genome structure info - the list of chromosome names and their sizes
      * Iterates through the chromosomes list. It contains sequenceName and sequence length
      * For each chromosome, goes to the BAI file and gets the value for each 16,000 base bin
-     * Lastly writes to a “bedgraph” file in the same location
+     * Lastly writes to a temporary “bedgraph” file in the default temp location
      */
     private void initializeChromosomes(URI uri) {
         InputStream bamFile = null;
         BrowseableBAMIndex browseableIndex = null;
         FileWriter writer=null;
-        File inputBAIFile = new File(uri);
+        File inputBAIFile = null;
+        
+        /**
+         * Checks the input scheme to support different file input sources(Local file, URL from Internet)
+         */
+        String scheme = uri.getScheme().toLowerCase();
+        if (StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)) {
+            inputBAIFile = new File(uri);
+        }else if (StringUtils.equals(scheme, HTTP_PROTOCOL_SCHEME) || StringUtils.equals(scheme, HTTPS_PROTOCOL_SCHEME)) {
+            inputBAIFile = LocalUrlCacher.convertURIToFile(uri);
+        }else if (scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
+            inputBAIFile = LocalUrlCacher.convertURIToFile(uri);
+        }else{
+            Logger.getLogger(BaiToBedgraphConverter.class.getName()).log(
+                    Level.SEVERE, "URL scheme: {0} not recognized", scheme);
+        }
+        
         
         /**
          * Get empty.bai file from Bai project resources folder
@@ -132,7 +155,7 @@ public class BaiToBedgraphConverter{
                 check = 0;
             }
         /**
-         * Write the output to a bedgraph file
+         * Write the output to a temporary bedgraph file
          */
         try {
             writer.write(output.toString());
@@ -161,15 +184,26 @@ public class BaiToBedgraphConverter{
     
     /**
      * 
-     * @param baifile It takes bai file location and creates a bedgraph file in the same location
-     * @return It returns newly created bedgraph file.
+     * @param baifile It takes bai file location and creates a temporary bedgraph file in the default temp location
+     * deletes the temp bedgraph file when IGB is closed
+     * @return It returns newly created temporary bedgraph file.
      */
-    public static File createBedGraphFile (File baifile) {
+    public File createBedGraphFile (File baifile) throws IOException {
             String path = baifile.getPath();
-            path = path.substring(0, path.length() - 3) + "bedgraph";
-            File bedGraphFile = new File(path);
+            path = path.substring(0, path.length() - 4);
+            bedGraphFile = File.createTempFile(path, "bedgraph");
+            bedGraphFile.deleteOnExit();
             return bedGraphFile;    
-    }   
+    }
+    
+   /**
+    * 
+    * @return temporary bedgraph file
+    */
+    public File returnTempBedgraphFile()
+    {
+        return bedGraphFile;
+    }
 }
 
 /**

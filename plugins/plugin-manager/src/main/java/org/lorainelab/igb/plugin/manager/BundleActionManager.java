@@ -110,9 +110,10 @@ public class BundleActionManager {
                 information)
                 */
                 // Get the Domain Name from the URL
-                String urlBuilder = url.getAuthority();
+                String urlHost = url.getAuthority();
+                String urlProtocol = url.getProtocol();
                 // Build URL to check the connection
-                URL connectURL = new URL("http://" + urlBuilder);
+                URL connectURL = new URL(urlProtocol + "://" + urlHost);
                 HttpURLConnection urlConnect = (HttpURLConnection)connectURL.openConnection();
                 //try connecting to the source, If there is no connection, this line will fail and throw exception
                 Object objData = urlConnect.getContent();

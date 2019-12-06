@@ -103,6 +103,7 @@ public class BundleActionManager {
             if(url.toString().toLowerCase().startsWith("http")){
                 //open a connection to that source
                 /*
+                Author : Sameer Shanbhag
                 IGBF-2164
                 URL Input to this function might have the link to jar which will 
                 increase download count for that app (Refer to Issue for more 
@@ -110,7 +111,7 @@ public class BundleActionManager {
                 */
                 // Get the Domain Name from the URL
                 String urlBuilder = url.getAuthority();
-                // Build URL to cehck the connection
+                // Build URL to check the connection
                 URL connectURL = new URL("http://" + urlBuilder);
                 HttpURLConnection urlConnect = (HttpURLConnection)connectURL.openConnection();
                 //try connecting to the source, If there is no connection, this line will fail and throw exception

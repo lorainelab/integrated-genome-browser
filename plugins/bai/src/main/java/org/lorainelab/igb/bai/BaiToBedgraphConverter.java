@@ -14,6 +14,7 @@ import htsjdk.samtools.BAMFileSpan;
 import htsjdk.samtools.Bin;
 import htsjdk.samtools.BinList;
 import htsjdk.samtools.BrowseableBAMIndex;
+import htsjdk.samtools.Chunk;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
@@ -21,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -109,50 +111,55 @@ public class BaiToBedgraphConverter{
         output.append("#chrom	start	end	length\n");
         for(int tid=0;tid< chromosomeList.size();++tid)
             {
-                int check = 0;
-                String prevSequenceName = null, prevFirstLocusInBin =null, prevLastLocusInBin = null;
-                double prevFirstOffset = 0;
-                double veryFirstOffset = 0;
-                    try{
-                        writer = new FileWriter(createBedGraphFile(inputBAIFile));
-                        BinList binList =browseableIndex.getBinsOverlapping(tid, 1, chromosomeList.get(tid).getSequenceLength());
-                        /**
-                         * For each chromosome, goes to the BAI file and gets the value for each 16,000 base bin
-                         */
-                        for(final Bin binItem:binList)
+                double mean=0,total=0,count=0;
+                BinList binList =browseableIndex.getBinsOverlapping(tid, 1, chromosomeList.get(tid).getSequenceLength());
+                //Calculating the mean of the chunks to scale the graph
+                for(final Bin binItem:binList)
+                    {
+                        if(String.valueOf(browseableIndex.getLevelForBin(binItem)).equals("5"))
                         {
-                            if(String.valueOf(browseableIndex.getLevelForBin(binItem)).equals("5"))
+                            final BAMFileSpan span= browseableIndex.getSpanOverlapping(binItem);
+                            if(!String.valueOf(span.getFirstOffset()).equals("0"))
                             {
-                                final BAMFileSpan span= browseableIndex.getSpanOverlapping(binItem);
-                                if(!String.valueOf(span.getFirstOffset()).equals("0"))
-                                {
-                                    if(check == 0)
-                                        {
-                                            check = check + 1;
-                                            veryFirstOffset = span.getFirstOffset();
-                                            prevSequenceName = chromosomeList.get(tid).getSequenceName();
-                                            prevFirstLocusInBin = String.valueOf(browseableIndex.getFirstLocusInBin(binItem));
-                                            prevLastLocusInBin = String.valueOf(browseableIndex.getLastLocusInBin(binItem));
-                                            prevFirstOffset = span.getFirstOffset();
-                                            continue;
-                                        }
-                                    output.append(prevSequenceName
-                                            +  "   " + prevFirstLocusInBin
-                                            +  "   " + prevLastLocusInBin
-                                            +  "   " + ((span.getFirstOffset() - prevFirstOffset)/1000000) + "\n");
-                                    prevSequenceName = chromosomeList.get(tid).getSequenceName();
-                                    prevFirstLocusInBin = String.valueOf(browseableIndex.getFirstLocusInBin(binItem));
-                                    prevLastLocusInBin = String.valueOf(browseableIndex.getLastLocusInBin(binItem));
-                                    prevFirstOffset = span.getFirstOffset();
-                                }
+                                final List<Chunk> chunks = span.getChunks();
+                                total += chunks.get(0).getChunkEnd() - chunks.get(0).getChunkStart();
+                                count++;
                             }
                         }
                     }
-                    catch (IOException ex) 
+                if(count>0)
+                    mean = total/count;
+                
+                try
+                {
+                    writer = new FileWriter(createBedGraphFile(inputBAIFile));
+                    /**
+                        * For each chromosome, goes to the BAI file and gets the value for each 16,000 base bin
+                    */
+                    for(final Bin binItem:binList)
                     {
-                        Logger.getLogger(BaiToBedgraphConverter.class.getName()).log(Level.SEVERE, null, ex);
+                        if(String.valueOf(browseableIndex.getLevelForBin(binItem)).equals("5"))
+                        {
+                            String firstLocusInBin = String.valueOf(browseableIndex.getFirstLocusInBin(binItem)-1);
+                            String lastLocusInBin = String.valueOf(browseableIndex.getLastLocusInBin(binItem));
+                            final BAMFileSpan span= browseableIndex.getSpanOverlapping(binItem);
+                            if(!String.valueOf(span.getFirstOffset()).equals("0"))
+                            {
+                                if(browseableIndex.getLastLocusInBin(binItem) > chromosomeList.get(tid).getSequenceLength())
+                                    lastLocusInBin = String.valueOf(chromosomeList.get(tid).getSequenceLength());
+                                final List<Chunk> chunks = span.getChunks();
+                                output.append(chromosomeList.get(tid).getSequenceName()
+                                        +  "   " + firstLocusInBin
+                                        +  "   " + lastLocusInBin
+                                        +  "   " + (chunks.get(0).getChunkEnd() - chunks.get(0).getChunkStart())/mean + "\n");
+                            }
+                        }
                     }
-                check = 0;
+                }
+                catch (IOException ex) 
+                {
+                    Logger.getLogger(BaiToBedgraphConverter.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         /**
          * Write the output to a temporary bedgraph file

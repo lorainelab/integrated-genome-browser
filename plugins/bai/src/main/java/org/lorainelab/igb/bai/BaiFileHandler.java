@@ -10,10 +10,7 @@ import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderTabix;
 import com.affymetrix.genometry.symloader.Wiggle;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 /**
  *
  * @author Sai Charan Reddy Vallapureddy

@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.FilenameUtils;
 
 
 /**
@@ -39,6 +40,7 @@ public class BaiToBedgraphConverter{
     ArrayList<Chromosomes> chromosomeList = new ArrayList<>();
     SamReader samReader = null;
     File bedGraphFile = null;
+    String inputFileName = null;
     
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BaiToBedgraphConverter.class);
     
@@ -59,6 +61,7 @@ public class BaiToBedgraphConverter{
      * Lastly writes to a temporary “bedgraph” file in the default temp location
      */
     private void initializeChromosomes(URI uri) {
+        inputFileName = FilenameUtils.getBaseName(uri.getPath()); // -> file
         InputStream bamFile = null;
         BrowseableBAMIndex browseableIndex = null;
         FileWriter writer=null;
@@ -200,10 +203,8 @@ public class BaiToBedgraphConverter{
      */
     public File createBedGraphFile (File baifile) throws IOException {
             String tempPath = System.getProperty("java.io.tmpdir");
-            
-            String path = baifile.getName();
-            path = path.substring(0, path.length() - 3);
-            bedGraphFile = new File(tempPath, path + "bedgraph");
+            inputFileName = inputFileName + ".";
+            bedGraphFile = new File(tempPath, inputFileName + "bedgraph");
             if (bedGraphFile.exists()) {
                 bedGraphFile.delete();
             }

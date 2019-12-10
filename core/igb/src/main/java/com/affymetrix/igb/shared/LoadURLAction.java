@@ -123,7 +123,14 @@ public class LoadURLAction extends OpenURIAction {
             ErrorHandler.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + url, Level.WARNING);
             return;
         }
- 
+        
+        // If no genome available, open URL should not work for BAI input type
+        if(gmodel.getSelectedGenomeVersion()==null && "bai".equals(urlStr.substring(urlStr.length()-3,urlStr.length()))){
+                ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"),
+                        BUNDLE.getString("noGenomeSelectedMessage"), Level.INFO);
+                return;
+        }
+        
         openURI(uri, friendlyName, mergeSelected, loadGroup, speciesName, isReferenceSequence);
     }
     

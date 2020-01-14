@@ -20,6 +20,7 @@ import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.OpenURIAction;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import org.apache.commons.io.FilenameUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -68,6 +69,12 @@ public final class LoadFileAction extends OpenURIAction {
             String speciesName = getSpeciesName();
             if (speciesName.startsWith(UNKNOWN_SPECIES_PREFIX)) {
                 genomeVersion.setSpeciesName(speciesName);
+            }
+            // If no genome available, open file should not work for BAI input type
+            if(gmodel.getSelectedGenomeVersion()==null && isGenomeRequiredForFileType(files)){
+                ErrorHandler.errorPanel(BUNDLE.getString("noGenomeSelectedTitle"),
+                        BUNDLE.getString("noGenomeSelectedMessage"), Level.INFO);
+                return;
             }
             UniFileFilter all_known_types = getAllSupportedExtensionsFilter();
             for (File f : files) {
@@ -190,6 +197,19 @@ public final class LoadFileAction extends OpenURIAction {
         //IGBF-1509 end
         
         
+    }
+    
+    /*
+        If no genome available, open file should not work for BAI input type
+        @return true if input file type is BAI, else return false
+    */ 
+    private boolean isGenomeRequiredForFileType(List<File> files) {
+        for(File file : files){
+            if("bai".equals(FilenameUtils.getExtension(file.getPath()))){
+                return true;
+           }
+        }
+        return false;
     }
 
     @Override

@@ -122,6 +122,7 @@ public final class GeneralLoadUtils {
 
     static final Map<String, String> versionName2species
             = new HashMap<>();	// the species associated with the given version.
+    static Map<String, Integer> assemblyInfo = new HashMap<>();
 
     final static Comparator<DataContainer> DATA_CONTAINER_PRIORITY_COMPARATOR = (DataContainer o1, DataContainer o2) -> {
         DataProviderComparator dataProviderComparator = new DataProviderComparator();
@@ -132,6 +133,9 @@ public final class GeneralLoadUtils {
 
     public static Map<String, String> getVersionName2Species() {
         return versionName2species;
+    }
+    public static Map<String, Integer> getAssemblyInfo() {
+        return assemblyInfo;
     }
 
     /**
@@ -267,7 +271,7 @@ public final class GeneralLoadUtils {
                         chromosomeLookup.addSynonyms(Sets.newConcurrentHashSet(chromosomeSynonyms.get(key)));
                     });
                 });
-                Map<String, Integer> assemblyInfo = assemblyProvider.getAssemblyInfo(dataContainer.getGenomeVersion());
+                assemblyInfo = assemblyProvider.getAssemblyInfo(dataContainer.getGenomeVersion());
                 GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
                 assemblyInfo.entrySet().stream().forEach(entry -> {
                     genomeVersion.addSeq(entry.getKey(), entry.getValue());
@@ -998,8 +1002,8 @@ public final class GeneralLoadUtils {
 
             @Override
             protected Boolean runInBackground() {
-                String message = "IGB is unable to load the data in your file.";
-                String helpMessage ="<br>More information about what went wrong may be available in the Console. To get help, visit the ";
+                String message = "IGB is unable to load the data in your file.<br>Error message: ";
+                String helpMessage ="<br>More information about what went wrong may be available in the Console. <br>To get help, visit the ";
                 String linkName = "IGB Help Page";
                 String link = "https://bioviz.org/help.html";
                 try {
@@ -1010,7 +1014,7 @@ public final class GeneralLoadUtils {
                 } catch (NumberFormatException nfe) {
                     ((QuickLoadSymLoader) dataSet.getSymL()).logException(nfe); 
                    
-                    featureRemoved = removeFeatureAndRefresh(dataSet, message + "The input string "+nfe.getMessage().split(":")[1]+" should be numberic. " +helpMessage, linkName, link);
+                    featureRemoved = removeFeatureAndRefresh(dataSet, message + "The input string "+nfe.getMessage().split(":")[1]+" should be numeric." +helpMessage, linkName, link);
                     return featureRemoved;
                     
                 }catch (Exception ex) {

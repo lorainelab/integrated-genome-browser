@@ -360,14 +360,12 @@ public final class BookmarkManagerView {
                 .saveFilesFromFxChooser();
         
         ExtensionFilter ext = fileChooser.getSelectedFileExtension();
-        System.out.println("Extnsions are: "+ext.getExtensions());
         if (selectedFile.isPresent() && selectedFile.get()!= null) {
             setLoadDirectory(selectedFile.get().getParentFile());
             try {
                 File fil = selectedFile.get();
                 boolean extSet = false;
                 String filePath = fil.getCanonicalPath();
-                System.out.println("File path: "+filePath);
                 for (String extension : ext.getExtensions()) {
                     if (filePath.endsWith("." + extension)) {
                         extSet = true;

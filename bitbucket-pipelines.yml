@@ -19,9 +19,9 @@
 # bitbucket UI lets you delete app passwords and monitor their usage. 
 # 
 # Branch pipelines run when you push to a branch with a name matching release-* or
-# IGBF-*. These pipelines are used by IGB core developers and require you to have access
-# to some private assets we are not allowed to distribute publicly. If you would like to 
-# build installers using these pipelines, please get in touch with Dr. Ann Loraine at 
+# IGBF-*. These pipelines build IGB intallers using some private assets we are not
+# allowed to distribute publicly. If you would like to build IGB installers using
+# these pipelines, please get in touch with Dr. Ann Loraine at 
 # UNC Charlotte for assistance. 
 #
 # Useful links:

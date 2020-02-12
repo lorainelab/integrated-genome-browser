@@ -114,7 +114,7 @@ public class BookmarkController {
                 }
 
                 String method = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(map, SYM.METHOD.toString() + i);
-
+                
                 SeqSymmetry sym = seq.getAnnotation(method);
 
                 if (sym == null) {
@@ -535,5 +535,14 @@ public class BookmarkController {
             return null;
         }
         return MessageFormat.format(DEFAULT_BOOKMARK_NAME_FORMAT, aseq.getGenomeVersion().getName(), aseq.getId(), span.getMin(), span.getMax());
+    }
+    
+        protected static void forceStyleChange(final ListMultimap<String, String> parameters){
+        for (int i = 0; !parameters.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
+            String method = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.METHOD.toString() + i);
+            ITrackStyleExtended cyVerseStyle = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
+            cyVerseStyle.setForeground(Color.decode(BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.COL.toString() + i)));
+            cyVerseStyle.setBackground(Color.decode(BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.BG.toString() + i)));
+        }
     }
 }

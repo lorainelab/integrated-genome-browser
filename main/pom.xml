@@ -310,7 +310,12 @@
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>paired-data-preprocessor</artifactId>
             <scope>runtime</scope>       
-        </dependency> 
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>genotyping</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- Why are these two here and not in the external bundle section?-->
         <dependency>
             <groupId>org.osgi</groupId>

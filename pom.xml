@@ -167,6 +167,7 @@
         <module>plugins/feedback</module>
         <module>plugins/external-sort</module>
         <module>plugins/narrowpeak</module>
+        <module>plugins/GenotypingResults</module>
         <module>plugins/bed</module>
         <module>plugins/bam</module>
         <module>plugins/bai</module>
@@ -565,6 +566,11 @@
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>bai</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.lorainelab.igb</groupId>
+                <artifactId>genotyping</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
             <dependency>

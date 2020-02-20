@@ -92,7 +92,6 @@
                                 <include>${project.build.finalName}.jar</include>
                                 <include>guava*.jar</include>
                                 <include>commons-lang3*.jar</include>
-                                <include>log4j*.jar</include>
                                 <include>commons-*.jar</include>
                                 <include>genoviz*.jar</include>
                                 <include>felix.jar</include>
@@ -128,11 +127,6 @@
                                     <groupId>org.apache.commons</groupId>
                                     <artifactId>commons-lang3</artifactId>
                                     <version>${commonsLangVersion}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.logging.log4j</groupId>
-                                    <artifactId>log4j-api</artifactId>
-                                    <version>${log4jVersion}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.commons</groupId>

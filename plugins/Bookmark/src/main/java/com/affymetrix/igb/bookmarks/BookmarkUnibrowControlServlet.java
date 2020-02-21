@@ -39,7 +39,6 @@ import java.io.UnsupportedEncodingException;
 import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -124,6 +123,9 @@ public final class BookmarkUnibrowControlServlet {
         if (isGalaxyBookmark) {
             threadDescription = "Loading Your Galaxy Data";
         }
+        if (Boolean.valueOf(getFirstValueEntry(parameters, Bookmark.CYVERSE_DATA))) {
+            threadDescription = "Loading Your BioViz Connect Data";
+        }
 
         CThreadWorker<Object, Void> worker = new CThreadWorker<Object, Void>(threadDescription) {
 
@@ -158,7 +160,7 @@ public final class BookmarkUnibrowControlServlet {
 
                     //missing seqid or start or end? Attempt to set to current view
 
-                    if (missingString(new String[]{seqid, start_param, end_param}) && cyverseData != true) {
+                    if (missingString(new String[]{seqid, start_param, end_param})) {
                         boolean pickOne = false;
                         //get GenomeVersion for bookmark
                         String preferredVersionName = LOOKUP.getPreferredName(version);
@@ -172,7 +174,7 @@ public final class BookmarkUnibrowControlServlet {
                                 if (currentSpan != null && currentSpan.getBioSeq() != null) {
                                     //check genome version, if same then set coordinates
                                     GenomeVersion currentGroup = currentSpan.getBioSeq().getGenomeVersion();
-                                    if (!isGalaxyBookmark && (currentGroup != null && currentGroup.equals(genomeVersion))) {
+                                    if (!isGalaxyBookmark && !cyverseData && (currentGroup != null && currentGroup.equals(genomeVersion))) {
                                         start = currentSpan.getStart();
                                         end = currentSpan.getEnd();
                                         seqid = currentSpan.getBioSeq().getId();
@@ -188,7 +190,7 @@ public final class BookmarkUnibrowControlServlet {
                             }
                         }
                         //pick something, only works if version was loaded.
-                        if (pickOne && !isGalaxyBookmark && genomeVersion != null) {
+                        if (pickOne && !isGalaxyBookmark && !cyverseData && genomeVersion != null) {
                             BioSeq bs = genomeVersion.getSeq(0);
                             if (bs != null) {
                                 int len = bs.getLength();
@@ -222,17 +224,15 @@ public final class BookmarkUnibrowControlServlet {
                     }
 
                     final BioSeq seq;
-                    if (cyverseData == true) {
-                        seq = null;
-                    } else {
-                        seq = goToBookmark(igbService, seqid, version, start, end).orNull();
-                    }
+                    seq = goToBookmark(igbService, seqid, version, start, end).orNull();
+                        
                     if (seq == null) {
                         if (isGalaxyBookmark) {
                             loadUnknownData(parameters, igbService);
                             return null;
                         } else if (cyverseData) {
                             loadCyverseData(parameters, igbService);
+                            BookmarkController.forceStyleChange(parameters);
                             return null;
                         }
                         return null;
@@ -248,11 +248,14 @@ public final class BookmarkUnibrowControlServlet {
                             String preferredVersionName = LOOKUP.getPreferredName(version);
                             GenomeVersion genomeVersion = gmodel.getSeqGroup(preferredVersionName);
                             directlyLoadUrls(genomeVersion, parameters, igbService);
+                            if(cyverseData){
+                                BookmarkController.forceStyleChange(parameters);
+                            }
                             return null;
                         }
                         // IGBF-1364: add parameters argument, contains parameters from bookmark URL
                         List<DataSet> gFeatures = loadData(igbService, gmodel.getSelectedGenomeVersion(), dataProivders, query_urls, start, end, parameters);
-
+                                                         
                         if (has_properties) {
                             List<String> graph_urls = getGraphUrls(parameters);
                             final Map<String, ITrackStyleExtended> combos = new HashMap<>();

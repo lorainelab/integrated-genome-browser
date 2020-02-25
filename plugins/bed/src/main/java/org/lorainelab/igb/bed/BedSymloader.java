@@ -479,7 +479,7 @@ public class BedSymloader extends SymLoader implements LineProcessor {
 
         } catch (IOException ex) {
             if (ex.getMessage() != null && ex.getMessage().toLowerCase().contains(TOO_MANY_CONTIGS_EXCEPTION.toLowerCase())) {
-                ErrorHandler.errorPanel(GenometryConstants.BUNDLE.getString("tooManyContigsError"));
+                logger.warn(GenometryConstants.BUNDLE.getString("tooManyContigsError"));
                 return true;
             }
             throw ex;

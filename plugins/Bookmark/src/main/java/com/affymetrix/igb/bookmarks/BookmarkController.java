@@ -540,9 +540,10 @@ public class BookmarkController {
         protected static void forceStyleChange(final ListMultimap<String, String> parameters){
         for (int i = 0; !parameters.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
             String method = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.METHOD.toString() + i);
-            ITrackStyleExtended cyVerseStyle = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
-            cyVerseStyle.setForeground(Color.decode(BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.COL.toString() + i)));
-            cyVerseStyle.setBackground(Color.decode(BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.BG.toString() + i)));
+            ITrackStyleExtended forcedStyle = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
+            forcedStyle.setForeground(Color.decode(BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.COL.toString() + i)));
+            forcedStyle.setBackground(Color.decode(BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.BG.toString() + i)));
+            forcedStyle.setTrackName(BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.NAME.toString() + i));
         }
     }
 }

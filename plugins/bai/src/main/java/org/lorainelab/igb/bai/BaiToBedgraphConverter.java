@@ -18,6 +18,10 @@ import htsjdk.samtools.Chunk;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMSequenceRecord;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +43,7 @@ public class BaiToBedgraphConverter{
     
     ArrayList<Chromosomes> chromosomeList = new ArrayList<>();
     SamReader samReader = null;
+    SamReader.PrimitiveSamReaderToSamReaderAdapter primitiveSamReader = null;
     File bedGraphFile = null;
     String inputFileName = null;
     
@@ -62,6 +67,44 @@ public class BaiToBedgraphConverter{
      */
     private void initializeChromosomes(URI uri) {
         inputFileName = FilenameUtils.getBaseName(uri.getPath()); // -> file
+
+        final SamReaderFactory samReaderFactory = SamReaderFactory.makeDefault().
+                setOption(SamReaderFactory.Option.CACHE_FILE_BASED_INDEXES, Boolean.TRUE).
+                validationStringency(ValidationStringency.LENIENT);
+
+        /**
+         * If there an exsisting BAM file present in the same location as of BAI location then sequence of chromosome is retrieved from BAM file header
+         */
+
+        File bamFileFromBai = null;
+        if(uri.getPath().contains("bam.bai")) {
+            bamFileFromBai = new File(uri.getPath().replace(".bai",""));
+        }
+        else {
+            bamFileFromBai = new File(uri.getPath().replace(".bai", ".bam"));
+        }
+
+        if(bamFileFromBai.exists() && !bamFileFromBai.isDirectory()) {
+            primitiveSamReader = (SamReader.PrimitiveSamReaderToSamReaderAdapter)samReaderFactory.open(bamFileFromBai);
+            if(primitiveSamReader != null && primitiveSamReader.underlyingReader() != null ) {
+                SAMFileHeader samFileHeader = primitiveSamReader.underlyingReader().getFileHeader();
+                if (samFileHeader != null)
+                {
+                    SAMSequenceDictionary samSequenceDictionary = samFileHeader.getSequenceDictionary();
+                    if (samSequenceDictionary != null)
+                    {
+                        List<SAMSequenceRecord> samequenceRecordList = samSequenceDictionary.getSequences();
+                        if (samequenceRecordList != null) {
+                            for (int i = 0; i < samequenceRecordList.size(); i++) {
+                                Chromosomes chromosome = new Chromosomes(samequenceRecordList.get(i).getSequenceName(), samequenceRecordList.get(i).getSequenceLength());
+                                chromosomeList.add(chromosome);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         InputStream bamFile = null;
         BrowseableBAMIndex browseableIndex = null;
         FileWriter writer=null;
@@ -91,18 +134,17 @@ public class BaiToBedgraphConverter{
         /**
          * Gets genome structure info - the map of chromosome names and their sizes. Add this information to the chromosomeList
          */
-        final Map<String, Integer> chromosomesMap = GeneralLoadUtils.getAssemblyInfo();
-        chromosomesMap.entrySet().forEach((spe) -> {
-             Chromosomes chromosome = new Chromosomes(spe.getKey(), spe.getValue());
-             chromosomeList.add(chromosome);
-        });
+        if(chromosomeList.isEmpty()) {
+            Map<String, Integer> chromosomesMap = GeneralLoadUtils.getAssemblyInfo();
+            chromosomesMap.entrySet().forEach((spe) -> {
+                Chromosomes chromosome = new Chromosomes(spe.getKey(), spe.getValue());
+                chromosomeList.add(chromosome);
+            });
+        }
         
         /**
          * Gets BrowsableIndex for browsing the input BAI file
          */
-        final SamReaderFactory samReaderFactory = SamReaderFactory.makeDefault().
-					setOption(SamReaderFactory.Option.CACHE_FILE_BASED_INDEXES, Boolean.TRUE).
-					validationStringency(ValidationStringency.LENIENT);
         samReader = samReaderFactory.open(bamFile,inputBAIFile);
         final SamReader.Indexing indexing = samReader.indexing();
         browseableIndex = indexing.getBrowseableIndexAlt();

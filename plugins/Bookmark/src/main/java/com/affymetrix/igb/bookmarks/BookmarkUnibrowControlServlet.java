@@ -35,7 +35,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 import com.google.common.primitives.Ints;
-import java.io.UnsupportedEncodingException;
 import org.lorainelab.igb.genoviz.extensions.SeqMapViewI;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
@@ -43,7 +42,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +51,6 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -231,7 +228,7 @@ public final class BookmarkUnibrowControlServlet {
                             loadUnknownData(parameters, igbService);
                             return null;
                         } else if (cyverseData) {
-                            loadCyverseData(parameters, igbService);
+                            loadUnknownData(parameters, igbService);
                             BookmarkController.forceStyleChange(parameters);
                             return null;
                         }
@@ -583,44 +580,19 @@ public final class BookmarkUnibrowControlServlet {
 
     }
 
-    private void directlyLoadFile(String urlToLoad, String trackLabel, IgbService igbService, GenomeVersion genomeVersion) {
+private void directlyLoadFile(String urlToLoad, String trackLabel, IgbService igbService, GenomeVersion genomeVersion) {
         /*~kiran:IGBF-1287: Using filename if trackLabel is null*/
         if (trackLabel == null) {
             trackLabel = DataSetUtils.extractNameFromPath(urlToLoad);
         }
         try {
-            //IGBF-32 Handle special characters in the url.
-            String encodedFileName = URLEncoder.encode(trackLabel, "UTF-8");
-            urlToLoad =  urlToLoad.replace(trackLabel, encodedFileName);
-            igbService.openURI(new URI(urlToLoad.replaceAll("\\+", "%20")), trackLabel, genomeVersion, genomeVersion.getSpeciesName(), false);
+            igbService.openURI(new URI(urlToLoad), trackLabel, genomeVersion, genomeVersion.getSpeciesName(), false);
         } catch (URISyntaxException ex) {
             logger.error("Invalid bookmark syntax.", ex);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     private void loadUnknownData(final ListMultimap<String, String> parameters, IgbService igbService) {
-        List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
-        //These bookmarks should only contain one url
-        if (!query_urls.isEmpty()) {
-            try {
-                String urlToLoad = query_urls.get(0);
-                GenomeVersion loadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
-                //IGBF-32 Handle special characters in the url.
-                String trackLabel = DataSetUtils.extractNameFromPath(urlToLoad);
-                String encodedFileName = URLEncoder.encode(trackLabel, "UTF-8");
-                urlToLoad =  urlToLoad.replace(trackLabel, encodedFileName);
-                igbService.openURI(new URI(urlToLoad.replaceAll("\\+", "%20")), trackLabel, loadGroup, "Custom Genome", false);
-            } catch (URISyntaxException ex) {
-                logger.error("Invalid bookmark syntax.", ex);
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(BookmarkUnibrowControlServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    private void loadCyverseData(final ListMultimap<String, String> parameters, IgbService igbService) {
         List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
         //These bookmarks should only contain one url
         if (!query_urls.isEmpty()) {

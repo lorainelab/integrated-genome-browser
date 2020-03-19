@@ -72,19 +72,53 @@ public class BaiToBedgraphConverter{
                 setOption(SamReaderFactory.Option.CACHE_FILE_BASED_INDEXES, Boolean.TRUE).
                 validationStringency(ValidationStringency.LENIENT);
 
+        InputStream bamFile = null;
+        BrowseableBAMIndex browseableIndex = null;
+        FileWriter writer=null;
+        File inputBAIFile = null;
+        File bamFileFromBai = null;
+        URI bamFileFromBaiURI = null;
+
         /**
          * If there an exsisting BAM file present in the same location as of BAI location then sequence of chromosome is retrieved from BAM file header
          */
-
-        File bamFileFromBai = null;
-        if(uri.getPath().contains("bam.bai")) {
-            bamFileFromBai = new File(uri.getPath().replace(".bai",""));
+        try {
+            if(uri.getPath().contains("bam.bai")) {
+                bamFileFromBaiURI = new URI(uri.toString().replace(".bai",""));
+            }
+            else {
+                bamFileFromBaiURI = new URI(uri.toString().replace(".bai", ".bam"));
+            }
         }
-        else {
-            bamFileFromBai = new File(uri.getPath().replace(".bai", ".bam"));
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage(), ex);
         }
 
-        if(bamFileFromBai.exists() && !bamFileFromBai.isDirectory()) {
+        /**
+         * Checks the input scheme to support different file input sources(Local file, URL from Internet)
+         */
+        String scheme = uri.getScheme().toLowerCase();
+        if (StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)) {
+            inputBAIFile = new File(uri);
+            bamFileFromBai = new File(bamFileFromBaiURI);
+        }else if (StringUtils.equals(scheme, HTTP_PROTOCOL_SCHEME) || StringUtils.equals(scheme, HTTPS_PROTOCOL_SCHEME)) {
+            inputBAIFile = LocalUrlCacher.convertURIToFile(uri);
+            bamFileFromBai = LocalUrlCacher.convertURIToFile(bamFileFromBaiURI);
+        }else if (scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
+            inputBAIFile = LocalUrlCacher.convertURIToFile(uri);
+            bamFileFromBai = LocalUrlCacher.convertURIToFile(bamFileFromBaiURI);
+        }else{
+            Logger.getLogger(BaiToBedgraphConverter.class.getName()).log(
+                    Level.SEVERE, "URL scheme: {0} not recognized", scheme);
+        }
+
+        /**
+         * Get empty.bai file from Bai project resources folder
+         */
+        bamFile = findBAMFile();
+
+        if(chromosomeList.isEmpty() && bamFileFromBai != null && bamFileFromBai.exists() && !bamFileFromBai.isDirectory()) {
             primitiveSamReader = (SamReader.PrimitiveSamReaderToSamReaderAdapter)samReaderFactory.open(bamFileFromBai);
             if(primitiveSamReader != null && primitiveSamReader.underlyingReader() != null ) {
                 SAMFileHeader samFileHeader = primitiveSamReader.underlyingReader().getFileHeader();
@@ -105,32 +139,6 @@ public class BaiToBedgraphConverter{
             }
         }
 
-        InputStream bamFile = null;
-        BrowseableBAMIndex browseableIndex = null;
-        FileWriter writer=null;
-        File inputBAIFile = null;
-        
-        /**
-         * Checks the input scheme to support different file input sources(Local file, URL from Internet)
-         */
-        String scheme = uri.getScheme().toLowerCase();
-        if (StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)) {
-            inputBAIFile = new File(uri);
-        }else if (StringUtils.equals(scheme, HTTP_PROTOCOL_SCHEME) || StringUtils.equals(scheme, HTTPS_PROTOCOL_SCHEME)) {
-            inputBAIFile = LocalUrlCacher.convertURIToFile(uri);
-        }else if (scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
-            inputBAIFile = LocalUrlCacher.convertURIToFile(uri);
-        }else{
-            Logger.getLogger(BaiToBedgraphConverter.class.getName()).log(
-                    Level.SEVERE, "URL scheme: {0} not recognized", scheme);
-        }
-        
-        
-        /**
-         * Get empty.bai file from Bai project resources folder
-         */
-        bamFile = findBAMFile();
-        
         /**
          * Gets genome structure info - the map of chromosome names and their sizes. Add this information to the chromosomeList
          */
@@ -175,7 +183,7 @@ public class BaiToBedgraphConverter{
                         if(String.valueOf(browseableIndex.getLevelForBin(binItem)).equals("5"))
                         {
                             final BAMFileSpan span= browseableIndex.getSpanOverlapping(binItem);
-                            if(!String.valueOf(span.getFirstOffset()).equals("0"))
+                            if(span != null && !String.valueOf(span.getFirstOffset()).equals("0"))
                             {
                                 final List<Chunk> chunks = span.getChunks();
                                 total += chunks.get(0).getChunkEnd() - chunks.get(0).getChunkStart();
@@ -196,7 +204,7 @@ public class BaiToBedgraphConverter{
                         String firstLocusInBin = String.valueOf(browseableIndex.getFirstLocusInBin(binItem)-1);
                         String lastLocusInBin = String.valueOf(browseableIndex.getLastLocusInBin(binItem));
                         final BAMFileSpan span= browseableIndex.getSpanOverlapping(binItem);
-                        if(!String.valueOf(span.getFirstOffset()).equals("0"))
+                        if(span != null && !String.valueOf(span.getFirstOffset()).equals("0"))
                         {
                             if(browseableIndex.getLastLocusInBin(binItem) > chromosomeList.get(tid).getSequenceLength())
                                 lastLocusInBin = String.valueOf(chromosomeList.get(tid).getSequenceLength());

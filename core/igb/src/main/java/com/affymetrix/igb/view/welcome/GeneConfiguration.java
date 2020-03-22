@@ -136,6 +136,11 @@ public class GeneConfiguration extends Configuration {
                         speciesSynLookup = bundleContext.getService(serviceReference);
                     }
                     // e.g., Homo sapiens 
+                    // Note: this is ultimately coming from the first column of the file species.txt
+                    // If you want to add a new image to the start screen, then you have to make
+                    // sure that there is an entry for same in species.txt
+                    // Also note that species.txt can also be obtained from a Quickload site. When
+                    // IGB launches, it tries to get a species.txt from every Quickload site
                     String species = speciesSynLookup.getSpeciesName(version);
                     String speciesName = species;
                     //If name is very long shorten the name by abbreviating the first name.

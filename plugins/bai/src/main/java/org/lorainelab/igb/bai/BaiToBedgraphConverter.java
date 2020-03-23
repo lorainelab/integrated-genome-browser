@@ -18,6 +18,10 @@ import htsjdk.samtools.Chunk;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMSequenceRecord;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +43,7 @@ public class BaiToBedgraphConverter{
     
     ArrayList<Chromosomes> chromosomeList = new ArrayList<>();
     SamReader samReader = null;
+    SamReader.PrimitiveSamReaderToSamReaderAdapter primitiveSamReader = null;
     File bedGraphFile = null;
     String inputFileName = null;
     
@@ -62,47 +67,92 @@ public class BaiToBedgraphConverter{
      */
     private void initializeChromosomes(URI uri) {
         inputFileName = FilenameUtils.getBaseName(uri.getPath()); // -> file
+
+        final SamReaderFactory samReaderFactory = SamReaderFactory.makeDefault().
+                setOption(SamReaderFactory.Option.CACHE_FILE_BASED_INDEXES, Boolean.TRUE).
+                validationStringency(ValidationStringency.LENIENT);
+
         InputStream bamFile = null;
         BrowseableBAMIndex browseableIndex = null;
         FileWriter writer=null;
         File inputBAIFile = null;
-        
+        File bamFileFromBai = null;
+        URI bamFileFromBaiURI = null;
+
+        /**
+         * If there an exsisting BAM file present in the same location as of BAI location then sequence of chromosome is retrieved from BAM file header
+         */
+        try {
+            if(uri.getPath().contains("bam.bai")) {
+                bamFileFromBaiURI = new URI(uri.toString().replace(".bai",""));
+            }
+            else {
+                bamFileFromBaiURI = new URI(uri.toString().replace(".bai", ".bam"));
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage(), ex);
+        }
+
         /**
          * Checks the input scheme to support different file input sources(Local file, URL from Internet)
          */
         String scheme = uri.getScheme().toLowerCase();
         if (StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)) {
             inputBAIFile = new File(uri);
+            bamFileFromBai = new File(bamFileFromBaiURI);
         }else if (StringUtils.equals(scheme, HTTP_PROTOCOL_SCHEME) || StringUtils.equals(scheme, HTTPS_PROTOCOL_SCHEME)) {
             inputBAIFile = LocalUrlCacher.convertURIToFile(uri);
+            bamFileFromBai = LocalUrlCacher.convertURIToFile(bamFileFromBaiURI);
         }else if (scheme.startsWith(FTP_PROTOCOL_SCHEME)) {
             inputBAIFile = LocalUrlCacher.convertURIToFile(uri);
+            bamFileFromBai = LocalUrlCacher.convertURIToFile(bamFileFromBaiURI);
         }else{
             Logger.getLogger(BaiToBedgraphConverter.class.getName()).log(
                     Level.SEVERE, "URL scheme: {0} not recognized", scheme);
         }
-        
-        
+
         /**
          * Get empty.bai file from Bai project resources folder
          */
         bamFile = findBAMFile();
-        
+
+        if(chromosomeList.isEmpty() && bamFileFromBai != null && bamFileFromBai.exists() && !bamFileFromBai.isDirectory()) {
+            primitiveSamReader = (SamReader.PrimitiveSamReaderToSamReaderAdapter)samReaderFactory.open(bamFileFromBai);
+            if(primitiveSamReader != null && primitiveSamReader.underlyingReader() != null ) {
+                SAMFileHeader samFileHeader = primitiveSamReader.underlyingReader().getFileHeader();
+                if (samFileHeader != null)
+                {
+                    SAMSequenceDictionary samSequenceDictionary = samFileHeader.getSequenceDictionary();
+                    if (samSequenceDictionary != null)
+                    {
+                        List<SAMSequenceRecord> samequenceRecordList = samSequenceDictionary.getSequences();
+                        if (samequenceRecordList != null) {
+                            for (int i = 0; i < samequenceRecordList.size(); i++) {
+                                Chromosomes chromosome = new Chromosomes(samequenceRecordList.get(i).getSequenceName(), samequenceRecordList.get(i).getSequenceLength());
+                                chromosomeList.add(chromosome);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         /**
          * Gets genome structure info - the map of chromosome names and their sizes. Add this information to the chromosomeList
          */
-        final Map<String, Integer> chromosomesMap = GeneralLoadUtils.getAssemblyInfo();
-        chromosomesMap.entrySet().forEach((spe) -> {
-             Chromosomes chromosome = new Chromosomes(spe.getKey(), spe.getValue());
-             chromosomeList.add(chromosome);
-        });
+        if(chromosomeList.isEmpty()) {
+            Map<String, Integer> chromosomesMap = GeneralLoadUtils.getAssemblyInfo();
+            chromosomesMap.entrySet().forEach((spe) -> {
+                Chromosomes chromosome = new Chromosomes(spe.getKey(), spe.getValue());
+                chromosomeList.add(chromosome);
+            });
+        }
         
         /**
          * Gets BrowsableIndex for browsing the input BAI file
          */
-        final SamReaderFactory samReaderFactory = SamReaderFactory.makeDefault().
-					setOption(SamReaderFactory.Option.CACHE_FILE_BASED_INDEXES, Boolean.TRUE).
-					validationStringency(ValidationStringency.LENIENT);
         samReader = samReaderFactory.open(bamFile,inputBAIFile);
         final SamReader.Indexing indexing = samReader.indexing();
         browseableIndex = indexing.getBrowseableIndexAlt();
@@ -133,7 +183,7 @@ public class BaiToBedgraphConverter{
                         if(String.valueOf(browseableIndex.getLevelForBin(binItem)).equals("5"))
                         {
                             final BAMFileSpan span= browseableIndex.getSpanOverlapping(binItem);
-                            if(!String.valueOf(span.getFirstOffset()).equals("0"))
+                            if(span != null && !String.valueOf(span.getFirstOffset()).equals("0"))
                             {
                                 final List<Chunk> chunks = span.getChunks();
                                 total += chunks.get(0).getChunkEnd() - chunks.get(0).getChunkStart();
@@ -154,7 +204,7 @@ public class BaiToBedgraphConverter{
                         String firstLocusInBin = String.valueOf(browseableIndex.getFirstLocusInBin(binItem)-1);
                         String lastLocusInBin = String.valueOf(browseableIndex.getLastLocusInBin(binItem));
                         final BAMFileSpan span= browseableIndex.getSpanOverlapping(binItem);
-                        if(!String.valueOf(span.getFirstOffset()).equals("0"))
+                        if(span != null && !String.valueOf(span.getFirstOffset()).equals("0"))
                         {
                             if(browseableIndex.getLastLocusInBin(binItem) > chromosomeList.get(tid).getSequenceLength())
                                 lastLocusInBin = String.valueOf(chromosomeList.get(tid).getSequenceLength());

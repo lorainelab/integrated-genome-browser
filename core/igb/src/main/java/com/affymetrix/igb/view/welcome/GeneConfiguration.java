@@ -135,19 +135,28 @@ public class GeneConfiguration extends Configuration {
                         ServiceReference<SpeciesSynonymsLookup> serviceReference = bundleContext.getServiceReference(SpeciesSynonymsLookup.class);
                         speciesSynLookup = bundleContext.getService(serviceReference);
                     }
+                    // e.g., Homo sapiens 
+                    // Note: this is ultimately coming from the first column of the file species.txt
+                    // If you want to add a new image to the start screen, then you have to make
+                    // sure that there is an entry for same in species.txt
+                    // Also note that species.txt can also be obtained from a Quickload site. When
+                    // IGB launches, it tries to get a species.txt from every Quickload site
                     String species = speciesSynLookup.getSpeciesName(version);
                     String speciesName = species;
                     //If name is very long shorten the name by abbreviating the first name.
                     if (species.length() > 8) {
                         String delims = "[ ]+";
                         String[] tokens = species.split(delims);
-                        species = tokens[0].substring(0, 1).toUpperCase() + ".";
+                        // first letter of genus followed by period
+                        species = tokens[0].substring(0, 1).toUpperCase() + "."; 
+                        // add species name, variety name (if present), and so on
                         for (int j = 1; j < tokens.length; j++) {
                             species += " " + tokens[j];
                         }
                     }
+                    // IGBF-2294
+                    // species="IGB Helper";
                     int num = metrics.stringWidth(species);
-
                     try {
                         g.setColor(Color.BLACK);
                         g.fill(new Rectangle2D.Double(0, img.getHeight() - 20, img.getWidth(), metrics.getHeight() + 4));
@@ -162,6 +171,12 @@ public class GeneConfiguration extends Configuration {
                     } else {
                         n = new CargoPicture(scaleImage(img, 10));
                     }
+                    // This next line determines which species' genome will
+                    // be opened when user clicks a start screen image
+                    // For example, hard-coding this as in the next (commented)
+                    // line causes the latest human reference genome to be opened
+                    // no matter what. 
+                    // n.setCargo("Homo sapiens");
                     n.setCargo(speciesName);
                     shapes[i] = n;
 

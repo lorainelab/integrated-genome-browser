@@ -137,7 +137,7 @@ public class AppManagerFxPanel extends JFXPanel {
                         .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName()))
                         .findFirst();
                 if (match.isPresent()) {
-                    if (bundle.getVersion().compareTo(match.get().getVersion()) == 1) {
+                    if (bundle.getVersion().compareTo(match.get().getVersion()) >= 1) {
                         toAdd.remove(match.get());
                         toAdd.add(bundle);
                     }

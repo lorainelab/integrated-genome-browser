@@ -156,7 +156,7 @@ public class BundleInfoManager {
                     .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName())).findFirst().get();
             return repositoryManagedBundles.stream()
                     .filter(repoBundle -> repoBundle.getSymbolicName().equals(bundle.getSymbolicName()))
-                    .anyMatch(repoBundle -> repoBundle.getVersion().compareTo(installedBundle.getVersion()) == 1);
+                    .anyMatch(repoBundle -> repoBundle.getVersion().compareTo(installedBundle.getVersion()) >= 1);
         } else {
             return false;
         }

@@ -40,6 +40,7 @@ public class DasServerInfoTest {
         });
     }
 
+    @Ignore
     @Test
     public void retrieveDnaTest() {
         String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";

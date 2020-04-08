@@ -192,20 +192,17 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <includes>
-                        <include>**/*.properties</include>
-                    </includes>
                     <verbose>false</verbose>
                     <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
                     <dateFormat>MM-dd-yyyy HH:mm:ss</dateFormat>
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>       
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
                     <generateGitPropertiesFilename>src/main/resources/git.properties</generateGitPropertiesFilename>
                     <failOnNoGitDirectory>true</failOnNoGitDirectory>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-            </plugin>
+			<plugin>
+			        <artifactId>maven-clean-plugin</artifactId>
+			</plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
             </plugin>  
@@ -229,7 +226,9 @@
                         <Bundle-Activator>com.affymetrix.igb.Activator</Bundle-Activator>
                         <Export-Package>
                             com.affymetrix.igb.shared,
-                            com.affymetrix.igb.view.load
+                            com.affymetrix.igb.view.load,
+                            com.affymetrix.igb.view.factories,
+                            com.affymetrix.igb.glyph
                         </Export-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.view.load.GeneralLoadViewGUI,com.affymetrix.igb.view.SeqGroupViewGUI,com.affymetrix.igb.view.AltSpliceView</Bundle-Category>

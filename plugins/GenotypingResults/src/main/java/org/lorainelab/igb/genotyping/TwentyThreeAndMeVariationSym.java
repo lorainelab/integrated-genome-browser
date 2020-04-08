@@ -8,8 +8,13 @@ package org.lorainelab.igb.genotyping;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SymSpanWithCds;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
 
 /**
@@ -30,134 +35,22 @@ import java.util.Map;
  * 
  * @author aloraine
  */
-public class TwentyThreeAndMeVariationSym implements SymWithProps, SeqSpan {
+public class TwentyThreeAndMeVariationSym extends BasicSeqSymmetry{
+    UcscBedSym bedSym;
 
-    @Override
-    public Map<String, Object> getProperties() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Map<String, Object> cloneProperties() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Object getProperty(String key) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean setProperty(String key, Object val) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getID() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int getSpanCount() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public SeqSpan getSpan(BioSeq seq) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public SeqSpan getSpan(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean getSpan(int index, MutableSeqSpan span) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public BioSeq getSpanSeq(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int getChildCount() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public TwentyThreeAndMeVariationSym(String trackUri, BioSeq seq, int txMin, int txMax, String name, float score, boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs) {
+        super(trackUri, seq, txMin, txMax, name, forward, blockMins, blockMaxs);
+        bedSym = new UcscBedSym(trackUri, seq, txMin, txMax, name, score, forward, cdsMin, cdsMax, blockMins, blockMaxs);
     }
 
     @Override
     public SeqSymmetry getChild(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return bedSym.getChild(index);
     }
 
     @Override
-    public int getStart() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Map<String, Object> getProperties() {
+        return ImmutableMap.copyOf(props);
     }
 
-    @Override
-    public int getEnd() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int getMin() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int getMax() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int getLength() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isForward() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public BioSeq getBioSeq() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public double getStartDouble() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public double getEndDouble() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public double getMaxDouble() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public double getMinDouble() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public double getLengthDouble() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isIntegral() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-
-    
-    
 }

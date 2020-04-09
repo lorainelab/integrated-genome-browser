@@ -1,56 +1,119 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.lorainelab.igb.genotyping;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.MutableSeqSpan;
-import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.Scored;
 import com.affymetrix.genometry.symmetry.BasicSeqSymmetry;
-import com.affymetrix.genometry.symmetry.SymSpanWithCds;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
-import com.google.common.collect.ImmutableMap;
+import com.affymetrix.genometry.symmetry.impl.SingletonSeqSymmetry;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Map;
 
-/**
- * Represents a polymorphism interrogated on the Affymetrix SNP
- * chip used by 23 and Me. 
- * 
- * Write this similar to BasicSeqSymmetry by Hiral Vora. 
- * The values returned for SeqSpan methods will be the region representing the 
- * genotyping probe - 25 bases, with 12 on either side of the interrogated 
- * SNP position.
- * 
- * On the screen, we will see the 12 bases on either end as separate clickable
- * Glyphs, the polymorphism site as a single clickable Glpyh, all of which
- * will be contained in a larger container glyph area that will display the rs id.
- * 
- * We are going to allow this object to hold properties so that we can decorate
- * the objects with meta-data about the polymorphism and its effects.
- * 
- * @author aloraine
- */
-public class TwentyThreeAndMeVariationSym extends BasicSeqSymmetry{
-    UcscBedSym bedSym;
 
-    public TwentyThreeAndMeVariationSym(String trackUri, BioSeq seq, int txMin, int txMax, String name, float score, boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs) {
-        super(trackUri, seq, txMin, txMax, name, forward, blockMins, blockMaxs);
-        bedSym = new UcscBedSym(trackUri, seq, txMin, txMax, name, score, forward, cdsMin, cdsMax, blockMins, blockMaxs);
+public class TwentyThreeAndMeVariationSym extends BasicSeqSymmetry {
+
+
+    private SeqSymmetry children[];
+
+    public TwentyThreeAndMeVariationSym(String type, BioSeq seq, int txMin, int txMax, String name, boolean forward, int[] blockMins, int[] blockMaxs) {
+        super(type, seq, txMin, txMax, name, forward, blockMins, blockMaxs);
     }
+
 
     @Override
     public SeqSymmetry getChild(int index) {
-        return bedSym.getChild(index);
+        if (blockMins == null || (blockMins.length <= index)) {
+            return null;
+        }
+        if (children == null) {
+            children = new SeqSymmetry[blockMins.length];
+        }
+
+        if (children[index] == null) {
+            if (forward) {
+                children[index] = new ChildSum(blockMins[index], blockMaxs[index], seq);
+            } else {
+                children[index] = new ChildSum(blockMaxs[index], blockMins[index], seq);
+            }
+        }
+        return children[index];
+    }
+
+    protected class ChildSum extends SingletonSeqSymmetry implements SymWithProps, Scored {
+
+        public ChildSum(int start, int end, BioSeq seq) {
+            super(start, end, seq);
+        }
+
+        public String getID() {
+            return this.getID();
+        }
+
+        public Map<String, Object> getProperties() {
+            return this.getProperties();
+        }
+
+        public Map<String, Object> cloneProperties() {
+            return this.cloneProperties();
+        }
+
+        public Object getProperty(String key) {
+            return this.getProperty(key);
+        }
+
+        public boolean setProperty(String key, Object val) {
+            return this.setProperty(key, val);
+        }
+
+        public float getScore() {
+            return this.getScore();
+        }
+
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 
     @Override
-    public Map<String, Object> getProperties() {
-        return ImmutableMap.copyOf(props);
+    public Map<String, Object> cloneProperties() {
+        Map<String, Object> tprops = super.cloneProperties();
+        return tprops;
     }
 
+    @Override
+    public Object getProperty(String key) {
+
+        return super.getProperty(key);
+    }
+
+    public void outputBedFormat(DataOutputStream out) throws IOException {
+        out.write(seq.getId().getBytes());
+        out.write('\t');
+        out.write(Integer.toString(txMin).getBytes());
+        out.write('\t');
+        out.write(Integer.toString(txMax).getBytes());
+        // only first three fields are required
+
+        // only keep going if has name
+        if (name != null) {
+            out.write('\t');
+            out.write(getName().getBytes());
+            // only keep going if has score field
+        }
+    }
+
+    @Override
+    public String toString() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            outputBedFormat(new DataOutputStream(baos));
+        } catch (IOException x) {
+            return x.getMessage();
+        }
+        return baos.toString();
+    }
 }

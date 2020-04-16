@@ -31,7 +31,7 @@
 #
 
 image:
-  name: lorainelab/igb-maven-install4j:jre-1.8.0-212-mvn-deploy
+  name: lorainelab/igb-maven-install4j:jre-1.8.0_241
 
 definitions:
   steps:

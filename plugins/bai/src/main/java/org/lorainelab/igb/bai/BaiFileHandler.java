@@ -34,10 +34,15 @@ public class BaiFileHandler implements FileTypeHandler {
 
     @Override
     public SymLoader createSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
-        URI bedgraphURI=null;
-        BaiToBedgraphConverter bai = new BaiToBedgraphConverter(uri);
-        bedgraphURI = bai.returnTempBedgraphFile().toURI();
-        return SymLoaderTabix.getSymLoader(new Wiggle(bedgraphURI, indexUri, featureName, genomeVersion));
+                
+//        URI bedgraphURI=null;
+//        BaiToBedgraphConverter bai = new BaiToBedgraphConverter(uri);
+//        bedgraphURI = bai.returnTempBedgraphFile().toURI();
+//       return SymLoaderTabix.getSymLoader(new Wiggle(bedgraphURI, indexUri, featureName, genomeVersion));
+
+        BaiSymLoader baiSymLoader = new BaiSymLoader(uri, indexUri, featureName, genomeVersion);
+        return SymLoaderTabix.getSymLoader(baiSymLoader);
+    
     }
 
     @Override

@@ -589,7 +589,9 @@ public class GenotypingResultsFactory extends MapTierGlyphFactoryA {
 
     @Override
     public Set<FileTypeCategory> getSupportedCategories() {
+      //        return ImmutableSet.<FileTypeCategory>builder()
+      //          .add(FileTypeCategory.Annotation).build();
         return ImmutableSet.<FileTypeCategory>builder()
-                .add(FileTypeCategory.Annotation).build();
+                .add(FileTypeCategory.PersonalGenomics).build();
     }
 }

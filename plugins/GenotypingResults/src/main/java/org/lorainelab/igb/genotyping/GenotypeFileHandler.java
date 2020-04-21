@@ -52,7 +52,8 @@ public class GenotypeFileHandler implements FileTypeHandler {
 
     @Override
     public FileTypeCategory getFileTypeCategory() {
-        return FileTypeCategory.Annotation;
+      // return FileTypeCategory.Annotation;
+      return FileTypeCategory.PersonalGenomics;
     }
 
 }

@@ -4,11 +4,18 @@ import com.affymetrix.genometry.GenomeVersion;
 import com.google.common.base.Strings;
 import org.lorainelab.igb.quickload.QuickloadDataProvider;
 import org.lorainelab.igb.synonymlookup.services.SpeciesInfo;
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -22,11 +29,12 @@ public class QuickloadDataProviderTest {
     private static GenomeVersion version;
 
     @BeforeClass
-    public static void setup() throws InterruptedException {
+    public static void setup() throws InterruptedException, MalformedURLException {
         GenomeVersion genomeVersion = new GenomeVersion("Quickload sample");
-        dataProvider = new QuickloadDataProvider("http://igbquickload.org/quickload", "igbquickload", 1);
-        Thread.sleep(1000);
-        dataProvider.setMirrorUrl("http://quickload.bioviz.org/quickload/");
+        ClassLoader classLoader = QuickloadDataProviderTest.class.getClassLoader();
+        File file = new File(classLoader.getResource("quickload").getFile());
+        dataProvider = new QuickloadDataProvider(file.toURI().toURL().toString(),"", 1);
+        dataProvider.setMirrorUrl(file.toURI().toURL().toString());
         version = new GenomeVersion("A_thaliana_Jun_2009");
         dataProvider.initialize();
     }
@@ -62,7 +70,24 @@ public class QuickloadDataProviderTest {
     @Test
     public void checkMirrorUrl() {
         assertTrue(dataProvider.getMirrorUrl().isPresent());
-        assertTrue(dataProvider.getMirrorUrl().get().equals("http://quickload.bioviz.org/quickload/"));
+    }
+
+    @Test
+    public void validateQuickload(){
+        final Set<String> supportedGenomeVersionNames = dataProvider.getSupportedGenomeVersionNames();
+        ClassLoader classLoader = QuickloadDataProviderTest.class.getClassLoader();
+        File file = new File(classLoader.getResource("quickload").getFile());
+        File[] f = file.listFiles();
+        List<String> folders =new ArrayList<>();
+        for (File dir: f) {
+            if(dir.isDirectory()){
+                folders.add(dir.getName());
+            }
+        }
+        assertEquals(supportedGenomeVersionNames.size(),folders.size());
+        for (String genomeVersionName: supportedGenomeVersionNames) {
+            assertTrue(folders.contains(genomeVersionName));
+        }
     }
 
 }

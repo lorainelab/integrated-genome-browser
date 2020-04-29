@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.4</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.lorainelab.igb</groupId>
@@ -55,6 +55,26 @@
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>genometry</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.affymetrix</groupId>
+            <artifactId>genoviz</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>igb</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>igb-genoviz-extensions</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>igb-services</artifactId>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>

@@ -52,6 +52,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -109,6 +110,8 @@ public class BaiSymLoader extends SymLoader {
         File inputBAIFile = null;
         File bamFileFromBai = null;
         URI bamFileFromBaiURI = null;
+        ArrayList<ChromosomeOutput> finalOutput = new ArrayList<>();
+        Map<Integer,Double> idToMeanMap = new HashMap<>();
 
         /**
          * If there an existing BAM file present in the same location as of BAI
@@ -192,46 +195,37 @@ public class BaiSymLoader extends SymLoader {
          */
         //output.append("#chrom	start	end	length\n");
         for (int tid = 0; tid < chromosomeList.size(); ++tid) {
-            double mean = 0, total = 0, count = 0;
+            double mean = 0, total = 0, count = 0,currChunk = 0;
             BinList binList = browseableIndex.getBinsOverlapping(tid, 1, chromosomeList.get(tid).getSequenceLength());
             //Calculating the mean of the chunks to scale the graph
             for (final Bin binItem : binList) {
                 if (String.valueOf(browseableIndex.getLevelForBin(binItem)).equals("5")) {
+                    String firstLocusInBin = String.valueOf(browseableIndex.getFirstLocusInBin(binItem) - 1);
+                    String lastLocusInBin = String.valueOf(browseableIndex.getLastLocusInBin(binItem));
                     final BAMFileSpan span = browseableIndex.getSpanOverlapping(binItem);
                     if (span != null && !String.valueOf(span.getFirstOffset()).equals("0")) {
+                         if (browseableIndex.getLastLocusInBin(binItem) > chromosomeList.get(tid).getSequenceLength()) {
+                            lastLocusInBin = String.valueOf(chromosomeList.get(tid).getSequenceLength());
+                        }
                         final List<Chunk> chunks = span.getChunks();
-                        total += chunks.get(0).getChunkEnd() - chunks.get(0).getChunkStart();
+                        currChunk = chunks.get(0).getChunkEnd() - chunks.get(0).getChunkStart();
+                        ChromosomeOutput chr = new ChromosomeOutput(tid, chromosomeList.get(tid).getSequenceName(), firstLocusInBin, lastLocusInBin,currChunk);
+                        finalOutput.add(chr);
+                        total += currChunk;                        
                         count++;
                     }
                 }
             }
             if (count > 0) {
                 mean = total / count;
-            }
-
-            /**
-             * For each chromosome, goes to the BAI file and gets the value for
-             * each 16,000 base bin
-             */
-            for (final Bin binItem : binList) {
-                if (String.valueOf(browseableIndex.getLevelForBin(binItem)).equals("5")) {
-                    String firstLocusInBin = String.valueOf(browseableIndex.getFirstLocusInBin(binItem) - 1);
-                    String lastLocusInBin = String.valueOf(browseableIndex.getLastLocusInBin(binItem));
-
-                    final BAMFileSpan span = browseableIndex.getSpanOverlapping(binItem);
-                    if (span != null && !String.valueOf(span.getFirstOffset()).equals("0")) {
-                        if (browseableIndex.getLastLocusInBin(binItem) > chromosomeList.get(tid).getSequenceLength()) {
-                            lastLocusInBin = String.valueOf(chromosomeList.get(tid).getSequenceLength());
-                        }
-                        final List<Chunk> chunks = span.getChunks();
-                        output.append(chromosomeList.get(tid).getSequenceName()
-                                + "   " + firstLocusInBin
-                                + "   " + lastLocusInBin
-                                + "   " + (chunks.get(0).getChunkEnd() - chunks.get(0).getChunkStart()) / mean + "\n");
-                    }
-                }
+                idToMeanMap.put(tid,mean);
             }
         }
+        
+        for (ChromosomeOutput chr : finalOutput){
+            output.append(chr.getChrom()+" "+chr.getStart()+" "+chr.getEnd()+" "+chr.getLength()/idToMeanMap.get(chr.getTid())+"\n");           
+        }  
+        
     }
 
     /**
@@ -247,7 +241,6 @@ public class BaiSymLoader extends SymLoader {
     @Override
     public List<BioSeq> getChromosomeList() throws Exception {
         init();
-
         List<BioSeq> chromosomeList = new ArrayList<>(chrList.keySet());
         Collections.sort(chromosomeList, new BioSeqComparator());
 
@@ -279,11 +272,11 @@ public class BaiSymLoader extends SymLoader {
         try {
             logger.info("build index from Bai File");
             try (InputStream is = new ByteArrayInputStream(output.toString().getBytes(StandardCharsets.UTF_8))) {
-                    if (parseLines(is, chrLength, chrFiles)) {
-                        createResults(chrLength, chrFiles);
-                        return true;
-                    }
+                if (parseLines(is, chrLength, chrFiles)) {
+                    createResults(chrLength, chrFiles);
+                    return true;
                 }
+            }
         } catch (Exception ex) {
             throw ex;
         }
@@ -320,7 +313,7 @@ public class BaiSymLoader extends SymLoader {
                     addToLists(chrs, current_seq_id, chrFiles, chrLength, ".wig");
                 }
                 bw = chrs.get(current_seq_id);
-                
+
                 bw.write(line + "\n");
                 if (length > chrLength.get(current_seq_id)) {
                     chrLength.put(current_seq_id, length);
@@ -344,7 +337,6 @@ public class BaiSymLoader extends SymLoader {
         }
     }
 
-    
     @Override
     public List<GraphSym> getRegion(SeqSpan span) throws Exception {
         init();
@@ -359,6 +351,7 @@ public class BaiSymLoader extends SymLoader {
         InputStream istr = null;
         try {
             File file = chrList.get(seq);
+            
             if (file == null) {
                 Logger.getLogger(BaiSymLoader.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getId());
                 return Collections.<GraphSym>emptyList();
@@ -485,10 +478,10 @@ public class BaiSymLoader extends SymLoader {
 }
 
 /**
- * 
+ *
  * Chromosomes class contains sequenceName and SequenceLength
  */
-class Chromosomes{
+class Chromosomes {
 
     public String getSequenceName() {
         return sequenceName;
@@ -504,4 +497,61 @@ class Chromosomes{
     }
     String sequenceName;
     int sequenceLength;
+}
+
+class ChromosomeOutput {
+   int tid;
+    String chrom;
+    String start;
+    String end;
+    Double length;
+
+     public ChromosomeOutput(int tid,String chrom, String start, String end, Double length) {
+        this.tid = tid;
+        this.chrom = chrom;
+        this.start = start;
+        this.end = end;
+        this.length = length;
+    }
+     
+    public int getTid() {
+        return tid;
+    }
+
+    public void setTid(int tid) {
+        this.tid = tid;
+    }
+
+    public String getChrom() {
+        return chrom;
+    }
+
+    public void setChrom(String chrom) {
+        this.chrom = chrom;
+    }
+
+    public String getStart() {
+        return start;
+    }
+
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
+    }
+    
+    public Double getLength() {
+        return length;
+    }
+
+    public void setLength(Double length) {
+        this.length = length;
+    }
+    
 }

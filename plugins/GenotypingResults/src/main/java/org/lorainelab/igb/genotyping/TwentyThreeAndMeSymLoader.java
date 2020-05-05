@@ -156,7 +156,7 @@ public class TwentyThreeAndMeSymLoader extends SymLoader{
         return dataModelContent;
     }
 
-    private boolean parseLineToDataModel(List<String> fields, int requestMin, int requestMax, List<SeqSymmetry> dataModelContent) {
+    public boolean parseLineToDataModel(List<String> fields, int requestMin, int requestMax, List<SeqSymmetry> dataModelContent) {
         if (fields.size() < 4) {
             LOGGER.error("line in 23andme file could not be visualized, missing required columns: {}", fields);
             return false;

@@ -156,10 +156,10 @@ public class TwentyThreeAndMeSymLoader extends SymLoader{
         return dataModelContent;
     }
 
-    private boolean parseLineToDataModel(List<String> fields, int requestMin, int requestMax, List<SeqSymmetry> dataModelContent) {
+    public boolean parseLineToDataModel(List<String> fields, int requestMin, int requestMax, List<SeqSymmetry> dataModelContent) {
         if (fields.size() < 4) {
             LOGGER.error("line in 23andme file could not be visualized, missing required columns: {}", fields);
-            return true;
+            return false;
         }
         String name = fields.get(0); // snp id
         String chrom = fields.get(1); // chromsome name
@@ -179,8 +179,8 @@ public class TwentyThreeAndMeSymLoader extends SymLoader{
         int[] blockMaxs = new int[1];
         blockMaxs[0] = max;
         BioSeq seq = genomeVersion.getSeq(seq_name);
-        TwentyThreeAndMeVariationSym twentyThreeAndMeVariationSym;
-        twentyThreeAndMeVariationSym= new TwentyThreeAndMeVariationSym(uri.toString().toLowerCase(), chromosomeReference.get(chrom), min, max, name, 0, true, 10+min, 11+ min, blockMins, blockMaxs);
+
+        TwentyThreeAndMeVariationSym twentyThreeAndMeVariationSym= new TwentyThreeAndMeVariationSym(uri.toString().toLowerCase(), chromosomeReference.get(chrom), min, max, name, true, blockMins, blockMaxs);
 
         twentyThreeAndMeVariationSym.setProperty("name",name);
         twentyThreeAndMeVariationSym.setProperty("chrom", chrom);

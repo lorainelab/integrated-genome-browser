@@ -32,8 +32,6 @@ public class TwoBitNewTest {
     String mnblocks_file = "data/2bit/mnblocks.2bit";
     String residues, file;
     File infile = null;
-    String url = "http://test.bioviz.org/testdata/";
-    boolean runRemote = false;
 
     @Test
     public void testCaseFiles() throws Exception {
@@ -117,10 +115,6 @@ public class TwoBitNewTest {
         infile = new File(TwoBitNewTest.class.getClassLoader().getResource(file).getFile());
         testACase(infile.toURI(), start, end);
 
-        if (runRemote) {
-            URI uri = URI.create(url + infile.getName());
-            testACase(uri, start, end);
-        }
     }
 
     private void testACase(URI uri, int start, int end) throws IOException {

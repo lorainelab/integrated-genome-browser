@@ -27,13 +27,9 @@ C_elegans_Jan_2007	C_Elegans_January_2007	ceJan2007	ce4	ce:Jan_2007	Ce:Jan_2007	
 C_elegans_Feb_2009	ce7	Caenorhabditis_elegans.WS200.reference
 C_elegans_Jun_2009	ce8	Caenorhabditis_elegans.WS204.reference
 C_elegans_Mar_2004	C_Elegans_March_2004	ceMar2004	ce2	ce:Mar_2004	Ce:Mar_2004	WS120
-C_elegans_Mar_2004	http://www.wormbase.org/genome/C_elegans/WS120	http://www.wormbase.org/genome/C_elegans/WS120/
-C_elegans_Mar_2005	ce3	http://www.wormbase.org/genome/C_elegans/WS140	http://www.wormbase.org/genome/C_elegans/WS140/
+C_elegans_Mar_2005	ce3
 C_elegans_May_2003	C_Elegans_May_2003	ceMay2003	ce1	ce:May_2003	Ce:May_2003
-C_elegans_May_2003	http://www.wormbase.org/genome/C_elegans/WS100	http://www.wormbase.org/genome/C_elegans/WS100/
 C_elegans_May_2008	C_Elegans_May_2008	ceMay2008	ce6	ce:May_2008	Ce:May_2008	WS190
-C_elegans_Nov_2005	http://www.wormbase.org/genome/C_elegans/WS150	http://www.wormbase.org/genome/C_elegans/WS150/
-C_elegans_Oct_2003	http://www.wormbase.org/genome/C_elegans/WS110	http://www.wormbase.org/genome/C_elegans/WS110/
 C_elegans_Oct_2010	ce10	WS220
 C_familiaris_Jul_2003	canFam1
 C_familiaris_May_2005	canFam2	Dog_May_2005	Canis_familiaris.BROADD2.reference
@@ -106,7 +102,6 @@ G_morhua_May_2010	gadMor1
 H_glaber_Jul_2011	hetGla1	BGI HetGla_1.0
 H_sapiens_Apr_2001	Human_Apr_2001	Human 1apr2002	Human_1apr2001	Chr_21_22 ABC Human	hg7	hs:Apr_2001	Hs:Apr_2001
 H_sapiens_Apr_2003	H_sapiens_Apr_2003_Encode	Human_Apr_2003	Human 10apr2003	Human_10apr2003	hs.NCBIv33	hg15	human_ncbi33	ncbi.v33	Human_Apr_2003_Encode	hs:Apr_2003	Hs:Apr_2003	hs:NCBIv33	Hs:NCBIv33	Hs;NCBIv33	Hs:NCBI33
-H_sapiens_Apr_2003	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B33	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B33/
 H_sapiens_Dec_2001	Human_Dec_2001	Human 22dec2001	Human_22dec2001	hs.NCBIv28	hg10	human_ncbi28	ncbi.v28	hs:Dec_2001	Hs:Dec_2001	hs:NCBIv28	Hs:NCBIv28	Hs;NCBIv28	Hs:NCBI28
 H_sapiens_Feb_2009	Human_Feb_2009	hs.NCBIv37	hg19	human_ncbi37	ncbi.v37	hs:Feb_2009	Hs:Feb_2009	hs:NCBIv37	Hs:NCBIv37	chado/chado-Hsa-19	human/19	Hs;NCBIv37	Hs:NCBI37	GRCh37	Hs:GRCh37	Homo_sapiens.GRCh37.reference
 H_sapiens_Dec_2013	Human_Dec_2013	hs.NCBIv38	hg38	human_ncbi38	ncbi.v38	hs:Dec_2013	Hs:Dec_2013	hs:NCBIv38	Hs:NCBIv38	chado/chado-Hsa-38	human/38	Hs;NCBIv38	Hs:NCBI38	GRCh38	Hs:GRCh38	Homo_sapiens.GRCh38.reference
@@ -130,7 +125,6 @@ L_africana_May_2005	loxAfr1
 L_chalumnae_Aug_2011	latCha1
 L_passim_Apr_2014	C_mellificae_Apr_2014	Crithidia_mellificae	C_mellificae
 M_acuminata_DH_Pahang_Jan_2016	M_acuminata_DH_Pahang
-M_domestica_Borkh_Jun_2017	M_domestica_Borkh
 M_eugenii_Sep_2009	macEug2
 M_gallopavo_Dec_2009	melGal1
 M_murinus_Jun_2003	micMur1	Microcebus_murinus.micMur1.reference

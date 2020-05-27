@@ -22,8 +22,8 @@ Caenorhabditis remanei	C. remanei (nematode)	C_remanei	caeRem
 Callithrix jacchus	Common marmoset	C_jacchus	calJac	Callithrix_jacchus
 Callorhinchus milii	Elephant shark	C_milii	calMil
 Camelina sativa DH55	False flax	C_sativa_DH55 
-Candida albicans SC	Yeast (Human Flora) SC	C_albicans_SC
-Candida albicans WO	Yeast (Human Flora) WO	C_albicans_WO
+Candida albicans SC	Yeast (Human Flora) SC	C_albicans_SC5314
+Candida albicans WO	Yeast (Human Flora) WO	C_albicans_WO-1
 Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
 Cannabis sativa CBDRx	Cannabis sativa CBDRx	C_sativa_CBDRx
 Capsella rubella	Red shepherd's purse	C_rubella

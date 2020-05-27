@@ -24,6 +24,7 @@ Camelina sativa DH55	False flax	C_sativa_DH55
 Candida albicans SC	Yeast (Human Flora) SC	C_albicans_SC
 Candida albicans WO	Yeast (Human Flora) WO	C_albicans_WO
 Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
+Cannabis sativa CBDRx	Cannabis sativa CBDRx	C_sativa_CBDRx
 Capsella rubella	Red shepherd's purse	C_rubella
 Carica papaya	Papaya	C_papaya
 Cavia porcellus	Guinea pig	C_porcellus	cavPor	Cavia_porcellus
@@ -170,5 +171,4 @@ Yarrowia lipolytica CLIB122	CLIB122	Y_lipolytica_CLIB
 Yarrowia lipolytica PO1f	PO1f	Y_lipolytica_PO 
 Yarrowia lipolytica WSH-Z06	WSHZ06	Y_lipolytica_WSH
 Zea mays B73	Maize B73	Z_mays
-
 

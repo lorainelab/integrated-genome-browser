@@ -170,5 +170,5 @@ Yersinia pseudotuberculosis	Y. pseudotuberculosis	Y_pseudotuberculosis
 Yarrowia lipolytica CLIB122	CLIB122	Y_lipolytica_CLIB 
 Yarrowia lipolytica PO1f	PO1f	Y_lipolytica_PO 
 Yarrowia lipolytica WSH-Z06	WSHZ06	Y_lipolytica_WSH
-Zea mays B73	Maize B73	Z_mays
+Zea mays B73	Maize B73	Z_mays_B73
 

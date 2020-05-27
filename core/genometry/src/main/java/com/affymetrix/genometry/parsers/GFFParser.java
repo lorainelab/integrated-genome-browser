@@ -147,9 +147,9 @@ public final class GFFParser implements AnnotationWriter, Parser {
     //          and no semicolons in the free text)
     //   (2): non-whitespace that doesn't start with a quote (or a whitespace)
     static final Pattern value_regex = Pattern.compile(
-            "\\s*\"([^\"]*)\"" /* pattern 1 */
+            "=+\\s*\"([^\"]*)\"" /* pattern 1 */
             + "|" /* or */
-            + "\\s*([^\"\\s]\\S*)" /* pattern 2 */
+            + "=+\\s*([^\"\\s]\\S*)" /* pattern 2 */
     );
 
     static final Pattern gff3_tagval_splitter = Pattern.compile("=");

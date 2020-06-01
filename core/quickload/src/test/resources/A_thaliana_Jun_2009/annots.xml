@@ -1,0 +1,12 @@
+<files>
+  <file
+    name="SimpleData.bed.gz"
+    title="Simple Data"
+    description="Simple Data for Testing"
+    url="A_thaliana_Jun_2009"
+    foreground="000000"
+    load_hint="Whole Sequence"
+    name_size="14"
+    show2tracks="true"
+  />
+</files>

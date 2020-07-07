@@ -1,0 +1,2 @@
+A_thaliana_Jun_2009	Arabidopsis thaliana TAIR9
+H_sapiens_Dec_2013	Homo sapiens (Dec 2013) human being (GRCh38/hg38)

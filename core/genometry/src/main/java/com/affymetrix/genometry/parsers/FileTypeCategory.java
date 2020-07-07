@@ -10,7 +10,8 @@ public enum FileTypeCategory {
     Mismatch("Mismatch"),
     ProbeSet("ProbeSet"),
     ScoredContainer("ScoredContainer"),
-    PairedRead("PairedRead");
+    PairedRead("PairedRead"),
+    PersonalGenomics("PersonalGenomics");
 
     private final String name;
 
@@ -18,4 +19,7 @@ public enum FileTypeCategory {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
 }

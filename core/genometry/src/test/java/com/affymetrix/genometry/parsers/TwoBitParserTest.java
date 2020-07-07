@@ -24,24 +24,19 @@ import org.junit.Test;
 public class TwoBitParserTest {
 
     String noblocks = "ACTGGGTCTCAGTACTAGGAATTCCGTCATAGCTAAA";
-    String noblocks_file = "test/data/2bit/noblocks.2bit";
+    String noblocks_file = "data/2bit/noblocks.2bit";
     String nblocks = "NACNTCNNNNNNNNNNNNGTCTCANNNNNGTACTANNNNGGAATTCNNNNNCGTCATAGNNNCTAAANNN";
-    String nblocks_file = "test/data/2bit/nblocks.2bit";
+    String nblocks_file = "data/2bit/nblocks.2bit";
     String maskblocks = "acTGGgtctaAGTACTAGGAattccgtcatagcTAAa";
-    String maskblocks_file = "test/data/2bit/maskblocks.2bit";
+    String maskblocks_file = "data/2bit/maskblocks.2bit";
     String mnblocks = "aNcTNGGNgtcNtaNAGNTACNTAGNGANaNttcNcgNNNNNtcNNNatNNagNNcTANNAaNN";
-    String mnblocks_file = "test/data/2bit/mnblocks.2bit";
+    String mnblocks_file = "data/2bit/mnblocks.2bit";
     String residues, file;
     File infile = null;
-    String url = "http://test.bioviz.org/testdata/";
-    boolean runRemote = false;
+
 
     @Test
     public void testCaseFiles() throws Exception {
-        if (!LocalUrlCacher.isValidURL(url)) {
-            return;
-        }
-
         residues = noblocks;
         file = noblocks_file;
         testOriginal();
@@ -71,7 +66,6 @@ public class TwoBitParserTest {
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         BioSeq seq = TwoBitParser.parse(infile.toURI(), genomeVersion).get(0);
         assertEquals(seq.getResidues(), residues);
-        //System.out.println(residues + "==" +seq.getResidues());
     }
 
     public void testCases() throws Exception {
@@ -121,11 +115,6 @@ public class TwoBitParserTest {
     public void testCase(int start, int end) throws Exception {
         infile = new File(TwoBitParserTest.class.getClassLoader().getResource(file).getFile());
         testACase(infile.toURI(), start, end);
-
-        if (runRemote) {
-            URI uri = URI.create(url + infile.getName());
-            testACase(uri, start, end);
-        }
     }
 
     private void testACase(URI uri, int start, int end) throws IOException {

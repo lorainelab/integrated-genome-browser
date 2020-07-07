@@ -9,6 +9,7 @@ import com.affymetrix.genometry.parsers.IndexWriter;
 import com.affymetrix.genometry.parsers.Parser;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symloader.SymLoaderTabix;
+
 import java.net.URI;
 import java.util.Optional;
 
@@ -19,7 +20,7 @@ import java.util.Optional;
 @Component(immediate = true)
 public class GenotypeFileHandler implements FileTypeHandler {
 
-    String[] extensions = new String[]{"23andMe"};
+    String[] extensions = new String[]{"23andme", "23andMe"};
 
     @Override
     public String getName() {
@@ -51,7 +52,8 @@ public class GenotypeFileHandler implements FileTypeHandler {
 
     @Override
     public FileTypeCategory getFileTypeCategory() {
-        return FileTypeCategory.Annotation;
+      // return FileTypeCategory.Annotation;
+      return FileTypeCategory.PersonalGenomics;
     }
 
 }

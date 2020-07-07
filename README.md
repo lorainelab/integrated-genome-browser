@@ -19,8 +19,8 @@ See:
 
 # Build and run IGB
 
-1. Install Java on your computer. IGB requires Java 1.8. 
-2. Install Apache mvn, required to build IGB.
+1. Install Java on your computer. IGB requires Java 1.8. Note that OpenJDK lacks JavaFX, a graphics library IGB needs. If building on Linux, you need to install and use Oracle's JDK 1.8, which includes the JavaFX library.
+2. Install Apache mvn, required to build IGB. If building on Linux, you need to configure JAVA_HOME to point to Oracle's JDK instead of OpenJDK, the default on most systems.
 3. Clone the [team repository](https://bitbucket.org/lorainelab/integrated-genome-browser) to your desktop.  
 4. Inside the local copy, check out the branch you wish to build. Review branch names to identify currently released version of IGB. 
 5. Build IGB using maven. Skip tests to save time.

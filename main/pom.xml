@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.4</version>
+        <version>9.1.6</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>org.lorainelab.igb</groupId>
@@ -310,7 +310,12 @@
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>paired-data-preprocessor</artifactId>
             <scope>runtime</scope>       
-        </dependency> 
+        </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>genotyping</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- Why are these two here and not in the external bundle section?-->
         <dependency>
             <groupId>org.osgi</groupId>

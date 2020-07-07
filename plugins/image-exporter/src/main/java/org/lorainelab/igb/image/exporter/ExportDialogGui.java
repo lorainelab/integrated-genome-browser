@@ -165,7 +165,8 @@ public class ExportDialogGui extends JPanel {
                 return rb;
             }
         }
-        return radioButtons.get(0);
+        //IGBF-2315 change the default option to "Main View with Labels" on every platform.
+        return radioButtons.get(2);
     }
 
     JPanel btnPanel;
@@ -200,7 +201,8 @@ public class ExportDialogGui extends JPanel {
             btnPanel.add(rb, "wrap");
         }
         btnPanel.add(refreshButton, "");
-        buttonGroup.setSelected(radioButtons.get(0).getModel(), true);
+        //IGBF-2315 change the default option to "Main View with Labels" on every platform.
+        buttonGroup.setSelected(radioButtons.get(2).getModel(), true);
     }
 
     private void setupAutoSizePreviewLabel() {

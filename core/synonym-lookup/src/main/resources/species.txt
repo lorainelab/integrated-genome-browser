@@ -1,12 +1,13 @@
 Ailuropoda melanoleuca	Giant panda	A_melanoleuca	ailMel	Ailuropoda_melanoleuca
 Alligator mississippiensis	American alligator	A_mississippiensis	allMis
+Anguilla rostrata	American eel	A_rostrata
 Anolis carolinensis	Anole Lizard	A_carolinensis	anoCar	Anolis_carolinensis
 Anopheles gambiae	Mosquito	A_gambiae	anoGam
-Apis mellifera	European honey bee	A. mellifera	A_mellifera	apiMel
+Apis mellifera	European honey bee	A_mellifera	apiMel
 Aplysia californica	California sea hare	A_californica	aplCal
-Arabidopsis lyrata	Lyrate rockcress	A. lyrata	A_lyrata
+Arabidopsis lyrata	Lyrate rockcress	A_lyrata
 Aquilegia coerulea	Colorado blue columbine	A_coerulea
-Arabidopsis thaliana	Thale cress	A_thaliana
+Arabidopsis thaliana	Mouse-ear cress	A_thaliana
 Arbacia punctulata	Purple-spined sea urchin	A_punctulata
 Balaenoptera acutorostrata	Minke whale	B_acutorostrata	balAcu
 Bos taurus	Cow	B_taurus	bosTau	Bos_taurus
@@ -21,9 +22,10 @@ Caenorhabditis remanei	C. remanei (nematode)	C_remanei	caeRem
 Callithrix jacchus	Common marmoset	C_jacchus	calJac	Callithrix_jacchus
 Callorhinchus milii	Elephant shark	C_milii	calMil
 Camelina sativa DH55	False flax	C_sativa_DH55 
-Candida albicans SC	Yeast (Human Flora) SC	C_albicans_SC
-Candida albicans WO	Yeast (Human Flora) WO	C_albicans_WO
+Candida albicans SC	Yeast (Human Flora) SC	C_albicans_SC5314
+Candida albicans WO	Yeast (Human Flora) WO	C_albicans_WO-1
 Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
+Cannabis sativa CBDRx	Cannabis sativa CBDRx	C_sativa_CBDRx
 Capsella rubella	Red shepherd's purse	C_rubella
 Carica papaya	Papaya	C_papaya
 Cavia porcellus	Guinea pig	C_porcellus	cavPor	Cavia_porcellus
@@ -35,6 +37,7 @@ Citrus clementina	Clementine mandarin	C_clementina
 Citrus sinensis	Sweet orange	C_sinensis
 Ciona intestinalis	vase tunicate (sea squirt)	C_intestinalis	ci	Ciona_intestinalis
 Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi
+Chlorocebus sabaeus	African green monkey	C_sabaeus
 Cricetulus griseus	Chinese hamster	C_griseus	criGri
 Cucumis sativus	Cucumber	C_sativus
 Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio
@@ -45,7 +48,7 @@ Dictyostelium discoideum	slime mold	D_discoideum
 Drosophila ananassae	D. ananassae (fruit fly)	D_ananassae	droAna
 Drosophila erecta	D. erecta (fruit fly)	D_erecta	droEre
 Drosophila grimshawi	D. grimshawi (fruit fly)	D_grimshawi	droGri
-Drosophila melanogaster	Common fruit fly	D. melanogaster	D_melanogaster	dm	Drosophila_melanogaster
+Drosophila melanogaster	Vinegar (fruit) fly	D. melanogaster	D_melanogaster	dm	Drosophila_melanogaster
 Drosophila mojavensis	D. mojavensis (fruit fly)	D_mojavensis	droMoj
 Drosophila persimilis	D. persimilis (fruit fly)	D_persimilis	droPer
 Drosophila pseudoobscura	D. pseudoobscura (fruit fly)	D_pseudoobscura	dp
@@ -58,10 +61,10 @@ Ebola virus	Ebola virus	E_virus	eboVir
 Echinops telfairi	Lesser hedgehog tenrec	E_telfairi		Echinops_telfairi	echTel
 Equus caballus	Horse	E_caballus	equCab	Equus_caballus
 Erinaceus europaeus	European hedgehog	E_europaeus	eriEur	Erinaceus_europaeus
-Escherichia coli K12-MG1655	E. coli K12-MG1655	E. coli	E_coli
+Escherichia coli K12-MG1655	E. coli K12-MG1655	E_coli_K12-MG1655
 Euprymna scolopes	Hawaiian bobtail squid	E_scolopes
 Eucalyptus grandis	Eucalyptus	E_grandis
-Felis catus	House Cat	F_catus	felCat	Felis_catus
+Felis catus	Cat	F_catus	felCat	Felis_catus
 Fragaria vesca	woodland strawberry	F_vesca
 Gallus gallus	Chicken	G_gallus	galGal	Gallus_gallus
 Gasterosteus aculeatus	Stickleback	G_aculeatus	gasAcu	Gasterosteus_aculeatus
@@ -80,7 +83,7 @@ Linum usitatissimum	flax	L_usitatissimum
 Loligo pealeii	Longfin inshore squid	L_pealeii
 Loxodonta africana	African bush elephant	L_africana	loxAfr	Loxodonta_africana
 Lotus japonicus	a model legume	L_japonicus
-Lotmaria passim	L_passim SF	L_passim
+Lotmaria passim	honeybee parasite	L_passim
 Macaca mulatta	Rhesus monkey	M_mulatta	rheMac	Macaca_mulatta
 Macropus eugenii	Tammar wallaby	M_eugenii		Macropus_eugenii	macEug
 Malus domestica Borkh	Apple	M_domestica_Borkh
@@ -98,7 +101,7 @@ Mycobacterium abscessus	M. abcessus	M_abscessus
 Mycobacterium smegmatis	M. smegmatis	M_smegmatis	
 Mycobacterium tuberculosis	M. tuberculosis	M_tuberculosis	
 Myotis lucifugus	Little brown bat	M_lucifugus		Myotis_lucifugus	myoLuc
-Nematostella vectensis	starlet sea anemone	N_vectensis
+Nematostella vectensis	Starlet sea anemone	N_vectensis
 Nicotiana tabacum	Tobacco	N_tabacum
 Nomascus leucogenys	Northern white-cheeked gibbon	Nomascus_leucogenys	N_leucogenys	nomLeu
 Ochotona princeps	American pika	O_princeps	ochPri	Ochotona_princeps
@@ -107,20 +110,20 @@ Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna	Ornithorhynchus_anatinus
 Oryctolagus cuniculus	European rabbit	O_cuniculus		Oryctolagus_cuniculus	oryCun
 Oryza sativa indica	Rice (indica)	O_sativa_indica	
 Oryza sativa japonica	Rice (japonica)	O_sativa	O_sativa_japonica
-Oryzias latipes	Medaka	O_latipes	oryLat	Oryzias_latipes
-Otolemur garnettii	Nothern greater galago	O_garnettii	otoGar	Otolemur_garnettii
-Ostreococcus lucimarinus	O. lucimarinus	O_lucimarinus	
-Ovis aries	sheep	O_aries	OAR	oviAri
+Oryzias latipes	Medaka	Japanese rice fish	oryLat	Oryzias_latipes
+Otolemur garnettii	Northern greater galago	O_garnettii	otoGar	Otolemur_garnettii
+Ostreococcus lucimarinus	Plankton	O_lucimarinus	
+Ovis aries	Sheep	O_aries	OAR	oviAri
 Pan paniscus	Bonobo	P_paniscus	panPan	
 Pan troglodytes	Chimp	P_troglodytes	panTro	Pan_troglodytes
 Panicum virgatum	Switchgrass	P_virgatum
-Papio anubis	olive baboon	P_anubis	papAnu
-Papio hamadryas	hamadryas baboon	P_hamadryas	papHam
+Papio anubis	Olive baboon	P_anubis	papAnu
+Papio hamadryas	Hamadryas baboon	P_hamadryas	papHam
 Petromyzon marinus	Lamprey	P_marinus	petMar
 Phaseolus vulgaris	Common bean	P_vulgaris
 Physcomitrella patens	Moss	P_patens
 Pinus taeda	Loblolly Pine	P. taeda	P_taeda
-Plasmodium falciparum	P. falciparum	P_falciparum	Pfalciparum_3D7_plasmoDB-5.4	Pfalciparum_3D7_plasmoDB-5.5
+Plasmodium falciparum	Malaria parasite	P_falciparum	Pfalciparum_3D7_plasmoDB-5.4	Pfalciparum_3D7_plasmoDB-5.5
 Pongo pygmaeus abelii	Orangutan	P_abelii	ponAbe	Pongo_pygmaeus
 Populus trichocarpa	Black cottonwood	P_trichocarpa	
 Pristionchus pacificus	P. pacificus (nematode)	P_pacificus	priPac
@@ -131,13 +134,13 @@ Prunus persica	Peach	P_persica
 Rattus norvegicus	Rat	R_norvegicus	rn	Rattus_norvegicus
 Ricinus communis	Castor oil plant	R_communis
 Saccharomyces cerevisiae	Budding Yeast	S_cerevisiae	sacCer	Saccharomyces_cerevisiae
-Saimiri boliviensis	squirrel monkey	S_boliviensis	saiBol
+Saimiri boliviensis	Squirrel monkey	S_boliviensis	saiBol
 Sarcophilus harrisii	Tasmanian devil	Sarcophilus_harrisii	S_harrisii	sarHar
 Schizosaccharomyces pombe	Fission Yeast	S_pombe
 Selaginella moellendorffii	Spikemoss	S. moellendorffii	S_moellendorffii
 Setaria italica	Foxtail millet	S. italica	S_italica
 Sigmodon hispidus	Cotton rat	S_hispidus
-Sodalis glossinidius	S. glossinidius	S_glossinidius
+Sodalis glossinidius	Tsetse fly endosymbiont	S_glossinidius
 Solanum lycopersicum	Tomato	S_lycopersicum
 Solanum tuberosum Phureja	Potato	S_tuberosum_DM
 Sorex araneus	Eurasian shrew	S_araneus	sorAra	Sorex_araneus
@@ -158,9 +161,9 @@ Triticum aestivum	Common wheat	T_aestivum
 Trypanosoma brucei	Protozoan parasites	T_brucei
 Tupaia belangeri	Northern tree shrew	T_belangeri	tupBel	Tupaia_belangeri
 Tursiops truncatus	Bottlenose dolphin	T_truncatus	turTru	Tursiops_truncatus
-Vaccinium corymbosum	blueberry	V_corymbosum
+Vaccinium corymbosum	Blueberry	V_corymbosum
 Vicugna pacos	Alpaca	V_pacos	vicPac	Vicugna_pacos
-Vitis vinifera	Common grape vine	V_vinifera
+Vitis vinifera	Grape vine	V_vinifera
 Volvox carteri	Volvox	V. carteri	V_carteri
 Xenopus laevis	African clawed frog	X_laevis
 Xenopus tropicalis	Pipid frog	X_tropicalis	xenTro	Xenopus_tropicalis
@@ -169,6 +172,5 @@ Yersinia pseudotuberculosis	Y. pseudotuberculosis	Y_pseudotuberculosis
 Yarrowia lipolytica CLIB122	CLIB122	Y_lipolytica_CLIB 
 Yarrowia lipolytica PO1f	PO1f	Y_lipolytica_PO 
 Yarrowia lipolytica WSH-Z06	WSHZ06	Y_lipolytica_WSH
-Zea mays B73	Maize B73	Z_mays
-
+Zea mays B73	Maize B73	Z_mays_B73
 

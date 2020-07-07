@@ -61,16 +61,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author Pooja Nikhare
  */
-public class BaiSymLoader extends SymLoader {
+public class BaiFileSymLoader extends SymLoader {
 
     ArrayList<Chromosomes> chromosomeList = new ArrayList<>();
+    Map<String, Integer> chrLength = new HashMap<>();
+    Map<String, File> chrFiles = new HashMap<>();
     SamReader samReader = null;
     SamReader.PrimitiveSamReaderToSamReaderAdapter primitiveSamReader = null;
 
     String inputFileName = null;
-    private StringBuilder output;
-
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BaiSymLoader.class);
+    
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(BaiFileSymLoader.class);
 
     private static final List<LoadUtils.LoadStrategy> strategyList = new ArrayList<>();
     private static final Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
@@ -80,13 +81,12 @@ public class BaiSymLoader extends SymLoader {
     static {
         strategyList.add(LoadUtils.LoadStrategy.NO_LOAD);
         strategyList.add(LoadUtils.LoadStrategy.VISIBLE);
-//		strategyList.add(LoadStrategy.CHROMOSOME);
+     // strategyList.add(LoadStrategy.CHROMOSOME);
         strategyList.add(LoadUtils.LoadStrategy.GENOME);
     }
 
-    public BaiSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
+    public BaiFileSymLoader(URI uri, Optional<URI> indexUri, String featureName, GenomeVersion genomeVersion) {
         super(uri, indexUri, featureName, genomeVersion);
-        output = new StringBuilder();
         initializeChromosomes(uri);
     }
 
@@ -110,8 +110,10 @@ public class BaiSymLoader extends SymLoader {
         File inputBAIFile = null;
         File bamFileFromBai = null;
         URI bamFileFromBaiURI = null;
+        String line = null;
         ArrayList<ChromosomeOutput> finalOutput = new ArrayList<>();
         Map<Integer, Double> idToMeanMap = new HashMap<>();
+        Map<String, BufferedWriter> chrs = new HashMap<>();
 
         /**
          * If there an existing BAM file present in the same location as of BAI
@@ -143,7 +145,7 @@ public class BaiSymLoader extends SymLoader {
             inputBAIFile = LocalUrlCacher.convertURIToFile(uri);
             bamFileFromBai = LocalUrlCacher.convertURIToFile(bamFileFromBaiURI);
         } else {
-            Logger.getLogger(BaiSymLoader.class.getName()).log(
+            Logger.getLogger(BaiFileSymLoader.class.getName()).log(
                     Level.SEVERE, "URL scheme: {0} not recognized", scheme);
         }
 
@@ -193,7 +195,7 @@ public class BaiSymLoader extends SymLoader {
         /**
          * Iterate through the chromosomes list
          */
-        //output.append("#chrom	start	end	length\n");
+        
         for (int tid = 0; tid < chromosomeList.size(); ++tid) {
             double mean = 0, total = 0, count = 0, currChunk = 0;
             BinList binList = browseableIndex.getBinsOverlapping(tid, 1, chromosomeList.get(tid).getSequenceLength());
@@ -221,20 +223,35 @@ public class BaiSymLoader extends SymLoader {
                 idToMeanMap.put(tid, mean);
             }
         }
-
-        for (ChromosomeOutput chr : finalOutput) {
-            output.append(chr.getChrom() + " " + chr.getStart() + " " + chr.getEnd() + " " + chr.getLength() / idToMeanMap.get(chr.getTid()) + "\n");
+        
+        // Recalculating the chunk length
+        try {
+            for (ChromosomeOutput chr : finalOutput) {
+                line = chr.getChrom() + " " + chr.getStart() + " " + chr.getEnd() + " " + chr.getLength() / idToMeanMap.get(chr.getTid()) + "\n";
+                // Parse single line 
+                parseLines(line, chrs, chrLength, chrFiles);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(BaiFileSymLoader.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            for (BufferedWriter b : chrs.values()) {
+                try {
+                    b.flush();
+                } catch (IOException ex) {
+                    Logger.getLogger(BaiFileSymLoader.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                GeneralUtils.safeClose(b);
+            }
         }
 
     }
 
     /**
-     *
      * @return It returns empty.bam file InputStream from the Bai project
      * resources folder
      */
     public InputStream findBAMFile() {
-        InputStream bamFile = BaiSymLoader.class.getClassLoader().getResourceAsStream("empty.bam");
+        InputStream bamFile = BaiFileSymLoader.class.getClassLoader().getResourceAsStream("empty.bam");
         return bamFile;
     }
 
@@ -263,44 +280,37 @@ public class BaiSymLoader extends SymLoader {
     }
 
     /*
-    Converts Bed File format string in Input stream and Parses each line
+     * Create result to build Map of BioSeq -> BED4/ Wiggle-formatted file
      */
     protected boolean buildBaiIndex() throws Exception {
-        Map<String, Integer> chrLength = new HashMap<>();
-        Map<String, File> chrFiles = new HashMap<>();
-
         try {
             logger.info("build index from Bai File");
-            try (InputStream is = new ByteArrayInputStream(output.toString().getBytes(StandardCharsets.UTF_8))) {
-                if (parseLines(is, chrLength, chrFiles)) {
-                    createResults(chrLength, chrFiles);
-                    return true;
-                }
-            }
+            createResults(chrLength, chrFiles);
+            return true;
         } catch (Exception ex) {
             throw ex;
         }
-        return false;
     }
-
-    @Override
-    protected boolean parseLines(InputStream istr, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
-        BufferedReader br = null;
+    
+    /**
+     * Parse Single line of Data
+     * @params line format:  
+     * chrom   start	end	length
+     * @params chrLength : Map seq_id -> max(end)
+     * @params chrFiles : Map seq_id -> BED4/ Wiggle-formatted file  
+     * 
+     */
+    protected boolean parseLines(String line, Map<String, BufferedWriter> chrs, Map<String, Integer> chrLength, Map<String, File> chrFiles) throws Exception {
         BufferedWriter bw = null;
-        String line, current_seq_id = null;
+        String current_seq_id = null;
         int length = 0;
 
-        Map<String, BufferedWriter> chrs = new HashMap<>();
-        /* line format:
-         * chrom	start	end	length
-         */
         try {
 
-            br = new BufferedReader(new InputStreamReader(istr));
             Thread thread = Thread.currentThread();
-            while ((line = br.readLine()) != null && !thread.isInterrupted()) {
+            if (line != null && !thread.isInterrupted()) {
                 if (line.length() == 0) {
-                    continue;
+                    return false;
                 }
 
                 String[] fields = field_regex.split(line.trim());
@@ -323,20 +333,13 @@ public class BaiSymLoader extends SymLoader {
             return !thread.isInterrupted();
         } catch (IOException | IllegalArgumentException ex) {
             throw ex;
-        } finally {
-            for (BufferedWriter b : chrs.values()) {
-                try {
-                    b.flush();
-                } catch (IOException ex) {
-                    Logger.getLogger(BaiSymLoader.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                GeneralUtils.safeClose(b);
-            }
-            GeneralUtils.safeClose(br);
-            GeneralUtils.safeClose(bw);
         }
+        
     }
 
+    /* 
+    * Creates Graph Syms for given seq within the range
+    */
     @Override
     public List<GraphSym> getRegion(SeqSpan span) throws Exception {
         init();
@@ -353,7 +356,7 @@ public class BaiSymLoader extends SymLoader {
             File file = chrList.get(seq);
 
             if (file == null) {
-                Logger.getLogger(BaiSymLoader.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getId());
+                Logger.getLogger(BaiFileSymLoader.class.getName()).log(Level.FINE, "Could not find chromosome {0}", seq.getId());
                 return Collections.<GraphSym>emptyList();
             }
 
@@ -434,6 +437,7 @@ public class BaiSymLoader extends SymLoader {
         int start = Math.min(x1, x2);
         int width = Math.max(x1, x2) - start;
 
+        // Discard data out of range
         if (!checkRange(x1, width, min, max)) {
             return;
         }
@@ -481,77 +485,81 @@ public class BaiSymLoader extends SymLoader {
  *
  * Chromosomes class contains sequenceName and SequenceLength
  */
-//class Chromosomes {
-//
-//    public String getSequenceName() {
-//        return sequenceName;
-//    }
-//
-//    public int getSequenceLength() {
-//        return sequenceLength;
-//    }
-//
-//    public Chromosomes(String sequenceName, int sequenceLength) {
-//        this.sequenceName = sequenceName;
-//        this.sequenceLength = sequenceLength;
-//    }
-//    String sequenceName;
-//    int sequenceLength;
-//}
-//
-//class ChromosomeOutput {
-//   int tid;
-//    String chrom;
-//    String start;
-//    String end;
-//    Double length;
-//
-//     public ChromosomeOutput(int tid,String chrom, String start, String end, Double length) {
-//        this.tid = tid;
-//        this.chrom = chrom;
-//        this.start = start;
-//        this.end = end;
-//        this.length = length;
-//    }
-//     
-//    public int getTid() {
-//        return tid;
-//    }
-//
-//    public void setTid(int tid) {
-//        this.tid = tid;
-//    }
-//
-//    public String getChrom() {
-//        return chrom;
-//    }
-//
-//    public void setChrom(String chrom) {
-//        this.chrom = chrom;
-//    }
-//
-//    public String getStart() {
-//        return start;
-//    }
-//
-//    public void setStart(String start) {
-//        this.start = start;
-//    }
-//
-//    public String getEnd() {
-//        return end;
-//    }
-//
-//    public void setEnd(String end) {
-//        this.end = end;
-//    }
-//    
-//    public Double getLength() {
-//        return length;
-//    }
-//
-//    public void setLength(Double length) {
-//        this.length = length;
-//    }
-//    
-//}
+class Chromosomes {
+
+    public String getSequenceName() {
+        return sequenceName;
+    }
+
+    public int getSequenceLength() {
+        return sequenceLength;
+    }
+
+    public Chromosomes(String sequenceName, int sequenceLength) {
+        this.sequenceName = sequenceName;
+        this.sequenceLength = sequenceLength;
+    }
+    String sequenceName;
+    int sequenceLength;
+}
+
+/**
+ * ChromosomeOutput class to store start, end, length for each chromosome
+ * and use to recalculate the chunk length
+ */
+class ChromosomeOutput {
+
+    private int tid;
+    private String chrom;
+    private String start;
+    private String end;
+    private Double length;
+
+    public ChromosomeOutput(int tid, String chrom, String start, String end, Double length) {
+        this.tid = tid;
+        this.chrom = chrom;
+        this.start = start;
+        this.end = end;
+        this.length = length;
+    }
+
+    public int getTid() {
+        return tid;
+    }
+
+    public void setTid(int tid) {
+        this.tid = tid;
+    }
+
+    public String getChrom() {
+        return chrom;
+    }
+
+    public void setChrom(String chrom) {
+        this.chrom = chrom;
+    }
+
+    public String getStart() {
+        return start;
+    }
+
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
+    public Double getLength() {
+        return length;
+    }
+
+    public void setLength(Double length) {
+        this.length = length;
+    }
+}

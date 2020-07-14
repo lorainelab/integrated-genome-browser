@@ -80,11 +80,12 @@
             <artifactId>commons-lang3</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>fusion</artifactId>
             <scope>provided</scope>
         </dependency>
+		-->
         <dependency>
             <groupId>colt</groupId>
             <artifactId>colt</artifactId>

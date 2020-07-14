@@ -25,10 +25,10 @@
     
     <!--    Dependencies which need to be "wrapped" into OSGI bundles-->
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>fusion</artifactId>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>

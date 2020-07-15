@@ -3,6 +3,7 @@ package com.lorainelab.das;
 import com.affymetrix.genometry.GenomeVersion;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.lorainelab.igb.das.DasDataProvider;
 import org.slf4j.Logger;
@@ -19,17 +20,20 @@ public class DasDataProviderTest {
     private static final String HUMAN_GENOME_ID = "hg38";
     private static DasDataProvider dasDataProvider;
 
+    @Ignore
     @BeforeClass
     public static void setup() {
         dasDataProvider = new DasDataProvider(UCSC_DAS_URL, "UCSC", 1);
     }
 
+    @Ignore
     @Test
     public void retrieveSupportedGenomeVersions() {
         Assert.assertTrue(dasDataProvider.getSupportedGenomeVersionNames().contains(HUMAN_GENOME_ID));
 //        dasDataProvider.getSupportedGenomeVersionNames().forEach(logger::info);
     }
 
+    @Ignore
     @Test
     public void retrieveAssemblyInfo() {
         GenomeVersion genomeVersion = new GenomeVersion(HUMAN_GENOME_ID);

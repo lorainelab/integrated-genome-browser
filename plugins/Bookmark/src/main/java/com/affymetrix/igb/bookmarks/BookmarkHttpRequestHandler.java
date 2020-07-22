@@ -104,6 +104,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
             case IGB_STATUS_CHECK:
                 response = new Response(handleStatusCheckRequests(session));
                 response.setStatus(Response.Status.OK);
+                response.addHeader("Access-Control-Allow-Origin", "*");
                 return response;
             default:
                 response = new Response(getBadRequestMessage());

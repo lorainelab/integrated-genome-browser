@@ -13,7 +13,11 @@
     <packaging>bundle</packaging>
 
     <name>Core - Genometry (Data Models)</name>
-
+    <!--<properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties> -->
     <dependencies>
         <dependency>
             <groupId>org.apache.felix</groupId>
@@ -50,11 +54,11 @@
             <artifactId>jdom</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.affymetrix</groupId>
             <artifactId>fusion</artifactId>
             <scope>provided</scope>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>net.sf</groupId>
             <artifactId>image4j</artifactId>

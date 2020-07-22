@@ -289,6 +289,7 @@ public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPan
         cacheResetPref.addActionListener((ActionEvent e) -> {
             try {
                 cachePrefsNode.clear();
+                initMaxCacheSizeValue();
             } catch (Exception ex) {
                 LOG.error(ex.getMessage(), ex);
             }

@@ -128,8 +128,8 @@
         <module>core/igb-preferences</module>
         <module>core/weblinks</module>
         <module>core/quickload</module>
-        <!--<module>core/das</module>-->
-        <module>core/das2</module>
+        <!--<module>core/das</module>
+        <module>core/das2</module>-->
         <module>core/frameManager</module>
         <module>core/synonym-lookup</module>
         <module>core/igb-javafx-util</module>
@@ -319,12 +319,12 @@
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>-->
-            <dependency>
+<!--            <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>das2</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>frameManager</artifactId>

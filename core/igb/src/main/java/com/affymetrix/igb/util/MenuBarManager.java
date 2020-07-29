@@ -58,6 +58,8 @@ import org.lorainelab.igb.menu.api.model.MenuItem;
 import static org.lorainelab.igb.menu.api.util.MenuUtils.convertContextMenuItemToJMenuItem;
 import org.lorainelab.igb.services.IgbService;
 import org.slf4j.LoggerFactory;
+import javax.swing.SwingConstants;
+import javax.swing.Action;
 
 @Component(immediate = true, provide = MenuBarManager.class)
 public class MenuBarManager {
@@ -129,6 +131,13 @@ public class MenuBarManager {
         menuBarExtensionsQueue.stream().forEach(menuBarExtension -> addMenuBarExtension(menuBarExtension));
         aMenuItemQueue.stream().forEach(aMenuItem -> addAMenuItem(aMenuItem));
     }
+    
+    private JCheckBoxMenuItem setCheckBoxTextAlignment(Action action){
+        JCheckBoxMenuItem j = new JCheckBoxMenuItem(action);
+        j.setHorizontalTextPosition(SwingConstants.LEFT);
+        return j;
+    }
+
 
     private void initializeMenus() {
         initFileMenu();
@@ -175,15 +184,15 @@ public class MenuBarManager {
         viewMenuEntries.put(5, new JMenuItem(ClampViewAction.getAction()));
         viewMenuEntries.put(10, new JMenuItem(ClearVisualTools.getAction()));
         viewMenuEntries.put(15, new JMenuItem(ShowAllVisualToolsAction.getAction()));
-        viewMenuEntries.put(20, new JCheckBoxMenuItem(ToggleHairlineAction.getAction()));
-        viewMenuEntries.put(25, new JCheckBoxMenuItem(ToggleHairlineLabelAction.getAction()));
-        viewMenuEntries.put(30, new JCheckBoxMenuItem(ToggleToolTipAction.getAction()));
-        viewMenuEntries.put(35, new JCheckBoxMenuItem(DrawCollapseControlAction.getAction()));
-        viewMenuEntries.put(40, new JCheckBoxMenuItem(ShowIGBTrackMarkAction.getAction()));
-        viewMenuEntries.put(45, new JCheckBoxMenuItem(ShowFilterMarkAction.getAction()));
-        viewMenuEntries.put(50, new JCheckBoxMenuItem(ToggleEdgeMatchingAction.getAction()));
-        viewMenuEntries.put(55, new JCheckBoxMenuItem(ShowLockedTrackIconAction.getAction()));
-        viewMenuEntries.put(60, new JCheckBoxMenuItem(ShowFullFilePathInTrack.getAction()));
+        viewMenuEntries.put(20, setCheckBoxTextAlignment(ToggleHairlineAction.getAction()));
+        viewMenuEntries.put(25, setCheckBoxTextAlignment(ToggleHairlineLabelAction.getAction()));
+        viewMenuEntries.put(30, setCheckBoxTextAlignment(ToggleToolTipAction.getAction()));
+        viewMenuEntries.put(35, setCheckBoxTextAlignment(DrawCollapseControlAction.getAction()));
+        viewMenuEntries.put(40, setCheckBoxTextAlignment(ShowIGBTrackMarkAction.getAction()));
+        viewMenuEntries.put(45, setCheckBoxTextAlignment(ShowFilterMarkAction.getAction()));
+        viewMenuEntries.put(50, setCheckBoxTextAlignment(ToggleEdgeMatchingAction.getAction()));
+        viewMenuEntries.put(55, setCheckBoxTextAlignment(ShowLockedTrackIconAction.getAction()));
+        viewMenuEntries.put(60, setCheckBoxTextAlignment(ShowFullFilePathInTrack.getAction()));
 
     }
 

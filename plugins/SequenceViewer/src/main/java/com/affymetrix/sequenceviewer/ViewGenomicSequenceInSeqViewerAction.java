@@ -98,7 +98,7 @@ public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implemen
         return Optional.of(Arrays.asList(menuItem));
     }
     private MenuItem menuItem;
-    private static final int MENU_WEIGHT = 65;
+    private static final int MENU_WEIGHT = 75;
     private static final String SEQUENCE_VIEWER_ICON = "Sequence_Viewer.png";
 
     @Override

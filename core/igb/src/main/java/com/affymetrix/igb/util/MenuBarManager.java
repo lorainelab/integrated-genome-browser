@@ -184,16 +184,17 @@ public class MenuBarManager {
         viewMenuEntries.put(5, new JMenuItem(ClampViewAction.getAction()));
         viewMenuEntries.put(10, new JMenuItem(ClearVisualTools.getAction()));
         viewMenuEntries.put(15, new JMenuItem(ShowAllVisualToolsAction.getAction()));
-        viewMenuEntries.put(20, setCheckBoxTextAlignment(ToggleHairlineAction.getAction()));
-        viewMenuEntries.put(25, setCheckBoxTextAlignment(ToggleHairlineLabelAction.getAction()));
-        viewMenuEntries.put(30, setCheckBoxTextAlignment(ToggleToolTipAction.getAction()));
-        viewMenuEntries.put(35, setCheckBoxTextAlignment(DrawCollapseControlAction.getAction()));
-        viewMenuEntries.put(40, setCheckBoxTextAlignment(ShowIGBTrackMarkAction.getAction()));
-        viewMenuEntries.put(45, setCheckBoxTextAlignment(ShowFilterMarkAction.getAction()));
-        viewMenuEntries.put(50, setCheckBoxTextAlignment(ToggleEdgeMatchingAction.getAction()));
-        viewMenuEntries.put(55, setCheckBoxTextAlignment(ShowLockedTrackIconAction.getAction()));
-        viewMenuEntries.put(60, setCheckBoxTextAlignment(ShowFullFilePathInTrack.getAction()));
-
+        viewMenuEntries.put(20, new JSeparator());
+        viewMenuEntries.put(25, setCheckBoxTextAlignment(ToggleHairlineAction.getAction()));
+        viewMenuEntries.put(30, setCheckBoxTextAlignment(ToggleHairlineLabelAction.getAction()));
+        viewMenuEntries.put(35, setCheckBoxTextAlignment(ToggleToolTipAction.getAction()));
+        viewMenuEntries.put(40, setCheckBoxTextAlignment(DrawCollapseControlAction.getAction()));
+        viewMenuEntries.put(45, setCheckBoxTextAlignment(ShowIGBTrackMarkAction.getAction()));
+        viewMenuEntries.put(50, setCheckBoxTextAlignment(ShowFilterMarkAction.getAction()));
+        viewMenuEntries.put(55, setCheckBoxTextAlignment(ToggleEdgeMatchingAction.getAction()));
+        viewMenuEntries.put(60, setCheckBoxTextAlignment(ShowLockedTrackIconAction.getAction()));
+        viewMenuEntries.put(65, setCheckBoxTextAlignment(ShowFullFilePathInTrack.getAction()));
+        viewMenuEntries.put(70, new JSeparator());
     }
 
     private void initToolsMenu() {

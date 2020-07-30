@@ -180,21 +180,22 @@ public class MenuBarManager {
     private void initViewMenu() {
         viewMenu = new JMenu(BUNDLE.getString("viewMenu"));
         viewMenu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
-        viewMenuEntries.put(1, new JMenuItem(AutoLoadThresholdAction.getAction()));
-        viewMenuEntries.put(5, new JMenuItem(ClampViewAction.getAction()));
-        viewMenuEntries.put(10, new JMenuItem(ClearVisualTools.getAction()));
-        viewMenuEntries.put(15, new JMenuItem(ShowAllVisualToolsAction.getAction()));
-        viewMenuEntries.put(20, new JSeparator());
-        viewMenuEntries.put(25, setCheckBoxTextAlignment(ToggleHairlineAction.getAction()));
-        viewMenuEntries.put(30, setCheckBoxTextAlignment(ToggleHairlineLabelAction.getAction()));
-        viewMenuEntries.put(35, setCheckBoxTextAlignment(ToggleToolTipAction.getAction()));
-        viewMenuEntries.put(40, setCheckBoxTextAlignment(DrawCollapseControlAction.getAction()));
-        viewMenuEntries.put(45, setCheckBoxTextAlignment(ShowIGBTrackMarkAction.getAction()));
-        viewMenuEntries.put(50, setCheckBoxTextAlignment(ShowFilterMarkAction.getAction()));
-        viewMenuEntries.put(55, setCheckBoxTextAlignment(ToggleEdgeMatchingAction.getAction()));
-        viewMenuEntries.put(60, setCheckBoxTextAlignment(ShowLockedTrackIconAction.getAction()));
-        viewMenuEntries.put(65, setCheckBoxTextAlignment(ShowFullFilePathInTrack.getAction()));
-        viewMenuEntries.put(70, new JSeparator());
+        viewMenuEntries.put(1, new JMenuItem(ClearVisualTools.getAction()));
+        viewMenuEntries.put(5, new JMenuItem(ShowAllVisualToolsAction.getAction()));
+        viewMenuEntries.put(10, new JSeparator());
+        viewMenuEntries.put(15, setCheckBoxTextAlignment(ToggleHairlineAction.getAction()));
+        viewMenuEntries.put(20, setCheckBoxTextAlignment(ToggleHairlineLabelAction.getAction()));
+        viewMenuEntries.put(25, setCheckBoxTextAlignment(ToggleToolTipAction.getAction()));
+        viewMenuEntries.put(30, setCheckBoxTextAlignment(DrawCollapseControlAction.getAction()));
+        viewMenuEntries.put(35, setCheckBoxTextAlignment(ShowIGBTrackMarkAction.getAction()));
+        viewMenuEntries.put(40, setCheckBoxTextAlignment(ShowFilterMarkAction.getAction()));
+        viewMenuEntries.put(45, setCheckBoxTextAlignment(ToggleEdgeMatchingAction.getAction()));
+        viewMenuEntries.put(50, setCheckBoxTextAlignment(ShowLockedTrackIconAction.getAction()));
+        viewMenuEntries.put(55, setCheckBoxTextAlignment(ShowFullFilePathInTrack.getAction()));
+        viewMenuEntries.put(60, new JSeparator());
+        viewMenuEntries.put(65, new JMenuItem(AutoLoadThresholdAction.getAction()));
+        viewMenuEntries.put(70, new JMenuItem(ClampViewAction.getAction()));
+        
     }
 
     private void initToolsMenu() {

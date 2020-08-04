@@ -40,10 +40,10 @@ public class DataProviderFactoryManager {
         logger.debug("QuickloadFactory now available.");
     }
 
-    @Reference(target = "(&(component.name=DasDataProviderFactory))")
-    public void trackDasDataProviderFactory(DataProviderFactory quickloadFactory) {
-        logger.debug("Das Factory now available.");
-    }
+//    @Reference(target = "(&(component.name=DasDataProviderFactory))")
+//    public void trackDasDataProviderFactory(DataProviderFactory quickloadFactory) {
+//        logger.debug("Das Factory now available.");
+//    }
 
     @Reference(target = "(&(component.name=Das2DataProviderFactory))")
     public void trackDas2DataProviderFactory(DataProviderFactory quickloadFactory) {

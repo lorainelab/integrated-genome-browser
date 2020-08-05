@@ -151,7 +151,7 @@ public final class BookmarkUnibrowControlServlet {
                     //    Can be any URL, not just a file
                     boolean has_properties = (parameters.get(SYM.FEATURE_URL + "0") != null);
                     boolean loaddata = true;
-                    boolean loaddas2data = true;
+                    //boolean loaddas2data = true;
                     int start = 0;
                     int end = 0;
 

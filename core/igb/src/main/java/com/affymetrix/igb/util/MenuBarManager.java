@@ -421,9 +421,8 @@ public class MenuBarManager {
     private void initializeParentMenuEntries() {
         parentMenuEntries.put(0, fileMenu);
         parentMenuEntries.put(1, editMenu);
-        parentMenuEntries.put(5, viewMenu);
-        parentMenuEntries.put(10, toolsMenu);
+        parentMenuEntries.put(5, toolsMenu);
+        parentMenuEntries.put(20, viewMenu);
         parentMenuEntries.put(100, helpMenu);
     }
-
 }

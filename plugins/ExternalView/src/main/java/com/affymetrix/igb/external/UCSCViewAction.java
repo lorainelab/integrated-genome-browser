@@ -46,7 +46,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
 
     private static final Logger LOG = LoggerFactory.getLogger(UCSCViewAction.class);
     public static final String COMPONENT_NAME = "UCSCViewAction";
-    private static final int MENU_WEIGHT = 65;
+    private static final int MENU_WEIGHT = 75;
     private static final long serialVersionUID = 1L;
     private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/";
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";

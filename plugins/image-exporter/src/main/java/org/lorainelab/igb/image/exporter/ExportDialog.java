@@ -119,8 +119,12 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     }
 
     private void setDefaultComponent() {
-        //IGBF-2315 change the default option to "Main View with Labels" on every platform.
-        exportComponent = components.get("Main View (with Labels)").get();
+        for (String key : components.keySet()) {
+            if (components.get(key).isPresent()) {
+               exportComponent = components.get(key).get();
+               break;
+            }
+        }
     }
 
     /**

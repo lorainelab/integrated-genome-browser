@@ -43,7 +43,6 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BAM_EXT;
@@ -100,8 +99,7 @@ public final class GeneralLoadUtils {
     private static final int MAX_INTERNAL_THREAD = Runtime.getRuntime().availableProcessors() + 1;
     private static final Pattern tab_regex = Pattern.compile("\t");
     /**
-     * using negative start coord for virtual genome chrom because (at least for human genome) whole genome
-     * start/end/length can't be represented with positive 4-byte ints (limit is +/- 2.1 billion)
+     * using negative start coord for virtual genome chrom because (at least for human genome) whole genome start/end/length can't be represented with positive 4-byte ints (limit is +/- 2.1 billion)
      */
 //    final double default_genome_min = -2100200300;
     private static final double default_genome_min = -2100200300;
@@ -110,8 +108,7 @@ public final class GeneralLoadUtils {
     public static final String SERVER_MAPPING = "/serverMapping.txt";
     private static final String LOADING_FEATURE_MESSAGE = IGBConstants.BUNDLE.getString("loadFeature");
     /**
-     * Location of synonym file for correlating versions to species. The file lookup is done using
-     * {@link Class#getResourceAsStream(String)}. The default file is {@value}.
+     * Location of synonym file for correlating versions to species. The file lookup is done using {@link Class#getResourceAsStream(String)}. The default file is {@value}.
      */
 
     private static final double MAGIC_SPACER_NUMBER = 10.0;	// spacer factor used to keep genome spacing reasonable
@@ -134,6 +131,7 @@ public final class GeneralLoadUtils {
     public static Map<String, String> getVersionName2Species() {
         return versionName2species;
     }
+
     public static Map<String, Integer> getAssemblyInfo() {
         return assemblyInfo;
     }
@@ -196,8 +194,7 @@ public final class GeneralLoadUtils {
     }
 
     /**
-     * Returns the list of features for the genome with the given version name. The list may (rarely) be empty, but
-     * never null.
+     * Returns the list of features for the genome with the given version name. The list may (rarely) be empty, but never null.
      */
     public static List<DataSet> getDataSets(GenomeVersion genomeVersion) {
         // There may be more than one server with the same versionName.  Merge all the version names.
@@ -206,7 +203,7 @@ public final class GeneralLoadUtils {
             Optional.ofNullable(genomeVersion.getDataContainers()).ifPresent(versions -> {
                 versions.stream()
                         .flatMap(version -> version.getDataSets()
-                                .stream()).forEach(featureList::add);
+                        .stream()).forEach(featureList::add);
             });
         }
         return featureList;
@@ -1003,7 +1000,7 @@ public final class GeneralLoadUtils {
             @Override
             protected Boolean runInBackground() {
                 String message = "IGB is unable to load the data in your file.<br>Error message: ";
-                String helpMessage ="<br>More information about what went wrong may be available in the Console. <br>To get help, visit the ";
+                String helpMessage = "<br>More information about what went wrong may be available in the Console. <br>To get help, visit the ";
                 String linkName = "IGB Help Page";
                 String link = "https://bioviz.org/help.html";
                 try {
@@ -1012,15 +1009,15 @@ public final class GeneralLoadUtils {
                     }
                     return true;
                 } catch (NumberFormatException nfe) {
-                    ((QuickLoadSymLoader) dataSet.getSymL()).logException(nfe); 
-                   
-                    featureRemoved = removeFeatureAndRefresh(dataSet, message + "The input string "+nfe.getMessage().split(":")[1]+" should be numeric." +helpMessage, linkName, link);
+                    ((QuickLoadSymLoader) dataSet.getSymL()).logException(nfe);
+
+                    featureRemoved = removeFeatureAndRefresh(dataSet, message + "The input string " + nfe.getMessage().split(":")[1] + " should be numeric." + helpMessage, linkName, link);
                     return featureRemoved;
-                    
-                }catch (Exception ex) {
+
+                } catch (Exception ex) {
                     ((QuickLoadSymLoader) dataSet.getSymL()).logException(ex);
-                    
-                    featureRemoved = removeFeatureAndRefresh(dataSet, message+ex.getMessage()+helpMessage, linkName, link);
+
+                    featureRemoved = removeFeatureAndRefresh(dataSet, message + ex.getMessage() + helpMessage, linkName, link);
                     return featureRemoved;
                 }
 
@@ -1077,9 +1074,9 @@ public final class GeneralLoadUtils {
         };
         CThreadHolder.getInstance().execute(dataSet, worker);
     }
-    
+
     private static boolean removeFeatureAndRefresh(DataSet gFeature, String msg, String linkName, String link) {
-        if (ModalUtils.confirmPanel(msg,linkName,link)) {
+        if (ModalUtils.confirmPanel(msg, linkName, link)) {
             GeneralLoadView.getLoadView().removeDataSet(gFeature, true);
             return true;
         }
@@ -1131,14 +1128,9 @@ public final class GeneralLoadUtils {
                 featureProps.put("collapsed", "true");
                 featureProps.put("show2tracks", "false");
             }
-            String friendlyName = QuickLoadSymLoader.detemineFriendlyName(uri);
-            QuickLoadSymLoader quickLoad
-                    = SymLoader.getExtension(uri).endsWith("chp")
-                    ? new QuickLoadSymLoaderChp(uri, indexUri, friendlyName, dataContainer.getGenomeVersion())
-                    : new QuickLoadSymLoader(uri, indexUri, friendlyName, dataContainer.getGenomeVersion(), !isReferenceSequence);
 
-            DataSet dataSet = new DataSet(uri, fileName, featureProps, dataContainer, quickLoad, autoload, isReferenceSequence);
-
+            // Updated dataSet initialization
+            DataSet dataSet = new DataSet(uri, featureProps, dataContainer);    
             dataContainer.addDataSet(dataSet);
 
             dataSet.setVisible(); // this should be automatically checked in the feature tree

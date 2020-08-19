@@ -90,16 +90,16 @@
             <artifactId>quickload</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>das</artifactId>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
+        </dependency>-->
+<!--        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>das2</artifactId>
             <scope>runtime</scope>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>frameManager</artifactId>

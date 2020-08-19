@@ -13,7 +13,6 @@
     <packaging>bundle</packaging>
 
     <name>Core - Genometry (Data Models)</name>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.felix</groupId>
@@ -48,11 +47,6 @@
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>fusion</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -152,8 +146,6 @@
                             com.affymetrix.genometry,
                             com.affymetrix.genometry.color,
                             com.affymetrix.genometry.comparator,
-                            com.affymetrix.genometry.das,
-                            com.affymetrix.genometry.das2,
                             com.affymetrix.genometry.event,
                             com.affymetrix.genometry.filter,
                             com.affymetrix.genometry.general,
@@ -161,7 +153,6 @@
                             com.affymetrix.genometry.operator.comparator,
                             com.affymetrix.genometry.operator.service,
                             com.affymetrix.genometry.parsers,
-                            com.affymetrix.genometry.parsers.das,
                             com.affymetrix.genometry.parsers.gchp,
                             com.affymetrix.genometry.parsers.graph,
                             com.affymetrix.genometry.parsers.useq,

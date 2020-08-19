@@ -33,41 +33,25 @@
                 "defaultDataProviderId": "IgbDefaultDataProviderId:4"
             },
             {
-                "factoryName": "das",
-                "name": "UCSC",
-                "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
-                "loadPriority": "5",
-                "status": "disabled",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:5"
-            },
-            {
-                "factoryName": "das2",
-                "name": "UofUtahBioinfoCore",
-                "url": "http://bioserver.hci.utah.edu:8080/DAS2DB",
-                "loadPriority": "6",
-                "status": "disabled",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:6"
-            },
-            {
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
                 "url": "http://lorainelab-quickload.scidas.org/bar",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
             {
                 "factoryName": "quickload",
                 "name": "DNA-Seq",
                 "url": "http://lorainelab-quickload.scidas.org/dnaseq/",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:8"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:6"
             },
             {
                 "factoryName": "quickload",
                 "name": "ChIP-Seq",
                 "url": "http://lorainelab-quickload.scidas.org/chipseq/",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:9"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
             }
             
         ],

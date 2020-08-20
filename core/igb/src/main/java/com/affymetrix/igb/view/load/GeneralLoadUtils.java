@@ -1128,9 +1128,9 @@ public final class GeneralLoadUtils {
                 featureProps.put("collapsed", "true");
                 featureProps.put("show2tracks", "false");
             }
-
+            
             // Updated dataSet initialization
-            DataSet dataSet = new DataSet(uri, featureProps, dataContainer);    
+            DataSet dataSet = new DataSet(uri, fileName, featureProps, dataContainer, autoload, isReferenceSequence);
             dataContainer.addDataSet(dataSet);
 
             dataSet.setVisible(); // this should be automatically checked in the feature tree

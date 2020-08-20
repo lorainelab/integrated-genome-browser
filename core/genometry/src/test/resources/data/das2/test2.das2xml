@@ -2,7 +2,7 @@
 <FEATURES 
     xmlns="http://biodas.org/documents/das2"
     xmlns:xlink="http://www.w3.org/1999/xlink" 
-    xml:base="http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/" >
+    xml:base="https://www.bioviz.org/das2/genome/A_thaliana_TAIR8/" >
     <FEATURE uri="gb%7CES212034" title="gb|ES212034" type="EST+%28spliced%2C+single+map%29" >
         <LOC segment="gb%7CES212034" range="0:102:1" />
         <LOC segment="chr1" range="1359864:1360290:-1" />

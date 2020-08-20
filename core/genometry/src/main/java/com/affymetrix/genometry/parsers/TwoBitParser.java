@@ -296,7 +296,7 @@ public final class TwoBitParser implements Parser {
             int start = 11;
             int end = residues.length() + 4;
             outStream = new ByteArrayOutputStream();
-            URI uri = URI.create("http://test.bioviz.org/testdata/nblocks.2bit");
+            URI uri = URI.create("https://test.bioviz.org/testdata/nblocks.2bit");
             TwoBitParser.parse(uri, start, end, outStream);
             //BioSeq seq = TwoBitParser.parse(f);
 

@@ -353,8 +353,8 @@ public final class BookmarkManagerView {
         }
         
         FileChooser.ExtensionFilter htmlExtFilter = 
-                new FileChooser.ExtensionFilter("HTML File(html, htm, xhtml)","html", "htm", "xhtml");
-                FileChooser.ExtensionFilter textExtFilter = new FileChooser.ExtensionFilter("Text File(txt)","txt");
+                new FileChooser.ExtensionFilter("HTML File(html, htm, xhtml)","*.html", "*.htm", "*.xhtml");
+                FileChooser.ExtensionFilter textExtFilter = new FileChooser.ExtensionFilter("Text File(txt)","*.txt");
                 ArrayList<FileChooser.ExtensionFilter> extList = Lists.newArrayList(htmlExtFilter);
                 extList.add(textExtFilter);
      

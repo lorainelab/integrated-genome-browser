@@ -526,6 +526,20 @@ public final class SeqSymSummarizer {
         return psym;
     }
 
+    public static GraphSym getSymmetrySoftclipSummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id) {
+        int symcount = syms.size();
+        List<SeqSpan> leaf_spans = new ArrayList<>(symcount);
+        for (SeqSymmetry sym : syms) {
+            // TODO: Implement collectSoftclipSpans. More notes within method skeleton
+            SeqUtils.collectSoftclipSpans(sym, seq, leaf_spans);
+        }
+        if (leaf_spans.isEmpty()) {
+            return null;
+        } else {
+            return getSpanSummary(leaf_spans, binary_depth, id);
+        }
+    }
+
     public static GraphSym getSymmetryStartSummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id) {
         int symcount = syms.size();
         List<SeqSpan> leaf_spans = new ArrayList<>(symcount);

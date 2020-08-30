@@ -188,6 +188,18 @@ public class SeqUtils {
             collectStartSpans(sym.getChild(counter), seq, leafs);
         }  
     }
+
+    /**
+     * Traverse sym, populate passed list with soft-clip regions of reads.
+     * @param sym
+     * @param seq
+     * @param leafs
+     */
+    public static void collectSoftclipSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs) {
+        // TODO: look at collectStartSpans and collectLeafSpans methods for ideas/understanding of the data structures
+        //  and methods that can be used. Make this method populate the leafs collection with only soft-clip portions
+        //  of aligned reads.
+    }
         
     /**
      * Get symmetries that are leaves of the given symmetry.

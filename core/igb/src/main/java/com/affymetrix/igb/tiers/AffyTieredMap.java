@@ -462,10 +462,7 @@ public class AffyTieredMap extends NeoMap {
     public void repackTheTiers(boolean full_repack, boolean stretch_vertically, boolean tierChanged) {
         packTiers(full_repack, true, false);
         stretchToFit(false, stretch_vertically, false);
-        // apply a hack to make sure strechToFit worked
-        if ((getZoom(Y) < getMinZoom(Y)) || (getZoom(Y) > getMaxZoom(Y))) {
-            stretchToFit(false, true, false);
-        }
+
         updateWidget();
 
         // pack them again!  This clears-up problems with the packing of the axis

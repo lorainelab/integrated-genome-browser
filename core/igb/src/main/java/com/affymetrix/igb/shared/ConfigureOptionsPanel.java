@@ -341,7 +341,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     && !(cp instanceof ColorProviderI)) { 
                 cp = returnValue;
             } else {
-                cp = (T) cp.newInstance();
+                cp = (cp == null) ? cp : (T) cp.newInstance();
             }
             setSelected(cp);
             if (tChangeListeners != null && !tChangeListeners.isEmpty() && cp != returnValue) {

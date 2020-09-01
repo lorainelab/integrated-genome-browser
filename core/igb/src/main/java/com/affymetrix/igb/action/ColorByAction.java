@@ -70,7 +70,7 @@ public class ColorByAction extends SeqMapViewActionA {
 
         //set color provider to all selected tiers only if it is changed..
         //We do not know if user pressed cancel or okay on selection dialog. Hence need to see if CP changed or not.
-        if (!newCp.equals(cp)) {
+        if (newCp == null || !newCp.equals(cp)) {
             getTierManager().getSelectedTiers().forEach(tm -> tm.getAnnotStyle().setColorProvider(newCp));
         }
 //        style.setColorProvider(cp);

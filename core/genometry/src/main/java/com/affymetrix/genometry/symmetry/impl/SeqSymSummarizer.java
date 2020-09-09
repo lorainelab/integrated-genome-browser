@@ -288,7 +288,6 @@ public final class SeqSymSummarizer {
             widths[i] = x_positions[i + 1] - x_positions[i];
         }
         widths[widths.length - 1] = 1;
-
         // Originally, this returned a GraphSym with just x and y, but now has widths.
         // Since the x and y values are not changed, all old code that relies on them
         // does not need to change.
@@ -530,7 +529,6 @@ public final class SeqSymSummarizer {
         int symcount = syms.size();
         List<SeqSpan> leaf_spans = new ArrayList<>(symcount);
         for (SeqSymmetry sym : syms) {
-            // TODO: Implement collectSoftclipSpans. More notes within method skeleton
             SeqUtils.collectSoftclipSpans(sym, seq, leaf_spans);
         }
         if (leaf_spans.isEmpty()) {

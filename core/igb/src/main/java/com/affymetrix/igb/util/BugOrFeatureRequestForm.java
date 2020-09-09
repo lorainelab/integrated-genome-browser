@@ -13,7 +13,7 @@ import java.util.Map;
 public class BugOrFeatureRequestForm extends javax.swing.JFrame {
 
     private static final long serialVersionUID = 1L;
-    private static String URL = "http://bioviz.org/bugreporter/report";
+    private static String URL = "https://bioviz.org/bugreporter/report";
 
     /**
      * Creates new form BugOrRequestFeatureForm1

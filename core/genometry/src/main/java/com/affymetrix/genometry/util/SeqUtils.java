@@ -195,6 +195,11 @@ public class SeqUtils {
      * @param seq
      * @param leafs
      */
+    /**
+      * This method populate the leafs collection with only soft-clip portions of aligned reads.
+      * Please go through Jira ticket IGBF-1443 for complete sequence of added methods 
+      *  for implementing Depth Graph(Soft-clip) feature.
+    */
     public static void collectSoftclipSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs) {
   
         int childCount = sym.getChildCount();
@@ -206,12 +211,13 @@ public class SeqUtils {
         } 
         else {
             for (int i = 0; i < childCount; i++) {
+                //Checking if SeqSymmetry is of type BamSym(BamSym only have soft clips)
                 if (isBamSym(sym)){
+                    //Typecasting SeqSymmetry to BAMSym
                     BAMSym bamSym = (BAMSym)sym;
                     for(int ii = 0; ii < bamSym.getSoftChildCount(); ii++){
                         collectSoftclipSpans(bamSym.getSoftChild(ii), seq, leafs);
                     }
-  
                 }
                 else{
                     collectSoftclipSpans(sym.getChild(i), seq, leafs);

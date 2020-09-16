@@ -9,7 +9,7 @@ import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.operator.service.OperatorServiceRegistry;
 import com.affymetrix.genometry.style.HeatMap;
 import com.affymetrix.genometry.style.HeatMapExtended;
-import com.affymetrix.genometry.util.ErrorHandler;
+import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.google.gson.Gson;
@@ -22,14 +22,15 @@ import cytoscape.visual.ui.editors.continuous.GradientEditorPanel;
 import java.awt.Color;
 import java.awt.Component;
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.DefaultListCellRenderer;
@@ -65,6 +66,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     // This is used to keep track of preferences update once result is accepted bu user,
     // ie. getReturnValue called with parameter true.
     private Runnable commitPreferences = null;
+    public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
 
     /**
      * Creates the reusable dialog.
@@ -406,7 +408,12 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             if (returnValue instanceof IParameters) {
                 boolean value = ((IParameters) returnValue).setParametersValue(paramMap);
                 if (!value && paramMap.size() >= 1) {
-                    ErrorHandler.errorPanel("Invalid Value", paramMap.get(returnValue.getName()).toString() + " is invalid. Kindly enter the valid number for the " + selectedValue.getDisplay().toLowerCase() + " track operation.", Level.SEVERE);
+                    String[] options = new String[] {"Ok", "Copy Error Message"};
+                    String message = MessageFormat.format(BUNDLE.getString("trackOperationError"), paramMap.get(returnValue.getName()).toString());
+                    int response = JOptionPane.showOptionDialog(this, message, "Invalid Value", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+                    if (response == 1) {
+                        GeneralUtils.copyToClipboard(message);
+                    }
                     returnValue = null;
                 }
             }

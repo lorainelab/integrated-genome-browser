@@ -9,6 +9,7 @@ import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.operator.service.OperatorServiceRegistry;
 import com.affymetrix.genometry.style.HeatMap;
 import com.affymetrix.genometry.style.HeatMapExtended;
+import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.google.gson.Gson;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.DefaultListCellRenderer;
@@ -402,7 +404,11 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         if (applyChanges) {
             returnValue = selectedValue;
             if (returnValue instanceof IParameters) {
-                ((IParameters) returnValue).setParametersValue(paramMap);
+                boolean value = ((IParameters) returnValue).setParametersValue(paramMap);
+                if (!value && paramMap.size() >= 1) {
+                    ErrorHandler.errorPanel("Invalid Value", paramMap.get(returnValue.getName()).toString() + " is invalid. Kindly enter the valid number for the " + selectedValue.getDisplay().toLowerCase() + " track operation.", Level.SEVERE);
+                    returnValue = null;
+                }
             }
             if (commitPreferences != null) {
                 commitPreferences.run();

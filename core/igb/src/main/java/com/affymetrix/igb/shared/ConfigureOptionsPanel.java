@@ -409,7 +409,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                 boolean value = ((IParameters) returnValue).setParametersValue(paramMap);
                 if (!value && paramMap.size() >= 1) {
                     String[] options = new String[] {"Ok", "Copy Error Message"};
-                    String message = MessageFormat.format(BUNDLE.getString("trackOperationError"), paramMap.get(returnValue.getName()).toString());
+                    String message = MessageFormat.format(BUNDLE.getString("trackOperationError"), paramMap.get(paramMap.keySet().toArray()[0].toString()));
                     int response = JOptionPane.showOptionDialog(this, message, "Invalid Value", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     if (response == 1) {
                         GeneralUtils.copyToClipboard(message);

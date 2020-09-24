@@ -27,13 +27,9 @@ C_elegans_Jan_2007	C_Elegans_January_2007	ceJan2007	ce4	ce:Jan_2007	Ce:Jan_2007	
 C_elegans_Feb_2009	ce7	Caenorhabditis_elegans.WS200.reference
 C_elegans_Jun_2009	ce8	Caenorhabditis_elegans.WS204.reference
 C_elegans_Mar_2004	C_Elegans_March_2004	ceMar2004	ce2	ce:Mar_2004	Ce:Mar_2004	WS120
-C_elegans_Mar_2004	http://www.wormbase.org/genome/C_elegans/WS120	http://www.wormbase.org/genome/C_elegans/WS120/
-C_elegans_Mar_2005	ce3	http://www.wormbase.org/genome/C_elegans/WS140	http://www.wormbase.org/genome/C_elegans/WS140/
+C_elegans_Mar_2005	ce3
 C_elegans_May_2003	C_Elegans_May_2003	ceMay2003	ce1	ce:May_2003	Ce:May_2003
-C_elegans_May_2003	http://www.wormbase.org/genome/C_elegans/WS100	http://www.wormbase.org/genome/C_elegans/WS100/
 C_elegans_May_2008	C_Elegans_May_2008	ceMay2008	ce6	ce:May_2008	Ce:May_2008	WS190
-C_elegans_Nov_2005	http://www.wormbase.org/genome/C_elegans/WS150	http://www.wormbase.org/genome/C_elegans/WS150/
-C_elegans_Oct_2003	http://www.wormbase.org/genome/C_elegans/WS110	http://www.wormbase.org/genome/C_elegans/WS110/
 C_elegans_Oct_2010	ce10	WS220
 C_familiaris_Jul_2003	canFam1
 C_familiaris_May_2005	canFam2	Dog_May_2005	Canis_familiaris.BROADD2.reference
@@ -59,6 +55,8 @@ D_ananassae_Aug_2005	droAna2
 D_ananassae_Jul_2004	droAna1
 D_erecta_Aug_2005	droEre1
 D_grimshawi_Aug_2005	droGri1
+D_magna_Apr_2010	Daphnia magna Xinb3 v2.4
+D_magna_Jan_2019	Daphnia magna SK v1.0
 D_melanogaster_Apr_2004	Drosophila_Apr_2004	BDGP Release 4	dm2	dm:Apr_2004	Dm:Apr_2004	Dm:R4	Dm:BDGPv4	Dm;BDGPv4	Dm:BDGPv4h	Dm;BDGPv4h
 D_melanogaster_Apr_2006	Drosophila_Apr_2006	BDGP Release 5	dm3	dm:Apr_2006	Dm:Apr_2006	Dm:R5	Dm:BDGPv5	Dm;BDGPv5	Dm:BDGPv5h	Dm;BDGPv5h
 D_melanogaster_Jan_2003	Drosophila_Jan_2003	Drosophila jan2003	dm1		dm:Jan_2003	Dm:Jan_2003	Dm:R3	Dm:BDGPv3	Dm;BDGPv3
@@ -70,6 +68,8 @@ D_ordii_Jul_2008	dipOrd1	Dipodomys_ordii.dipOrd1.reference
 D_persimilis_Oct_2005	droPer1
 D_pseudoobscura_Nov_2004	dp3
 D_pseudoobscura_Aug_2003	dp2
+D_pulex_Feb_2011	Daphnia pulex TCO v1.0
+D_pulex_Sep_2016	Daphnia pulex PA42 v3.0
 D_rerio_Jul_2010	danRer7
 D_rerio_Dec_2008	danRer6	Zv8	Zebrafish_Dec_2008	Danio_rerio.Zv8.reference
 D_rerio_Jul_2007	danRer5	Zv7	Zebrafish_Jul_2007
@@ -102,7 +102,6 @@ G_morhua_May_2010	gadMor1
 H_glaber_Jul_2011	hetGla1	BGI HetGla_1.0
 H_sapiens_Apr_2001	Human_Apr_2001	Human 1apr2002	Human_1apr2001	Chr_21_22 ABC Human	hg7	hs:Apr_2001	Hs:Apr_2001
 H_sapiens_Apr_2003	H_sapiens_Apr_2003_Encode	Human_Apr_2003	Human 10apr2003	Human_10apr2003	hs.NCBIv33	hg15	human_ncbi33	ncbi.v33	Human_Apr_2003_Encode	hs:Apr_2003	Hs:Apr_2003	hs:NCBIv33	Hs:NCBIv33	Hs;NCBIv33	Hs:NCBI33
-H_sapiens_Apr_2003	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B33	http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B33/
 H_sapiens_Dec_2001	Human_Dec_2001	Human 22dec2001	Human_22dec2001	hs.NCBIv28	hg10	human_ncbi28	ncbi.v28	hs:Dec_2001	Hs:Dec_2001	hs:NCBIv28	Hs:NCBIv28	Hs;NCBIv28	Hs:NCBI28
 H_sapiens_Feb_2009	Human_Feb_2009	hs.NCBIv37	hg19	human_ncbi37	ncbi.v37	hs:Feb_2009	Hs:Feb_2009	hs:NCBIv37	Hs:NCBIv37	chado/chado-Hsa-19	human/19	Hs;NCBIv37	Hs:NCBI37	GRCh37	Hs:GRCh37	Homo_sapiens.GRCh37.reference
 H_sapiens_Dec_2013	Human_Dec_2013	hs.NCBIv38	hg38	human_ncbi38	ncbi.v38	hs:Dec_2013	Hs:Dec_2013	hs:NCBIv38	Hs:NCBIv38	chado/chado-Hsa-38	human/38	Hs;NCBIv38	Hs:NCBI38	GRCh38	Hs:GRCh38	Homo_sapiens.GRCh38.reference
@@ -126,7 +125,6 @@ L_africana_May_2005	loxAfr1
 L_chalumnae_Aug_2011	latCha1
 L_passim_Apr_2014	C_mellificae_Apr_2014	Crithidia_mellificae	C_mellificae
 M_acuminata_DH_Pahang_Jan_2016	M_acuminata_DH_Pahang
-M_domestica_Borkh_Jun_2017	M_domestica_Borkh
 M_eugenii_Sep_2009	macEug2
 M_gallopavo_Dec_2009	melGal1
 M_murinus_Jun_2003	micMur1	Microcebus_murinus.micMur1.reference
@@ -143,7 +141,6 @@ M_musculus_Feb_2003	Mouse_Feb_2003	Mouse feb2003	mm3	mm:Feb_2003	Mm:Feb_2003	Mm:
 M_musculus_Jul_2007	Mouse_Jul_2007	M_musculus_Aug_2007	Mouse_Aug_2007	mm9	Mm:NCBIv37	Mm:NCBI37	Mus_musculus.NCBIM37.reference
 M_musculus_Mar_2005	http://www.ncbi.nlm.nih.gov/genome/M_musculus/34.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/34.1/
 M_musculus_Mar_2005	Mouse_Mar_2005	mm6	Mm:NCBIv34	Mm:NCBI34
-M_musculus_May_2004	http://www.ncbi.nlm.nih.gov/genome/M_musculus/33.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/33.1/
 M_musculus_May_2004	Mouse_May_2004	Mouse may2004	mm5	mm:May_2004	Mm:May_2004	Mm:NCBIv33	Mm:NCBI33
 M_musculus_Oct_2003	http://www.ncbi.nlm.nih.gov/genome/M_musculus/32.1	http://www.ncbi.nlm.nih.gov/genome/M_musculus/32.1/
 M_musculus_Oct_2003	Mouse_Oct_2003	Mouse oct2003	mm4	mm:Oct_2003	Mm:Oct_2003	Mm:NCBIv32	Mm:NCBI32
@@ -216,7 +213,6 @@ T_syrichta_Aug_2008	tarSyr1	Tarsius_syrichta.tarSyr1.reference
 V_pacos_Jul_2008	vicPac1	Vicugna_pacos.vicPac1.reference
 X_tropicalis_Nov_2009	xenTro3
 X_tropicalis_Aug_2005	xenTro2	Xenopus_tropicalis.JGI4.1.reference
-Z_mays_B73_Mar_2010	Z_mays_B73
 X_tropicalis_Oct_2004	xenTro1	Xenopus_tropicalis.JGI3.0.reference
 Y_lipolytica_CLIB122_Jul_2004	Yarrowia_lipolytica_CLIB122	Y_lipolytica_CLIB122 
 Y_lipolytica_PO1f_May_2014	Yarrowia_lipolytica_PO1f	Y_lipolytica_PO1f 

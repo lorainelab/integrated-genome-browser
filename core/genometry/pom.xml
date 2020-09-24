@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -12,8 +12,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>genometry</name>
-
+    <name>Core - Genometry (Data Models)</name>
     <dependencies>
         <dependency>
             <groupId>org.apache.felix</groupId>
@@ -48,11 +47,6 @@
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>fusion</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -152,8 +146,6 @@
                             com.affymetrix.genometry,
                             com.affymetrix.genometry.color,
                             com.affymetrix.genometry.comparator,
-                            com.affymetrix.genometry.das,
-                            com.affymetrix.genometry.das2,
                             com.affymetrix.genometry.event,
                             com.affymetrix.genometry.filter,
                             com.affymetrix.genometry.general,
@@ -161,7 +153,6 @@
                             com.affymetrix.genometry.operator.comparator,
                             com.affymetrix.genometry.operator.service,
                             com.affymetrix.genometry.parsers,
-                            com.affymetrix.genometry.parsers.das,
                             com.affymetrix.genometry.parsers.gchp,
                             com.affymetrix.genometry.parsers.graph,
                             com.affymetrix.genometry.parsers.useq,
@@ -178,9 +169,7 @@
                             com.affymetrix.genometry.tooltip,
                             com.affymetrix.genometry.search,
                             com.affymetrix.genometry.data,
-                            com.affymetrix.genometry.data.*,
-                            htsjdk,
-                            htsjdk.*
+                            com.affymetrix.genometry.data.*
                         </Export-Package>
                         <Import-Package>com.apple.laf,*;resolution:=optional</Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

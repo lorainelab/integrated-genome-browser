@@ -4,13 +4,13 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     
     <artifactId>affymetrix-common</artifactId>
     
-    <name>Affymetrix Common</name>
+    <name>Core - Affymetrix Common</name>
 
     <packaging>bundle</packaging>
     <dependencies>

@@ -4,19 +4,27 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+    <!-- 
+
+    This module has two jobs:
+    
+    1) Build a big bundle containing all non-OSGi bundle 
+       dependency jar files and export their packages so
+       the other bundles can use them.
+    2) When running in "development mode," copy all the bundles
+       to the "bundles" directory in the project root directory.
+
+    -->
+    <name>Core - Bundle wrapper, deployer</name>
     <artifactId>shared-lib-wrapper</artifactId>
     
     <packaging>bundle</packaging>
     
     <!--    Dependencies which need to be "wrapped" into OSGI bundles-->
     <dependencies>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>fusion</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
@@ -80,7 +88,6 @@
                                 <include>${project.build.finalName}.jar</include>
                                 <include>guava*.jar</include>
                                 <include>commons-lang3*.jar</include>
-                                <include>log4j*.jar</include>
                                 <include>commons-*.jar</include>
                                 <include>genoviz*.jar</include>
                                 <include>felix.jar</include>
@@ -116,11 +123,6 @@
                                     <groupId>org.apache.commons</groupId>
                                     <artifactId>commons-lang3</artifactId>
                                     <version>${commonsLangVersion}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.logging.log4j</groupId>
-                                    <artifactId>log4j-api</artifactId>
-                                    <version>${log4jVersion}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.commons</groupId>
@@ -184,6 +186,16 @@
                                     <version>${commonsPoolVersion}</version>
                                 </artifactItem>
                                 <artifactItem>
+                                    <groupId>commons-logging</groupId>
+                                    <artifactId>commons-logging</artifactId>
+                                    <version>${commonsLoggingVersion}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.commons</groupId>
+                                    <artifactId>commons-jexl</artifactId>
+                                    <version>${commonsJexl}</version>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>com.jidesoft</groupId>
                                     <artifactId>jide-ultimate</artifactId>
                                     <version>${jide.version}</version>
@@ -196,17 +208,17 @@
                                 <artifactItem>
                                     <groupId>org.slf4j</groupId>
                                     <artifactId>slf4j-api</artifactId>
-                                    <version>1.7.7</version>
+                                    <version>${slf4j-api.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>ch.qos.logback</groupId>
                                     <artifactId>logback-core</artifactId>
-                                    <version>1.1.2</version>
+                                    <version>${logback-core.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>ch.qos.logback</groupId>
                                     <artifactId>logback-classic</artifactId>
-                                    <version>1.1.2</version>
+                                    <version>${logback-classic.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>htsjdk-igb</groupId>
@@ -232,7 +244,7 @@
                                 <artifactItem>
                                     <groupId>com.github.kevinsawicki</groupId>
                                     <artifactId>http-request</artifactId>
-                                    <version>6.0</version>
+                                    <version>${gitKevinsawickiHttpReq}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.lorainelab.igb</groupId>
@@ -312,19 +324,36 @@
                                 <artifactItem>
                                     <groupId>com.fasterxml.jackson.core</groupId>
                                     <artifactId>jackson-core</artifactId>
-                                    <version>2.3.5</version>
+                                    <version>${jacksonCoreVersion}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>com.fasterxml.jackson.core</groupId>
                                     <artifactId>jackson-annotations</artifactId>
-                                    <version>2.3.5</version>
+                                    <version>${jacksonAnnotationVersion}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>com.fasterxml.jackson.core</groupId>
                                     <artifactId>jackson-databind</artifactId>
                                     <version>${jacksonDatabindVersion}</version>
                                 </artifactItem>
-                                <!-- End of development only bundles -->                                                                      
+                                <!-- End of development only bundles -->
+                                <!-- Start of Apache Felix Web Console bundles-->
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.webconsole</artifactId>
+                                    <version>${felix-webconsole-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>commons-fileupload</groupId>
+                                    <artifactId>commons-fileupload</artifactId>
+                                    <version>${commonsFileUpload}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.eventadmin</artifactId>
+                                    <version>${felix-eventadmin-version}</version>
+                                </artifactItem>
+                                <!-- End of Apache Felix Web Console bundles -->
                             </artifactItems>
                             <outputDirectory>${project.parent.basedir}/bundles</outputDirectory>
                             <overWriteReleases>true</overWriteReleases>

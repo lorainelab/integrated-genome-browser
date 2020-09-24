@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     
@@ -12,7 +12,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>IGB Services</name>
+    <name>Core - IGB Services API</name>
 
     <dependencies>
         <dependency>

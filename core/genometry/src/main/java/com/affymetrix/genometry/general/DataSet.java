@@ -107,6 +107,20 @@ public final class DataSet {
         this.supportsAvailabilityCheck = false;
         //methods.add(name);
     }
+    
+    
+    // Constructor without SymLoader parameter
+    public DataSet(URI uri,
+            String name, Map<String, String> props, DataContainer dataContainer, boolean autoload, boolean isReferenceSequence) {
+        this.uri = uri;
+        this.name = name;
+        this.properties = props;
+        this.dataContainer = dataContainer;
+        this.setAutoload(autoload);
+        this.lastRefresh = RefreshStatus.NOT_REFRESHED;
+        this.isReferenceSequence = isReferenceSequence;
+        this.supportsAvailabilityCheck = false;
+    }
 
     public static String detemineFriendlyName(URI uri) {
         String uriString = uri.toASCIIString().toLowerCase();

@@ -5,16 +5,14 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>external-sort</artifactId>
     <packaging>bundle</packaging>
-
-    <name>external-sort</name>
-
+    <name>Plugin - Sorting API and Impl</name>
     <dependencies>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -59,7 +57,6 @@
         <dependency>
             <groupId>htsjdk-igb</groupId>
             <artifactId>htsjdk-igb</artifactId>
-            <version>2.16.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

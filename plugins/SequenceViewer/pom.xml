@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -12,7 +12,7 @@
     <artifactId>sequenceViewer</artifactId>
     <packaging>bundle</packaging>
 
-    <name>sequenceViewer</name>
+    <name>Plugin - Sequence Viewer GUI</name>
     
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

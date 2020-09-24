@@ -4,15 +4,13 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>bookmark</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Bookmark</name>
-
+    <name>Plugin - Bookmarks and REST API</name>
     <dependencies>
         <dependency>
             <groupId>fi.iki.elonen</groupId>
@@ -100,6 +98,11 @@
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-javafx-util</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

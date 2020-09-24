@@ -4,15 +4,13 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>image-exporter</artifactId>
     <packaging>bundle</packaging>
-
-    <name>image-exporter</name>
-
+    <name>Plugin - Save Image GUI</name>
     <dependencies>
         <dependency>
             <groupId>com.affymetrix</groupId>
@@ -79,7 +77,6 @@
         <dependency>
             <groupId>org.swinglabs</groupId>
             <artifactId>swing-layout</artifactId>
-            <version>1.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>

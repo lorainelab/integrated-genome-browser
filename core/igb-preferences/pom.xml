@@ -4,15 +4,13 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>igb-preferences</artifactId>
     <packaging>bundle</packaging>
-
-    <name>IGB Preferences</name>
-
+    <name>Core - Preferences</name>
     <dependencies>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>

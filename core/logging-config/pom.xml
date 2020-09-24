@@ -4,14 +4,14 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>logging-config</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Logging Config</name>
+    <name>Core - Logging Config</name>
 
     <dependencies>
     </dependencies>

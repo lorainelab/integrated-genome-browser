@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -13,7 +13,7 @@
     <artifactId>bam</artifactId>
     <packaging>bundle</packaging>
 
-    <name>bam</name>
+    <name>Plugin - BAM data format handler</name>
 
     <dependencies>
         <dependency>

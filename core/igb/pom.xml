@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     
@@ -12,7 +12,7 @@
     
     <packaging>bundle</packaging>
 
-    <name>igb</name>
+    <name>Core - IGB</name>
 
     <dependencies>
         <dependency>
@@ -78,11 +78,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>fusion</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -181,8 +176,28 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.1.4</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <verbose>false</verbose>
+                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+                    <dateFormat>MM-dd-yyyy HH:mm:ss</dateFormat>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <generateGitPropertiesFilename>src/main/resources/git.properties</generateGitPropertiesFilename>
+                    <failOnNoGitDirectory>true</failOnNoGitDirectory>
+                </configuration>
             </plugin>
+			<plugin>
+			        <artifactId>maven-clean-plugin</artifactId>
+			</plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
             </plugin>  
@@ -205,7 +220,10 @@
                         </Import-Package>
                         <Bundle-Activator>com.affymetrix.igb.Activator</Bundle-Activator>
                         <Export-Package>
-                            com.affymetrix.igb.shared
+                            com.affymetrix.igb.shared,
+                            com.affymetrix.igb.view.load,
+                            com.affymetrix.igb.view.factories,
+                            com.affymetrix.igb.glyph
                         </Export-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.view.load.GeneralLoadViewGUI,com.affymetrix.igb.view.SeqGroupViewGUI,com.affymetrix.igb.view.AltSpliceView</Bundle-Category>

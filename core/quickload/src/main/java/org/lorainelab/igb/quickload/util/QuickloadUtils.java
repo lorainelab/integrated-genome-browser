@@ -5,6 +5,8 @@ import static com.affymetrix.genometry.util.UriUtils.getInputStream;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import java.io.File;
+import java.io.FileNotFoundException;
 import org.lorainelab.igb.quickload.QuickloadConstants;
 import static org.lorainelab.igb.quickload.QuickloadConstants.ANNOTS_XML;
 import org.lorainelab.igb.quickload.model.annots.QuickloadFile;
@@ -27,7 +29,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
+import java.net.URL;
+import java.net.MalformedURLException;
 /**
  *
  * @author dcnorris
@@ -116,6 +121,32 @@ public class QuickloadUtils {
             });
         }
     }
+    
+    private static boolean isValidRepositoryUrl(String strAnnotsURL){
+        try {
+            URL AnnotsURL = new URL(strAnnotsURL);
+            if(AnnotsURL.toString().contains("https"))
+            {
+                if(((HttpsURLConnection) AnnotsURL.openConnection()).getResponseCode() != HttpsURLConnection.HTTP_OK)
+                    throw new MalformedURLException("Invalid URL or annots.xml not found");
+            } else if(strAnnotsURL.contains("http")){
+                if(((HttpURLConnection) AnnotsURL.openConnection()).getResponseCode() != HttpURLConnection.HTTP_OK)
+                    throw new MalformedURLException("Invalid URL or annots.xml not found");
+            } else if(strAnnotsURL.contains("file")){
+                if(!(new File(strAnnotsURL.replace("file:",""))).exists()){
+                    throw new FileNotFoundException("Invalid file path or annots.xml not found.");
+                }
+            }
+           
+        } catch (MalformedURLException | FileNotFoundException ex) {
+            logger.warn(ex.getMessage());
+            return false;
+        } catch (IOException ex) { 
+            logger.warn(ex.getMessage());
+            return false;
+        }
+        return true;
+    }
 
     public static Optional<Set<QuickloadFile>> getGenomeVersionData(String quickloadUrl, String genomeVersionName, Map<String, Optional<String>> supportedGenomeVersionInfo, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         genomeVersionName = getContextRootKey(genomeVersionName, supportedGenomeVersionInfo.keySet(), genomeVersionSynonymLookup).orElse(genomeVersionName);
@@ -123,20 +154,21 @@ public class QuickloadUtils {
         String annotsXmlUrl = genomeVersionBaseUrl + QuickloadConstants.ANNOTS_XML;
         try {
             URI uri = new URI(annotsXmlUrl);
-
-            try (InputStream inputStream = getInputStream(uri)) {
+            if(isValidRepositoryUrl(annotsXmlUrl)){
+              try (InputStream inputStream = getInputStream(uri)) {
                 List<QuickloadFile> annotsFiles = ANNOTS_PARSER.getQuickloadFileList(inputStream);
                 if (!annotsFiles.isEmpty()) {
                     return Optional.of(Sets.newLinkedHashSet(annotsFiles));
                 } else {
-                    ModalUtils.errorPanel("Could not read annots.xml or this file was empty. Skipping this genome version for quickload site (" + genomeVersionBaseUrl + ")");
-                    logger.error("Could not read annots.xml or this file was empty. Skipping this genome version for quickload site {}", genomeVersionBaseUrl);
+                    logger.warn("Could not read annots.xml or this file was empty. Skipping this genome version for quickload site {}", genomeVersionBaseUrl);
                     supportedGenomeVersionInfo.remove(genomeVersionName);
                 }
+                }  
             }
+            
         } catch (URISyntaxException | IOException ex) {
-            ModalUtils.errorPanel("Could not read annots.xml or this file was empty. Skipping this genome version for quickload site (" + genomeVersionBaseUrl + ")");
-            logger.error("Missing required {} file for genome version {}, skipping this genome version for quickload site {}", ANNOTS_XML, genomeVersionName, genomeVersionBaseUrl, ex);
+            logger.warn("Missing required {} file for genome version {}, skipping this genome version for quickload site {}", ANNOTS_XML, genomeVersionName, genomeVersionBaseUrl, ex);
+            return Optional.empty();
         }
         return Optional.empty();
     }

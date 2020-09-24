@@ -4,16 +4,13 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>bigWigHandler</artifactId>
     <packaging>bundle</packaging>
-
-
-    <name>BigWigHandler</name>
-
+    <name>Plugin - Bigwig data format handler</name>
     <dependencies>
         <dependency>
             <groupId>org.broad.igv</groupId>

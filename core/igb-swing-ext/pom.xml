@@ -4,14 +4,14 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>igbSwingExt</artifactId>
 	
     <packaging>bundle</packaging>
 
-    <name>igbSwingExt</name>
+    <name>Core - IGB Swing Extensions</name>
 
     <dependencies>
         <dependency>

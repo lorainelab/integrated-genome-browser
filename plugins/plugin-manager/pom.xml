@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -12,7 +12,7 @@
     <artifactId>plugins-manager</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Plugin Manager</name>
+    <name>Plugin - App Manager GUI</name>
     
     <dependencies> 
         <dependency>

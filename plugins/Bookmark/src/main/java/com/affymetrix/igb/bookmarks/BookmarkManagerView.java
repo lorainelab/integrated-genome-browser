@@ -333,6 +333,11 @@ public final class BookmarkManagerView {
 
     public void exportBookmarks() {
         BookmarkList main_bookmark_list;
+        int extensionIndex;
+        String filePath;
+        File fil;
+        boolean extSet = false;
+        String file_ext;
         /* //Uncomment if its desired to export the bookmark selected
          TreePath path = tree.getSelectionPath();
          try {
@@ -348,8 +353,8 @@ public final class BookmarkManagerView {
         }
         
         FileChooser.ExtensionFilter htmlExtFilter = 
-                new FileChooser.ExtensionFilter("HTML File(html, htm, xhtml)","html", "htm", "xhtml");
-                FileChooser.ExtensionFilter textExtFilter = new FileChooser.ExtensionFilter("Text File(txt)","txt");
+                new FileChooser.ExtensionFilter("HTML File(html, htm, xhtml)","*.html", "*.htm", "*.xhtml");
+                FileChooser.ExtensionFilter textExtFilter = new FileChooser.ExtensionFilter("Text File(txt)","*.txt");
                 ArrayList<FileChooser.ExtensionFilter> extList = Lists.newArrayList(htmlExtFilter);
                 extList.add(textExtFilter);
      
@@ -360,23 +365,28 @@ public final class BookmarkManagerView {
                 .saveFilesFromFxChooser();
         
         ExtensionFilter ext = fileChooser.getSelectedFileExtension();
-        System.out.println("Extnsions are: "+ext.getExtensions());
         if (selectedFile.isPresent() && selectedFile.get()!= null) {
             setLoadDirectory(selectedFile.get().getParentFile());
             try {
-                File fil = selectedFile.get();
-                boolean extSet = false;
-                String filePath = fil.getCanonicalPath();
-                System.out.println("File path: "+filePath);
-                for (String extension : ext.getExtensions()) {
-                    if (filePath.endsWith("." + extension)) {
-                        extSet = true;
-                        break;
+                fil = selectedFile.get();
+                filePath = fil.getAbsolutePath().replace("*.", "");
+
+                file_ext = filePath.substring(filePath.lastIndexOf(".") + 1);
+                extensionIndex = filePath.indexOf(file_ext);
+
+                if (extensionIndex <= 0) {
+                    for (String extension : ext.getExtensions()) {
+                       if (filePath.endsWith(extension.replace("*", ""))) {
+                           extSet = true;
+                           break;
+                       }
                     }
-                }
-                
-                if (!extSet) {
-                    fil = new File(filePath + "." + ext.getExtensions().get(0));
+                    if (!extSet) {
+                       filePath = filePath.concat(ext.getExtensions().get(0).replace("*", ""));
+                    }
+                   fil = new File(filePath);
+                } else {
+                   fil = new File(filePath.substring(0, extensionIndex + file_ext.length()));
                 }
                 
                 if(ext.equals(htmlExtFilter))

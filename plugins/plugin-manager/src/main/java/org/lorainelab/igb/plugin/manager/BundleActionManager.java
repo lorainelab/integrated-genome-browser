@@ -97,12 +97,24 @@ public class BundleActionManager {
     }
     /*~Kiran:IGBF-1108:Added this method as we cannot believe in InetAddress.isReachable method.*/
     private static boolean isInternetReachable(URL url)
-    {
+    {   
         try {
             //Do this test only if it is http or https url skip for local url's
             if(url.toString().toLowerCase().startsWith("http")){
                 //open a connection to that source
-                HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
+                /*
+                Author : Sameer Shanbhag
+                IGBF-2164
+                URL Input to this function might have the link to jar which will 
+                increase download count for that app (Refer to Issue for more 
+                information)
+                */
+                // Get the Domain Name from the URL
+                String urlHost = url.getAuthority();
+                String urlProtocol = url.getProtocol();
+                // Build URL to check the connection
+                URL connectURL = new URL(urlProtocol + "://" + urlHost);
+                HttpURLConnection urlConnect = (HttpURLConnection)connectURL.openConnection();
                 //try connecting to the source, If there is no connection, this line will fail and throw exception
                 Object objData = urlConnect.getContent();
             }

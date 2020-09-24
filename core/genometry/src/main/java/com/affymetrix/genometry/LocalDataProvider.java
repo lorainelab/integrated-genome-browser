@@ -103,6 +103,16 @@ public class LocalDataProvider implements DataProvider {
     public void setPassword(String password) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    @Override
+    public Optional<String> getId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setId(String id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     public boolean isContainsReferenceSequenceData() {
         return containsReferenceSequenceData;

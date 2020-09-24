@@ -4,15 +4,13 @@
     <parent>
         <groupId>org.lorainelab.igb</groupId>
         <artifactId>igb-project</artifactId>
-        <version>9.1.0</version>
+        <version>9.1.6</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.lorainelab.igb</groupId>
     <artifactId>org.lorainelab.igb.menu.api</artifactId>
     <packaging>bundle</packaging>
-
-    <name>Menu API</name>
-    
+    <name>Core - Menu API</name>
     <dependencies>
         <dependency>
             <groupId>biz.aQute.bnd</groupId>

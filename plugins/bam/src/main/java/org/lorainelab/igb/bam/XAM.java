@@ -274,7 +274,7 @@ public abstract class XAM extends SymLoader {
                     } else {
                         insertChilds.add(new SimpleSeqSpan(currentChildEnd + celLength, currentChildEnd, seq));
                     }
-                } else if (cel.getOperator() == CigarOperator.M) {
+                } else if (cel.getOperator() == CigarOperator.M || cel.getOperator() == CigarOperator.X || cel.getOperator() == CigarOperator.EQ) {
                     // print matches
                     if (!isNegative) {
                         if (previousSpan != null && previousSpan.getStart() == currentChildEnd) {
@@ -365,7 +365,7 @@ public abstract class XAM extends SymLoader {
                     insResidues.append(residues.substring(currentPos, currentPos + celLength));
                     currentPos += celLength;	// print insertion
                     continue;
-                } else if (cel.getOperator() == CigarOperator.M) {
+                } else if (cel.getOperator() == CigarOperator.M || cel.getOperator() == CigarOperator.X || cel.getOperator() == CigarOperator.EQ) {
                     char[] tempArr = residues.substring(currentPos, currentPos + celLength).toCharArray();
                     System.arraycopy(tempArr, 0, sb, currentEnd, tempArr.length);
                     currentPos += celLength;	// print matches
@@ -414,7 +414,7 @@ public abstract class XAM extends SymLoader {
             final CigarOperator op = cig.getOperator();
             if (op == CigarOperator.SOFT_CLIP) {
                 unSoftClippedStart -= cig.getLength();
-            } else if(op == CigarOperator.MATCH_OR_MISMATCH){
+            } else if(op == CigarOperator.MATCH_OR_MISMATCH || op == CigarOperator.X || op == CigarOperator.EQ){
                 break;
             }
         }
@@ -440,7 +440,7 @@ public abstract class XAM extends SymLoader {
 
             if (op == CigarOperator.SOFT_CLIP) {
                 unSoftClippedEnd += cig.getLength();
-            } else if(op == CigarOperator.MATCH_OR_MISMATCH){
+            } else if(op == CigarOperator.MATCH_OR_MISMATCH || op == CigarOperator.X || op == CigarOperator.EQ){
                 break;
             }
         }

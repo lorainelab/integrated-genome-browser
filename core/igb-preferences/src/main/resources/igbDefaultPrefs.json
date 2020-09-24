@@ -11,25 +11,25 @@
             {
                 "factoryName": "quickload",
                 "name": "IGB Quickload",
-                "url": "http://igbquickload.org/quickload",
+                "url": "http://lorainelab-quickload.scidas.org/quickload",
                 "loadPriority": "2",
-                "mirror": "http://lorainelab-quickload.scidas.org/quickload",
+                "mirror": "http://quickload.bioviz.org/quickload",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:1"
             },
             {
                 "factoryName": "quickload",
                 "name": "Blueberry",
-                "url": "http://igbquickload.org/blueberry",
+                "url": "http://lorainelab-quickload.scidas.org/blueberry",
                 "loadPriority": "3",
-                "mirror": "http://lorainelab-quickload.scidas.org/blueberry",
+                "mirror": "http://quickload.bioviz.org/blueberry",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:3"
             },
             {
                 "factoryName": "quickload",
                 "name": "SoySeq",
-                "url": "http://igbquickload.org/soyseq",
+                "url": "http://lorainelab-quickload.scidas.org/soyseq",
                 "loadPriority": "4",
-                "mirror": "http://lorainelab-quickload.scidas.org/soyseq",
+                "mirror": "http://igbquickload.org/soyseq",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:4"
             },
             {

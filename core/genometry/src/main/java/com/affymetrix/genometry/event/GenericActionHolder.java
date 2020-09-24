@@ -44,7 +44,12 @@ public class GenericActionHolder {
             listener.onCreateGenericAction(genericAction);
         }
     }
-
+    
+    public void addActionToMap(GenericAction genericAction){
+        synchronized (genericActions) {
+            genericActions.put(genericAction.getId(), genericAction);
+        }
+    }
     /**
      * Add one to the collection and keep it a secret.
      * Don't tell the listeners.

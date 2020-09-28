@@ -9,6 +9,8 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.common.CommonUtils;
+import static com.affymetrix.common.CommonUtils.IGB_NAME;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.FAVICON_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.GALAXY_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME;
@@ -159,7 +161,7 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
     }
 
     private String getIgbJs() {
-        return "var igbIsRunning = true";
+        return ("var igbVersion="+CommonUtils.getInstance().getIgbVersion());
     }
 
     private String getWelcomeMessage() {

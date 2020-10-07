@@ -35,6 +35,7 @@ public class QuickloadFile {
     protected String serverURL;
     protected String collapsed;
     protected String index;
+    protected String reference;
 
     private final Map<String, String> props = new HashMap<>();
 
@@ -278,6 +279,18 @@ public class QuickloadFile {
         this.collapsed = value;
         if (!Strings.isNullOrEmpty(value)) {
             props.put("collapsed", value);
+        }
+    }
+    
+    public String getReference() {
+        return reference;
+    }
+    
+    @XmlAttribute(name = "reference")
+    public void setReference(String value) {
+        this.reference = value;
+        if (!Strings.isNullOrEmpty(value)) {
+            props.put("reference", value);
         }
     }
 

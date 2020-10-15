@@ -240,7 +240,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     public Optional<URI> getSequenceFileUri(GenomeVersion genomeVersion) {
         final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet(), getDefaultSynonymLookup()).orElse(genomeVersion.getName());
         String sequenceFileLocation = getGenomeVersionBaseUrl(getUrl(), genomeVersionName) + genomeVersionName + ".2bit";
-        if (twoBitFilePath != null) {
+        if (!Strings.isNullOrEmpty(twoBitFilePath)) {
             if (twoBitFilePath.startsWith("http") || twoBitFilePath.startsWith("https")) {
                 sequenceFileLocation = twoBitFilePath;
             } else {

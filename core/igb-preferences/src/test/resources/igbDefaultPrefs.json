@@ -43,7 +43,7 @@
         "repository": [
             {
                 "name": "BioViz",
-                "url": "http://bioviz.org/igbserver",
+                "url": "https://bioviz.org/igbserver",
                 "enabled": "true",
                 "default": "true"
             },

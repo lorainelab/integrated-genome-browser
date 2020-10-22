@@ -58,6 +58,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     private final Map<String, Optional<String>> supportedGenomeVersionInfo;
     private final Map<String, Optional<Multimap<String, String>>> chromosomeSynonymReference;
     private static GenomeVersionSynonymLookup genomeVersionSynonymLookup;
+    private String twoBitFilePath = "";
     public QuickloadDataProvider(String url, String name, int loadPriority) {
         super(toExternalForm(url), name, loadPriority);
         supportedGenomeVersionInfo = Maps.newConcurrentMap();
@@ -202,6 +203,10 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
                     } else {
                         uri = new URI(file.getName());
                     }
+                    if (!Strings.isNullOrEmpty(file.getReference()) && file.getReference().equals("true")) {
+                        twoBitFilePath = file.getName();
+                        return;
+                    }
                     DataSet dataSet = new DataSet(uri, file.getProps(), dataContainer);
                     dataSet.setSupportsAvailabilityCheck(true);
                     dataSets.add(dataSet);
@@ -234,7 +239,14 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
     @Override
     public Optional<URI> getSequenceFileUri(GenomeVersion genomeVersion) {
         final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet(), getDefaultSynonymLookup()).orElse(genomeVersion.getName());
-        final String sequenceFileLocation = getGenomeVersionBaseUrl(getUrl(), genomeVersionName) + genomeVersionName + ".2bit";
+        String sequenceFileLocation = getGenomeVersionBaseUrl(getUrl(), genomeVersionName) + genomeVersionName + ".2bit";
+        if (!Strings.isNullOrEmpty(twoBitFilePath)) {
+            if (twoBitFilePath.startsWith("http") || twoBitFilePath.startsWith("https")) {
+                sequenceFileLocation = twoBitFilePath;
+            } else {
+                sequenceFileLocation = getGenomeVersionBaseUrl(getUrl(), genomeVersionName) + twoBitFilePath;
+            }
+        }
         URI uri = null;
         try {
             uri = new URI(sequenceFileLocation);

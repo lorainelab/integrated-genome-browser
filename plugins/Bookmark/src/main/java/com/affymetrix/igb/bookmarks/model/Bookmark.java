@@ -49,8 +49,8 @@ public final class Bookmark implements Serializable {
     public static final String LOADRESIDUES = "loadresidues";
     public static final String COMMENT = "comment";
     public static final String DATA_URL = "data_url";
-    public static final String DAS2_QUERY_URL = "das2_query";
-    public static final String DAS2_SERVER_URL = "das2_server";
+//    public static final String DAS2_QUERY_URL = "das2_query";
+//    public static final String DAS2_SERVER_URL = "das2_server";
     public static final String QUERY_URL = "query_url";
     public static final String SERVER_URL = "server_url";
     public static final String CYVERSE_DATA = "cyverse_data";

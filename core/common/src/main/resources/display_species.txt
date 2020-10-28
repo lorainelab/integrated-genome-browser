@@ -1,3 +1,4 @@
+S_bicolor.png
 V_carteri.png
 A_melanoleuca.png
 A_mellifera.png
@@ -21,6 +22,7 @@ D_melanogaster.png
 M_musculus.png
 H_sapiens.png
 A_thaliana.png
+T_aestivum.png
 O_sativa_japonica.png
 S_tuberosum_DM.png
 S_lycopersicum.png
@@ -40,4 +42,3 @@ C_reinhardtii.png
 D_discoideum_Ax4.png
 P_persica.png
 R_communis.png
-S_bicolor.png

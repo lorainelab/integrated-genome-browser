@@ -11,63 +11,47 @@
             {
                 "factoryName": "quickload",
                 "name": "IGB Quickload",
-                "url": "http://igbquickload.org/quickload",
+                "url": "http://lorainelab-quickload.scidas.org/quickload",
                 "loadPriority": "2",
-                "mirror": "http://lorainelab-quickload.scidas.org/quickload",
+                "mirror": "http://quickload.bioviz.org/quickload",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:1"
             },
             {
                 "factoryName": "quickload",
                 "name": "Blueberry",
-                "url": "http://igbquickload.org/blueberry",
+                "url": "http://lorainelab-quickload.scidas.org/blueberry",
                 "loadPriority": "3",
-                "mirror": "http://lorainelab-quickload.scidas.org/blueberry",
+                "mirror": "http://quickload.bioviz.org/blueberry",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:3"
             },
             {
                 "factoryName": "quickload",
                 "name": "SoySeq",
-                "url": "http://igbquickload.org/soyseq",
+                "url": "http://lorainelab-quickload.scidas.org/soyseq",
                 "loadPriority": "4",
-                "mirror": "http://lorainelab-quickload.scidas.org/soyseq",
+                "mirror": "http://igbquickload.org/soyseq",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:4"
-            },
-            {
-                "factoryName": "das",
-                "name": "UCSC",
-                "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
-                "loadPriority": "5",
-                "status": "disabled",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:5"
-            },
-            {
-                "factoryName": "das2",
-                "name": "UofUtahBioinfoCore",
-                "url": "http://bioserver.hci.utah.edu:8080/DAS2DB",
-                "loadPriority": "6",
-                "status": "disabled",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:6"
             },
             {
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
                 "url": "http://lorainelab-quickload.scidas.org/bar",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
             {
                 "factoryName": "quickload",
                 "name": "DNA-Seq",
                 "url": "http://lorainelab-quickload.scidas.org/dnaseq/",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:8"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:6"
             },
             {
                 "factoryName": "quickload",
                 "name": "ChIP-Seq",
                 "url": "http://lorainelab-quickload.scidas.org/chipseq/",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:9"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
             }
             
         ],

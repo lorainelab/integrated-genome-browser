@@ -43,7 +43,6 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.ServerUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
-//import com.affymetrix.igb.parsers.QuickLoadSymLoaderChp;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BAM_EXT;
@@ -1129,16 +1128,9 @@ public final class GeneralLoadUtils {
                 featureProps.put("collapsed", "true");
                 featureProps.put("show2tracks", "false");
             }
-//            String friendlyName = QuickLoadSymLoader.detemineFriendlyName(uri);
-//            QuickLoadSymLoader quickLoad
-//                    = SymLoader.getExtension(uri).endsWith("chp")
-//                    ? new QuickLoadSymLoaderChp(uri, indexUri, friendlyName, dataContainer.getGenomeVersion())
-//                    : new QuickLoadSymLoader(uri, indexUri, friendlyName, dataContainer.getGenomeVersion(), !isReferenceSequence);
-
-//            DataSet dataSet = new DataSet(uri, fileName, featureProps, dataContainer, quickLoad, autoload, isReferenceSequence);
-           
+            
             // Updated dataSet initialization
-            DataSet dataSet = new DataSet(uri, featureProps, dataContainer);    
+            DataSet dataSet = new DataSet(uri, fileName, featureProps, dataContainer, autoload, isReferenceSequence);
             dataContainer.addDataSet(dataSet);
 
             dataSet.setVisible(); // this should be automatically checked in the feature tree

@@ -68,8 +68,7 @@ public final class PowerTransformer extends AbstractFloatTransformer implements 
     @Override
     public boolean setParametersValue(Map<String, Object> parms) {
         if (getParamPrompt() != null && parms.size() == 1 && parms.get(getParamPrompt()) instanceof String) {
-            setParameterValue(getParamPrompt(), parms.get(getParamPrompt()));
-            return true;
+            return setParameterValue(getParamPrompt(), parms.get(getParamPrompt()));
         }
         return false;
     }

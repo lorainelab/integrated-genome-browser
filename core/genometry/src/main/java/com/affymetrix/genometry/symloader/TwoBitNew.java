@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import htsjdk.samtools.seekablestream.SeekableFileStream;
+import java.net.HttpURLConnection;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -53,6 +54,7 @@ public class TwoBitNew extends SymLoader {
     private long buffer_pos;
     private long start_file_pos;
     private long file_pos;
+    private double thresholdFileSize = 0.8;
     //
     private static final char[] bit_chars = {
         'T', 'C', 'A', 'G'
@@ -91,7 +93,15 @@ public class TwoBitNew extends SymLoader {
                     if (totalLength < 1699207523) {
                         defaultIsYes = true;
                     }
-                    remoteFileCacheService.promptToCacheInBackground(fileUrl, defaultIsYes);
+                    long fileSizeInGB = 1024 * 1024 * 1024;
+                    HttpURLConnection conn = (HttpURLConnection) fileUrl.openConnection();
+                    conn.setRequestMethod("HEAD");
+                    conn.getInputStream();
+                    long size = conn.getContentLength();
+                    conn.getInputStream().close();
+                    if (size > -1 && size / fileSizeInGB <= thresholdFileSize) {
+                        remoteFileCacheService.promptToCacheInBackground(fileUrl, defaultIsYes);
+                    }
                 }
                 raf = new SeekableBufferedStream(LocalUrlCacher.getSeekableStream(uri));
             }

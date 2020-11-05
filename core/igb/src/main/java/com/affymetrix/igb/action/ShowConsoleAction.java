@@ -42,7 +42,7 @@ public class ShowConsoleAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        IgbTabPanel consoleTab = (IGB.getInstance()).getViewByDisplayName("Console");
+        IgbTabPanel consoleTab = (IGB.getInstance()).getViewByDisplayName("Log");
         (IGB.getInstance()).getWindowService().setTabStateAndMenu(consoleTab, IgbTabPanel.TabState.COMPONENT_STATE_WINDOW);
     }
 

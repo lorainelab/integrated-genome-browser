@@ -5,3 +5,5 @@ git.properties
 target
 *.jar
 bundles
+distribution/2020-03-25-developerID_application_igb.p12
+distribution/windows_keystore.pfx

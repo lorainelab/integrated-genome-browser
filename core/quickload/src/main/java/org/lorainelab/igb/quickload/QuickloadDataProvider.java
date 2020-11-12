@@ -198,10 +198,10 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
             versionFiles.stream().filter(file -> !Strings.isNullOrEmpty(file.getName())).forEach((file) -> {
                 try {
                     URI uri;
-                    if (!file.getName().startsWith("http")) {
-                        uri = new URI(getUrl() + genomeVersionName + "/" + file.getName());
-                    } else {
+                    if (file.getName().startsWith("http") || file.getName().startsWith("ftp")) {
                         uri = new URI(file.getName());
+                    } else {
+                        uri = new URI(getUrl() + genomeVersionName + "/" + file.getName());
                     }
                     if (!Strings.isNullOrEmpty(file.getReference()) && file.getReference().equals("true")) {
                         twoBitFilePath = file.getName();

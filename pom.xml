@@ -46,7 +46,10 @@
         <commonsPoolVersion>1.6</commonsPoolVersion>
         <htsjdk-igb-Version>2.16.3</htsjdk-igb-Version>
         <commonsVfsVersion>2.0</commonsVfsVersion>
-        <jide.version>3.5.15</jide.version>
+<!--        <jide.version>3.5.15</jide.version>-->
+        <jide-grids.version>3.5.15</jide-grids.version>
+        <jide-common.version>3.5.15</jide-common.version>
+        <jide-components.version>3.5.15</jide-components.version>
         <slf4j-api.version>1.7.7</slf4j-api.version>
         <logback-core.version>1.1.2</logback-core.version>
         <logback-classic.version>1.1.2</logback-classic.version>
@@ -106,6 +109,18 @@
         <repository>
             <id>repo3</id>
             <url>https://maven.bioviz.org/repo3</url>
+        </repository>
+        <repository>
+            <id>Geomajas</id>
+            <url>http://maven.geomajas.org/</url>
+        </repository>
+        <repository>
+            <id>Mulesoft</id>
+            <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>GridGain</id>
+            <url>https://www.gridgainsystems.com/nexus/content/repositories/external/</url>
         </repository>
         <repository>
             <id>maven-releases</id>
@@ -215,7 +230,7 @@
             </activation>
             <!-- passed to mvn using environment variables, e.g., mvn -D install4j.macKeystorePassword=${MACKPW} -->
             <properties>
-                <install4j.home>/opt/install4j7/</install4j.home> <!-- exists in Docker image --> 
+                <install4j.home>/opt/install4j8/</install4j.home> <!-- exists in Docker image --> 
                 <install4j.licenseKey>${INSTALL4J_LICENSE}</install4j.licenseKey>
                 <install4j.winKeystorePassword>${WIN_KEYSTORE_PASSWORD}</install4j.winKeystorePassword>
                 <install4j.macKeystorePassword>${MAC_KEYSTORE_PASSWORD}</install4j.macKeystorePassword>
@@ -906,8 +921,23 @@
             </dependency>
             <dependency>
                 <groupId>com.jidesoft</groupId>
-                <artifactId>jide-ultimate</artifactId>
-                <version>${jide.version}</version>
+                <artifactId>jide-grids</artifactId>
+                <version>${jide-grids.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.jidesoft/jide-common -->
+            <dependency>
+                <groupId>com.jidesoft</groupId>
+                <artifactId>jide-common</artifactId>
+                <version>${jide-common.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.jidesoft/jide-components -->
+            <dependency>
+                <groupId>com.jidesoft</groupId>
+                <artifactId>jide-components</artifactId>
+                <version>${jide-components.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>fi.iki.elonen</groupId>

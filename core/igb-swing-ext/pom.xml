@@ -31,9 +31,14 @@
         </dependency>
         <dependency>
             <groupId>com.jidesoft</groupId>
-            <artifactId>jide-ultimate</artifactId>
+            <artifactId>jide-grids</artifactId>
             <scope>provided</scope>
         </dependency>
+<!--        <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-ultimate</artifactId>
+            <scope>provided</scope>
+        </dependency>-->
         <dependency>
             <groupId>biz.aQute.bnd</groupId>
             <artifactId>bndlib</artifactId>

@@ -20,7 +20,7 @@
         <dependency>
             <groupId>fi.iki.elonen</groupId>
             <artifactId>NanoHTTPD</artifactId>
-            <scope>provided</scope><!-- to-do: change to provided -->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>

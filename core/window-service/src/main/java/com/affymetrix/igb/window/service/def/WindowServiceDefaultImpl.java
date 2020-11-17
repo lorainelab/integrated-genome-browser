@@ -13,9 +13,14 @@ import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.affymetrix.igb.window.service.def.JTabbedTrayPane.TrayState;
 import com.google.common.collect.Sets;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -49,7 +54,7 @@ import org.slf4j.LoggerFactory;
 
 @Component(provide = {IWindowService.class})
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
-
+    
     private static final Logger logger = LoggerFactory.getLogger(WindowServiceDefaultImpl.class);
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private final Map<TabState, JRPMenuItem> move_tab_to_window_items;
@@ -96,11 +101,40 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
     @Reference(optional = true, dynamic = true, multiple = false, unbind = "unsetIgbService")
     public void setIgbService(IgbService igbService) {
         igbService.addParentMenuBarEntry(tabsMenu, 12);
+        
+        // set the text color of the label to black to match the others
+        tabsMenu.setForeground(Color.BLACK);
+        // change the font being used for the label to Segoe UI to match the others
+        tabsMenu.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        // trying to adjust color of when selected or deselected (see mouseAction)
+        tabsMenu.addMouseListener(mouseAction); 
     }
+    
+    // adjusting background color of the Tabs menu label (unfinished)
+    private MouseListener mouseAction = new MouseAdapter() {
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            if (e.getSource() == tabsMenu) {
+                tabsMenu.setSelected(true);
+              //  tabsMenu.setOpaque(true);
+              //  tabsMenu.setBackground(new Color(200, 250, 250));
+            }
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            if (e.getSource() == tabsMenu) {
+                tabsMenu.setSelected(false);
+                //   tabsMenu.setOpaque(true);
+                //   tabsMenu.setBackground(new Color(250, 250, 250));
+            }
+        }
+    };
 
     private void unsetIgbService(IgbService igbService) {
     }
-
+    
     @Override
     public void setMainPanel(JPanel mainPanel) {
         JTabbedTrayPane bottomPane = new JTabbedTrayBottomPane(frameManagerService, mainPanel);
@@ -335,7 +369,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         }
         PreferenceUtils.saveComponentState(panel.getName(), tabState.name());
     }
-
+    
     @Override
     public void setTabStateAndMenu(IgbTabPanel igbTabPanel, TabState tabState) {
         setTabState(igbTabPanel, tabState);

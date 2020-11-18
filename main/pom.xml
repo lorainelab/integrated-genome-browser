@@ -367,20 +367,10 @@
             <artifactId>appstore</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!--End of plugin module dependencies--> 
+        <!--End of plugin module dependencies-->
         <dependency>
             <groupId>com.jidesoft</groupId>
-            <artifactId>jide-grids</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jidesoft</groupId>
-            <artifactId>jide-common</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jidesoft</groupId>
-            <artifactId>jide-components</artifactId>
+            <artifactId>jide-ultimate</artifactId>
             <scope>runtime</scope>
         </dependency>
         <!--End of plugin module dependencies-->

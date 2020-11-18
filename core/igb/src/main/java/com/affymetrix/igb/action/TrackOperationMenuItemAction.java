@@ -61,11 +61,11 @@ public class TrackOperationMenuItemAction extends AbstractAction {
         configureOptionsDialog.setLocationRelativeTo(IGB.getInstance().getMapView());
         configureOptionsDialog.setInitialValue(matchingOperators.get(0));
         Operator showDialog = configureOptionsDialog.showDialog();
+        if (showDialog == null) {
+            return;
+        }
         Object value = configureOptionsDialog.getValue();
         if (value != null && value instanceof Integer &&(Integer) value == JOptionPane.OK_OPTION) {
-            if (showDialog == null) {
-                return;
-            }
             new TrackOperationAction(showDialog).actionPerformed(e);
         }
     }

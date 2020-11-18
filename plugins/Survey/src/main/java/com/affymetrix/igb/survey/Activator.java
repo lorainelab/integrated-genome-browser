@@ -54,7 +54,17 @@ public class Activator extends XServiceRegistrar<IgbService> implements BundleAc
         try {
 //            inputStream = Activator.class.getClassLoader().getResourceAsStream("surveys.xml");
             URL url = new URL(BUNDLE.getString("surveys"));
-            inputStream = new ByteArrayInputStream(Resources.toByteArray(url));
+            byte repsonseXMLBytes[] = Resources.toByteArray(url);
+            String repsonseXML = new String(repsonseXMLBytes, "UTF-8");
+            
+            if(repsonseXML.toLowerCase().contains("html")){
+                String newURL = repsonseXML.split("href=\"")[1].split("\"")[0];
+                inputStream = new ByteArrayInputStream(Resources.toByteArray(new URL(newURL)));
+            }
+            else {
+                inputStream = new ByteArrayInputStream(repsonseXMLBytes);
+            }
+            
             if (inputStream != null) {
                 List<Survey> surveys = SurveyParser.parse(inputStream);
                 GeneralUtils.safeClose(inputStream);

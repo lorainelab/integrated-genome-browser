@@ -63,8 +63,7 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
     @Override
     public boolean setParametersValue(Map<String, Object> parms) {
         if (paramPrompt != null && parms.size() == 1 && parms.get(paramPrompt) instanceof String) {
-            setParameterValue(paramPrompt, parms.get(paramPrompt));
-            return true;
+            return setParameterValue(paramPrompt, parms.get(paramPrompt));
         }
         return false;
     }
@@ -86,7 +85,7 @@ public abstract class AbstractMathTransform extends AbstractFloatTransformer imp
     public boolean setParameterValue(String key, Object value) {
         if (parameterized && value != null) {
             try {
-                base = NumberFormat.getNumberInstance().parse(value.toString()).doubleValue();
+                base = Double.valueOf(value.toString());
                 if (!allowNegative() && base < 0) {
                     return false;
                 }

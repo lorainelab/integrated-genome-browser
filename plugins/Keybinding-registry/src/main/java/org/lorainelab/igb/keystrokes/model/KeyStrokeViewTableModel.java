@@ -322,6 +322,10 @@ public class KeyStrokeViewTableModel extends AbstractTableModel implements Gener
         Object[][] rows = new Object[actionKeys.size()][5];
         int i = 0;
         for (GenericAction genericAction : actionKeys) {
+            GenericAction gA = GenericActionHolder.getInstance().getGenericAction(genericAction.getId());
+            if(gA == null){
+                GenericActionHolder.getInstance().addActionToMap(genericAction);
+            }
             rows[i][ActionColumn] = genericAction.getDisplay();
             if (genericAction.getKeyStroke() != null) {
                 rows[i][KeyStrokeColumn] = genericAction.getKeyStrokeBinding().toUpperCase();

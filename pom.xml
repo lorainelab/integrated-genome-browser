@@ -40,14 +40,16 @@
         <org.osgi.service.remoteserviceadmin-version>1.1.0</org.osgi.service.remoteserviceadmin-version>
         <bindlib-version>2.4.0</bindlib-version>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
-        <fusionVersion>1.0.1</fusionVersion>
         <bigWigVersion>2.0.0</bigWigVersion>
         <commonsCompressVersion>1.5</commonsCompressVersion>
         <commonsCodecVersion>1.6</commonsCodecVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
         <htsjdk-igb-Version>2.16.3</htsjdk-igb-Version>
         <commonsVfsVersion>2.0</commonsVfsVersion>
-        <jide.version>3.5.15</jide.version>
+<!--        <jide.version>3.5.15</jide.version>-->
+        <jide-grids.version>3.5.15</jide-grids.version>
+        <jide-common.version>3.5.15</jide-common.version>
+        <jide-components.version>3.5.15</jide-components.version>
         <slf4j-api.version>1.7.7</slf4j-api.version>
         <logback-core.version>1.1.2</logback-core.version>
         <logback-classic.version>1.1.2</logback-classic.version>
@@ -109,6 +111,18 @@
             <url>https://maven.bioviz.org/repo3</url>
         </repository>
         <repository>
+            <id>Geomajas</id>
+            <url>http://maven.geomajas.org/</url>
+        </repository>
+        <repository>
+            <id>Mulesoft</id>
+            <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>GridGain</id>
+            <url>https://www.gridgainsystems.com/nexus/content/repositories/external/</url>
+        </repository>
+        <repository>
             <id>maven-releases</id>
             <name>maven-releases</name>
             <url>https://nexus.bioviz.org/repository/maven-releases</url>
@@ -129,8 +143,8 @@
         <module>core/igb-preferences</module>
         <module>core/weblinks</module>
         <module>core/quickload</module>
-        <module>core/das</module>
-        <module>core/das2</module>
+        <!--<module>core/das</module>
+        <module>core/das2</module>-->
         <module>core/frameManager</module>
         <module>core/synonym-lookup</module>
         <module>core/igb-javafx-util</module>
@@ -216,7 +230,7 @@
             </activation>
             <!-- passed to mvn using environment variables, e.g., mvn -D install4j.macKeystorePassword=${MACKPW} -->
             <properties>
-                <install4j.home>/opt/install4j7/</install4j.home> <!-- exists in Docker image --> 
+                <install4j.home>/opt/install4j8/</install4j.home> <!-- exists in Docker image --> 
                 <install4j.licenseKey>${INSTALL4J_LICENSE}</install4j.licenseKey>
                 <install4j.winKeystorePassword>${WIN_KEYSTORE_PASSWORD}</install4j.winKeystorePassword>
                 <install4j.macKeystorePassword>${MAC_KEYSTORE_PASSWORD}</install4j.macKeystorePassword>
@@ -314,18 +328,18 @@
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
+<!--            <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>das</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
+            </dependency>-->
+<!--            <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>das2</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>frameManager</artifactId>
@@ -830,11 +844,6 @@
                 <version>${jdomVersion}</version>
             </dependency>
             <dependency>
-                <groupId>com.affymetrix</groupId>
-                <artifactId>fusion</artifactId>
-                <version>${fusionVersion}</version>
-            </dependency>
-            <dependency>
                 <groupId>net.sf</groupId>
                 <artifactId>image4j</artifactId>
                 <version>${image4jVersion}</version>
@@ -912,8 +921,23 @@
             </dependency>
             <dependency>
                 <groupId>com.jidesoft</groupId>
-                <artifactId>jide-ultimate</artifactId>
-                <version>${jide.version}</version>
+                <artifactId>jide-grids</artifactId>
+                <version>${jide-grids.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.jidesoft/jide-common -->
+            <dependency>
+                <groupId>com.jidesoft</groupId>
+                <artifactId>jide-common</artifactId>
+                <version>${jide-common.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.jidesoft/jide-components -->
+            <dependency>
+                <groupId>com.jidesoft</groupId>
+                <artifactId>jide-components</artifactId>
+                <version>${jide-components.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>fi.iki.elonen</groupId>

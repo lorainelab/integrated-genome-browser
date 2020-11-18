@@ -42,9 +42,24 @@
         </dependency>
         <dependency>
             <groupId>com.jidesoft</groupId>
+            <artifactId>jide-grids</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-components</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
+<!--        <dependency>
+            <groupId>com.jidesoft</groupId>
             <artifactId>jide-ultimate</artifactId>
             <scope>provided</scope>
-        </dependency>  
+        </dependency>  -->
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.main</artifactId>
@@ -78,11 +93,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>fusion</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

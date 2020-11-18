@@ -26,10 +26,6 @@
     <!--    Dependencies which need to be "wrapped" into OSGI bundles-->
     <dependencies>
         <dependency>
-            <groupId>com.affymetrix</groupId>
-            <artifactId>fusion</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
         </dependency>
@@ -70,6 +66,18 @@
             <artifactId>jgoogleanalytics</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-grids</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-components</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.github.kevinsawicki</groupId>
             <artifactId>http-request</artifactId>
         </dependency>
@@ -97,7 +105,7 @@
                                 <include>felix.jar</include>
                                 <include>org.apache.felix*.jar</include>
                                 <include>bigwig*.jar</include>
-                                <include>jide-ultimate*.jar</include>
+<!--                                <include>jide-ultimate*.jar</include>-->
                             </includes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
@@ -199,11 +207,11 @@
                                     <artifactId>commons-jexl</artifactId>
                                     <version>${commonsJexl}</version>
                                 </artifactItem>
-                                <artifactItem>
+<!--                                <artifactItem>
                                     <groupId>com.jidesoft</groupId>
                                     <artifactId>jide-ultimate</artifactId>
                                     <version>${jide.version}</version>
-                                </artifactItem>
+                                </artifactItem>-->
                                 <artifactItem>
                                     <groupId>com.google.code.gson</groupId>
                                     <artifactId>gson</artifactId>
@@ -396,6 +404,16 @@
                             org.jdesktop.*,
                             org.jdesktop.swingx,
                             org.jdesktop.swingx.*,
+                            com.jidesoft.*,
+                            org.apache.poi.hssf.usermodel,
+                            org.apache.poi.hssf.util,
+                            org.apache.poi.poifs.filesystem,
+                            org.apache.lucene.store,
+                            org.apache.lucene.search,
+                            org.apache.lucene.queryParser,
+                            org.apache.lucene.index,
+                            org.apache.lucene.document,
+                            org.apache.lucene.analysis.standard,
                             com.boxysystems.jgoogleanalytics,
                             com.boxysystems.jgoogleanalytics.*,
                             net.miginfocom.layout,

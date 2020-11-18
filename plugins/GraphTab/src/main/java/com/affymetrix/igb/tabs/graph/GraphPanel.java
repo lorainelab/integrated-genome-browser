@@ -147,28 +147,29 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         graphPanelLayout.setHorizontalGroup(
             graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jSeparator1)
-            .add(graphPanelLayout.createSequentialGroup()
-                .add(graphStyleHeatMapRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 0, 0)
-                .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(graphPanelLayout.createSequentialGroup()
-                .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(6, 6, 6)
-                .add(graphStyleDotRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-            .add(graphPanelLayout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, graphPanelLayout.createSequentialGroup()
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(labelCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 63, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(10, 10, 10)
                 .add(YAxisCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(10, 10, 10)
-                .add(floatCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(floatCheckBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(92, 92, 92))
             .add(graphPanelLayout.createSequentialGroup()
-                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(graphPanelLayout.createSequentialGroup()
+                        .add(graphStyleHeatMapRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 106, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(graphStyleLineRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(graphStyleStairStepRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(graphStyleLineRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(47, 47, 47)
+                    .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(14, 14, 14)
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(graphStyleFilledBarRadioButton)
-                    .add(graphStyleBarRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(graphStyleBarRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(graphStyleDotRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         graphPanelLayout.setVerticalGroup(
             graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -187,22 +188,24 @@ public abstract class GraphPanel extends javax.swing.JPanel {
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(graphStyleStairStepRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(graphStyleFilledBarRadioButton))
-                .add(2, 2, 2)
+                .add(4, 4, 4)
                 .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(graphStyleMinMaxAvgRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(graphStyleDotRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 18, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(2, 2, 2)
-                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(3, 3, 3)
+                .add(graphPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(graphStyleHeatMapRadioButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(graphStyleHeatMapComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(3, 3, 3))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(graphPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .add(graphPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 248, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -210,59 +213,11 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void graphStyleLineRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleLineRadioButtonActionPerformed
+    private void graphStyleFilledBarRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleFilledBarRadioButtonActionPerformed
         if (is_listening) {
             buttonGroup1ActionPerformedA(evt);
         }
-    }//GEN-LAST:event_graphStyleLineRadioButtonActionPerformed
-
-    private void graphStyleBarRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleBarRadioButtonActionPerformed
-        if (is_listening) {
-            buttonGroup1ActionPerformedA(evt);
-        }
-    }//GEN-LAST:event_graphStyleBarRadioButtonActionPerformed
-
-    private void graphStyleStairStepRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleStairStepRadioButtonActionPerformed
-        if (is_listening) {
-            buttonGroup1ActionPerformedA(evt);
-        }
-    }//GEN-LAST:event_graphStyleStairStepRadioButtonActionPerformed
-
-    private void floatCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_floatCheckBoxActionPerformed
-        if (is_listening) {
-            floatCheckBoxActionPerformedA(evt);
-        }
-    }//GEN-LAST:event_floatCheckBoxActionPerformed
-
-    private void YAxisCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_YAxisCheckBoxActionPerformed
-        if (is_listening) {
-            YAxisCheckBoxActionPerformedA(evt);
-        }
-    }//GEN-LAST:event_YAxisCheckBoxActionPerformed
-
-    private void graphStyleHeatMapRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleHeatMapRadioButtonActionPerformed
-        if (is_listening) {
-            buttonGroup1ActionPerformedA(evt);
-        }
-    }//GEN-LAST:event_graphStyleHeatMapRadioButtonActionPerformed
-
-    private void graphStyleDotRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleDotRadioButtonActionPerformed
-        if (is_listening) {
-            buttonGroup1ActionPerformedA(evt);
-        }
-    }//GEN-LAST:event_graphStyleDotRadioButtonActionPerformed
-
-    private void graphStyleMinMaxAvgRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleMinMaxAvgRadioButtonActionPerformed
-        if (is_listening) {
-            buttonGroup1ActionPerformedA(evt);
-        }
-    }//GEN-LAST:event_graphStyleMinMaxAvgRadioButtonActionPerformed
-
-    private void graphStyleHeatMapComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleHeatMapComboBoxActionPerformed
-        if (is_listening) {
-            graphStyleHeatMapComboBoxActionPerformedA(evt);
-        }
-    }//GEN-LAST:event_graphStyleHeatMapComboBoxActionPerformed
+    }//GEN-LAST:event_graphStyleFilledBarRadioButtonActionPerformed
 
     private void labelCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelCheckBoxActionPerformed
         if (is_listening) {
@@ -270,11 +225,59 @@ public abstract class GraphPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_labelCheckBoxActionPerformed
 
-    private void graphStyleFilledBarRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleFilledBarRadioButtonActionPerformed
+    private void graphStyleHeatMapComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleHeatMapComboBoxActionPerformed
+        if (is_listening) {
+            graphStyleHeatMapComboBoxActionPerformedA(evt);
+        }
+    }//GEN-LAST:event_graphStyleHeatMapComboBoxActionPerformed
+
+    private void graphStyleMinMaxAvgRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleMinMaxAvgRadioButtonActionPerformed
         if (is_listening) {
             buttonGroup1ActionPerformedA(evt);
         }
-    }//GEN-LAST:event_graphStyleFilledBarRadioButtonActionPerformed
+    }//GEN-LAST:event_graphStyleMinMaxAvgRadioButtonActionPerformed
+
+    private void graphStyleDotRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleDotRadioButtonActionPerformed
+        if (is_listening) {
+            buttonGroup1ActionPerformedA(evt);
+        }
+    }//GEN-LAST:event_graphStyleDotRadioButtonActionPerformed
+
+    private void graphStyleHeatMapRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleHeatMapRadioButtonActionPerformed
+        if (is_listening) {
+            buttonGroup1ActionPerformedA(evt);
+        }
+    }//GEN-LAST:event_graphStyleHeatMapRadioButtonActionPerformed
+
+    private void YAxisCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_YAxisCheckBoxActionPerformed
+        if (is_listening) {
+            YAxisCheckBoxActionPerformedA(evt);
+        }
+    }//GEN-LAST:event_YAxisCheckBoxActionPerformed
+
+    private void floatCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_floatCheckBoxActionPerformed
+        if (is_listening) {
+            floatCheckBoxActionPerformedA(evt);
+        }
+    }//GEN-LAST:event_floatCheckBoxActionPerformed
+
+    private void graphStyleStairStepRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleStairStepRadioButtonActionPerformed
+        if (is_listening) {
+            buttonGroup1ActionPerformedA(evt);
+        }
+    }//GEN-LAST:event_graphStyleStairStepRadioButtonActionPerformed
+
+    private void graphStyleBarRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleBarRadioButtonActionPerformed
+        if (is_listening) {
+            buttonGroup1ActionPerformedA(evt);
+        }
+    }//GEN-LAST:event_graphStyleBarRadioButtonActionPerformed
+
+    private void graphStyleLineRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphStyleLineRadioButtonActionPerformed
+        if (is_listening) {
+            buttonGroup1ActionPerformedA(evt);
+        }
+    }//GEN-LAST:event_graphStyleLineRadioButtonActionPerformed
 
     public javax.swing.JCheckBox getFloatCheckBox() {
         return floatCheckBox;

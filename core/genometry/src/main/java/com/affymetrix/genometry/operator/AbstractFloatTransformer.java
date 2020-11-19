@@ -27,9 +27,10 @@ public abstract class AbstractFloatTransformer implements Operator {
         float[] y = new float[sourceY.length];
         for (int i = 0; i < sourceY.length; i++) {
             y[i] = transform(sourceY[i]);
-            if (Float.isInfinite(y[i])) {
-                y[i] = y[i] == Float.POSITIVE_INFINITY ? Float.MAX_VALUE : Float.MIN_VALUE;
-            }
+            //This issue points to IGBF-1344
+//            if (Float.isInfinite(y[i])) {
+//                y[i] = y[i] == Float.POSITIVE_INFINITY ? Float.MAX_VALUE : Float.MIN_VALUE; 
+//            }
         }
         String id = sourceSym.getID();
         BioSeq seq = sourceSym.getGraphSeq();

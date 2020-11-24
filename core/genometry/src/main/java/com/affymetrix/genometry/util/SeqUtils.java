@@ -196,28 +196,9 @@ public class SeqUtils {
      * @param leafs
      */
     public static void collectSoftclipSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs) {
-  
-        int childCount = sym.getChildCount();
-        if (childCount == 0) {
-            SeqSpan span = sym.getSpan(seq);
-            if (span != null) {
-                leafs.add(span);
-            }
-        } 
-        else {
-            for (int i = 0; i < childCount; i++) {
-                if (isBamSym(sym)){
-                    BAMSym bamSym = (BAMSym)sym;
-                    for(int ii = 0; ii < bamSym.getSoftChildCount(); ii++){
-                        collectSoftclipSpans(bamSym.getSoftChild(ii), seq, leafs);
-                    }
-  
-                }
-                else{
-                    collectSoftclipSpans(sym.getChild(i), seq, leafs);
-                }
-            }
-        }
+        // TODO: look at collectStartSpans and collectLeafSpans methods for ideas/understanding of the data structures
+        //  and methods that can be used. Make this method populate the leafs collection with only soft-clip portions
+        //  of aligned reads.
     }
         
     /**

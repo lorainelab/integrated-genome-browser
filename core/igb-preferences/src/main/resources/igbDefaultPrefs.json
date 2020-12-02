@@ -4,16 +4,17 @@
             {
                 "factoryName": "quickload",
                 "name": "RNA-Seq",
-                "url": "http://lorainelab-quickload.scidas.org/rnaseq",
+                "url": "http://igbquickload.org/rnaseq",
                 "loadPriority": "0",
+                "mirror":"http://lorainelab-quickload.scidas.org/rnaseq",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:2"
             },
             {
                 "factoryName": "quickload",
                 "name": "IGB Quickload",
-                "url": "http://lorainelab-quickload.scidas.org/quickload",
+                "url": "http://igbquickload.org/quickload",
                 "loadPriority": "2",
-                "mirror": "http://quickload.bioviz.org/quickload",
+                "mirror": "http://lorainelab-quickload.scidas.org/quickload",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:1"
             },
             {
@@ -21,7 +22,7 @@
                 "name": "Blueberry",
                 "url": "http://lorainelab-quickload.scidas.org/blueberry",
                 "loadPriority": "3",
-                "mirror": "http://quickload.bioviz.org/blueberry",
+                "mirror": "http://igbquickload.org/blueberry",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:3"
             },
             {
@@ -35,22 +36,25 @@
             {
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
-                "url": "http://lorainelab-quickload.scidas.org/bar",
+                "url": "http://bioviz.org/quickload/bar",
                 "loadPriority": "1",
+                "mirror": "http://lorainelab-quickload.scidas.org/bar",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
             {
                 "factoryName": "quickload",
                 "name": "DNA-Seq",
-                "url": "http://lorainelab-quickload.scidas.org/dnaseq/",
+                "url": "http://lorainelab-quickload.scidas.org/dnaseq",
                 "loadPriority": "1",
+                "mirror": "http://igbquickload.org/dnaseq",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:6"
             },
             {
                 "factoryName": "quickload",
                 "name": "ChIP-Seq",
-                "url": "http://lorainelab-quickload.scidas.org/chipseq/",
+                "url": "http://lorainelab-quickload.scidas.org/chipseq",
                 "loadPriority": "1",
+                "mirror": "http://igbquickload.org/chipseq",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:7"
             }
             

@@ -606,7 +606,7 @@
                                     <goal>compile</goal>
                                 </goals>
                                 <configuration>
-                                    <projectFile>${session.executionRootDirectory}/distribution/igb_7.install4j</projectFile>
+                                    <projectFile>${session.executionRootDirectory}/distribution/install4jv8_config.xml</projectFile>
                                 </configuration>
                             </execution>
                         </executions>

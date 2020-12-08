@@ -16,7 +16,7 @@
       <variable name="codeBaseUrl" value="https://bioviz.org/igb/releases/current" description="Directory containing updates.xml file." category="" />
     </variables>
     <mergedProjects />
-    <codeSigning macEnabled="true" macPkcs12File="2020-03-25-developerID_application_igb.p12" windowsEnabled="true" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="windows_keystore.pfx" />
+    <codeSigning macEnabled="true" macPkcs12File="2020-11-18-developerID_application_igb.p12" windowsEnabled="true" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="windows_keystore.pfx" />
   </application>
   <files keepModificationTimes="false" missingFilesStrategy="warn" globalExcludeSuffixes="" defaultOverwriteMode="4" defaultUninstallMode="0" launcherOverwriteMode="3" defaultFileMode="644" defaultDirMode="755">
     <filesets />

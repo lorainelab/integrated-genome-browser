@@ -16,6 +16,7 @@ import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -551,5 +552,10 @@ public class IgbServiceImpl implements IgbService {
         ts = new Timestamp((new Date()).getTime());
         consoleTab = (JTextArea)((JViewport)((JScrollPane) (IGB.getInstance()).getViewByDisplayName("Console").getComponent(0)).getViewport()).getView();
         consoleTab.append("\n" + ts.toString().split("\\s+")[1] + " " + MsgType + " " + Msg);
+    }
+    
+    @Override
+    public ITrackStyleExtended getAnnotStyle(String unique_name) {
+        return IGBStateProvider.getGlobalStateProvider().getAnnotStyle(unique_name);
     }
 }

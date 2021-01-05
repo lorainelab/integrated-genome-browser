@@ -684,6 +684,7 @@ public class TrackStyle implements ITrackStyleExtended, TrackConstants, Property
         save(PREF_LABEL_FIELD, l);
     }
 
+    @Override
     public boolean getConnected() {
         return connected;
     }

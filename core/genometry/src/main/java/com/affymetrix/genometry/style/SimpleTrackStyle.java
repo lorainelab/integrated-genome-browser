@@ -392,4 +392,9 @@ public class SimpleTrackStyle extends DefaultTrackStyle implements ITrackStyleEx
         this.showSoftClipCustomColor = showSoftClipCustomColor;
     }
 
+    @Override
+    public boolean getConnected() {
+        return super.getConnected();
+    }
+
 }

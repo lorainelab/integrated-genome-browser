@@ -6,6 +6,7 @@ import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -256,4 +257,12 @@ public interface IgbService {
     public List<String> getSpeciesList();
 
     public List<String> getAllVersions(String species);
+    
+    /**
+     * Return style object when passed a unique track identifier.
+     * 
+     * @param unique_name
+     * @return 
+     */
+    public ITrackStyleExtended getAnnotStyle(String unique_name);    
 }

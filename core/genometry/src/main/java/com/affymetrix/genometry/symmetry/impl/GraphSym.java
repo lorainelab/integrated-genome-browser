@@ -423,7 +423,7 @@ public class GraphSym extends RootSeqSymmetry {
      * Determine the y coordinate, given x.
      *
      * @param x
-     * @return y coord. -1 indicates not found.
+     * @return y coord. NaN indicates not found.
      */
     protected float getYCoordFromX(int x) {
         int leftBound = this.determineBegIndex(x);
@@ -432,7 +432,7 @@ public class GraphSym extends RootSeqSymmetry {
             return this.getGraphYCoord(leftBound);
         }
         // Couldn't find point
-        return -1f;
+        return Float.NaN;
     }
 
     private File index(int[] x, float[] y, int[] w) {
@@ -573,11 +573,11 @@ public class GraphSym extends RootSeqSymmetry {
 
         locprops.put("x coord", x);
         if (isValid()) {
-            float y = getYCoordFromX(x);
-            if (y < 0) {
-                locprops.put("y coord", "no point");
-            } else {
+            Float y = getYCoordFromX(x);
+            if (y < 0 || y >= 0) {
                 locprops.put("y coord", y);
+            } else {
+                locprops.put("y coord", "no point");
             }
         }
         return locprops;

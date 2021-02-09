@@ -6,6 +6,7 @@ import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceDataSetProvider;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
+import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -201,7 +202,11 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
                     if (file.getName().startsWith("http") || file.getName().startsWith("ftp")) {
                         uri = new URI(file.getName());
                     } else {
-                        uri = new URI(getUrl() + genomeVersionName + "/" + file.getName());
+                        if (file.getName().startsWith(FILE_PROTOCOL_SCHEME)) {
+                            uri = new URI(file.getName());
+                        } else {
+                            uri = new URI(getUrl() + genomeVersionName + "/" + file.getName());
+                        }
                     }
                     if (!Strings.isNullOrEmpty(file.getReference()) && file.getReference().equals("true")) {
                         twoBitFilePath = file.getName();

@@ -52,6 +52,14 @@
                 "url": "http://lorainelab-quickload.scidas.org/chipseq/",
                 "loadPriority": "1",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:7"
+            },
+            {
+                "factoryName": "quickload",
+                "name": "GIAB",
+                "url": "https://bitbucket.org/nfreese/quickload-genome-in-a-bottle/raw/release-v1.0.0/quickload/",
+                "loadPriority": "1",
+                "mirror": "https://raw.githubusercontent.com/nowlanfreese/Quickload-Genome-In-A-Bottle/release-v1.0.0/quickload/",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:8"
             }
             
         ],

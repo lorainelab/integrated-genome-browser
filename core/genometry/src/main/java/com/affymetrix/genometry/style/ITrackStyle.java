@@ -109,4 +109,7 @@ public interface ITrackStyle {
      * @return
      */
     public Optional<Preferences> getPreferenceChildForProperty(String propertyName);
+    
+    public boolean getConnected(); 
+    
 }

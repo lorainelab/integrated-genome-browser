@@ -35,6 +35,7 @@ public class DefaultTrackStyle implements ITrackStyle {
     double y = 0.0f;
     boolean is_graph = false;
     Map<String, Object> transient_properties = null;
+    boolean connected = true;
 
     /**
      * Should only be called by subclasses or a StateProvider.
@@ -176,6 +177,11 @@ public class DefaultTrackStyle implements ITrackStyle {
     @Override
     public Optional<Preferences> getPreferenceChildForProperty(String propertyName) {
         return Optional.empty();
+    }
+
+    @Override
+    public boolean getConnected() {
+       return connected;
     }
 
 }

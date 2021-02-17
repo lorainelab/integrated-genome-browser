@@ -167,6 +167,7 @@ public final class GeneralLoadUtils {
         boolean isNewSpecies = !getLoadedSpeciesNames().contains(speciesName);
         Set<DataContainer> dataContainers = speciesDataContainerReference.get(speciesName);
         versionName2species.put(preferredVersionName, speciesName);
+        dataContainer.getGenomeVersion().setSpeciesName(speciesName);
         if (!dataContainers.contains(dataContainer)) {
             dataContainers.add(dataContainer);
         }

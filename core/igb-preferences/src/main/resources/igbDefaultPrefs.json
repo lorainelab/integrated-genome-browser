@@ -33,25 +33,33 @@
                 "defaultDataProviderId": "IgbDefaultDataProviderId:4"
             },
             {
+                "factoryName": "das",
+                "name": "UCSC",
+                "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
+                "loadPriority": "5",
+                "status": "disabled",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:5"
+            },
+            {
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
                 "url": "http://lorainelab-quickload.scidas.org/bar",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:5"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:6"
             },
             {
                 "factoryName": "quickload",
                 "name": "DNA-Seq",
                 "url": "http://lorainelab-quickload.scidas.org/dnaseq/",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:6"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
             },
             {
                 "factoryName": "quickload",
                 "name": "ChIP-Seq",
                 "url": "http://lorainelab-quickload.scidas.org/chipseq/",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:8"
             },
             {
                 "factoryName": "quickload",
@@ -59,7 +67,7 @@
                 "url": "https://bitbucket.org/nfreese/quickload-genome-in-a-bottle/raw/release-v1.0.0/quickload/",
                 "loadPriority": "1",
                 "mirror": "https://raw.githubusercontent.com/nowlanfreese/Quickload-Genome-In-A-Bottle/release-v1.0.0/quickload/",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:8"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:9"
             }
             
         ],

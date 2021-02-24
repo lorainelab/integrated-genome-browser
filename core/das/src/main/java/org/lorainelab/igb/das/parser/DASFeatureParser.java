@@ -4,6 +4,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.Parser;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.util.XMLUtils;
 import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -59,6 +60,10 @@ public final class DASFeatureParser implements Parser {
 
     public List<DASSymmetry> parse(InputStream s, GenomeVersion genomeVersion) throws XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
+        /*The XML returned by UCSC DAS contains a link to a dtd file
+        that is unavailable (http://www.biodas.org/dtd/dasgff.dtd)
+        XML validation by dtd must be ignored*/
+        factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
         XMLEventReader reader = factory.createXMLEventReader(s);
         XMLEvent current;
         Deque<StartElement> stack = new ArrayDeque<>();

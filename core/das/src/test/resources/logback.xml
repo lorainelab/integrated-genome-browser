@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Examples of package level logging control this is useful for silencing verbose logging from libraries or debugging a package-->
+    <!--    <logger name="org.eclipse.jetty.util.log" level="INFO" />
+    <logger name="org.apache.aries.jpa" level="INFO" />-->
+    <!--    <logger name="com.affymetrix.genometry.quickload" level="DEBUG" />-->
+    <!--        <logger name="com.affymetrix.igb.plugins" level="DEBUG" />-->
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

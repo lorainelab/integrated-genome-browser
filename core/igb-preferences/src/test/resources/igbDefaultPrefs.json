@@ -33,6 +33,13 @@
                 "defaultDataProviderId": "IgbDefaultDataProviderId:4"
             },
             {
+                "factoryName": "das",
+                "name": "UCSC",
+                "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
+                "loadPriority": "5",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:5"
+            },
+            {
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
                 "url": "http://lorainelab-quickload.scidas.org/bar",

@@ -130,7 +130,7 @@ public class CustomGenomeDialogPanel extends JPanel {
                 try{
                     if(text.matches("^[a-zA-z]+$")){                        
                         speciesTextField.setBorder(defaultB);
-                        version[1] = text;
+                        version[1] = text.substring(0,1).toUpperCase()+text.substring(1);
                         versionTextField.setText(String.join("_", version));
                     }else{
                         versionTextField.setText("");
@@ -238,7 +238,9 @@ public class CustomGenomeDialogPanel extends JPanel {
     }
 
     public String getSpeciesName() {
-        return speciesTextField.getText();
+        String specieseName = genusTextField.getText().substring(0,1).toUpperCase()+genusTextField.getText().substring(1);
+        specieseName = specieseName+" "+speciesTextField.getText().toLowerCase();
+        return specieseName;
     }
 
     public String getVersionName() {

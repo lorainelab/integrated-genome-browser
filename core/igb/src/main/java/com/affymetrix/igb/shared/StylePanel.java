@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 public abstract class StylePanel extends javax.swing.JPanel {
 
     protected boolean is_listening = true; // used to turn on and off listening to GUI events
-    private static final Object[] SUPPORTED_SIZE = {8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+    private static final Object[] SUPPORTED_SIZE = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 36, 48, 72};
 
     /**
      * Creates new form StylePanel

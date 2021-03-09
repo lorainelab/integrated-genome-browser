@@ -51,7 +51,8 @@ public class CustomGenomeDialogPanel extends JPanel {
     private javax.swing.JTextField genusTextField;
     private javax.swing.JLabel speciesLabel;
     private javax.swing.JTextField speciesTextField;
-    private javax.swing.JLabel yearLabel;
+    private javax.swing.JLabel varietyLabel;
+    private javax.swing.JTextField varietyTextField;
     private javax.swing.JTextField yearTextField;
     private javax.swing.JLabel monthLabel;
     private static final String[] months = {"Month", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
@@ -60,7 +61,7 @@ public class CustomGenomeDialogPanel extends JPanel {
     private javax.swing.JTextField versionTextField;
     private JComboBoxToolTipRenderer speciesCBRenderer;
     private LocalDate cdate;
-    private String defaultVersion = "Genus_species_MMM_YYYY";
+    private String defaultVersion = "Genus_species__MMM_YYYY";
 
     public CustomGenomeDialogPanel() {
         initComponents();
@@ -68,6 +69,7 @@ public class CustomGenomeDialogPanel extends JPanel {
         PromptSupport.setPrompt(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER + "     ", versionTextField);
         PromptSupport.setPrompt("Enter Genus", genusTextField);
         PromptSupport.setPrompt("Enter Species", speciesTextField);
+        PromptSupport.setPrompt("(Optional)-strain/cultivar/accession", varietyTextField);
         PromptSupport.setPrompt("Enter Year", yearTextField);
         PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIDE_PROMPT, versionTextField);
     }
@@ -83,10 +85,14 @@ public class CustomGenomeDialogPanel extends JPanel {
         monthLabel = new javax.swing.JLabel("Month/Year");
         monthComboBox = new JRPComboBoxWithSingleListener("Month",months);
         
-        yearLabel = new javax.swing.JLabel("Year");
+        speciesLabel = new javax.swing.JLabel("Species");
+        speciesTextField = new javax.swing.JTextField();
         yearTextField = new javax.swing.JTextField();
         
-        versionLabel = new javax.swing.JLabel("Genome Version");
+        varietyLabel = new javax.swing.JLabel("Variety");
+        varietyTextField = new javax.swing.JTextField();
+        
+        versionLabel = new javax.swing.JLabel("Version");
         versionTextField = new javax.swing.JTextField();
         versionTextField.setEditable(false);
         
@@ -105,12 +111,12 @@ public class CustomGenomeDialogPanel extends JPanel {
             @Override
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
-                versionTextField.setText("");
+                genusTextField.setText(text.substring(0,1).toUpperCase()+text.substring(1).toLowerCase());
                 try{
                     if(text.matches("^[a-zA-z]+$")){                        
                         genusTextField.setBorder(defaultB);
                         version[0]=text.toUpperCase().charAt(0)+"";
-                        versionTextField.setText(String.join("_", version));
+                        versionTextField.setText(joinVersionValues(version));
                     }else{
                         versionTextField.setText("");
                         throw new Exception("Error");
@@ -127,12 +133,11 @@ public class CustomGenomeDialogPanel extends JPanel {
             @Override
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
-                versionTextField.setText("");
                 try{
                     if(text.matches("^[a-zA-z]+$")){                        
                         speciesTextField.setBorder(defaultB);
                         version[1] = text.toLowerCase();
-                        versionTextField.setText(String.join("_", version));
+                        versionTextField.setText(joinVersionValues(version));
                     }else{
                         versionTextField.setText("");
                         throw new Exception("Error");
@@ -145,24 +150,35 @@ public class CustomGenomeDialogPanel extends JPanel {
                 }
             } 
         });
+        varietyTextField.setInputVerifier(new InputVerifier() {
+            @Override
+            public boolean verify(JComponent input) {
+                String text = ((JTextField)input).getText();
+                try{                     
+                    version[2] = text.toLowerCase();
+                    versionTextField.setText(joinVersionValues(version));
+                    return true;      
+                }catch(Exception e){
+                    return true;
+                }
+            } 
+        });
         monthComboBox.addItemListener((ItemEvent e) -> {
             String monthSelected = monthComboBox.getSelectedItem().toString();
-            versionTextField.setText("");
             if (!monthSelected.equalsIgnoreCase("Month")) {
-                version[2] = monthSelected.substring(0,3);
-                versionTextField.setText(String.join("_", version));
+                version[3] = monthSelected.substring(0,3);
+                versionTextField.setText(joinVersionValues(version));
             }
         });
          yearTextField.setInputVerifier(new InputVerifier() {
             @Override
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
-                versionTextField.setText("");
                 try{
                     if(text.matches("^[0-9]{4}+$")){                        
                         yearTextField.setBorder(defaultB);
-                        version[3] = text;
-                        versionTextField.setText(String.join("_", version));
+                        version[4] = text;
+                        versionTextField.setText(joinVersionValues(version));
                     }else{
                         versionTextField.setText("");
                         throw new Exception("Error");
@@ -177,6 +193,11 @@ public class CustomGenomeDialogPanel extends JPanel {
         });
         
     }
+    private String joinVersionValues(String version[]){
+        String vers = String.join("_",version);
+        vers = vers.replace("__","_");
+        return vers;
+    }
     private void layoutComponents() {
         this.setLayout(new MigLayout("fillx", "[]rel[grow]", "[][][]"));
         add(refSeqLabel);
@@ -186,9 +207,10 @@ public class CustomGenomeDialogPanel extends JPanel {
         add(genusTextField, "growx, wrap");
         add(speciesLabel, "");
         add(speciesTextField, "growx, wrap");
+        add(varietyLabel,"");
+        add(varietyTextField, "growx, wrap");
         add(monthLabel,"");
         add(monthComboBox,"split 2");
-//        add(yearLabel, "");
         add(yearTextField,"growx,wrap");
         add(versionLabel, "");
         add(versionTextField, "growx, wrap");
@@ -235,7 +257,7 @@ public class CustomGenomeDialogPanel extends JPanel {
         }
     }
     public String getGenusName(){
-        return genusTextField.getText();
+        return genusTextField.getText().substring(0,1).toUpperCase()+genusTextField.getText().substring(1);
     }
 
     public String getSpeciesName() {

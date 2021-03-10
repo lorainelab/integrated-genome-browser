@@ -111,7 +111,10 @@ public class CustomGenomeDialogPanel extends JPanel {
             @Override
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
-                genusTextField.setText(text.substring(0,1).toUpperCase()+text.substring(1).toLowerCase());
+                if(!text.isEmpty())
+                    genusTextField.setText(text.substring(0,1).toUpperCase()+text.substring(1).toLowerCase());
+                versionTextField.setText("");
+                version[0] = "Genus";
                 try{
                     if(text.matches("^[a-zA-z]+$")){                        
                         genusTextField.setBorder(defaultB);
@@ -133,6 +136,8 @@ public class CustomGenomeDialogPanel extends JPanel {
             @Override
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
+                versionTextField.setText("");
+                version[1] = "species";
                 try{
                     if(text.matches("^[a-zA-z]+$")){                        
                         speciesTextField.setBorder(defaultB);
@@ -154,6 +159,8 @@ public class CustomGenomeDialogPanel extends JPanel {
             @Override
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
+                versionTextField.setText("");
+                version[2] = "";
                 try{                     
                     version[2] = text.toLowerCase();
                     versionTextField.setText(joinVersionValues(version));
@@ -168,12 +175,16 @@ public class CustomGenomeDialogPanel extends JPanel {
             if (!monthSelected.equalsIgnoreCase("Month")) {
                 version[3] = monthSelected.substring(0,3);
                 versionTextField.setText(joinVersionValues(version));
+            }else{
+                version[3]="MMM";
             }
         });
          yearTextField.setInputVerifier(new InputVerifier() {
             @Override
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
+                versionTextField.setText("");
+                version[4] = "YYYY";
                 try{
                     if(text.matches("^[0-9]{4}+$")){                        
                         yearTextField.setBorder(defaultB);
@@ -261,14 +272,16 @@ public class CustomGenomeDialogPanel extends JPanel {
     }
 
     public String getSpeciesName() {
-        String specieseName= "";
-        if(!(genusTextField.getText().isEmpty() || speciesTextField.getText().isEmpty() || varietyTextField.getText().isEmpty())){
-            specieseName = genusTextField.getText().substring(0,1).toUpperCase()+genusTextField.getText().substring(1);
-            specieseName = specieseName+" "+speciesTextField.getText().toLowerCase() + " "+varietyTextField.getText().toLowerCase();
-            return specieseName;
+        String speciesName= "";
+        if(!(genusTextField.getText().isEmpty() || speciesTextField.getText().isEmpty())){
+            speciesName = genusTextField.getText().substring(0,1).toUpperCase()+genusTextField.getText().substring(1);
+            speciesName = speciesName+" "+speciesTextField.getText().toLowerCase();
+            return speciesName;
+        }else if(!speciesName.isEmpty() || varietyTextField.getText().isEmpty()){
+            return speciesName+" "+varietyTextField.getText().toLowerCase();
         }else{
-          return speciesTextField.getText();   
-        }      
+            return speciesName;  
+        }
     }
 
     public String getVersionName() {

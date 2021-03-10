@@ -229,7 +229,7 @@ public class CustomGenomeDialogPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(575, 175);
+        return new Dimension(575, 210);
     }
 
     private void refSeqBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -262,9 +262,9 @@ public class CustomGenomeDialogPanel extends JPanel {
 
     public String getSpeciesName() {
         String specieseName= "";
-        if(!(genusTextField.getText().isEmpty() || speciesTextField.getText().isEmpty())){
+        if(!(genusTextField.getText().isEmpty() || speciesTextField.getText().isEmpty() || varietyTextField.getText().isEmpty())){
             specieseName = genusTextField.getText().substring(0,1).toUpperCase()+genusTextField.getText().substring(1);
-            specieseName = specieseName+" "+speciesTextField.getText().toLowerCase();
+            specieseName = specieseName+" "+speciesTextField.getText().toLowerCase() + " "+varietyTextField.getText().toLowerCase();
             return specieseName;
         }else{
           return speciesTextField.getText();   

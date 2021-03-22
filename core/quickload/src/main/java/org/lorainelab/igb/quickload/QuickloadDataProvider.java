@@ -199,14 +199,10 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
             versionFiles.stream().filter(file -> !Strings.isNullOrEmpty(file.getName())).forEach((file) -> {
                 try {
                     URI uri;
-                    if (file.getName().startsWith("http") || file.getName().startsWith("ftp")) {
+                    if (file.getName().startsWith("http") || file.getName().startsWith("ftp") || file.getName().startsWith(FILE_PROTOCOL_SCHEME)){
                         uri = new URI(file.getName());
                     } else {
-                        if (file.getName().startsWith(FILE_PROTOCOL_SCHEME)) {
-                            uri = new URI(file.getName());
-                        } else {
-                            uri = new URI(getUrl() + genomeVersionName + "/" + file.getName());
-                        }
+                        uri = new URI(getUrl() + genomeVersionName + "/" + file.getName());
                     }
                     if (!Strings.isNullOrEmpty(file.getReference()) && file.getReference().equals("true")) {
                         twoBitFilePath = file.getName();
@@ -246,7 +242,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
         final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet(), getDefaultSynonymLookup()).orElse(genomeVersion.getName());
         String sequenceFileLocation = getGenomeVersionBaseUrl(getUrl(), genomeVersionName) + genomeVersionName + ".2bit";
         if (!Strings.isNullOrEmpty(twoBitFilePath)) {
-            if (twoBitFilePath.startsWith("http") || twoBitFilePath.startsWith("https")) {
+            if (twoBitFilePath.startsWith("http") || twoBitFilePath.startsWith("ftp") || twoBitFilePath.startsWith(FILE_PROTOCOL_SCHEME)) {
                 sequenceFileLocation = twoBitFilePath;
             } else {
                 sequenceFileLocation = getGenomeVersionBaseUrl(getUrl(), genomeVersionName) + twoBitFilePath;

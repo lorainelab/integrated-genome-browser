@@ -70,20 +70,20 @@ public class CustomGenomeDialogPanel extends JPanel {
         PromptSupport.setPrompt(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER + "     ", versionTextField);
         PromptSupport.setPrompt("Enter genus", genusTextField);
         PromptSupport.setPrompt("Enter species", speciesTextField);
-        PromptSupport.setPrompt("strain/cultivar/accession", varietyTextField);
+        PromptSupport.setPrompt("Enter strain/cultivar/accession", varietyTextField);
         PromptSupport.setPrompt("Enter year", yearTextField);
         PromptSupport.setPrompt("Enter URL or choose a local file", refSeqTextField);
         PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIDE_PROMPT, versionTextField);
     }
 
     private void initComponents() {
-        genusLabel = new javax.swing.JLabel("Genus(optional)");
+        genusLabel = new javax.swing.JLabel("Genus (optional)");
         genusTextField = new javax.swing.JTextField();
         
-        speciesLabel = new javax.swing.JLabel("Species(optional)");
+        speciesLabel = new javax.swing.JLabel("Species (optional)");
         speciesTextField = new javax.swing.JTextField();
         
-        monthLabel = new javax.swing.JLabel("<html>Genome release<br>date (optional)</html>");
+        monthLabel = new javax.swing.JLabel("Genome release date (optional)");
         monthComboBox = new JRPComboBoxWithSingleListener("Month",months);        
         yearTextField = new javax.swing.JTextField();
         
@@ -141,6 +141,8 @@ public class CustomGenomeDialogPanel extends JPanel {
                      version[1] = "species";
                      versionTextField.setText(joinVersionValues(version));
                      return true;
+                }else{
+                    speciesTextField.setText(text.substring(0,1).toUpperCase()+text.substring(1).toLowerCase());
                 }
                 versionTextField.setText("");               
                 try{
@@ -223,7 +225,7 @@ public class CustomGenomeDialogPanel extends JPanel {
         this.setLayout(new MigLayout("fillx"));
         
         JPanel referencePane = new JPanel();
-        referencePane.setLayout(new MigLayout("fillx","[]rel[grow][]","[][][]"));
+        referencePane.setLayout(new MigLayout("fillx","[]rel[grow][]"));
         referencePane.add(refSeqLabel);
         referencePane.add(refSeqTextField,"growx");
         referencePane.add(refSeqBrowseButton);
@@ -231,7 +233,7 @@ public class CustomGenomeDialogPanel extends JPanel {
         
         JPanel optionalPane = new JPanel();
         optionalPane.setLayout(new MigLayout("fillx,insets 0 20 0 20","[]rel[grow]",""));
-        Border border = BorderFactory.createTitledBorder("Optional Genome Details");
+        Border border = BorderFactory.createTitledBorder("Genome Details (all fields are optional)");
         optionalPane.setBorder(border);
         optionalPane.add(genusLabel, "");
         optionalPane.add(genusTextField, "growx,wrap");
@@ -243,7 +245,7 @@ public class CustomGenomeDialogPanel extends JPanel {
         optionalPane.add(monthComboBox,"split 2,growx");
         optionalPane.add(yearTextField,"growx,wrap");
        
-        add(optionalPane,"growx,gapleft 50,gapright 50");
+        add(optionalPane,"growx, gapright 50");
 //        add(versionLabel, "");
 //        add(versionTextField, "growx, wrap");
    
@@ -262,7 +264,7 @@ public class CustomGenomeDialogPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(575, 210);
+        return new Dimension(575, 250);
     }
 
     private void refSeqBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {

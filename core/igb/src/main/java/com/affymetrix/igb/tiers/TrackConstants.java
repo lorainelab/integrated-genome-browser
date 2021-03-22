@@ -81,7 +81,7 @@ public interface TrackConstants {
     static final float default_min_score_color = 1.0f;
     static final float default_max_score_color = 1000.f;
     static final DirectionType DEFAULT_DIRECTION_TYPE = DirectionType.NONE;
-    public static final Object[] SUPPORTED_SIZE = {8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f};
+    public static final Object[] SUPPORTED_SIZE = {6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 22.0f, 24.0f, 26.0f, 28.0f, 36.0f, 48.0f, 72.0f};
     public static final Object[] LABELFIELD = {NO_LABEL, "id", "name", "score"};
 
     public static enum DirectionType {

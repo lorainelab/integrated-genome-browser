@@ -26,9 +26,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javafx.stage.FileChooser;
+import javax.swing.BorderFactory;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
@@ -59,69 +62,67 @@ public class CustomGenomeDialogPanel extends JPanel {
     private JRPComboBox monthComboBox;
     private javax.swing.JLabel versionLabel;
     private javax.swing.JTextField versionTextField;
-    private JComboBoxToolTipRenderer speciesCBRenderer;
-    private LocalDate cdate;
-    private String defaultVersion = "Genus_species__MMM_YYYY";
+    private final String defaultVersion = "Genus_species__MMM_YYYY";
 
     public CustomGenomeDialogPanel() {
         initComponents();
         layoutComponents();      
         PromptSupport.setPrompt(UNKNOWN_GENOME_PREFIX + " " + CUSTOM_GENOME_COUNTER + "     ", versionTextField);
-        PromptSupport.setPrompt("Enter Genus", genusTextField);
-        PromptSupport.setPrompt("Enter Species", speciesTextField);
-        PromptSupport.setPrompt("(Optional)-strain/cultivar/accession", varietyTextField);
-        PromptSupport.setPrompt("Enter Year", yearTextField);
+        PromptSupport.setPrompt("Enter genus", genusTextField);
+        PromptSupport.setPrompt("Enter species", speciesTextField);
+        PromptSupport.setPrompt("strain/cultivar/accession", varietyTextField);
+        PromptSupport.setPrompt("Enter year", yearTextField);
+        PromptSupport.setPrompt("Enter URL or choose a local file", refSeqTextField);
         PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.HIDE_PROMPT, versionTextField);
     }
 
     private void initComponents() {
-        cdate = LocalDate.now();
-        genusLabel = new javax.swing.JLabel("Genus");
+        genusLabel = new javax.swing.JLabel("Genus(optional)");
         genusTextField = new javax.swing.JTextField();
         
-        speciesLabel = new javax.swing.JLabel("Species");
+        speciesLabel = new javax.swing.JLabel("Species(optional)");
         speciesTextField = new javax.swing.JTextField();
         
-        monthLabel = new javax.swing.JLabel("Month/Year");
-        monthComboBox = new JRPComboBoxWithSingleListener("Month",months);
-        
-        speciesLabel = new javax.swing.JLabel("Species");
-        speciesTextField = new javax.swing.JTextField();
+        monthLabel = new javax.swing.JLabel("<html>Genome release<br>date (optional)</html>");
+        monthComboBox = new JRPComboBoxWithSingleListener("Month",months);        
         yearTextField = new javax.swing.JTextField();
         
-        varietyLabel = new javax.swing.JLabel("Variety");
+        varietyLabel = new javax.swing.JLabel("Variety (optional)");
         varietyTextField = new javax.swing.JTextField();
         
         versionLabel = new javax.swing.JLabel("Version");
         versionTextField = new javax.swing.JTextField();
-        versionTextField.setEditable(false);
+//        versionTextField.setEditable(false);
         
-        refSeqLabel = new javax.swing.JLabel("Reference Sequence");
+        refSeqLabel = new javax.swing.JLabel("*Reference Sequence");
         refSeqTextField = new javax.swing.JTextField();
         validateTextFields();
-        refSeqBrowseButton = new javax.swing.JButton("Choose File\u2026");
+        refSeqBrowseButton = new javax.swing.JButton("Choose Local File\u2026");
         refSeqBrowseButton.addActionListener(this::refSeqBrowseButtonActionPerformed);
     }
     private void validateTextFields(){
         final String version[] = defaultVersion.split("_");
         monthComboBox.setEnabled(true);
-        monthComboBox.setEditable(false); 
+//        monthComboBox.setEditable(false); 
         Border defaultB = genusTextField.getBorder();
         genusTextField.setInputVerifier(new InputVerifier() {
             @Override
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
-                if(!text.isEmpty())
+                if(text.isEmpty()){
+                    version[0] = "Genus";
+                    versionTextField.setText(joinVersionValues(version));
+                    return true;
+                }else{
                     genusTextField.setText(text.substring(0,1).toUpperCase()+text.substring(1).toLowerCase());
+                }
                 versionTextField.setText("");
-                version[0] = "Genus";
                 try{
-                    if(text.matches("^[a-zA-z]+$")){                        
+                    if(text.matches("^[a-zA-z]+$")|| text.isEmpty()){                        
                         genusTextField.setBorder(defaultB);
                         version[0]=text.toUpperCase().charAt(0)+"";
                         versionTextField.setText(joinVersionValues(version));
                     }else{
-                        versionTextField.setText("");
                         throw new Exception("Error");
                     }
                     return true;      
@@ -136,15 +137,18 @@ public class CustomGenomeDialogPanel extends JPanel {
             @Override
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
-                versionTextField.setText("");
-                version[1] = "species";
+                if(text.isEmpty()){
+                     version[1] = "species";
+                     versionTextField.setText(joinVersionValues(version));
+                     return true;
+                }
+                versionTextField.setText("");               
                 try{
-                    if(text.matches("^[a-zA-z]+$")){                        
+                    if(text.matches("^[a-zA-z]+$")|| text.isEmpty()){                        
                         speciesTextField.setBorder(defaultB);
                         version[1] = text.toLowerCase();
                         versionTextField.setText(joinVersionValues(version));
                     }else{
-                        versionTextField.setText("");
                         throw new Exception("Error");
                     }
                     return true;      
@@ -174,24 +178,28 @@ public class CustomGenomeDialogPanel extends JPanel {
             String monthSelected = monthComboBox.getSelectedItem().toString();
             if (!monthSelected.equalsIgnoreCase("Month")) {
                 version[3] = monthSelected.substring(0,3);
-                versionTextField.setText(joinVersionValues(version));
             }else{
                 version[3]="MMM";
             }
+             versionTextField.setText(joinVersionValues(version));
         });
          yearTextField.setInputVerifier(new InputVerifier() {
             @Override
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
+                if(text.isEmpty()){
+                     version[4] = "YYYY";
+                     versionTextField.setText(joinVersionValues(version));
+                     return true;
+                }
                 versionTextField.setText("");
-                version[4] = "YYYY";
+               
                 try{
-                    if(text.matches("^[0-9]{4}+$")){                        
+                    if(text.matches("^[0-9]{4}+$")|| text.isEmpty()){                        
                         yearTextField.setBorder(defaultB);
                         version[4] = text;
                         versionTextField.setText(joinVersionValues(version));
                     }else{
-                        versionTextField.setText("");
                         throw new Exception("Error");
                     }
                     return true;      
@@ -207,24 +215,38 @@ public class CustomGenomeDialogPanel extends JPanel {
     private String joinVersionValues(String version[]){
         String vers = String.join("_",version);
         vers = vers.replace("__","_");
+        if(vers.equalsIgnoreCase("Genus_species_MMM_YYYY"))
+            return "Custom Genome " + CUSTOM_GENOME_COUNTER;
         return vers;
     }
     private void layoutComponents() {
-        this.setLayout(new MigLayout("fillx", "[]rel[grow]", "[][][]"));
-        add(refSeqLabel);
-        add(refSeqTextField, "growx");
-        add(refSeqBrowseButton, "wrap");
-        add(genusLabel, "");
-        add(genusTextField, "growx, wrap");
-        add(speciesLabel, "");
-        add(speciesTextField, "growx, wrap");
-        add(varietyLabel,"");
-        add(varietyTextField, "growx, wrap");
-        add(monthLabel,"");
-        add(monthComboBox,"split 2");
-        add(yearTextField,"growx,wrap");
-        add(versionLabel, "");
-        add(versionTextField, "growx, wrap");
+        this.setLayout(new MigLayout("fillx"));
+        
+        JPanel referencePane = new JPanel();
+        referencePane.setLayout(new MigLayout("fillx","[]rel[grow][]","[][][]"));
+        referencePane.add(refSeqLabel);
+        referencePane.add(refSeqTextField,"growx");
+        referencePane.add(refSeqBrowseButton);
+        add(referencePane,"growx,wrap");
+        
+        JPanel optionalPane = new JPanel();
+        optionalPane.setLayout(new MigLayout("fillx,insets 0 20 0 20","[]rel[grow]",""));
+        Border border = BorderFactory.createTitledBorder("Optional Genome Details");
+        optionalPane.setBorder(border);
+        optionalPane.add(genusLabel, "");
+        optionalPane.add(genusTextField, "growx,wrap");
+        optionalPane.add(speciesLabel, "");
+        optionalPane.add(speciesTextField, "growx,wrap");
+        optionalPane.add(varietyLabel,"");
+        optionalPane.add(varietyTextField, "growx,wrap");
+        optionalPane.add(monthLabel,"");
+        optionalPane.add(monthComboBox,"split 2,growx");
+        optionalPane.add(yearTextField,"growx,wrap");
+       
+        add(optionalPane,"growx,gapleft 50,gapright 50");
+//        add(versionLabel, "");
+//        add(versionTextField, "growx, wrap");
+   
 
 
         this.addHierarchyListener((HierarchyEvent e) -> {

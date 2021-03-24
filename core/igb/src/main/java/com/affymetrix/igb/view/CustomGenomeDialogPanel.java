@@ -114,7 +114,7 @@ public class CustomGenomeDialogPanel extends JPanel {
                     versionTextField.setText(joinVersionValues(version));
                     return true;
                 }else{
-                    genusTextField.setText(text.substring(0,1).toUpperCase()+text.substring(1).toLowerCase());
+                    genusTextField.setText(text.toLowerCase());
                 }
                 versionTextField.setText("");
                 try{
@@ -135,7 +135,7 @@ public class CustomGenomeDialogPanel extends JPanel {
                      versionTextField.setText(joinVersionValues(version));
                      return true;
                 }else{
-                    speciesTextField.setText(text.substring(0,1).toUpperCase()+text.substring(1).toLowerCase());
+                    speciesTextField.setText(text.toLowerCase());
                 }
                 versionTextField.setText("");               
                 try{
@@ -154,7 +154,7 @@ public class CustomGenomeDialogPanel extends JPanel {
                 versionTextField.setText("");
                 version[2] = "";
                 try{                     
-                    version[2] = text;
+                    version[2] = text.toLowerCase();
                     versionTextField.setText(joinVersionValues(version));
                     return true;      
                 }catch(Exception e){

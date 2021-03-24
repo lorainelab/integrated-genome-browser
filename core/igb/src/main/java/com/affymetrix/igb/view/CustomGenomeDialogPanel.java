@@ -118,17 +118,10 @@ public class CustomGenomeDialogPanel extends JPanel {
                 }
                 versionTextField.setText("");
                 try{
-                    if(text.matches("^[a-zA-z]+$")|| text.isEmpty()){                        
-                        genusTextField.setBorder(defaultB);
-                        version[0]=text.toUpperCase().charAt(0)+"";
-                        versionTextField.setText(joinVersionValues(version));
-                    }else{
-                        throw new Exception("Error");
-                    }
+                    version[0]=text.toUpperCase().charAt(0)+"";
+                    versionTextField.setText(joinVersionValues(version));
                     return true;      
                 }catch(Exception e){
-                    Border border = new LineBorder(Color.red,2,true);
-                    genusTextField.setBorder(border);
                     return true;
                 }
             } 
@@ -146,17 +139,10 @@ public class CustomGenomeDialogPanel extends JPanel {
                 }
                 versionTextField.setText("");               
                 try{
-                    if(text.matches("^[a-zA-z]+$")|| text.isEmpty()){                        
-                        speciesTextField.setBorder(defaultB);
-                        version[1] = text.toLowerCase();
-                        versionTextField.setText(joinVersionValues(version));
-                    }else{
-                        throw new Exception("Error");
-                    }
+                    version[1] = text.toLowerCase();
+                    versionTextField.setText(joinVersionValues(version));
                     return true;      
                 }catch(Exception e){
-                    Border border = new LineBorder(Color.red,2,true);
-                    speciesTextField.setBorder(border);
                     return true;
                 }
             } 
@@ -168,7 +154,7 @@ public class CustomGenomeDialogPanel extends JPanel {
                 versionTextField.setText("");
                 version[2] = "";
                 try{                     
-                    version[2] = text.toLowerCase();
+                    version[2] = text;
                     versionTextField.setText(joinVersionValues(version));
                     return true;      
                 }catch(Exception e){
@@ -206,8 +192,6 @@ public class CustomGenomeDialogPanel extends JPanel {
                     }
                     return true;      
                 }catch(Exception e){
-                    Border border = new LineBorder(Color.red,2,true);
-                    yearTextField.setBorder(border);
                     return true;
                 }
             } 
@@ -273,7 +257,7 @@ public class CustomGenomeDialogPanel extends JPanel {
                 .flatMap(filter -> filter.getExtensions().stream())
                 .map(ext -> "*." + ext).collect(Collectors.toList());
         final String extensionInfo = Joiner.on(",").join(supportedExtensions);
-        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Sequence file (" + extensionInfo + ")", supportedExtensions);
+        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Sequence file ()", supportedExtensions);
         Optional<File> selectedRefSeqFile = FileChooserUtil.build()
                 .setContext(fileTracker.getFile())
                 .setTitle("Choose Reference Sequence File")

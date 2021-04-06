@@ -7,11 +7,9 @@ import static com.affymetrix.igb.shared.OpenURIAction.CUSTOM_GENOME_COUNTER;
 import static com.affymetrix.igb.shared.OpenURIAction.UNKNOWN_GENOME_PREFIX;
 import com.affymetrix.igb.swing.JRPComboBox;
 import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
-import com.affymetrix.igb.util.JComboBoxToolTipRenderer;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import java.awt.Color;
 import org.lorainelab.igb.javafx.FileChooserUtil;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -20,8 +18,6 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,11 +27,9 @@ import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.prompt.PromptSupport;
 import org.slf4j.LoggerFactory;
@@ -94,10 +88,10 @@ public class CustomGenomeDialogPanel extends JPanel {
         versionTextField = new javax.swing.JTextField();
 //        versionTextField.setEditable(false);
         
-        refSeqLabel = new javax.swing.JLabel("*Reference Sequence");
+        refSeqLabel = new javax.swing.JLabel("<html>Reference Sequence <font color='red'>*</font></html> ");
         refSeqTextField = new javax.swing.JTextField();
         validateTextFields();
-        refSeqBrowseButton = new javax.swing.JButton("Choose Local File\u2026");
+        refSeqBrowseButton = new javax.swing.JButton("Browse\u2026");
         refSeqBrowseButton.addActionListener(this::refSeqBrowseButtonActionPerformed);
     }
     private void validateTextFields(){
@@ -229,9 +223,9 @@ public class CustomGenomeDialogPanel extends JPanel {
         optionalPane.add(monthComboBox,"split 2,growx");
         optionalPane.add(yearTextField,"growx,wrap");
        
-        add(optionalPane,"growx, gapright 50");
-//        add(versionLabel, "");
-//        add(versionTextField, "growx, wrap");
+        add(optionalPane,"growx,wrap,gapright 50");
+        add(new JLabel("<html><font color='red'>* </font>Required field</html>"),"growx,wrap");
+        add(new JLabel("If you include the optional details, IGB will display the details in the species and genome menus."),"growx,wrap");
    
 
 

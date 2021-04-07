@@ -225,7 +225,7 @@ public class CustomGenomeDialogPanel extends JPanel {
        
         add(optionalPane,"growx,wrap,gapright 50");
         add(new JLabel("<html><font color='red'>* </font>Required field</html>"),"growx,wrap");
-        add(new JLabel("If you include the optional details, IGB will display the details in the species and genome menus."),"growx,wrap");
+        add(new JLabel("If you choose to include the optional details, IGB will display the details in the species and genome menus."),"growx,wrap");
    
 
 
@@ -239,12 +239,6 @@ public class CustomGenomeDialogPanel extends JPanel {
             }
         });
     }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(575, 250);
-    }
-
     private void refSeqBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {
         FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
         List<String> supportedExtensions = OpenURIAction.getSupportedFiles(FileTypeCategory.Sequence).stream()

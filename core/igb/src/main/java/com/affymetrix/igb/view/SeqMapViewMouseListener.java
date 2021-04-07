@@ -363,6 +363,14 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
                 preserve_selections = false;
             }
         }
+        
+        // Keep glyphs selected when drag mouseup event occurs on non-glyph whitespace background canvas
+        // ClickCount is 2 for double click, 1 for click, 0 for drag
+        if (smv.getMapMode() == SeqMapView.MapMode.MapScrollMode
+                && nevt.getClickCount() == 0
+                && (nevt.getItems() != null && nevt.getItems().size() == 0)) {
+            preserve_selections = true;
+        }
 
         if (!preserve_selections) {
             smv.clearSelection(); // Note that this also clears the selected sequence region

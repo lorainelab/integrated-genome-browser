@@ -309,12 +309,6 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
         NeoMouseEvent nevt = (NeoMouseEvent) evt;
         Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
 
-        if (smv.getMapMode() != SeqMapView.MapMode.MapSelectMode) {
-            smv.setZoomSpotX(zoom_point.getX());
-            smv.setZoomSpotY(zoom_point.getY());
-            map.updateWidget();
-            return;
-        }
 
         List<GlyphI> hits = nevt.getItems();
         int hcount = hits.size();

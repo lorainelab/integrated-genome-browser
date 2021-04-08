@@ -133,7 +133,7 @@ public class QuickloadUtils {
                 if(((HttpURLConnection) AnnotsURL.openConnection()).getResponseCode() != HttpURLConnection.HTTP_OK)
                     throw new MalformedURLException("Invalid URL or annots.xml not found");
             } else if(strAnnotsURL.contains("file")){
-                if(!(new File(strAnnotsURL.replace("file:",""))).exists()){
+                if(!(new File(java.net.URLDecoder.decode(strAnnotsURL.replace("file:",""), "UTF-8"))).exists()){
                     throw new FileNotFoundException("Invalid file path or annots.xml not found.");
                 }
             }

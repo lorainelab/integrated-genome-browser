@@ -65,6 +65,7 @@ Escherichia coli K12-MG1655	E. coli K12-MG1655	E_coli_K12-MG1655
 Euprymna scolopes	Hawaiian bobtail squid	E_scolopes
 Eucalyptus grandis	Eucalyptus	E_grandis
 Felis catus	Cat	F_catus	felCat	Felis_catus
+Ficedula albicollis	collared flycatcher	F_albicollis
 Fragaria vesca	woodland strawberry	F_vesca
 Gallus gallus	Chicken	G_gallus	galGal	Gallus_gallus
 Gasterosteus aculeatus	Stickleback	G_aculeatus	gasAcu	Gasterosteus_aculeatus

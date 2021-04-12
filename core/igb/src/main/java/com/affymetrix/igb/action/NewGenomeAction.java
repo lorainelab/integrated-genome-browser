@@ -14,9 +14,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import javax.swing.JOptionPane;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
@@ -66,8 +69,17 @@ public class NewGenomeAction extends OpenURIAction implements MenuBarEntryProvid
             String refSeqPath = ng.getRefSeqFile();
 
             if (!Strings.isNullOrEmpty(refSeqPath)) {
-                String fileName = getFriendlyName(refSeqPath);
-                igbService.openURI(new File(refSeqPath).toURI(), fileName, genomeVersion, speciesName, true);
+                String fileName = "";
+                if (refSeqPath.startsWith("http") || refSeqPath.startsWith("ftp")){
+                    try {
+                        igbService.openURI(new URI(refSeqPath.trim()), fileName, genomeVersion, speciesName, true);
+                    } catch (URISyntaxException ex) {
+                        java.util.logging.Logger.getLogger(NewGenomeAction.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }else{
+                    igbService.openURI(new File(refSeqPath.trim()).toURI(), fileName, genomeVersion, speciesName, true);
+
+                }
             } else {
                 DataContainer version = GeneralLoadUtils.getLocalFileDataContainer(genomeVersion, speciesName);
 //                ServerList.getServerInstance().fireServerInitEvent(version.getgServer(), ResourceStatus.Initialized, false);

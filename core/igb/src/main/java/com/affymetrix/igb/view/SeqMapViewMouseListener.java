@@ -309,12 +309,6 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
         NeoMouseEvent nevt = (NeoMouseEvent) evt;
         Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
 
-        if (smv.getMapMode() != SeqMapView.MapMode.MapSelectMode) {
-            smv.setZoomSpotX(zoom_point.getX());
-            smv.setZoomSpotY(zoom_point.getY());
-            map.updateWidget();
-            return;
-        }
 
         List<GlyphI> hits = nevt.getItems();
         int hcount = hits.size();
@@ -368,6 +362,14 @@ public final class SeqMapViewMouseListener implements MouseListener, MouseMotion
                 // This is the important special case.  Needs to be kept.
                 preserve_selections = false;
             }
+        }
+        
+        // Keep glyphs selected when drag mouseup event occurs on non-glyph whitespace background canvas
+        // ClickCount is 2 for double click, 1 for click, 0 for drag
+        if (smv.getMapMode() == SeqMapView.MapMode.MapScrollMode
+                && nevt.getClickCount() == 0
+                && (nevt.getItems() != null && nevt.getItems().size() == 0)) {
+            preserve_selections = true;
         }
 
         if (!preserve_selections) {

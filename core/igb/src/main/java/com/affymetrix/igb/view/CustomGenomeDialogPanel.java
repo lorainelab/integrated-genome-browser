@@ -174,14 +174,22 @@ public class CustomGenomeDialogPanel extends JPanel {
                      versionTextField.setText(joinVersionValues(version));
                      return true;
                 }
-                versionTextField.setText("");
-               
+                versionTextField.setText("");               
                 try{
-                    if(text.matches("^[0-9]{4}+$")|| text.isEmpty()){                        
-                        yearTextField.setBorder(defaultB);
-                        version[4] = text;
-                        versionTextField.setText(joinVersionValues(version));
-                    }else{
+                    if(text.matches("^[0-9]+$")|| text.isEmpty()){
+                        if(text.length()==4){
+                            yearTextField.setBorder(defaultB);
+                            version[4] = text;
+                            versionTextField.setText(joinVersionValues(version));
+                        }else{ 
+                            if(text.length()>4){
+                                version[4]=text.substring(0,4);
+                                versionTextField.setText(joinVersionValues(version));
+                            }else{
+                                throw new Exception("Error");
+                            }
+                        }
+                    }else{                        
                         throw new Exception("Error");
                     }
                     return true;      
@@ -273,7 +281,7 @@ public class CustomGenomeDialogPanel extends JPanel {
             speciesName = genusTextField.getText().substring(0,1).toUpperCase()+genusTextField.getText().substring(1);
             speciesName = speciesName+" "+speciesTextField.getText().toLowerCase();
             return speciesName;
-        }else if(!speciesName.isEmpty() || varietyTextField.getText().isEmpty()){
+        }else if(!speciesName.isEmpty() || !varietyTextField.getText().isEmpty()){
             return speciesName+" "+varietyTextField.getText().toLowerCase();
         }else{
             return speciesName;  

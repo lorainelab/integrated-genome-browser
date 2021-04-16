@@ -16,9 +16,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashSet;
@@ -34,6 +32,7 @@ import org.lorainelab.igb.quickload.model.annots.QuickloadFile;
 import org.lorainelab.igb.quickload.util.QuickloadUtils;
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.getContextRootKey;
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.getGenomeVersionBaseUrl;
+import static org.lorainelab.igb.quickload.util.QuickloadUtils.getUri;
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.loadGenomeVersionSynonyms;
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.loadSpeciesInfo;
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.loadSupportedGenomeVersionInfo;
@@ -198,33 +197,14 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
             }
 
             versionFiles.stream().filter(file -> !Strings.isNullOrEmpty(file.getName())).forEach((file) -> {
-                try {
-                    URI uri;
-                    if (file.getName().startsWith("http") || file.getName().startsWith("ftp")){
-                        uri = new URI(file.getName());
-                    } else {
-                        if(new File(file.getName()).isAbsolute()) {
-                            uri = new File(file.getName()).toURI();
-                        } else {
-                            if(getUrl().startsWith("http" ) || getUrl().startsWith("ftp")){
-                                uri = new URI((getUrl() + genomeVersionName + "/" + file.getName()).replace(" ", "%20"));
-                            } else {
-                                uri = new File(java.net.URLDecoder.decode(getUrl().replace("file:",""), "UTF-8") + genomeVersionName + "/" + file.getName()).toURI();
-                            }
-                        }
-                    }
-                    if (!Strings.isNullOrEmpty(file.getReference()) && file.getReference().equals("true")) {
-                        twoBitFilePath = uri.toString();
-                        return;
-                    }
-                    DataSet dataSet = new DataSet(uri, file.getProps(), dataContainer);
-                    dataSet.setSupportsAvailabilityCheck(true);
-                    dataSets.add(dataSet);
-                } catch (URISyntaxException ex) {
-                    logger.error(ex.getMessage(), ex);
-                } catch (UnsupportedEncodingException ex) {
-                    logger.error(ex.getMessage(), ex);
+                URI uri = getUri(file.getName(), getUrl(), genomeVersionName);
+                if (!Strings.isNullOrEmpty(file.getReference()) && file.getReference().equals("true")) {
+                    twoBitFilePath = uri.toString();
+                    return;
                 }
+                DataSet dataSet = new DataSet(uri, file.getProps(), dataContainer);
+                dataSet.setSupportsAvailabilityCheck(true);
+                dataSets.add(dataSet);
             });
             return dataSets;
         } else {

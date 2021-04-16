@@ -1,7 +1,9 @@
 package org.lorainelab.igb.quickload.util;
 
+import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.ModalUtils;
 import static com.affymetrix.genometry.util.UriUtils.getInputStream;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -224,5 +227,38 @@ public class QuickloadUtils {
                 .parse(reader);
         return StreamSupport.stream(records.spliterator(), false);
     }
-
+    
+    /**
+    * Returns a URI of the file location.
+    * If file location is online and absolute, path is not encoded.
+    * If file location is local and absolute, path is encoded.
+    * If file location is online and relative, spaces are encoded in the relative path.
+    * If file location is local and relative, path is encoded.
+    * 
+    * @param fileName the value of the name attribute from the annots.xml
+    * @param url the url of the quickload
+    * @param genomeVersionName the IGB-friendly genome version name
+    * @return the encoded uri of the file location
+    */
+    public static URI getUri(String fileName, String url, String genomeVersionName){
+        URI uri = null;
+        try {
+                if (fileName.startsWith("http") || fileName.startsWith("ftp")){
+                    uri = new URI(fileName);
+                } else {
+                    if(new File(fileName).isAbsolute()) {
+                        uri = new File(fileName).toURI();
+                    } else {
+                        if(url.startsWith("http" ) || url.startsWith("ftp")){
+                            uri = new URI((url + genomeVersionName + "/" + fileName).replace(" ", "%20"));
+                        } else {
+                            uri = new File(java.net.URLDecoder.decode(url.replace("file:",""), "UTF-8") + genomeVersionName + "/" + fileName).toURI();
+                        }
+                    }
+                }
+            } catch (URISyntaxException | UnsupportedEncodingException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
+        return uri;
+    }
 }

@@ -6,7 +6,6 @@ import com.affymetrix.genometry.data.assembly.AssemblyProvider;
 import com.affymetrix.genometry.data.sequence.ReferenceSequenceDataSetProvider;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
-import static com.affymetrix.genometry.symloader.ProtocolConstants.FILE_PROTOCOL_SCHEME;
 import com.affymetrix.genometry.util.LoadUtils.ResourceStatus;
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.Initialized;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -33,6 +32,7 @@ import org.lorainelab.igb.quickload.model.annots.QuickloadFile;
 import org.lorainelab.igb.quickload.util.QuickloadUtils;
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.getContextRootKey;
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.getGenomeVersionBaseUrl;
+import static org.lorainelab.igb.quickload.util.QuickloadUtils.getUri;
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.loadGenomeVersionSynonyms;
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.loadSpeciesInfo;
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.loadSupportedGenomeVersionInfo;
@@ -197,23 +197,14 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
             }
 
             versionFiles.stream().filter(file -> !Strings.isNullOrEmpty(file.getName())).forEach((file) -> {
-                try {
-                    URI uri;
-                    if (file.getName().startsWith("http") || file.getName().startsWith("ftp") || file.getName().startsWith(FILE_PROTOCOL_SCHEME)){
-                        uri = new URI(file.getName());
-                    } else {
-                        uri = new URI(getUrl() + genomeVersionName + "/" + file.getName());
-                    }
-                    if (!Strings.isNullOrEmpty(file.getReference()) && file.getReference().equals("true")) {
-                        twoBitFilePath = file.getName();
-                        return;
-                    }
-                    DataSet dataSet = new DataSet(uri, file.getProps(), dataContainer);
-                    dataSet.setSupportsAvailabilityCheck(true);
-                    dataSets.add(dataSet);
-                } catch (URISyntaxException ex) {
-                    logger.error(ex.getMessage(), ex);
+                URI uri = getUri(file.getName(), getUrl(), genomeVersionName);
+                if (!Strings.isNullOrEmpty(file.getReference()) && file.getReference().equals("true")) {
+                    twoBitFilePath = uri.toString();
+                    return;
                 }
+                DataSet dataSet = new DataSet(uri, file.getProps(), dataContainer);
+                dataSet.setSupportsAvailabilityCheck(true);
+                dataSets.add(dataSet);
             });
             return dataSets;
         } else {
@@ -242,11 +233,7 @@ public class QuickloadDataProvider extends BaseDataProvider implements Reference
         final String genomeVersionName = getContextRootKey(genomeVersion.getName(), supportedGenomeVersionInfo.keySet(), getDefaultSynonymLookup()).orElse(genomeVersion.getName());
         String sequenceFileLocation = getGenomeVersionBaseUrl(getUrl(), genomeVersionName) + genomeVersionName + ".2bit";
         if (!Strings.isNullOrEmpty(twoBitFilePath)) {
-            if (twoBitFilePath.startsWith("http") || twoBitFilePath.startsWith("ftp") || twoBitFilePath.startsWith(FILE_PROTOCOL_SCHEME)) {
-                sequenceFileLocation = twoBitFilePath;
-            } else {
-                sequenceFileLocation = getGenomeVersionBaseUrl(getUrl(), genomeVersionName) + twoBitFilePath;
-            }
+            sequenceFileLocation = twoBitFilePath;
         }
         URI uri = null;
         try {

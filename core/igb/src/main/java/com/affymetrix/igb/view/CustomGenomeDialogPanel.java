@@ -56,7 +56,7 @@ public class CustomGenomeDialogPanel extends JPanel {
     private JRPComboBox monthComboBox;
     private javax.swing.JLabel versionLabel;
     private javax.swing.JTextField versionTextField;
-    private final String defaultVersion = "Genus_species__MMM_YYYY";
+    private final String defaultVersion = "GENUS_SPECIES__MMM_YYYY";
 
     public CustomGenomeDialogPanel() {
         initComponents();
@@ -98,17 +98,16 @@ public class CustomGenomeDialogPanel extends JPanel {
         final String version[] = defaultVersion.split("_");
         monthComboBox.setEnabled(true);
 //        monthComboBox.setEditable(false); 
-        Border defaultB = genusTextField.getBorder();
         genusTextField.setInputVerifier(new InputVerifier() {
             @Override
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
                 if(text.isEmpty()){
-                    version[0] = "Genus";
+                    version[0] = "GENUS";
                     versionTextField.setText(joinVersionValues(version));
                     return true;
                 }else{
-                    genusTextField.setText(text.toLowerCase());
+                    genusTextField.setText(text);
                 }
                 versionTextField.setText("");
                 try{
@@ -125,7 +124,7 @@ public class CustomGenomeDialogPanel extends JPanel {
             public boolean verify(JComponent input) {
                 String text = ((JTextField)input).getText();
                 if(text.isEmpty()){
-                     version[1] = "species";
+                     version[1] = "SPECIES";
                      versionTextField.setText(joinVersionValues(version));
                      return true;
                 }else{
@@ -174,14 +173,21 @@ public class CustomGenomeDialogPanel extends JPanel {
                      versionTextField.setText(joinVersionValues(version));
                      return true;
                 }
-                versionTextField.setText("");
-               
+                versionTextField.setText("");               
                 try{
-                    if(text.matches("^[0-9]{4}+$")|| text.isEmpty()){                        
-                        yearTextField.setBorder(defaultB);
-                        version[4] = text;
-                        versionTextField.setText(joinVersionValues(version));
-                    }else{
+                    if(text.matches("^[0-9]+$")|| text.isEmpty()){
+                        if(text.length()==4){
+                            version[4] = text;
+                            versionTextField.setText(joinVersionValues(version));
+                        }else{ 
+                            if(text.length()>4){
+                                version[4]=text.substring(0,4);
+                                versionTextField.setText(joinVersionValues(version));
+                            }else{
+                                throw new Exception("Error");
+                            }
+                        }
+                    }else{                        
                         throw new Exception("Error");
                     }
                     return true;      
@@ -268,16 +274,14 @@ public class CustomGenomeDialogPanel extends JPanel {
     }
 
     public String getSpeciesName() {
-        String speciesName= "";
-        if(!(genusTextField.getText().isEmpty() || speciesTextField.getText().isEmpty())){
-            speciesName = genusTextField.getText().substring(0,1).toUpperCase()+genusTextField.getText().substring(1);
-            speciesName = speciesName+" "+speciesTextField.getText().toLowerCase();
-            return speciesName;
-        }else if(!speciesName.isEmpty() || varietyTextField.getText().isEmpty()){
-            return speciesName+" "+varietyTextField.getText().toLowerCase();
-        }else{
-            return speciesName;  
-        }
+         if(genusTextField.getText().isEmpty() && speciesTextField.getText().isEmpty() && varietyTextField.getText().isEmpty()){
+             return "";
+         }
+        String genus = genusTextField.getText().isEmpty()? "GENUS": genusTextField.getText().substring(0,1).toUpperCase()+genusTextField.getText().substring(1).toLowerCase();
+        String species=speciesTextField.getText().isEmpty()? " SPECIES":" "+speciesTextField.getText();
+        String variety=varietyTextField.getText().isEmpty()? "":" "+varietyTextField.getText();
+        
+        return genus+species+variety;
     }
 
     public String getVersionName() {

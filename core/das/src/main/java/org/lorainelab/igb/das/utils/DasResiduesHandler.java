@@ -27,6 +27,7 @@ public class DasResiduesHandler extends DefaultHandler {
 
     public String getDasResidues(InputStream stream, SeqSpan span) throws ParserConfigurationException, SAXException, IOException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         SAXParser saxParser = factory.newSAXParser();
         saxParser.parse(new BufferedInputStream(stream), this);
         return residues;

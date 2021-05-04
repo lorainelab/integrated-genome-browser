@@ -70,7 +70,7 @@
                 "name": "Genome in a Bottle",
                 "url": "https://bioviz.org/quickload/genome-in-a-bottle",
                 "loadPriority": "1",
-                "mirror": "https://raw.githubusercontent.com/nowlanfreese/Quickload-Genome-In-A-Bottle/master/quickload/",
+                "mirror": "https://bitbucket.org/nfreese/quickload-genome-in-a-bottle/raw/release-v1.0.0",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:9"
             }
             

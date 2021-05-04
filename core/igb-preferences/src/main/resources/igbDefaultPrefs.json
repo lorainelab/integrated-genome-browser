@@ -93,6 +93,7 @@
                 "url": "https://apps.bioviz.org/obr/pending_releases",
                 "enabled": "false",
                 "default": "true"
+            }
         ],
         "annotation_url": [
             {

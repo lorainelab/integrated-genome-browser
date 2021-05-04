@@ -31,8 +31,8 @@
                 "url": "http://lorainelab-quickload.scidas.org/soyseq",
                 "loadPriority": "4",
                 "mirror": "http://igbquickload.org/soyseq",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:4"
-                "status": "disabled",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:4",
+                "status": "disabled"
             },
             {
                 "factoryName": "das",

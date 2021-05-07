@@ -44,9 +44,9 @@
             {
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
-                "url": "http://bioviz.org/quickload/bar",
+                "url": "http://lorainelab-quickload.scidas.org/bar",
                 "loadPriority": "1",
-                "mirror": "http://lorainelab-quickload.scidas.org/bar",
+                "mirror": "http://bioviz.org/quickload/bar",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
             {
@@ -55,7 +55,8 @@
                 "url": "http://lorainelab-quickload.scidas.org/dnaseq",
                 "loadPriority": "1",
                 "mirror": "http://igbquickload.org/dnaseq",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:6"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:6",
+                "status": "disabled"
             },
             {
                 "factoryName": "quickload",

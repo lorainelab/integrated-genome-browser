@@ -20,6 +20,7 @@ import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
 import java.awt.event.ActionEvent;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -48,7 +49,8 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     public static final String COMPONENT_NAME = "UCSCViewAction";
     private static final int MENU_WEIGHT = 75;
     private static final long serialVersionUID = 1L;
-    private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/";
+    private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/"; // to be deleted
+    private static final String UCSC_JSON_ENDPOINT = "https://api.genome.ucsc.edu/list/ucscGenomes"; // keys are UCSC genome names
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
     private static final Set<String> UCSCSources = Collections.synchronizedSet(new HashSet<>());
     private IgbService igbService;
@@ -117,11 +119,15 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     private void initUCSCSources() {
         synchronized (UCSCSources) {
             if (UCSCSources.isEmpty()) {
+                UCSCSources.addAll(getUcscGenomeNamesFromJsonEndpoint());
+                
+                /**
                 Optional<DataProvider> dasDataProvider = igbService.getAllServersList().stream().filter(dataProvider -> dataProvider.getUrl().equals(UCSC_DAS_URL)).findFirst();
                 if (dasDataProvider.isPresent()) {
                     Set<String> supportedGenomeVersionNames = dasDataProvider.get().getSupportedGenomeVersionNames();
                     UCSCSources.addAll(supportedGenomeVersionNames);
                 }
+                */
 
             }
         }
@@ -183,5 +189,9 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     @Reference
     public void setGenomeVersionSynonymLookup(GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         this.genomeVersionSynonymLookup = genomeVersionSynonymLookup;
+    }
+
+    private Collection<? extends String> getUcscGenomeNamesFromJsonEndpoint() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -191,7 +191,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
         this.genomeVersionSynonymLookup = genomeVersionSynonymLookup;
     }
 
-    private Collection<? extends String> getUcscGenomeNamesFromJsonEndpoint() {
+    protected static Collection<? extends String> getUcscGenomeNamesFromJsonEndpoint() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

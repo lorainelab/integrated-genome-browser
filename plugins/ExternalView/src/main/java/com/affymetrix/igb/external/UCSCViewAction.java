@@ -50,7 +50,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     private static final int MENU_WEIGHT = 75;
     private static final long serialVersionUID = 1L;
     private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/"; // to be deleted
-    private static final String UCSC_JSON_ENDPOINT = "https://api.genome.ucsc.edu/list/ucscGenomes"; // keys are UCSC genome names
+    protected static final String UCSC_JSON_ENDPOINT = "https://api.genome.ucsc.edu/list/ucscGenomes"; // keys are UCSC genome names
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
     private static final Set<String> UCSCSources = Collections.synchronizedSet(new HashSet<>());
     private IgbService igbService;

@@ -101,7 +101,7 @@ Meleagris gallopavo	Turkey		M_gallopavo	Meleagris_gallopavo	melGal
 Melopsittacus undulatus	Budgie	M_undulatus	melUnd
 Microcebus murinus	Gray mouse lemur	M_murinus	micMur	Microcebus_murinus
 Mimulus guttatus	Monkey flower	M_guttatus
-Monodelphis domestica	Opossum	M_domestica	monDom
+Monodelphis domestica	Opossum	M_domestica_metatherian	monDom
 Monosiga brevicollis	Choanoflagellates	Monosiga_brevicollis
 Mus musculus	House mouse	M_musculus	mm	Mus_musculus
 Musa acuminata DH Pahang	banana	M_acuminata_DH_Pahang

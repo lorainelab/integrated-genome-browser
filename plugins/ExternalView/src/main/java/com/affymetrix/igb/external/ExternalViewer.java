@@ -28,7 +28,9 @@ public class ExternalViewer extends IgbTabPanel implements ItemListener {
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("external");
     private static final int TAB_POSITION = 7;
 
-    private static final String[] names = {UCSCView.viewName, EnsemblView.viewName};
+    // Removing the Ensembl option because it no longer works
+    //private static final String[] names = {UCSCView.viewName, EnsemblView.viewName};
+    private static final String[] names = {UCSCView.viewName};
     private JRPComboBox ucscBox;
     private JRPComboBox ensemblBox;
     private IgbService igbService;

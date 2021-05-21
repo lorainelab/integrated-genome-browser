@@ -6,7 +6,6 @@
 package com.affymetrix.igb.external;
 
 import com.google.gson.Gson;
-import java.util.Collections;
 import com.google.common.base.Charsets;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -24,14 +23,13 @@ import com.google.common.reflect.TypeToken;
 import static junit.framework.Assert.assertTrue;
 
 /**
- *
+ * Check that UCSC JSON REST API is available and working as required.
  * @author aloraine
  */
 public class EndPointTest {
-    public static HttpURLConnection connection = null;
+    
     public static URL url = null;
-    public static String json = null;
-    public static Object content = null;
+    public static HttpURLConnection connection = null;
     public static String data = null;
 
     @BeforeClass
@@ -41,7 +39,6 @@ public class EndPointTest {
         } catch (MalformedURLException ex) {
             fail("UCSC JSON API endpoint should be a URL.");
         }
-
         try {
             connection = (HttpURLConnection) url.openConnection();
         } catch (IOException ex) {
@@ -49,20 +46,14 @@ public class EndPointTest {
         }
         try {
             data = Resources.toString(url, Charsets.UTF_8);
-
         } catch (IOException ex) {
             fail("UCSC JSON API endpoint should provide content.");
         }
-        /**
-         * try { content = url.getContent(); } catch (IOException ex) {
-         * fail("UCSC JSON API endpoint should provide content."); }
-         */
-
     }
 
     @Test
     public void testResponseCode() {
-        String message = "Response code should be HTTP_OK";
+        String message = "Response code should be HTTP_OK.";
         int right_answer = HttpURLConnection.HTTP_OK;
         int given_answer = -1;
         try {
@@ -75,8 +66,8 @@ public class EndPointTest {
 
     @Test
     public void testEndpointContentType() {
-        String message = "Content should be JSON";
         String right_answer = "application/json";
+        String message = "Content should be "+right_answer+".";
         String given_answer = connection.getContentType();
         assertEquals(message, right_answer, given_answer);
     }
@@ -88,7 +79,7 @@ public class EndPointTest {
                 data, new TypeToken<HashMap<String, Object>>() {
                 }.getType()
         );
-        assertNotNull(map);
+        assertNotNull(message,map);
     }
 
     @Test
@@ -104,7 +95,25 @@ public class EndPointTest {
         } catch (NullPointerException ex) {
             fail(message);
         }
-        assertTrue(result);
+        assertTrue(message,result);
+    }
+    
+    @Test
+    public void testSomeGenomes() {
+        String message = "Genome versions should be available.";
+        Map<String, Object> map = new Gson().fromJson(
+                data, new TypeToken<HashMap<String, Object>>() {
+                }.getType()
+        ); 
+        Map submap = null;
+        if (map.containsKey("ucscGenomes")) {
+            try {
+                submap = (Map) ((Map) map.get("ucscGenomes")).get("hg19");
+            } catch (NullPointerException ex) {
+                fail(message);
+            }
+        }
+        assertNotNull(message,submap);
     }
 
 }

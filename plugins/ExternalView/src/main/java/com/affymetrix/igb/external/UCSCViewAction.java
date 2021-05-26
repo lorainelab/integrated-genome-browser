@@ -10,19 +10,28 @@ import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.SeqSelectionEvent;
 import com.affymetrix.genometry.event.SeqSelectionListener;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import static com.affymetrix.igb.external.ExternalViewer.BUNDLE;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.lorainelab.igb.menu.api.MenuItemEventService;
@@ -48,7 +57,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     public static final String COMPONENT_NAME = "UCSCViewAction";
     private static final int MENU_WEIGHT = 75;
     private static final long serialVersionUID = 1L;
-    private static final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/";
+    protected static final String UCSC_JSON_ENDPOINT = "https://api.genome.ucsc.edu/list/ucscGenomes"; 
     private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
     private static final Set<String> UCSCSources = Collections.synchronizedSet(new HashSet<>());
     private IgbService igbService;
@@ -108,20 +117,31 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
      * Returns the genome UcscVersion in UCSC two-letter plus number format,
      * like "hg17".
      */
-    private String getUcscGenomeVersion(String version) {
-        initUCSCSources();
+    protected String getUcscGenomeVersion(String version) {
+        try {
+            initUCSCSources();
+        }
+        catch (IOException ex) {
+            LOG.error("Unable to look up UCSC genome name");
+            return "";
+        }
         String ucsc_version = genomeVersionSynonymLookup.findMatchingSynonym(UCSCSources, version);
         return UCSCSources.contains(ucsc_version) ? ucsc_version : "";
     }
+    
 
-    private void initUCSCSources() {
+    private void initUCSCSources() throws IOException {
         synchronized (UCSCSources) {
             if (UCSCSources.isEmpty()) {
+                UCSCSources.addAll(getUcscGenomeNamesFromJsonEndpoint());
+                
+                /**
                 Optional<DataProvider> dasDataProvider = igbService.getAllServersList().stream().filter(dataProvider -> dataProvider.getUrl().equals(UCSC_DAS_URL)).findFirst();
                 if (dasDataProvider.isPresent()) {
                     Set<String> supportedGenomeVersionNames = dasDataProvider.get().getSupportedGenomeVersionNames();
                     UCSCSources.addAll(supportedGenomeVersionNames);
                 }
+                */
 
             }
         }
@@ -184,4 +204,16 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     public void setGenomeVersionSynonymLookup(GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         this.genomeVersionSynonymLookup = genomeVersionSynonymLookup;
     }
+
+    protected static Collection<? extends String> getUcscGenomeNamesFromJsonEndpoint() throws MalformedURLException, IOException {
+        URL url = new URL(UCSC_JSON_ENDPOINT);
+        String data = Resources.toString(url, Charsets.UTF_8);
+        Map <String, Object> map = new Gson().fromJson(
+                data, new TypeToken<HashMap<String, Object>>() {
+                }.getType()
+        );
+        Map submap = (Map) map.get("ucscGenomes");
+        Set genome_names = submap.keySet();
+        return genome_names;
+     }
 }

@@ -7,8 +7,17 @@ import static junit.framework.Assert.assertNotNull;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.affymetrix.igb.external.UCSCViewAction;
+
 public class LoaderTest {
 
+    
+    @Test
+    public void checkJsonAPIEndpoint() {
+        
+    }
+    
+    
     @Ignore //ignored for now, but will re-enable as an integration test
     @Test
     public void checkDownLoadEnsembl() throws ImageUnavailableException {

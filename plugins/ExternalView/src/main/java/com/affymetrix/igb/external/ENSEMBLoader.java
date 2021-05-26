@@ -47,7 +47,7 @@ class ENSEMBLoader extends BrowserLoader {
         Map<String, EnsemblURL> urlMap = new HashMap<>();
         String urlfile = "/ensemblURLs";
         InputStream file_input_str
-                = ExternalViewer.class.getResourceAsStream(urlfile);
+                = ENSEMBLoader.class.getResourceAsStream(urlfile);
         BufferedReader d = new BufferedReader(new InputStreamReader(file_input_str));
         StringTokenizer string_toks;
         String ucscName, ensemblURL, line;

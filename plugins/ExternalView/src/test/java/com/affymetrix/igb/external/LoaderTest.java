@@ -41,11 +41,11 @@ public class LoaderTest {
         // code was first written. Looks like much of the functionality and appearance are computing now
         // in the Web browser and it doesn't makes sense to retrieve a PNG image anymore?
         String message = "ENSEMBLoader should build a URL for retrieving an image from Ensembl genome browser Web site.";
-        String right_answer = "http://useast.ensembl.org/Homo_sapiens//Component/Location/Web/ViewBottom?r=4:113775473-113777472;image_width=500;export=png";
+        String expected = "https://useast.ensembl.org/Homo_sapiens/Component/Location/Web/ViewBottom?r=4:113775473-113777472;image_width=500;export=png";
         Loc loc = new Loc("hg38", "chr4", 113775472, 113777472);//chr4:113,435,486-113,777,472
         ENSEMBLoader loader = new ENSEMBLoader();
-        String url_string = loader.getUrlForView(loc,500);
-        assertEquals(url_string,right_answer);
+        String actual = loader.getUrlForView(loc,500);
+        assertEquals(message,expected,actual);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class LoaderTest {
         cookies.put(UCSCView.UCSCUSERID, "");
         Loc loc = new Loc("hg19", "chr1", 6203693, 6206373);
         BufferedImage image = new UCSCLoader().getImage(loc, 800, cookies);
-        assertNotNull(image);
+        assertNotNull(message,image);
     }
 
 }

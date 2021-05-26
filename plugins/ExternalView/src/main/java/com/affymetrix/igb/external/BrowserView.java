@@ -1,6 +1,8 @@
 package com.affymetrix.igb.external;
 
 import com.affymetrix.igb.swing.JRPButton;
+import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.GenometryModel;
 import org.lorainelab.igb.services.IgbService;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
@@ -107,8 +109,12 @@ public abstract class BrowserView extends JPanel {
 
                     @Override
                     public Image doInBackground() throws ImageUnavailableException {
+                        GenomeVersion genomeVersion = GenometryModel.getInstance().getSelectedGenomeVersion();
                         String ucscQuery = ucscViewAction.getUCSCQuery();
                         Loc loc = Loc.fromUCSCQuery(ucscQuery);
+                        if (genomeVersion == null) {
+                            return BrowserLoader.createErrorImage(ExternalViewer.BUNDLE.getString("NoGenomeSelectedError"), pixWidth);
+                        }
                         if (ucscQuery.length() == 0 || loc.db.length() == 0) {
                             return BrowserLoader.createErrorImage(ExternalViewer.BUNDLE.getString("resolveError"), pixWidth);
                         }

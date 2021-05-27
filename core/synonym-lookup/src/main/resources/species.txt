@@ -5,11 +5,14 @@ Anolis carolinensis	Anole Lizard	A_carolinensis	anoCar	Anolis_carolinensis
 Anopheles gambiae	Mosquito	A_gambiae	anoGam
 Apis mellifera	European honey bee	A_mellifera	apiMel
 Aplysia californica	California sea hare	A_californica	aplCal
-Arabidopsis lyrata	Lyrate rockcress	A_lyrata
+Apteryx australis	Brown kiwi	A_australis	aptMan
+Aquila chrysaetos canadensis	Golden eagle	A_chrysaetos_canadensis	aquChr
 Aquilegia coerulea	Colorado blue columbine	A_coerulea
+Arabidopsis lyrata	Lyrate rockcress	A_lyrata
 Arabidopsis thaliana	Mouse-ear cress	A_thaliana
 Arbacia punctulata	Purple-spined sea urchin	A_punctulata
 Balaenoptera acutorostrata	Minke whale	B_acutorostrata	balAcu
+Bison bison bison	Bison	B_bison_bison	bisBis
 Bos taurus	Cow	B_taurus	bosTau	Bos_taurus
 Brachypodium distachyon	Purple false brome	B_distachyon
 Branchiostoma floridae	Lancet	B_floridae	braFlo
@@ -37,8 +40,8 @@ Citrus clementina	Clementine mandarin	C_clementina
 Citrus sinensis	Sweet orange	C_sinensis
 Ciona intestinalis	vase tunicate (sea squirt)	C_intestinalis	ci	Ciona_intestinalis
 Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi
-Chlorocebus sabaeus	African green monkey	C_sabaeus
-Cricetulus griseus	Chinese hamster	C_griseus	criGri
+Chlorocebus sabaeus	African green monkey	C_sabaeus	chlSab
+Cricetulus griseus	Chinese hamster	C_griseus	criGri	criGriChoV
 Cucumis sativus	Cucumber	C_sativus
 Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio
 Daphnia magna	water flea	D_magna
@@ -59,6 +62,7 @@ Drosophila yakuba	D. yakuba (fruit fly)	D_yakuba	droYak
 Dipodomys ordii	Kangaroo rat	D_ordii	dipOrd	Dipodomys_ordii
 Ebola virus	Ebola virus	E_virus	eboVir
 Echinops telfairi	Lesser hedgehog tenrec	E_telfairi		Echinops_telfairi	echTel
+Enhydra lutris nereis	Southern sea otter	E_lutris_nereis	enhLutNer
 Equus caballus	Horse	E_caballus	equCab	Equus_caballus
 Erinaceus europaeus	European hedgehog	E_europaeus	eriEur	Erinaceus_europaeus
 Escherichia coli K12-MG1655	E. coli K12-MG1655	E_coli_K12-MG1655
@@ -67,6 +71,7 @@ Eucalyptus grandis	Eucalyptus	E_grandis
 Felis catus	Cat	F_catus	felCat	Felis_catus
 Ficedula albicollis	collared flycatcher	F_albicollis
 Fragaria vesca	woodland strawberry	F_vesca
+Galeopterus variegatus	Malayan flying lemur	G_variegatus	galVar
 Gallus gallus	Chicken	G_gallus	galGal	Gallus_gallus
 Gasterosteus aculeatus	Stickleback	G_aculeatus	gasAcu	Gasterosteus_aculeatus
 Geospiza fortis	medium ground finch	Geospiza_fortis	G_fortis	geoFor
@@ -85,15 +90,18 @@ Loligo pealeii	Longfin inshore squid	L_pealeii
 Loxodonta africana	African bush elephant	L_africana	loxAfr	Loxodonta_africana
 Lotus japonicus	a model legume	L_japonicus
 Lotmaria passim	honeybee parasite	L_passim
+Macaca fascicularis	Crab-eating macaque	M_fascicularis	macFas
 Macaca mulatta	Rhesus monkey	M_mulatta	rheMac	Macaca_mulatta
 Macropus eugenii	Tammar wallaby	M_eugenii		Macropus_eugenii	macEug
 Malus domestica Borkh	Apple	M_domestica_Borkh
 Manihot esculenta	Cassava	M_esculenta
+Manis pentadactyla	Chinese pangolin	M_pentadactyla	manPen
 Medicago truncatula	Barrel medic	M_truncatula	
 Meleagris gallopavo	Turkey		M_gallopavo	Meleagris_gallopavo	melGal
 Melopsittacus undulatus	Budgie	M_undulatus	melUnd
 Microcebus murinus	Gray mouse lemur	M_murinus	micMur	Microcebus_murinus
 Mimulus guttatus	Monkey flower	M_guttatus
+Monodelphis domestica	Opossum	M_domestica_metatherian	monDom
 Monosiga brevicollis	Choanoflagellates	Monosiga_brevicollis
 Mus musculus	House mouse	M_musculus	mm	Mus_musculus
 Musa acuminata DH Pahang	banana	M_acuminata_DH_Pahang
@@ -102,7 +110,10 @@ Mycobacterium abscessus	M. abcessus	M_abscessus
 Mycobacterium smegmatis	M. smegmatis	M_smegmatis	
 Mycobacterium tuberculosis	M. tuberculosis	M_tuberculosis	
 Myotis lucifugus	Little brown bat	M_lucifugus		Myotis_lucifugus	myoLuc
+Nasalis larvatus	Proboscis monkey	N_larvatus	nasLar
+Nanorana parkeri	Tibetan frog	N_parkeri	nanPar
 Nematostella vectensis	Starlet sea anemone	N_vectensis
+Neomonachus schauinslandi	Hawaiian monk seal	N_schauinslandi	neoSch
 Nicotiana tabacum	Tobacco	N_tabacum
 Nomascus leucogenys	Northern white-cheeked gibbon	Nomascus_leucogenys	N_leucogenys	nomLeu
 Ochotona princeps	American pika	O_princeps	ochPri	Ochotona_princeps
@@ -133,10 +144,12 @@ Pseudomonas aeruginosa	P_aeruginosa	P. aeruginosa
 Pteropus vampyrus	Large flying fox	P_vampyrus	pteVam	Pteropus_vampyrus
 Prunus persica	Peach	P_persica
 Rattus norvegicus	Rat	R_norvegicus	rn	Rattus_norvegicus
+Rhinopithecus roxellana	Golden snub-nosed monkey	R_roxellana	rhiRox
 Ricinus communis	Castor oil plant	R_communis
 Saccharomyces cerevisiae	Budding Yeast	S_cerevisiae	sacCer	Saccharomyces_cerevisiae
 Saimiri boliviensis	Squirrel monkey	S_boliviensis	saiBol
 Sarcophilus harrisii	Tasmanian devil	Sarcophilus_harrisii	S_harrisii	sarHar
+SARS-CoV-2 virus	SARS-CoV-2	S_virus	wuhCor
 Schizosaccharomyces pombe	Fission Yeast	S_pombe
 Selaginella moellendorffii	Spikemoss	S. moellendorffii	S_moellendorffii
 Setaria italica	Foxtail millet	S. italica	S_italica
@@ -153,6 +166,7 @@ Taeniopygia guttata	Zebra finch	T_guttata	taeGut	Taeniopygia_guttata
 Takifugu rubripes	Fugu	T_rubripes	fr	Takifugu_rubripes
 Tarsius syrichta	Philippine tarsier	T_syrichta	tarSyr	Tarsius_syrichta
 Tetraodon nigroviridis	Tetraodon	T_nigroviridis	tetNig	Tetraodon_nigroviridis
+Thamnophis sirtalis	Garter snake	T_sirtalis	thaSir
 Thellungiella halophila	Salt cress	T_halophila
 Thellungiella parvula	Anatolian cress	T_parvula
 Thermococcus kodakaraensis KOD1	Hyperthermophilic Archaeon	T_kodakaraensis_KOD1	T. kodakaraensis_KOD1	T_kodakaraensis_KOD
@@ -166,7 +180,7 @@ Vaccinium corymbosum	Blueberry	V_corymbosum
 Vicugna pacos	Alpaca	V_pacos	vicPac	Vicugna_pacos
 Vitis vinifera	Grape vine	V_vinifera
 Volvox carteri	Volvox	V. carteri	V_carteri
-Xenopus laevis	African clawed frog	X_laevis
+Xenopus laevis	African clawed frog	X_laevis	xenLae
 Xenopus tropicalis	Pipid frog	X_tropicalis	xenTro	Xenopus_tropicalis
 Yersinia pestis	Bubonic plague pathogen	Y_pestis
 Yersinia pseudotuberculosis	Y. pseudotuberculosis	Y_pseudotuberculosis

@@ -281,8 +281,7 @@ public class DefaultTierGlyph extends TransformTierGlyph {
                     // TransientGlyphs are usually NOT drawn in standard drawTraversal
                     if (!(child instanceof TransientGlyph) || drawTransients()) {
                         if (child.isOverlapped() && this.tierType == TierType.ANNOTATION) {
-                            if (child.getRowNumber() < max_depth + MAX_CHILD_IN_SLOP_ROW) {
-                                if (!style.getCollapsed()) {
+                            if (!style.getCollapsed()) {
                                     Graphics2D g = view.getGraphics();
                                     Composite dac = g.getComposite();
                                     g.setComposite(ac);
@@ -291,7 +290,6 @@ public class DefaultTierGlyph extends TransformTierGlyph {
                                 } else {
                                     child.drawTraversal(view);
                                 }
-                            }
                         } else {
                             child.drawTraversal(view);
                         }

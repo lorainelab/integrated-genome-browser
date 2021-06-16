@@ -6,9 +6,14 @@ import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.GraphSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.TypeContainerAnnot;
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
+import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
+import com.affymetrix.genoviz.glyph.EfficientLineContGlyph;
+import com.affymetrix.genoviz.glyph.EfficientOutlinedRectGlyph;
+import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.tiers.IGBStateProvider;
@@ -30,6 +35,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -71,7 +77,6 @@ public class DefaultTierGlyph extends TransformTierGlyph {
 
     private boolean sorted = true;
     private static final Comparator<GlyphI> child_sorter = new GlyphMinXComparator();
-    private static final int MAX_CHILD_IN_SLOP_ROW = 10;
 
     /**
      * A property for the IAnnotStyle.getTransientPropertyMap(). If set to
@@ -91,10 +96,13 @@ public class DefaultTierGlyph extends TransformTierGlyph {
     private static final int handle_width = 10;  // width of handle in pixels
     private boolean isFixedHeight;
 
+    private List<GlyphI> summaryRowChildren;
+
     public DefaultTierGlyph(ITrackStyleExtended style) {
         super(style);
         Rectangle2D.Double cbox = this.getCoordBox();
         cbox.height = DEFAULT_TIER_GLYPH_HEIGHT;
+        this.summaryRowChildren = new ArrayList<GlyphI>();
     }
 
     @Override
@@ -274,22 +282,50 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         int max_depth = getStyleDepth();
         try {
             if (getChildren() != null) {
+                List<GlyphI> children = getChildren();
                 GlyphI child;
-                int numChildren = getChildren().size();
-                for (int i = 0; i < numChildren; i++) {
-                    child = getChildren().get(i);
+                // Draw rows within the stack height (max_depth), as set in the Annotation pane preferences.
+                for (int i = 0; i < children.size(); i++) {
+                    child = children.get(i);
                     // TransientGlyphs are usually NOT drawn in standard drawTraversal
                     if (!(child instanceof TransientGlyph) || drawTransients()) {
                         if (child.isOverlapped() && this.tierType == TierType.ANNOTATION) {
+                            
+                            // TEST: annotation glyph nesting: 
+                            // tier -> EfficientLabelledLineGlyph -> PointedGlyph (-> CodonGlyph?) / EfficientOutlinedRectGlyph (-> CodonGlyph)
+                            // tier -> EfficientLineContGlyph -> PointedGlyph / AlignedResidueGlyph
+                            if (child instanceof EfficientLabelledLineGlyph) {
+                                System.out.println("found EfficientLineContGlyph");
+                                for (int j = 0; j < child.getChildCount(); j++) {
+                                        if (child.getChild(j) instanceof EfficientOutlinedRectGlyph) {
+                                            synchronized (this) {
+                                                // Observe effect
+                                                this.removeChild(child);
+                                            }
+                                        }
+                                    }
+                            } else if (child instanceof EfficientLabelledLineGlyph) {
+                                System.out.println("found EfficientLabelledLineGlyph");
+                            } else {
+                                System.out.println("found other glyph type");
+                            }
+                            
+                            if (child.getRowNumber() >= max_depth) {
+                                this.summaryRowChildren.add(child);
+                                if (i == (children.size() - 1)) {
+                                    // Generate and draw a summary row using the rows that do not fit into the configured stack height (max_depth).
+                                    child = getSummaryRowGlyph(this.summaryRowChildren);
+                                }
+                            }
                             if (!style.getCollapsed()) {
                                     Graphics2D g = view.getGraphics();
                                     Composite dac = g.getComposite();
                                     g.setComposite(ac);
                                     child.drawTraversal(view);
                                     g.setComposite(dac);
-                                } else {
-                                    child.drawTraversal(view);
-                                }
+                            } else {
+                                child.drawTraversal(view);
+                            }
                         } else {
                             child.drawTraversal(view);
                         }
@@ -300,6 +336,17 @@ public class DefaultTierGlyph extends TransformTierGlyph {
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
+    }
+    
+    private GlyphI getSummaryRowGlyph(List<GlyphI> children) {
+        
+        GlyphI summaryGlyph = children.get(children.size() - 1);
+        
+        for (GlyphI child : children) {
+            // TODO: Modify summaryGlyph based on each summary row child glyph (and its nested glyphs) 
+        }
+        
+        return summaryGlyph;
     }
 
     private boolean isAnnotationTier() {

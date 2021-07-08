@@ -50,7 +50,7 @@ public class SpeciesSynonymsLookupImpl extends SynonymLookup implements SpeciesS
     
     private static final boolean DEFAULT_CS = true;
     private static final Pattern STANDARD_REGEX = Pattern.compile("^([a-zA-Z]+_[a-zA-Z]+).*$");
-    private static final Pattern UCSC_REGEX = Pattern.compile("^([a-zA-Z]{2,6})[\\d]+$");
+    private static final Pattern UCSC_REGEX = Pattern.compile("^([a-zA-Z]{2,10})[\\d]+$");
     private static final Pattern NON_STANDARD_REGEX = Pattern.compile("^([a-zA-Z]+_[a-zA-Z]+_[a-zA-Z]+).*$");
 
     private static final String SPECIES_SYNONYM_FILE = "species.txt";

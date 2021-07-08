@@ -69,7 +69,7 @@ public class NewGenomeAction extends OpenURIAction implements MenuBarEntryProvid
             String refSeqPath = ng.getRefSeqFile();
 
             if (!Strings.isNullOrEmpty(refSeqPath)) {
-                String fileName = "";
+                String fileName = getFriendlyName(refSeqPath);
                 if (refSeqPath.startsWith("http") || refSeqPath.startsWith("ftp")){
                     try {
                         igbService.openURI(new URI(refSeqPath.trim()), fileName, genomeVersion, speciesName, true);

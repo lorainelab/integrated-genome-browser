@@ -4,16 +4,17 @@
             {
                 "factoryName": "quickload",
                 "name": "RNA-Seq",
-                "url": "http://lorainelab-quickload.scidas.org/rnaseq",
+                "url": "http://igbquickload.org/rnaseq",
                 "loadPriority": "0",
+                "mirror":"http://lorainelab-quickload.scidas.org/rnaseq",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:2"
             },
             {
                 "factoryName": "quickload",
                 "name": "IGB Quickload",
-                "url": "http://lorainelab-quickload.scidas.org/quickload",
+                "url": "http://igbquickload.org/quickload",
                 "loadPriority": "2",
-                "mirror": "http://quickload.bioviz.org/quickload",
+                "mirror": "http://lorainelab-quickload.scidas.org/quickload",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:1"
             },
             {
@@ -21,7 +22,7 @@
                 "name": "Blueberry",
                 "url": "http://lorainelab-quickload.scidas.org/blueberry",
                 "loadPriority": "3",
-                "mirror": "http://quickload.bioviz.org/blueberry",
+                "mirror": "http://igbquickload.org/blueberry",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:3"
             },
             {
@@ -30,42 +31,48 @@
                 "url": "http://lorainelab-quickload.scidas.org/soyseq",
                 "loadPriority": "4",
                 "mirror": "http://igbquickload.org/soyseq",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:4"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:4",
+                "status": "disabled"
             },
             {
                 "factoryName": "das",
                 "name": "UCSC",
                 "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
                 "loadPriority": "5",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:5"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:15",
+                "status": "disabled"
             },
             {
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
                 "url": "http://lorainelab-quickload.scidas.org/bar",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:6"
+                "mirror": "http://bioviz.org/quickload/bar",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
             {
                 "factoryName": "quickload",
                 "name": "DNA-Seq",
-                "url": "http://lorainelab-quickload.scidas.org/dnaseq/",
+                "url": "http://lorainelab-quickload.scidas.org/dnaseq",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
+                "mirror": "http://igbquickload.org/dnaseq",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:6",
+                "status": "disabled"
             },
             {
                 "factoryName": "quickload",
                 "name": "ChIP-Seq",
-                "url": "http://lorainelab-quickload.scidas.org/chipseq/",
+                "url": "http://lorainelab-quickload.scidas.org/chipseq",
                 "loadPriority": "1",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:8"
+                "mirror": "http://igbquickload.org/chipseq",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:7"
             },
             {
                 "factoryName": "quickload",
-                "name": "GIAB",
-                "url": "https://bitbucket.org/nfreese/quickload-genome-in-a-bottle/raw/release-v1.0.0/quickload/",
+                "name": "Genome in a Bottle",
+                "url": "https://bioviz.org/quickload/genome-in-a-bottle",
                 "loadPriority": "1",
-                "mirror": "https://raw.githubusercontent.com/nowlanfreese/Quickload-Genome-In-A-Bottle/release-v1.0.0/quickload/",
+                "mirror": "https://bitbucket.org/nfreese/quickload-genome-in-a-bottle/raw/release-v1.0.0",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:9"
             }
             
@@ -81,6 +88,12 @@
                 "name": "App Store",
                 "url": "https://apps.bioviz.org/obr/releases/",
                 "enabled": "true",
+                "default": "true"
+            },
+            {
+                "name": "Pending Apps",
+                "url": "https://apps.bioviz.org/obr/pending_releases",
+                "enabled": "false",
                 "default": "true"
             }
         ],

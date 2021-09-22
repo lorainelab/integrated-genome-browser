@@ -12,7 +12,7 @@
     </searchSequence>
     <variables>
       <variable name="projectHomeDirectory" value=".." description="Path to the source control root of the IGB project, relative to main" category="" />
-      <variable name="igbVersion" value="9.1.8" description="" category="" />
+      <variable name="igbVersion" value="9.1.10" description="" category="" />
       <variable name="codeBaseUrl" value="https://bioviz.org/igb/releases/current" description="Directory containing updates.xml file." category="" />
     </variables>
     <mergedProjects />

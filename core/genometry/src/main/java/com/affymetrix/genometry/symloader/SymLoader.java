@@ -360,6 +360,7 @@ public abstract class SymLoader {
         String unzippedStreamName = GeneralUtils.stripEndings(uriString);
         String extension = GeneralUtils.getExtension(unzippedStreamName);
         extension = extension.substring(extension.indexOf('.') + 1);	// strip off first .
+        extension = extension.split("\\?")[0]; // strip off potential query params
         return extension;
     }
 

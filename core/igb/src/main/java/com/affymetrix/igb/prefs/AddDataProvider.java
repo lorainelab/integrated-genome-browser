@@ -119,7 +119,6 @@ public class AddDataProvider extends JFrame {
             typeCombo.setEnabled(true);
             nameText.setText("Your server name");
             addServerButton.setText("Submit");
-            urlText.setText("http://");
         }
 
         setTitle(title);
@@ -153,7 +152,7 @@ public class AddDataProvider extends JFrame {
         typeLabel = new javax.swing.JLabel();
         typeCombo = new javax.swing.JComboBox();
         urlLabelField = new javax.swing.JLabel();
-        urlText = new JRPTextField("ServerPrefsView_url", "http://");
+        urlText = new JRPTextField("ServerPrefsView_url");
         openDir = new JRPButton("DataLoadPrefsView_openDir", "\u2026");
         cancelButton = new javax.swing.JButton();
         addServerButton = new javax.swing.JButton();

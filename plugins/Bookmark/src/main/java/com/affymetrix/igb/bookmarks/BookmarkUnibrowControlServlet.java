@@ -594,17 +594,19 @@ private void directlyLoadFile(String urlToLoad, String trackLabel, IgbService ig
 
     private void loadUnknownData(final ListMultimap<String, String> parameters, IgbService igbService) {
         List<String> query_urls = parameters.get(Bookmark.QUERY_URL);
+        List<String> trackLabels = parameters.get(SYM.NAME + "0");
         //These bookmarks should only contain one url
         if (!query_urls.isEmpty()) {
             try {
                 String urlToLoad = query_urls.get(0);
                 String speciesName = igbService.getSelectedSpecies();
+                String trackLabel = (trackLabels != null && trackLabels.size() > 0) ? trackLabels.get(0) : DataSetUtils.extractNameFromPath(query_urls.get(0));
                 GenomeVersion loadGroup = GenometryModel.getInstance().getSelectedGenomeVersion();
                 if(StringUtils.isNotEmpty(speciesName) && loadGroup!=null){
-                    igbService.openURI(new URI(urlToLoad), urlToLoad, loadGroup, speciesName, false);
+                    igbService.openURI(new URI(urlToLoad), trackLabel, loadGroup, speciesName, false);
                 }else{
                     GenomeVersion customLoadGroup = OpenURIAction.retrieveSeqGroup("Custom Genome");
-                    igbService.openURI(new URI(urlToLoad), urlToLoad, customLoadGroup, "Custom Genome", false);
+                    igbService.openURI(new URI(urlToLoad), trackLabel, customLoadGroup, "Custom Genome", false);
                 }
             } catch (URISyntaxException ex) {
                 logger.error("Invalid bookmark syntax.", ex);

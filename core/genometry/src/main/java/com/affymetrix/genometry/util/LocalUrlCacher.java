@@ -40,6 +40,12 @@ import java.util.Properties;
 import htsjdk.samtools.seekablestream.SeekableFileStream;
 import htsjdk.samtools.seekablestream.SeekableHTTPStream;
 import htsjdk.samtools.seekablestream.SeekableStream;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -311,6 +317,25 @@ public final class LocalUrlCacher {
     }
 
     public static URLConnection connectToUrl(String url, long local_timestamp) throws IOException {
+        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                try {
+                    for (Certificate cert : session.getPeerCertificates()) {
+                        String[] certDomainComponents = ((X509Certificate) cert).getSubjectDN().toString().split("\\.");
+                        String[] urlDomainComponents = hostname.split("\\.");
+                        // Trust certificates whose common name's core domain matches that of the request URL
+                        if ((urlDomainComponents[urlDomainComponents.length - 1] + urlDomainComponents[urlDomainComponents.length - 2])
+                                .equals(certDomainComponents[certDomainComponents.length - 1] + certDomainComponents[certDomainComponents.length - 2])) {
+                            return true;
+                        }
+                    }
+                } catch (SSLPeerUnverifiedException ex) {
+                    logger.info("Could not verify SSL peer: ", ex);
+                }
+                return false;
+            }
+        });        
         URL theurl = new URL(url);
         URLConnection conn = theurl.openConnection();
         conn.setConnectTimeout(CONNECT_TIMEOUT);

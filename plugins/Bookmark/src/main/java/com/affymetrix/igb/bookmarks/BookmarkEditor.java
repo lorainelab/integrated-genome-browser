@@ -7,7 +7,7 @@ import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.google.common.base.Optional;
 import java.util.logging.Level;
 import javax.swing.ButtonGroup;
-/*import javax.swing.JCheckBox;*/
+
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
@@ -28,12 +28,12 @@ public class BookmarkEditor {
     private final JTextArea commentField;
     private final JRadioButton positionOnlyB;
     private final JRadioButton positionDataB;
-    /*private final JCheckBox useDefaultName;*/
+   
     private final JOptionPane op;
     private SeqSpan span;
 
     private static final boolean defaultUseDefaultName = true;
-    /*private static final String PREF_USE_DEFAULT_NAME = "Use Default Name";*/
+    
 
     private static final String default_bookmark_type = "Position and Data";
     private static final String PREF_BOOKMARK_TYPE = "Bookmark type";
@@ -47,9 +47,7 @@ public class BookmarkEditor {
                 "Position Only", PREF_BOOKMARK_TYPE, default_bookmark_type);
         positionDataB = PreferenceUtils.createRadioButton("Position and Data",
                 "Position and Data", PREF_BOOKMARK_TYPE, default_bookmark_type);
-        /*useDefaultName = PreferenceUtils.createCheckBox(PREF_USE_DEFAULT_NAME,
-                PREF_USE_DEFAULT_NAME, defaultUseDefaultName);*/
-        /*useDefaultName.addActionListener(evt -> setNameField());*/
+        
         ButtonGroup group = new ButtonGroup();
         group.add(positionOnlyB);
         group.add(positionDataB);
@@ -88,11 +86,9 @@ public class BookmarkEditor {
     }
 
     private void setNameField() {
-        /*if (useDefaultName.isSelected()){*/
+        
             nameField.setText(BookmarkController.getDefaultBookmarkName(span));
-        /*} else {*/
-            /*nameField.setText("");*/
-        /*}*/
+      
     }
 
     private void addBookmark() {

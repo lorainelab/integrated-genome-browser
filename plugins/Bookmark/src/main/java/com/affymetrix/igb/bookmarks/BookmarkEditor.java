@@ -7,7 +7,6 @@ import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.google.common.base.Optional;
 import java.util.logging.Level;
 import javax.swing.ButtonGroup;
-
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
@@ -28,13 +27,10 @@ public class BookmarkEditor {
     private final JTextArea commentField;
     private final JRadioButton positionOnlyB;
     private final JRadioButton positionDataB;
-   
     private final JOptionPane op;
     private SeqSpan span;
-
     private static final boolean defaultUseDefaultName = true;
-    
-
+   
     private static final String default_bookmark_type = "Position and Data";
     private static final String PREF_BOOKMARK_TYPE = "Bookmark type";
 
@@ -85,10 +81,9 @@ public class BookmarkEditor {
         dialog.pack();
     }
 
-    private void setNameField() {
-        
-            nameField.setText(BookmarkController.getDefaultBookmarkName(span));
-      
+    private void setNameField() 
+    {
+        nameField.setText(BookmarkController.getDefaultBookmarkName(span));      
     }
 
     private void addBookmark() {

@@ -323,6 +323,7 @@ public final class LocalUrlCacher {
                 try {
                     for (Certificate cert : session.getPeerCertificates()) {
                         String[] certDomainComponents = ((X509Certificate) cert).getSubjectDN().toString().split("\\.");
+                        certDomainComponents[certDomainComponents.length - 1] = certDomainComponents[certDomainComponents.length - 1].split(",")[0];
                         String[] urlDomainComponents = hostname.split("\\.");
                         // Trust certificates whose common name's core domain matches that of the request URL
                         if ((urlDomainComponents[urlDomainComponents.length - 1] + urlDomainComponents[urlDomainComponents.length - 2])

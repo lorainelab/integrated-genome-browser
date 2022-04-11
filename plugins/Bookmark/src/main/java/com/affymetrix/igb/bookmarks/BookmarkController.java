@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
 public class BookmarkController {
 
     private static final Logger logger = LoggerFactory.getLogger(BookmarkController.class);
-    public static final String DEFAULT_BOOKMARK_NAME_FORMAT = "{0}, {1} : {2} - {3}";
+    public static final String DEFAULT_BOOKMARK_NAME_FORMAT = "{0}, {1}:{2}-{3}";
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     /**

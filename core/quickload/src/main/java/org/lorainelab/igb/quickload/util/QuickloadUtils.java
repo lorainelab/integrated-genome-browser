@@ -128,14 +128,13 @@ public class QuickloadUtils {
     private static boolean isValidRepositoryUrl(String strAnnotsURL){
         try {
             URL AnnotsURL = new URL(strAnnotsURL);
-            if(AnnotsURL.toString().contains("https"))
-            {
+            if(AnnotsURL.getProtocol().equals("https")) {
                 if(((HttpsURLConnection) AnnotsURL.openConnection()).getResponseCode() != HttpsURLConnection.HTTP_OK)
                     throw new MalformedURLException("Invalid URL or annots.xml not found");
-            } else if(strAnnotsURL.contains("http")){
+            } else if(AnnotsURL.getProtocol().equals("http")){
                 if(((HttpURLConnection) AnnotsURL.openConnection()).getResponseCode() != HttpURLConnection.HTTP_OK)
                     throw new MalformedURLException("Invalid URL or annots.xml not found");
-            } else if(strAnnotsURL.contains("file")){
+            } else if(AnnotsURL.getProtocol().equals("file")){
                 if(!(new File(java.net.URLDecoder.decode(strAnnotsURL.replace("file:",""), "UTF-8"))).exists()){
                     throw new FileNotFoundException("Invalid file path or annots.xml not found.");
                 }

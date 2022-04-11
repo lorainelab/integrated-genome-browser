@@ -9,7 +9,7 @@ Apteryx australis	Brown kiwi	A_australis	aptMan
 Aquila chrysaetos canadensis	Golden eagle	A_chrysaetos_canadensis	aquChr
 Aquilegia coerulea	Colorado blue columbine	A_coerulea
 Arabidopsis lyrata	Lyrate rockcress	A_lyrata
-Arabidopsis thaliana	Mouse-ear cress	A_thaliana
+Arabidopsis thaliana	Mouse-ear cress	A_thaliana	araTha
 Arbacia punctulata	Purple-spined sea urchin	A_punctulata
 Balaenoptera acutorostrata	Minke whale	B_acutorostrata	balAcu
 Bison bison bison	Bison	B_bison_bison	bisBis

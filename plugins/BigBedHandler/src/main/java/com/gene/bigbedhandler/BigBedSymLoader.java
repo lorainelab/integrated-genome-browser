@@ -3,10 +3,12 @@ package com.gene.bigbedhandler;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.parsers.BedParser;
+import com.affymetrix.genometry.parsers.TrackLineParser;
 import com.affymetrix.genometry.symloader.SymLoader;
+import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.SimpleSymWithProps;
+import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
@@ -27,6 +29,7 @@ import org.broad.igv.bbfile.BPTreeNode;
 import org.broad.igv.bbfile.BedFeature;
 import org.broad.igv.bbfile.BigBedIterator;
 import htsjdk.samtools.seekablestream.SeekableStreamFactory;
+import java.util.Arrays;
 
 public class BigBedSymLoader extends SymLoader {
 
@@ -147,6 +150,8 @@ public class BigBedSymLoader extends SymLoader {
 
     private List<? extends SeqSymmetry> parse(BioSeq seq, BigBedIterator bedIterator) {
         List<SeqSymmetry> symList = new ArrayList<>();
+        int definedFieldCount = bbReader.getBBFileHeader().getDefinedFieldCount();
+        int fieldCount = bbReader.getBBFileHeader().getFieldCount();
         try {
             BedFeature bedFeature = null;
             while (bedIterator.hasNext() && (!Thread.currentThread().isInterrupted())) {
@@ -154,19 +159,108 @@ public class BigBedSymLoader extends SymLoader {
                 if (bedFeature == null) {
                     break;
                 }
-                SimpleSymWithProps sym = new SimpleSymWithProps();
-                SeqSpan span = new SimpleSeqSpan(bedFeature.getStartBase(), bedFeature.getEndBase(), seq);
-                sym.addSpan(span);
-                sym.setProperty("type", featureName);
-                String[] restOfFields = bedFeature.getRestOfFields();
+                if (definedFieldCount < 3) {
+                    return symList;
+                }
+
+                String seq_name = null;
+                String geneName = null;
+                int min;
+                int max;
+                String itemRgb = "";
+                int thick_min = Integer.MIN_VALUE; // Integer.MIN_VALUE signifies that thick_min is not used
+                int thick_max = Integer.MIN_VALUE; // Integer.MIN_VALUE signifies that thick_max is not used
+                float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
+                boolean forward;
+                int[] blockSizes = null;
+                int[] blockStarts = null;
+                int[] blockMins = null;
+                int[] blockMaxs = null;
+
+                seq_name = bedFeature.getChromosome(); // seq id field
+                int beg = bedFeature.getStartBase(); // start field
+                int end = bedFeature.getEndBase(); // stop field
+                if (definedFieldCount >= 4) {
+                    geneName = bedFeature.getRestOfFields()[0];
+                    if (geneName == null || geneName.length() == 0) {
+                        geneName = genomeVersion.getName();
+                    }
+                }
+                if (definedFieldCount >= 5) {
+                    score = Float.parseFloat(bedFeature.getRestOfFields()[1]);
+                } // score field
+                if (definedFieldCount >= 6) {
+                    forward = !(bedFeature.getRestOfFields()[2].equals("-"));
+                } else {
+                    forward = (beg <= end);
+                }
+
+                min = Math.min(beg, end);
+                max = Math.max(beg, end);
+
+                if (definedFieldCount >= 8) {
+                    thick_min = Integer.parseInt(bedFeature.getRestOfFields()[3]); // thickStart field
+                    thick_max = Integer.parseInt(bedFeature.getRestOfFields()[4]); // thickEnd field
+                }
+                if (definedFieldCount >= 9) {
+                    itemRgb = bedFeature.getRestOfFields()[5];
+                } 
+                if (definedFieldCount >= 12) {
+                    int blockCount = Integer.parseInt(bedFeature.getRestOfFields()[6]); // blockCount field
+                    blockSizes = BedParser.parseIntArray(bedFeature.getRestOfFields()[7]); // blockSizes field
+                    if (blockCount != blockSizes.length) {
+                        System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + geneName + " on " + seq_name);
+                        continue;
+                    }
+                    blockStarts = BedParser.parseIntArray(bedFeature.getRestOfFields()[8]); // blockStarts field
+                    if (blockCount != blockStarts.length) {
+                        System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + geneName + " on " + seq_name);
+                        continue;
+                    }
+                    blockMins = BedParser.makeBlockMins(min, blockStarts);
+                    blockMaxs = BedParser.makeBlockMaxs(blockSizes, blockMins);
+                } else {
+                    /*
+                     * if no child blocks, make a single child block the same size as the parent
+                     * Very Inefficient, ideally wouldn't do this
+                     * But currently need this because of GenericAnnotGlyphFactory use of annotation depth to
+                     *     determine at what level to connect glyphs -- if just leave blockMins/blockMaxs null (no children),
+                     *     then factory will create a line container glyph to draw line connecting all the bed annots
+                     * Maybe a way around this is to adjust depth preference based on overall depth (1 or 2) of bed file?
+                     */
+                    blockMins = new int[1];
+                    blockMins[0] = min;
+                    blockMaxs = new int[1];
+                    blockMaxs[0] = max;
+                }
+                if (max > seq.getLength()) {
+                    seq.setLength(max);
+                }
+
+                SymWithProps bedline_sym;
+                bedline_sym = new UcscBedSym(this.bbFileHdr.getPath(), seq, min, max, geneName, score, forward, thick_min, thick_max, blockMins, blockMaxs);
+                if (itemRgb != null) {
+                    java.awt.Color c = null;
+                    try {
+                        c = TrackLineParser.reformatColor(itemRgb);
+                    } catch (Exception e) {
+                        Logger.getLogger(BigBedSymLoader.class.getName()).log(Level.SEVERE, "Could not parse a color from String '{}'", itemRgb);
+                    }
+                    if (c != null) {
+                        bedline_sym.setProperty(TrackLineParser.ITEM_RGB, c);
+                    }
+                }
+
+                //Add optional fields to sym
+                String[] restOfFields = Arrays.copyOfRange(bedFeature.getRestOfFields(),definedFieldCount-3,fieldCount-3);
                 if (restOfFields != null) {
                     for (int i = 0; i < restOfFields.length; i++) {
                         if (restOfFields[i] != null && restOfFields[i].trim().length() > 0) {
-                            sym.setProperty("restOfFields " + (i + 1), restOfFields[i]);
+                            bedline_sym.setProperty("optional field " + (i + 1), restOfFields[i]);
                         }
                     }
                 }
-                symList.add(sym);
+                symList.add(bedline_sym);
             }
         } catch (Exception ex) {
             Logger.getLogger(BigBedSymLoader.class.getName()).log(Level.SEVERE, null, ex);

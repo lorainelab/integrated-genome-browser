@@ -39,8 +39,8 @@
                 "name": "UCSC",
                 "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
                 "loadPriority": "5",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:15",
-                "status": "disabled"
+                "defaultDataProviderId": "IgbDefaultDataProviderId:15"
+                
             },
             {
                 "factoryName": "quickload",

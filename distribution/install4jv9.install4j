@@ -3,7 +3,7 @@
   <application name="Integrated Genome Browser" applicationId="1717-8724-7098-6386" mediaDir="${compiler:projectHomeDirectory}/distribution" mediaFilePattern="${compiler:sys.shortName}-${compiler:sys.platform}-${compiler:sys.version}" lzmaCompression="true" shrinkRuntime="false" shortName="IGB" publisher="Loraine Lab" publisherWeb="https://bioviz.org" version="${compiler:igbVersion}" allPathsRelative="true" convertDotsToUnderscores="false" macVolumeId="a1638eb14df51528" javaMinVersion="1.8" jdkMode="runtimeJre">
     <variables>
       <variable name="projectHomeDirectory" value=".." description="Path to the source control root of the IGB project, relative to main" />
-      <variable name="igbVersion" value="9.1.10" />
+      <variable name="igbVersion" value="9.1.8" />
       <variable name="codeBaseUrl" value="https://bioviz.org/igb/releases/current" description="Directory containing updates.xml file." />
     </variables>
     <codeSigning macEnabled="true" macPkcs12File="2020-11-18-developerID_application_igb.p12" windowsEnabled="true" windowsPkcs12File="windows_keystore.pfx" macNotarize="true" appleId="aloraine@gmail.com" />
@@ -1185,5 +1185,5 @@ context.goForward(1, true, true);
     <mediaSet refId="179" />
     <mediaSet refId="552" />
   </buildIds>
-  <buildOptions verbose="true" faster="true" disableJreBundling="true" />
+  <buildOptions verbose="true" faster="true" />
 </install4j>

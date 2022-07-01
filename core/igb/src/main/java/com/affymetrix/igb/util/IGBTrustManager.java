@@ -62,16 +62,18 @@ public class IGBTrustManager implements X509TrustManager {
         StringBuilder subjects = new StringBuilder();
         IGB app = IGB.getInstance();
         for (X509Certificate cert : certs) {
-            certificates.append(cert.getIssuerX500Principal().getName()).append(",").append("\n");
+            certificates.append(cert.getIssuerX500Principal().getName()).append(";");
             subjects.append(cert.getSubjectX500Principal().getName()).append("; ");
         }
         JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
         try {
             //kiran:IGBF-1362: First try to validate the certificate using the default trust store
             defaultTm.checkServerTrusted(certs,authType);
-            logger.info("Authenticated {} certificates using default trust store",certificates.toString().replace("\n", "").replace("\r", ""));
+            String str = subjects.toString().trim();
+            logger.info("Trusted Certificates:" + str.substring(0, str.length() - 1));
         } catch (CertificateException e) {
-            logger.info("Untrusted certificate: " + subjects.toString());
+            String str = subjects.toString().trim();
+            logger.info("Untrusted Certificates: " + str.substring(0, str.length() - 1));
         }
     }
 }

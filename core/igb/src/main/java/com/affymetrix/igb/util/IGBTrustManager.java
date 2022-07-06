@@ -59,23 +59,21 @@ public class IGBTrustManager implements X509TrustManager {
     public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 
         StringBuilder certificates = new StringBuilder("\n\n");
+        StringBuilder subjects = new StringBuilder();
         IGB app = IGB.getInstance();
         for (X509Certificate cert : certs) {
-            certificates.append(cert.getIssuerX500Principal().getName()).append(",").append("\n");
+            certificates.append(cert.getIssuerX500Principal().getName()).append(";");
+            subjects.append(cert.getSubjectX500Principal().getName()).append("; ");
         }
         JComponent comp = (app == null) ? null : app.getFrame().getRootPane();
         try {
             //kiran:IGBF-1362: First try to validate the certificate using the default trust store
             defaultTm.checkServerTrusted(certs,authType);
-            logger.info("Authenticated {} certificates using default trust store",certificates.toString().replace("\n", "").replace("\r", ""));
+            String str = subjects.toString().trim();
+            logger.info("Trusted Certificates:" + str.substring(0, str.length() - 1));
         } catch (CertificateException e) {
-            //if certificate not found then ask the user to validate the certificate
-            boolean response = ModalUtils.confirmPanel(comp, "Trust following certificate? " + certificates.toString(),
-                    PreferenceUtils.getCertificatePrefsNode(), certificates.toString(), true, "Do not show this again for the publisher above");
-
-            if (!response) {
-                throw new RuntimeException("Untrusted certificate.");
-            }
+            String str = subjects.toString().trim();
+            logger.info("Untrusted Certificates: " + str.substring(0, str.length() - 1));
         }
     }
 }

@@ -1,25 +1,34 @@
 /**
  * Copyright (c) 2010 Affymetrix, Inc.
  *
+ * <p>
  * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
  * of the license must be included with any distribution of this source code.
  * Distributions from Affymetrix, Inc., place this in the IGB_LICENSE.html file.
  *
+ * <p>
  * The license is also available at http://www.opensource.org/licenses/cpl.php
  */
 package com.affymetrix.igb;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.data.DataProvider;
+import com.affymetrix.genometry.data.DataProviderFactory;
+import com.affymetrix.genometry.data.DataProviderFactoryManager;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.affymetrix.genometry.thread.CThreadHolder;
+import com.affymetrix.genometry.thread.CThreadWorker;
 import com.affymetrix.genometry.util.GeneralUtils;
+import com.affymetrix.genometry.util.LoadUtils;
+import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
@@ -42,6 +51,7 @@ import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
@@ -76,6 +86,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.LoggerFactory;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -94,6 +106,8 @@ public class IgbServiceImpl implements IgbService {
 
     private MenuBarManager menuBarManager;
     private TreeMultimap<Integer, JMenu> parentMenuEntries;
+    private DataProviderFactoryManager dataProviderFactoryManager;
+    private DataProviderManager dataProviderManager;
 
     private IgbServiceImpl() {
         super();
@@ -421,10 +435,63 @@ public class IgbServiceImpl implements IgbService {
     @Override
     public void openPreferencesOtherPanel() {
         PreferencesPanel pv = PreferencesPanel.getSingleton();
-        pv.setTab(OtherOptionsView.class);	// Other preferences tab
+        pv.setTab(OtherOptionsView.class);    // Other preferences tab
         JFrame f = pv.getFrame();
         f.setState(JFrame.NORMAL);
         f.setVisible(true);
+    }
+
+    /**
+     * Adds Quickload data source in IGB Preferences.
+     * @param url : the quickloadurl provided by the user or converted UCSC trackhub url from the trackhub page
+     * @param name : the quickloadname(shortLabel) provided by the user or from the hub.txt file
+     */
+    @Override
+    public void addDataSourcesEndpoint(String url, String name) {
+        org.slf4j.Logger LOG = LoggerFactory.getLogger(IgbServiceImpl.class);
+        BundleContext bundleContext = FrameworkUtil.getBundle(IgbServiceImpl.class).getBundleContext();
+        ServiceReference serviceRef = bundleContext.getServiceReference(DataProviderManager.class.getName());
+        dataProviderManager = (DataProviderManager) bundleContext.getService(serviceRef);
+        serviceRef = bundleContext.getServiceReference(DataProviderFactoryManager.class.getName());
+        dataProviderFactoryManager = (DataProviderFactoryManager) bundleContext.getService(serviceRef);
+        CThreadWorker<Boolean, Void> worker;
+        worker = new CThreadWorker<Boolean, Void>("Adding Data Source: " + name.trim()) {
+            boolean isUnavailable = false;
+            @Override
+            protected Boolean runInBackground() {
+                if (!Strings.isNullOrEmpty(url) || !Strings.isNullOrEmpty(name)) {
+                    Optional<DataProviderFactory> factory = dataProviderFactoryManager.findFactoryByName("Quickload");
+                    if (factory.isPresent()) {
+                        DataProvider createdDataProvider = factory.get().createDataProvider(url, name, -1);
+                        dataProviderManager.addDataProvider(createdDataProvider);
+                        if (createdDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
+                            isUnavailable = true;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            protected void finished() {
+                boolean serverAdded = true;
+                try {
+                    serverAdded = get();
+                } catch (InterruptedException | ExecutionException ex) {
+                    LOG.error(ex.getMessage(), ex);
+                }
+                GenometryModel gmodel = GenometryModel.getInstance();
+                GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
+                if (serverAdded && genomeVersion != null) {
+                    ModalUtils.infoPanel("<html>Your data source <b>" + name.trim() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
+                }
+                if (isUnavailable) {
+                    ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
+                }
+            }
+        };
+        CThreadHolder.getInstance().execute(new Object(),worker);
+
     }
 
     @Override
@@ -549,11 +616,13 @@ public class IgbServiceImpl implements IgbService {
         JTextArea consoleTab;
         Timestamp ts;
         
+
         ts = new Timestamp((new Date()).getTime());
         consoleTab = (JTextArea)((JViewport)((JScrollPane) (IGB.getInstance()).getViewByDisplayName("Console").getComponent(0)).getViewport()).getView();
         consoleTab.append("\n" + ts.toString().split("\\s+")[1] + " " + MsgType + " " + Msg);
     }
     
+
     @Override
     public ITrackStyleExtended getAnnotStyle(String unique_name) {
         return IGBStateProvider.getGlobalStateProvider().getAnnotStyle(unique_name);

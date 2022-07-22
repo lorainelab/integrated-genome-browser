@@ -224,6 +224,14 @@ public interface IgbService {
     public void selectFeatureAndCenterZoomStripe(String selectParam);
 
     public void openPreferencesOtherPanel();
+    /**
+     * Adds Quickload data source in IGB Preferences.
+     * To verify if the API endpoint works check the data sources tab in preferences window in IGB after
+     * the API request has been made.
+     * @param url : the quickloadurl provided by the user or converted UCSC trackhub url from the trackhub page
+     * @param name : the quickloadname(shortLabel) provided by the user or from the hub.txt file
+     */
+    public void addDataSourcesEndpoint(String url,String name);
 
     public void openPreferencesPanelTab(Class<? extends PreferencesPanelProvider> cls);
 

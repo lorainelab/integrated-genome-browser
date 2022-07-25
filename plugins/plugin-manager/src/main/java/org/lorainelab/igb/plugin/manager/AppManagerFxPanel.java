@@ -34,6 +34,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -226,14 +227,21 @@ public class AppManagerFxPanel extends JFXPanel {
         listView.setCellFactory((ListView<PluginListItemMetadata> l) -> new BuildCell());
         description.setContextMenuEnabled(false);
         webEngine = description.getEngine();
-        JSObject jsobj = (JSObject) webEngine.executeScript("window");
         /*~kiran: IGBF-1244- Creating instance variables to avoid garbage collection of the weak references
          causing subsequent accesses to the JavaScript objects to have no effect.*/
         jsBridge = new JSBridge();
         jsLogger = new JSLogger();
-        jsobj.setMember("Bridge", jsBridge);
-        jsobj.setMember("logger", jsLogger);
-
+        description.getEngine().getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
+            @Override
+            public void changed(ObservableValue ov, State oldState, State newState) {
+                if (newState == State.SUCCEEDED) {
+                    JSObject jsobj = (JSObject) description.getEngine().executeScript("window");
+                    jsobj.setMember("Bridge", jsBridge);
+                    jsobj.setMember("logger", jsLogger);
+                }
+            }
+        });
+        
         String htmlUrl;
         if (bundleContext != null) {
             htmlUrl = bundleContext.getBundle().getEntry(PLUGIN_INFO_TEMPLATE).toExternalForm();

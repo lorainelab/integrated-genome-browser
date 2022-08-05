@@ -15,7 +15,6 @@ public class FileExtensionContants {
         //private constructor to prevent instantiation
     }
     public static final String BAM_EXT = ".bam";
-    public static final String USEQ_EXT = ".useq";
     public static final String BAR_EXT = ".bar";
     public static final String BP1_EXT = ".bp1";
     public static final String BP2_EXT = ".bp2";

@@ -157,7 +157,6 @@
                             com.affymetrix.genometry.parsers.das,
                             com.affymetrix.genometry.parsers.gchp,
                             com.affymetrix.genometry.parsers.graph,
-                            com.affymetrix.genometry.parsers.useq,
                             com.affymetrix.genometry.quickload,
                             com.affymetrix.genometry.regionfinder,
                             com.affymetrix.genometry.span,

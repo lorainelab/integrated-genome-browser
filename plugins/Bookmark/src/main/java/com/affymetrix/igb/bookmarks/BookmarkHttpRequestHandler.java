@@ -10,7 +10,6 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.common.CommonUtils;
-import static com.affymetrix.common.CommonUtils.IGB_NAME;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.FAVICON_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.GALAXY_REQUEST;
 import static com.affymetrix.igb.bookmarks.BookmarkConstants.SERVLET_NAME;
@@ -32,6 +31,7 @@ import org.slf4j.LoggerFactory;
 class BookmarkHttpRequestHandler extends NanoHTTPD {
 
     private final IgbService igbService;
+    private static final String IGB_ADD_SOURCE = "igbDataSource";
     private static final String IGB_STATUS_CHECK = "igbStatusCheck";
     private static final String FOCUS_IGB_COMMAND = "bringIGBToFront";
     private static final String GET_SPECIES_VERSION_LIST = "getSpeciesVersionList";
@@ -107,6 +107,13 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
                 response = new Response(handleStatusCheckRequests(session));
                 response.setStatus(Response.Status.OK);
                 response.addHeader("Access-Control-Allow-Origin", "*");
+                return response;
+            case IGB_ADD_SOURCE:
+                String url = session.getParms().get("quickloadurl");
+                String name = session.getParms().get("quickloadname");
+                addDataSourceToDataManagement(url,name);
+                response = new Response("OK");
+                response.setStatus(Response.Status.OK);
                 return response;
             default:
                 response = new Response(getBadRequestMessage());
@@ -212,6 +219,9 @@ class BookmarkHttpRequestHandler extends NanoHTTPD {
 
     }
 
+    public void addDataSourceToDataManagement(String url,String name){
+        igbService.addDataSourcesEndpoint(url,name);
+    }
     private void bringIgbToFront() {
         JFrame f = igbService.getApplicationFrame();
         boolean tmp = f.isAlwaysOnTop();

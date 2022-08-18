@@ -50,6 +50,7 @@
         <file path="${compiler:projectHomeDirectory}/distribution/branding/igb_128.png" />
       </iconImageFiles>
     </launcher>
+    <!--
     <launcher name="IntegratedGenomeBrowser_Windows32bit" id="368">
       <executable name="IntegratedGenomeBrowser" iconSet="true" executableDir="." redirectStderr="false" executableMode="gui" singleInstance="true" dpiAware="false" />
       <splashScreen show="true" bitmapFile="./branding/igb_splash.png" />
@@ -67,6 +68,7 @@
         <file path="${compiler:projectHomeDirectory}/distribution/branding/igb_128.png" />
       </iconImageFiles>
     </launcher>
+    -->
   </launchers>
   <installerGui autoUpdateDescriptorUrl="${compiler:codeBaseUrl}/updates.xml">
     <applications>
@@ -1153,14 +1155,17 @@ context.goForward(1, true, true);
       <excludedLaunchers>
         <launcher id="368" />
       </excludedLaunchers>
-      <jreBundle jreBundleSource="preCreated" includedJre="windows-amd64-1.8.0_241" />
+      <!--      <jreBundle jreBundleSource="preCreated" includedJre="windows-amd64-1.8.0_241" /> -->
+      <jreBundle jreBundleSource="preCreated" includedJre="windows-amd64-1.8.0_332" />
     </windows>
     <unixInstaller name="Unix Installer" id="25">
       <excludedLaunchers>
         <launcher id="368" />
       </excludedLaunchers>
-      <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-1.8.0_241" />
+      <!-- <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-1.8.0_241" /> -->
+      <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-1.8.0_332" /> 
     </unixInstaller>
+    <!--
     <windows name="Windows_x86" id="179" jreBitType="32">
       <excludedLaunchers>
         <launcher id="22" />
@@ -1170,11 +1175,13 @@ context.goForward(1, true, true);
       </excludedBeans>
       <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_241" />
     </windows>
+    -->
     <macosFolder name="Mac OS X Folder" id="552" signLaunchers="true">
       <excludedLaunchers>
         <launcher id="368" />
       </excludedLaunchers>
-      <jreBundle jreBundleSource="preCreated" includedJre="macos-amd64-1.8.0_241" />
+      <!-- <jreBundle jreBundleSource="preCreated" includedJre="macos-amd64-1.8.0_241" /> -->
+      <jreBundle jreBundleSource="preCreated" includedJre="macos-universal-1.8.0_332" />
     </macosFolder>
   </mediaSets>
   <buildIds buildAll="false">

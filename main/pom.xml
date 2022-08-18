@@ -606,7 +606,7 @@
                                     <goal>compile</goal>
                                 </goals>
                                 <configuration>
-                                    <projectFile>${session.executionRootDirectory}/distribution/install4jv8_config.xml</projectFile>
+                                    <projectFile>${session.executionRootDirectory}/distribution/install4jv9.install4j</projectFile>
                                 </configuration>
                             </execution>
                         </executions>

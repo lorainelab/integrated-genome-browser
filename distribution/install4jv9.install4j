@@ -1176,7 +1176,7 @@ context.goForward(1, true, true);
       <jreBundle jreBundleSource="preCreated" includedJre="windows-x86-1.8.0_241" />
     </windows>
     -->
-    <macosFolder name="Mac OS X Folder" id="552" signLaunchers="true">
+    <macosFolder name="Mac OS X Folder" id="552" architecture="universal" signLaunchers="true">
       <excludedLaunchers>
         <launcher id="368" />
       </excludedLaunchers>

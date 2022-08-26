@@ -39,6 +39,10 @@ import javax.swing.event.DocumentListener;
 import org.lorainelab.igb.javafx.DirectoryChooserUtil;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.UnknownHostException;
 
 @aQute.bnd.annotation.component.Component(name = AddDataProvider.COMPONENT_NAME, immediate = true, provide = AddDataProvider.class)
 public class AddDataProvider extends JFrame {
@@ -286,7 +290,7 @@ public class AddDataProvider extends JFrame {
                         String existingName = dataProvider.getName();
                         final String updatedName = nameText.getText().trim();
                         String existingUrl = toExternalForm(dataProvider.getUrl());
-                        final String updatedUrl = toExternalForm(urlText.getText().trim());
+                        final String updatedUrl = checkValidAndSetUrl(toExternalForm(urlText.getText().trim()));
                         if (!existingName.equals(updatedName)) {
                             dataProvider.setName(updatedName);
                         }
@@ -316,7 +320,7 @@ public class AddDataProvider extends JFrame {
                         timer.setRepeats(false);
                         timer.start();
                     } else {
-                        String url = urlText.getText().trim();
+                        String url = checkValidAndSetUrl(urlText.getText().trim());
                         String name = nameText.getText().trim();
                         if (!Strings.isNullOrEmpty(url) || !Strings.isNullOrEmpty(name)) {
                             Optional<DataProviderFactory> factory = dataProviderFactoryManager.findFactoryByName((String) typeCombo.getSelectedItem());
@@ -361,8 +365,30 @@ public class AddDataProvider extends JFrame {
             this.setVisible(false);
             eventService.getEventBus().post(new DataProviderServiceChangeEvent());
 	}//GEN-LAST:event_addServerButtonActionPerformed
+    public static String checkValidAndSetUrl(String uriString) {
+        try {
+            URL obj = new URL(uriString);
+            HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+            conn.setReadTimeout(5000);
+            int code = conn.getResponseCode();
+            if (code != HttpURLConnection.HTTP_OK) {
+                if (code == HttpURLConnection.HTTP_MOVED_TEMP || code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_SEE_OTHER) {
+                    String newUrl = conn.getHeaderField("Location");
+                    return newUrl;
+                }
+            }
 
-	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return uriString;
+    }
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
             this.setVisible(false);
 	}//GEN-LAST:event_cancelButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

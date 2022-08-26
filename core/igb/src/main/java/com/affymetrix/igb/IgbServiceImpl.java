@@ -34,6 +34,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.general.DataProviderManager;
+import com.affymetrix.igb.prefs.AddDataProvider;
 import com.affymetrix.igb.prefs.OtherOptionsView;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.shared.LoadResidueAction;
@@ -448,6 +449,7 @@ public class IgbServiceImpl implements IgbService {
      */
     @Override
     public void addDataSourcesEndpoint(String url, String name) {
+        String finalUrl = AddDataProvider.checkValidAndSetUrl(url);
         org.slf4j.Logger LOG = LoggerFactory.getLogger(IgbServiceImpl.class);
         BundleContext bundleContext = FrameworkUtil.getBundle(IgbServiceImpl.class).getBundleContext();
         ServiceReference serviceRef = bundleContext.getServiceReference(DataProviderManager.class.getName());
@@ -459,10 +461,10 @@ public class IgbServiceImpl implements IgbService {
             boolean isUnavailable = false;
             @Override
             protected Boolean runInBackground() {
-                if (!Strings.isNullOrEmpty(url) || !Strings.isNullOrEmpty(name)) {
+                if (!Strings.isNullOrEmpty(finalUrl) || !Strings.isNullOrEmpty(name)) {
                     Optional<DataProviderFactory> factory = dataProviderFactoryManager.findFactoryByName("Quickload");
                     if (factory.isPresent()) {
-                        DataProvider createdDataProvider = factory.get().createDataProvider(url, name, -1);
+                        DataProvider createdDataProvider = factory.get().createDataProvider(finalUrl, name, -1);
                         dataProviderManager.addDataProvider(createdDataProvider);
                         if (createdDataProvider.getStatus() == LoadUtils.ResourceStatus.NotResponding) {
                             isUnavailable = true;
@@ -615,13 +617,13 @@ public class IgbServiceImpl implements IgbService {
     public void writeCustomMsgToIGBConsoleTab(String Msg, String MsgType) {
         JTextArea consoleTab;
         Timestamp ts;
-        
+
 
         ts = new Timestamp((new Date()).getTime());
         consoleTab = (JTextArea)((JViewport)((JScrollPane) (IGB.getInstance()).getViewByDisplayName("Console").getComponent(0)).getViewport()).getView();
         consoleTab.append("\n" + ts.toString().split("\\s+")[1] + " " + MsgType + " " + Msg);
     }
-    
+
 
     @Override
     public ITrackStyleExtended getAnnotStyle(String unique_name) {

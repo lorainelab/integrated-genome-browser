@@ -541,9 +541,25 @@ public class BookmarkController {
         for (int i = 0; !parameters.get(SYM.FEATURE_URL.toString() + i).isEmpty(); i++) {
             String method = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.METHOD.toString() + i);
             ITrackStyleExtended forcedStyle = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method);
-            forcedStyle.setForeground(Color.decode(BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.COL.toString() + i)));
-            forcedStyle.setBackground(Color.decode(BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.BG.toString() + i)));
             forcedStyle.setTrackName(BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.NAME.toString() + i));
+            String sym_col = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.COL.toString() + i);
+            String sym_bg_col = BookmarkUnibrowControlServlet.getInstance().getFirstValueEntry(parameters, SYM.BG.toString() + i);
+            if (sym_col != null && !sym_col.isEmpty()) {
+                try {
+                    forcedStyle.setForeground(Color.decode(sym_col));
+                } catch (NumberFormatException nfe) {
+                    logger.error("Couldn't parse graph color from '" + sym_col + "'\n"
+                            + "Please use a hexidecimal RGB format,\n e.g. red = '0xFF0000', blue = '0x0000FF'.");
+                }
+            }
+            if (sym_bg_col != null && !sym_bg_col.isEmpty()) {
+                try {
+                    forcedStyle.setBackground(Color.decode(sym_bg_col));
+                } catch (NumberFormatException nfe) {
+                    logger.error("Couldn't parse graph background color from '" + sym_bg_col + "'\n"
+                            + "Please use a hexidecimal RGB format,\n e.g. red = '0xFF0000', blue = '0x0000FF'.");
+                }
+            }                    
         }
     }
 }

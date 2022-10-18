@@ -135,9 +135,8 @@ public class FileChooserUtil {
                         if (selectedExtensionFilterExtensions.size() == 1) {
                             String selectedExtension = selectedExtensionFilterExtensions.get(0);
                             if (!selectedExtension.isEmpty()) {
-                                selectedExtension = selectedExtension.charAt(0) == '.' ? selectedExtension : "." + selectedExtension;
                                 try {
-                                    selectedFile[0] = new File(selectedFile[0].getAbsolutePath() + selectedExtension);
+                                    selectedFile[0] = new File(selectedFile[0].getAbsolutePath());
                                 } catch (Exception ex) {
                                     selectedFile[0] = originalSelection;
                                     logger.error(ex.getMessage(), ex);

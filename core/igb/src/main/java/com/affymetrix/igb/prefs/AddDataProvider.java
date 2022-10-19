@@ -366,6 +366,9 @@ public class AddDataProvider extends JFrame {
             eventService.getEventBus().post(new DataProviderServiceChangeEvent());
 	}//GEN-LAST:event_addServerButtonActionPerformed
     public static String checkValidAndSetUrl(String uriString) {
+        if(!uriString.toLowerCase().startsWith("http")){
+            return uriString;
+        }
         try {
             URL obj = new URL(uriString);
             HttpURLConnection conn = (HttpURLConnection) obj.openConnection();

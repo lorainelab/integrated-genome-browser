@@ -383,19 +383,15 @@ public final class WebLinksView {
 
         // IGBF-1184: Change 'Tools->Configure Web Links->Export file chooser window style to Native OS window style
         FileChooserUtil chooser = getFileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("json file", "*.json");
         Optional<File> selectedFile = chooser.setTitle("Export")
+                .setFileExtensionFilters(Lists.newArrayList(extFilter))
                 .saveFilesFromFxChooser();
                 
         if (selectedFile.isPresent() && selectedFile.get()!= null) {
             FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
             try {
                 File fil = selectedFile.get();
-                String full_path = fil.getCanonicalPath();
-
-                if ( ! (full_path.endsWith(".json") || full_path.endsWith(".JSON"))) {
-                    fil = new File(full_path + ".json");
-                }
-                
                 WebLinkUtils.exportWebLinks(fil);
             } catch (Exception ex) {
                 ErrorHandler.errorPanel("Error exporting web links", ex, Level.SEVERE);

@@ -99,8 +99,7 @@ public abstract class AbstractExportFileAction
             keySet.stream().forEach((filter) -> {
                 filter.getExtensions().forEach(filterName -> {
                     FileChooser.ExtensionFilter extensionFilter
-                            = new FileChooser.ExtensionFilter(filter.getDescription(), filterName);
-                            // = new FileChooser.ExtensionFilter(filter.getDescription(), "*." + filterName);
+                             = new FileChooser.ExtensionFilter(filter.getDescription(), "*." + filterName);
                     filters.add(extensionFilter);
                 });
 

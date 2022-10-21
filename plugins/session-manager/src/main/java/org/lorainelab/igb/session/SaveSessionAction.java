@@ -11,11 +11,9 @@ import com.affymetrix.igb.bookmarks.service.BookmarkService;
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -47,10 +45,7 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
     private IgbService igbService;
     private BookmarkService bookmarkService;
     private final int TOOLBAR_INDEX = 1;
-    final public static boolean IS_MAC
-            = System.getProperty("os.name").toLowerCase().contains("mac");
     private static final int MENU_POSITION = 50;
-    FilenameFilter fileNameFilter = (dir, name) -> name.endsWith(".xml");
 
     public SaveSessionAction() {
         super(BUNDLE.getString("saveSession"), BUNDLE.getString("saveSessionTooltip"),
@@ -65,25 +60,7 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
         String dateString = sdf.format(today);
         String defaultFileName = "igbSession-" + dateString + ".xml";
-
-        if (IS_MAC) {
-            showFileDialog(defaultFileName);
-        } else {
-            showJFileChooser(defaultFileName);
-        }
-
-    }
-
-    private void showFileDialog(String defaultFileName) {
-        FileDialog dialog = new FileDialog(igbService.getApplicationFrame(), "Save Session", FileDialog.SAVE);
-        dialog.setFilenameFilter(fileNameFilter);
-        dialog.setFile(defaultFileName);
-        dialog.setVisible(true);
-        String fileS = dialog.getFile();
-        if (fileS != null) {
-            File sessionFile = new File(dialog.getDirectory(), dialog.getFile());
-            saveSession(sessionFile);
-        }
+        showJFileChooser(defaultFileName);
     }
 
     private void showJFileChooser(String defaultFileName) {
@@ -91,7 +68,7 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
         // Instead we want OS Native file choooser (Windows and Linux). 
         // Thus we are using FileChooser for opening a dialog.
         FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML File", "xml"); 
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML File", "*.xml"); 
         fileTracker.setFile(new File(System.getProperty("user.home")));
         java.util.Optional<File> selectedFile = FileChooserUtil.build()
                     .setContext(fileTracker.getFile())

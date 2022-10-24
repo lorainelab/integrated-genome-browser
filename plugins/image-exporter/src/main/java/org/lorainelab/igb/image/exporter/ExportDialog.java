@@ -6,6 +6,7 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.lorainelab.igb.javafx.FileChooserUtil;
 import static org.lorainelab.igb.image.exporter.ExportDialogGui.UNIT;
 import org.lorainelab.igb.image.exporter.service.ImageExportService;
@@ -21,6 +22,7 @@ import java.text.NumberFormat;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.stage.FileChooser;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -320,8 +322,9 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
                 }
             }
         }
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image File", "*.png", "*.jpeg", "*.svg");
         Optional<File> fileFromChooser = FileChooserUtil.build().setTitle("Save Image").setContext(new File(directory.getAbsolutePath()))
-                .setDefaultFileName(fileName).saveFilesFromFxChooser();
+                .setDefaultFileName(fileName).setFileExtensionFilters(Lists.newArrayList(extFilter)).saveFilesFromFxChooser();
         if (fileFromChooser.isPresent()) {
             completeSaveButtonAction(fileFromChooser.get());
             exportDialogGui.getExportDialogFrame().setVisible(false);

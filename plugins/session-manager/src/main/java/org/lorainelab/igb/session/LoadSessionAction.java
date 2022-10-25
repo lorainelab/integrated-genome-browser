@@ -2,7 +2,6 @@ package org.lorainelab.igb.session;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import static com.affymetrix.common.CommonUtils.IS_MAC;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.FileTracker;
@@ -11,7 +10,6 @@ import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
-import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;

@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.prefs.Preferences;
 import javafx.stage.FileChooser;
 import org.lorainelab.igb.javafx.FileChooserUtil;
@@ -67,19 +68,51 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
         // IGBF-1151: JFileChooser displays JavaFX style dialog. 
         // Instead we want OS Native file choooser (Windows and Linux). 
         // Thus we are using FileChooser for opening a dialog.
+        int extensionIndex;
+        String filePath;
+        File fil;
+        boolean extSet = false;
+        String file_ext;
         FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML File", "*.xml"); 
         fileTracker.setFile(new File(System.getProperty("user.home")));
-        java.util.Optional<File> selectedFile = FileChooserUtil.build()
+        FileChooserUtil fileChooser = FileChooserUtil.build() ;
+        java.util.Optional<File> selectedFile = fileChooser
                     .setContext(fileTracker.getFile())
                     .setDefaultFileName(defaultFileName)
                     .setTitle("Save Session")
                     .setFileExtensionFilters(Lists.newArrayList(extFilter))
                     .saveFilesFromFxChooser();
         
+        FileChooser.ExtensionFilter ext = fileChooser.getSelectedFileExtension();
         if (selectedFile.isPresent()) {
             fileTracker.setFile(selectedFile.get().getParentFile());
-            saveSession(selectedFile.get());
+            try {
+                fil = selectedFile.get();
+                filePath = fil.getAbsolutePath().replace("*.", "");
+
+                file_ext = filePath.substring(filePath.lastIndexOf(".") + 1);
+                extensionIndex = filePath.indexOf(file_ext);
+
+                if (extensionIndex <= 0) {
+                    for (String extension : ext.getExtensions()) {
+                       if (filePath.endsWith(extension.replace("*", ""))) {
+                           extSet = true;
+                           break;
+                       }
+                    }
+                    if (!extSet) {
+                       filePath = filePath.concat(ext.getExtensions().get(0).replace("*", ""));
+                    }
+                   fil = new File(filePath);
+                } else {
+                   fil = new File(filePath.substring(0, extensionIndex + file_ext.length()));
+                }
+                
+                saveSession(fil);
+            } catch (Exception ex) {
+                com.affymetrix.genometry.util.ErrorHandler.errorPanel("Error exporting session", ex, Level.SEVERE);
+            }
         }
     }
 

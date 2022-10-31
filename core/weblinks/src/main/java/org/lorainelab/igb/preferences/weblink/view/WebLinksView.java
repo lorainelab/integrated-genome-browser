@@ -380,18 +380,45 @@ public final class WebLinksView {
             ErrorHandler.errorPanel("Error", "No web links to save", Level.WARNING);
             return;
         }
+        int extensionIndex;
+        String filePath;
+        File fil;
+        boolean extSet = false;
+        String file_ext;
 
         // IGBF-1184: Change 'Tools->Configure Web Links->Export file chooser window style to Native OS window style
         FileChooserUtil chooser = getFileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("json file", "*.json");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("JSON File", "*.json");
         Optional<File> selectedFile = chooser.setTitle("Export")
+                .setDefaultFileName("Untitled.json")
                 .setFileExtensionFilters(Lists.newArrayList(extFilter))
                 .saveFilesFromFxChooser();
                 
+        FileChooser.ExtensionFilter ext = chooser.getSelectedFileExtension();
         if (selectedFile.isPresent() && selectedFile.get()!= null) {
             FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
             try {
-                File fil = selectedFile.get();
+                fil = selectedFile.get();
+                filePath = fil.getAbsolutePath().replace("*.", "");
+
+                file_ext = filePath.substring(filePath.lastIndexOf(".") + 1);
+                extensionIndex = filePath.indexOf(file_ext);
+
+                if (extensionIndex <= 0) {
+                    for (String extension : ext.getExtensions()) {
+                       if (filePath.endsWith(extension.replace("*", ""))) {
+                           extSet = true;
+                           break;
+                       }
+                    }
+                    if (!extSet) {
+                       filePath = filePath.concat(ext.getExtensions().get(0).replace("*", ""));
+                    }
+                   fil = new File(filePath);
+                } else {
+                   fil = new File(filePath.substring(0, extensionIndex + file_ext.length()));
+                }
+                
                 WebLinkUtils.exportWebLinks(fil);
             } catch (Exception ex) {
                 ErrorHandler.errorPanel("Error exporting web links", ex, Level.SEVERE);

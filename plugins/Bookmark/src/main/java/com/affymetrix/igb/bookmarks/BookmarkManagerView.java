@@ -353,14 +353,15 @@ public final class BookmarkManagerView {
         }
         
         FileChooser.ExtensionFilter htmlExtFilter = 
-                new FileChooser.ExtensionFilter("HTML File(html, htm, xhtml)","*.html", "*.htm", "*.xhtml");
-                FileChooser.ExtensionFilter textExtFilter = new FileChooser.ExtensionFilter("Text File(txt)","*.txt");
+                new FileChooser.ExtensionFilter("HTML File","*.html");
+                FileChooser.ExtensionFilter textExtFilter = new FileChooser.ExtensionFilter("Text File","*.txt");
                 ArrayList<FileChooser.ExtensionFilter> extList = Lists.newArrayList(htmlExtFilter);
                 extList.add(textExtFilter);
      
         FileChooserUtil fileChooser = FileChooserUtil.build() ;
         Optional<File> selectedFile = fileChooser.setContext(getLoadDirectory())
                 .setTitle("Export")
+                .setDefaultFileName("Untitled")
                 .setFileExtensionFilters(extList)
                 .saveFilesFromFxChooser();
         

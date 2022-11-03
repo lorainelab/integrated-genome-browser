@@ -89,6 +89,11 @@ public abstract class AbstractExportFileAction
     }
 
     private void saveAsFile(TierGlyph atier) {
+        int extensionIndex;
+        String filePath;
+        File fil;
+        boolean extSet = false;
+        String file_ext;
         RootSeqSymmetry rootSym = (RootSeqSymmetry) atier.getInfo();
 
         Optional<Map<UniFileFilter, AnnotationWriter>> filter2writers = model.getFilterToWriters(rootSym.getCategory());
@@ -108,25 +113,53 @@ public abstract class AbstractExportFileAction
             Collections.sort(filters, new filterComparator());
 
             FileChooserUtil fcUtil = FileChooserUtil.build()
+                    .setDefaultFileName("Untitled")
                     .setFileExtensionFilters(filters)
                     .setContext(savedDir);
 
             Optional<File> file = fcUtil.saveFilesFromFxChooser();
-
+            
+            FileChooser.ExtensionFilter ext = fcUtil.getSelectedFileExtension();
             if (file.isPresent()) {
-                File selectedFile = file.get();
+                fil = file.get();
+                try {
+                filePath = fil.getAbsolutePath().replace("*.", "");
+
+                file_ext = filePath.substring(filePath.lastIndexOf(".") + 1);
+                extensionIndex = filePath.indexOf(file_ext);
+
+                if (extensionIndex <= 0) {
+                    for (String extension : ext.getExtensions()) {
+                       if (filePath.endsWith(extension.replace("*", ""))) {
+                           extSet = true;
+                           break;
+                       }
+                    }
+                    if (!extSet) {
+                       filePath = filePath.concat(ext.getExtensions().get(0).replace("*", ""));
+                    }
+                   fil = new File(filePath);
+                } else {
+                   fil = new File(filePath.substring(0, extensionIndex + file_ext.length()));
+                }
+            }catch(Exception ex) {
+                ErrorHandler.errorPanel("Error exporting bookmarks", ex, Level.SEVERE);
+            }
+                
+                
+                
                 Optional<BioSeq> aseq = gmodel.getSelectedSeq();
 
-                try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(selectedFile)))) {
+                try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)))) {
 
                     UniFileFilter swingSelectedFilter = null;
 
-                    String selectedFileName = file.get().getName();
+                    String selectedFileName = fil.getName();
                     String extension = selectedFileName.substring(selectedFileName.lastIndexOf(".") + 1);
                     boolean isFound = false;
                     for (UniFileFilter key : filter2writers.get().keySet()) {
-                        for (String ext : key.getExtensions()) {
-                            if (ext.equals(extension)) {
+                        for (String exten : key.getExtensions()) {
+                            if (exten.equals(extension)) {
                                 swingSelectedFilter = key;
                                 isFound = true;
                                 break;
@@ -142,7 +175,7 @@ public abstract class AbstractExportFileAction
                 } catch (Exception ex) {
                     ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
                 }
-                FileTracker.DATA_DIR_TRACKER.setFile(selectedFile);
+                FileTracker.DATA_DIR_TRACKER.setFile(fil);
             }
         } else {
             ErrorHandler.errorPanel("not supported yet", "cannot export files of type "

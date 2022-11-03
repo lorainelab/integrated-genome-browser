@@ -4,17 +4,17 @@
             {
                 "factoryName": "quickload",
                 "name": "RNA-Seq",
-                "url": "http://igbquickload.org/rnaseq",
+                "url": "http://lorainelab-quickload.scidas.org/rnaseq",
                 "loadPriority": "0",
-                "mirror":"http://lorainelab-quickload.scidas.org/rnaseq",
+                "mirror":"http://igbquickload.org/rnaseq",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:2"
             },
             {
                 "factoryName": "quickload",
                 "name": "IGB Quickload",
-                "url": "http://igbquickload.org/quickload",
+                "url": "http://lorainelab-quickload.scidas.org/quickload",
                 "loadPriority": "2",
-                "mirror": "http://lorainelab-quickload.scidas.org/quickload",
+                "mirror": "http://igbquickload.org/quickload",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:1"
             },
             {

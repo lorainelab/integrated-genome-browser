@@ -19,7 +19,8 @@
         <!-- Dependency versions controlled via properties -->
         <!-- Define properties as [artifactId].version -->        
         <!-- External bundle version declarations -->
-        <guavaVersion>16.0.1</guavaVersion>
+        <guavaVersion>31.1-jre</guavaVersion>
+        <failureaccessVersion>1.0.1</failureaccessVersion>
         <gsonVersion>2.3.1</gsonVersion>
         <commonsLangVersion>3.4</commonsLangVersion>
         <commonsCsvVersion>1.2</commonsCsvVersion>
@@ -609,6 +610,12 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guavaVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>failureaccess</artifactId>
+                <version>${failureaccessVersion}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

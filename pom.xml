@@ -21,20 +21,20 @@
         <!-- External bundle version declarations -->
         <guavaVersion>31.1-jre</guavaVersion>
         <failureaccessVersion>1.0.1</failureaccessVersion>
-        <gsonVersion>2.3.1</gsonVersion>
-        <commonsLangVersion>3.4</commonsLangVersion>
-        <commonsCsvVersion>1.2</commonsCsvVersion>
-        <commonsIoVersion>2.4</commonsIoVersion>
-        <commons-net.version>2.0</commons-net.version>
+        <gsonVersion>2.10.1</gsonVersion>
+        <commonsLangVersion>3.12.0</commonsLangVersion>
+        <commonsCsvVersion>1.10.0</commonsCsvVersion>
+        <commonsIoVersion>2.11.0</commonsIoVersion>
+        <commons-net.version>3.9.0</commons-net.version>
         <commons-fileupload-version>1.3.1</commons-fileupload-version>
         <genovizVersion>1.1.9</genovizVersion>
-        <felixMainVersion>5.2.0</felixMainVersion>
-        <felix-scr-version>1.8.2</felix-scr-version>
-        <felix-http-version>2.3.2</felix-http-version>
-        <felix-configadmin-version>1.8.8</felix-configadmin-version>
-        <felix-eventadmin-version>1.5.0</felix-eventadmin-version>   
-        <felix-metatype-version>1.0.10</felix-metatype-version>
-        <felix-webconsole-version>4.3.12</felix-webconsole-version>
+        <felixMainVersion>6.0.3</felixMainVersion>
+        <felix-scr-version>2.0.14</felix-scr-version>
+        <felix-http-version>3.0.0</felix-http-version>
+        <felix-configadmin-version>1.9.26</felix-configadmin-version>
+        <felix-eventadmin-version>1.6.4</felix-eventadmin-version>   
+        <felix-metatype-version>1.2.4</felix-metatype-version>
+        <felix-webconsole-version>4.8.8</felix-webconsole-version>
         <felix-bundlerepository-version>2.0.10</felix-bundlerepository-version>
         <org.osgi.compendium-version>5.0.0</org.osgi.compendium-version>
         <org.lorainelab.igb.remote.services-version>1.0.0</org.lorainelab.igb.remote.services-version>
@@ -42,17 +42,17 @@
         <bindlib-version>2.4.0</bindlib-version>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
         <bigWigVersion>2.0.0</bigWigVersion>
-        <commonsCompressVersion>1.5</commonsCompressVersion>
-        <commonsCodecVersion>1.6</commonsCodecVersion>
+        <commonsCompressVersion>1.23.0</commonsCompressVersion>
+        <commonsCodecVersion>1.15</commonsCodecVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
         <htsjdk-igb-Version>2.16.3</htsjdk-igb-Version>
-        <commonsVfsVersion>2.0</commonsVfsVersion>
+        <commonsVfsVersion>2.9.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <logback-core.version>1.2.12</logback-core.version>
         <logback-classic.version>1.2.12</logback-classic.version>
-        <felix-file-install-version>3.5.0</felix-file-install-version>
-        <miglayout-version>4.2</miglayout-version>
+        <felix-file-install-version>3.7.4</felix-file-install-version>
+        <miglayout-version>5.2</miglayout-version>
         <nano-httpd-version>2.0.5</nano-httpd-version>
         <!-- End of external bundle version declarations -->
         <!-- Start of functional dependencies declarations -->
@@ -60,40 +60,39 @@
         <commonsJexl>2.1.1</commonsJexl>
         <felixLog>1.0.1</felixLog>
         <gitKevinsawickiHttpReq>6.0</gitKevinsawickiHttpReq>
-        <xzVersion>1.5</xzVersion>
+        <xzVersion>1.9</xzVersion>
         <furbelowVersion>1.0</furbelowVersion>
-        <jacksonMapperVersion>1.7.9</jacksonMapperVersion>
+        <jacksonMapperVersion>1.9.13</jacksonMapperVersion>
         <felixRuntimeVersion>0.16.2</felixRuntimeVersion>
         <felixGogoShellVersion>0.12.0</felixGogoShellVersion>
         <felixGogoCommandVersion>0.16.0</felixGogoCommandVersion>
-        <felixShellRemoteVersion>1.1.2</felixShellRemoteVersion>
+        <felixShellRemoteVersion>1.2.0</felixShellRemoteVersion>
         <osgiFelixObrVersion>1.0.2</osgiFelixObrVersion>
         <felixBundleRepoVersion>2.0.10</felixBundleRepoVersion>
-        <feluxMainVersion>5.2.0</feluxMainVersion>
         <llRemoteServHttpVersion>1.0.0</llRemoteServHttpVersion>
         <felixDependencyManagerVersion>3.2.0</felixDependencyManagerVersion>
         <felixDependencyManagerShellVersion>3.2.0</felixDependencyManagerShellVersion>
-        <jacksonCoreVersion>2.3.5</jacksonCoreVersion>
-        <jacksonAnnotationVersion>2.3.5</jacksonAnnotationVersion>
-        <jacksonDatabindVersion>2.3.5</jacksonDatabindVersion>
+        <jacksonCoreVersion>2.15.0</jacksonCoreVersion>
+        <jacksonAnnotationVersion>2.15.0</jacksonAnnotationVersion>
+        <jacksonDatabindVersion>2.15.0</jacksonDatabindVersion>
         <jflowVersion>1.0</jflowVersion>
-        <swingAllVersion>1.6.4</swingAllVersion>
+        <swingAllVersion>1.6.5</swingAllVersion>
         <swingLayoutVersion>1.0.3</swingLayoutVersion>
         <freehepGraphicSvgVersion>2.4</freehepGraphicSvgVersion>
-        <jdomVersion>1.1.3</jdomVersion>
+        <jdomVersion>2.0.2</jdomVersion>
         <image4jVersion>0.7</image4jVersion>
         <googleAnalyticsVersion>0.4</googleAnalyticsVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
-        <commonsConfigVersion>1.9</commonsConfigVersion>
+        <commonsConfigVersion>1.10</commonsConfigVersion>
         <coltVersion>1.2.0</coltVersion>
         <jlfgrVersion>1.0</jlfgrVersion>
         <commonsNetVersion>2.0</commonsNetVersion>
-        <junitVersion>4.8.2</junitVersion>
-        <luceneCoreVersion>3.6.0</luceneCoreVersion>
+        <junitVersion>4.13.2</junitVersion>
+        <luceneCoreVersion>9.5.0</luceneCoreVersion>
         <tangoIconVersion>0.8.90</tangoIconVersion>
-        <org.apache.felix.http.servlet-api.version>1.1.2</org.apache.felix.http.servlet-api.version>
-        <felixJettyVersion>4.0.10</felixJettyVersion>
-        <commonsFileUpload>1.4</commonsFileUpload>
+        <org.apache.felix.http.servlet-api.version>2.1.0</org.apache.felix.http.servlet-api.version>
+        <felixJettyVersion>4.2.12</felixJettyVersion>
+        <commonsFileUpload>1.5</commonsFileUpload>
     </properties>
     <repositories>
         <repository>
@@ -977,12 +976,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.2</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.3</version>
+                    <version>3.11.0</version>
                     <configuration>
                         <compilerId>javac-with-errorprone</compilerId>
                         <forceJavacCompilerUse>true</forceJavacCompilerUse>
@@ -1020,25 +1019,25 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.7</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.5.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>3.2.0</version>
                     <configuration>
                         <filesets>
                             <fileset>
@@ -1054,7 +1053,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
+                    <version>3.5.0</version>
                     <executions>
                         <execution>
                             <id>copy</id>
@@ -1079,13 +1078,13 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.3</version>
+                    <version>3.5.0</version>
                     <configuration>
                         <doclet>ch.raffael.doclets.pegdown.PegdownDoclet</doclet>
                         <docletArtifact>
                             <groupId>ch.raffael.pegdown-doclet</groupId>
                             <artifactId>pegdown-doclet</artifactId>
-                            <version>1.2.1</version>
+                            <version>1.3</version>
                         </docletArtifact>
                         <useStandardDocletOptions>true</useStandardDocletOptions>
                         <docfilessubdirs>true</docfilessubdirs>
@@ -1107,7 +1106,7 @@
             <plugin>
                 <inherited>false</inherited>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.2.0</version>
                 <configuration>
                     <filesets>
                         <fileset>

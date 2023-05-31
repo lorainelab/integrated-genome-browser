@@ -119,6 +119,11 @@
                                     <version>${guavaVersion}</version>
                                 </artifactItem>
                                 <artifactItem>
+                                    <groupId>com.google.guava</groupId>
+                                    <artifactId>failureaccess</artifactId>
+                                    <version>${failureaccessVersion}</version>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.apache.commons</groupId>
                                     <artifactId>commons-lang3</artifactId>
                                     <version>${commonsLangVersion}</version>

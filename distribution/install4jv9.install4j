@@ -28,6 +28,7 @@
           <entry location="pom.xml" />
           <entry location="run_igb.bat" />
           <entry location="run_igb.sh" />
+          <entry location="env.sh" />
         </exclude>
       </dirEntry>
     </entries>

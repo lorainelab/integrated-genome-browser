@@ -40,11 +40,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.AbstractAction;
@@ -61,6 +67,25 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("searchmoderesidue");
     private static final int MAX_RESIDUE_LEN_SEARCH = 1000000;
     private static final GenometryModel gmodel = GenometryModel.getInstance();
+    private static final String ESCAPE_BEGIN = "\\Q";
+    private static final String ESCAPE_END = "\\E";
+    private static final Map<Character,String> SPECIAL_NUCLEOTIDES;
+
+    static{
+        Map<Character,String> tempNucleotides= new HashMap<>();
+        tempNucleotides.put('R',"[AG]");
+        tempNucleotides.put('Y',"[CT]");
+        tempNucleotides.put('S',"[GC]");
+        tempNucleotides.put('W',"[AT]");
+        tempNucleotides.put('K',"[GT]");
+        tempNucleotides.put('M',"[AC]");
+        tempNucleotides.put('B',"[CGT]");
+        tempNucleotides.put('D',"[AGT]");
+        tempNucleotides.put('H',"[ACT]");
+        tempNucleotides.put('V',"[ACG]");
+        tempNucleotides.put('N',"[ACGT]");
+        SPECIAL_NUCLEOTIDES= Collections.unmodifiableMap(tempNucleotides);
+    }
     private static final Color hitcolors[] = {
         Color.magenta,
         new Color(0x00cd00),
@@ -282,7 +307,7 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
         String friendlySearchStr = MessageFormat.format(BUNDLE.getString("friendlyPattern"), search_text, chrFilter.getId());
         Pattern regex = null;
         try {
-            regex = Pattern.compile(search_text, Pattern.CASE_INSENSITIVE);
+            regex = Pattern.compile(processSpecialNucleotides(search_text), Pattern.CASE_INSENSITIVE);
         } catch (Exception ex) { // should not happen already checked above
             return new SearchResults<>(getName(), search_text, chrFilter.getId(), ex.getLocalizedMessage(), null);
         }
@@ -329,6 +354,40 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
         color++;
         return new SearchResults<>(getName(), search_text, chrFilter.getId(), statusStr, glyphs);
     }
+
+    private String processSpecialNucleotides(String searchText) {
+        Set<Integer> beginEscapeIndices = getIndices(searchText,ESCAPE_BEGIN);
+        StringBuilder processedSearchText = new StringBuilder();
+        int i;
+        char curr;
+        for(i=0;i<searchText.length();i++){
+            curr = searchText.charAt(i);
+           if(beginEscapeIndices.contains(i)){
+               int escapeEndIndex = getEscapeEndIndex(searchText,i);
+               processedSearchText.append(searchText.substring(i,escapeEndIndex+1));
+               i=escapeEndIndex;
+           }else{
+              processedSearchText.append(SPECIAL_NUCLEOTIDES.getOrDefault(Character.toUpperCase(curr),String.valueOf(curr)));
+           }
+        }
+        return processedSearchText.toString();
+    }
+    private int getEscapeEndIndex(String searchText,int fromIndex){
+        int index=searchText.indexOf(ESCAPE_END,fromIndex);
+        return index==-1?searchText.length()-1:index+1;
+    }
+    private Set<Integer> getIndices(String searchText, String escapeLiteral){
+        Set<Integer> indices = new HashSet<>();
+        int fromIdx=0;
+        while(fromIdx<searchText.length()){
+            int idx = searchText.indexOf(escapeLiteral,fromIdx);
+            if(idx==-1) return indices;
+            indices.add(idx);
+            fromIdx=idx+1;
+        }
+        return indices;
+    }
+
 
     @Override
     public Action getCustomAction() {

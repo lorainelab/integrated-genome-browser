@@ -19,7 +19,7 @@
         <!-- Dependency versions controlled via properties -->
         <!-- Define properties as [artifactId].version -->        
         <!-- External bundle version declarations -->
-        <guavaVersion>31.1-jre</guavaVersion>
+        <guavaVersion>32.1.1-jre</guavaVersion>
         <failureaccessVersion>1.0.1</failureaccessVersion>
         <gsonVersion>2.10.1</gsonVersion>
         <commonsLangVersion>3.12.0</commonsLangVersion>

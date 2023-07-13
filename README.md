@@ -1,5 +1,7 @@
 # Integrated Genome Browser
 
+## About 
+
 The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and highly interactive desktop genome browser ideal for exploring and understanding large-scale data sets from genomics. Originally developed at Affymetrix, IGB is now open source software. 
 
 IGB is also an extensible visual analytics platform. Developers can use IGB to create new visual analysis functions called IGB Apps.
@@ -17,10 +19,12 @@ See:
 
 ***
 
-# Build and run IGB
+The code from this branch compiles and runs under JDK 8.
 
-1. Install Java on your computer. IGB requires Java 1.8. Note that OpenJDK lacks JavaFX, a graphics library IGB needs. If building on Linux, you need to install and use Oracle's JDK 1.8, which includes the JavaFX library.
-2. Install Apache mvn, required to build IGB. If building on Linux, you need to configure JAVA_HOME to point to Oracle's JDK instead of OpenJDK, the default on most systems.
+# To build and run IGB
+
+1. Install JDK 8 on your computer. 
+2. Install Apache mvn, required to build IGB. 
 3. Clone the [team repository](https://bitbucket.org/lorainelab/integrated-genome-browser) to your desktop.  
 4. Inside the local copy, check out the branch you wish to build. Review branch names to identify currently released version of IGB. 
 5. Build IGB using maven. Skip tests to save time.

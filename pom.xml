@@ -37,8 +37,6 @@
         <felix-webconsole-version>4.8.8</felix-webconsole-version>
         <felix-bundlerepository-version>2.0.10</felix-bundlerepository-version>
         <org.osgi.compendium-version>5.0.0</org.osgi.compendium-version>
-        <org.lorainelab.igb.remote.services-version>1.0.0</org.lorainelab.igb.remote.services-version>
-        <org.osgi.service.remoteserviceadmin-version>1.1.0</org.osgi.service.remoteserviceadmin-version>
         <bindlib-version>6.4.0</bindlib-version>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
         <bigWigVersion>2.0.0</bigWigVersion>
@@ -63,18 +61,8 @@
         <xzVersion>1.9</xzVersion>
         <furbelowVersion>1.0</furbelowVersion>
         <jacksonMapperVersion>1.9.13</jacksonMapperVersion>
-        <felixRuntimeVersion>0.16.2</felixRuntimeVersion>
-        <felixGogoShellVersion>0.12.0</felixGogoShellVersion>
-        <felixGogoCommandVersion>0.16.0</felixGogoCommandVersion>
-        <felixShellRemoteVersion>1.2.0</felixShellRemoteVersion>
         <osgiFelixObrVersion>1.0.2</osgiFelixObrVersion>
         <felixBundleRepoVersion>2.0.10</felixBundleRepoVersion>
-        <llRemoteServHttpVersion>1.0.0</llRemoteServHttpVersion>
-        <felixDependencyManagerVersion>3.2.0</felixDependencyManagerVersion>
-        <felixDependencyManagerShellVersion>3.2.0</felixDependencyManagerShellVersion>
-        <jacksonCoreVersion>2.15.0</jacksonCoreVersion>
-        <jacksonAnnotationVersion>2.15.0</jacksonAnnotationVersion>
-        <jacksonDatabindVersion>2.15.0</jacksonDatabindVersion>
         <jflowVersion>1.0</jflowVersion>
         <swingAllVersion>1.6.5</swingAllVersion>
         <swingLayoutVersion>1.0.3</swingLayoutVersion>
@@ -162,7 +150,7 @@
         <module>plugins/Keybinding-registry</module>
         <module>plugins/cache</module>
         <module>plugins/cache-api</module>
-        <module>plugins/org.lorainelab.igb.error.reporter.manager</module>
+        <!--<module>plugins/org.lorainelab.igb.error.reporter.manager</module>-->
         <module>plugins/feedback</module>
         <module>plugins/external-sort</module>
         <module>plugins/narrowpeak</module>
@@ -534,16 +522,6 @@
             </dependency>
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
-                <artifactId>org.lorainelab.igb.error.reporter.api</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>org.lorainelab.igb.error.reporter.manager</artifactId>
-                <version>${project.parent.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
                 <artifactId>feedback</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
@@ -704,26 +682,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.gogo.runtime</artifactId>
-                <version>${felixRuntimeVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.gogo.shell</artifactId>
-                <version>${felixGogoShellVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.gogo.command</artifactId>
-                <version>${felixGogoCommandVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.shell.remote</artifactId>
-                <version>${felixShellRemoteVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
                 <artifactId>org.osgi.service.obr</artifactId>
                 <version>${osgiFelixObrVersion}</version>
             </dependency>
@@ -736,51 +694,6 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.main</artifactId>
                 <version>${felixMainVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>org.lorainelab.igb.remote.services.commons</artifactId>
-                <version>${org.lorainelab.igb.remote.services-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>org.lorainelab.igb.remote.services.discovery.provider.configured</artifactId>
-                <version>${org.lorainelab.igb.remote.services-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>org.lorainelab.igb.remote.services.topology.manager</artifactId>
-                <version>${org.lorainelab.igb.remote.services-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>org.lorainelab.igb.remote.services.distribution.provider.http</artifactId>
-                <version>${llRemoteServHttpVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.dependencymanager</artifactId>
-                <version>${felixDependencyManagerVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.dependencymanager.shell</artifactId>
-                <version>${felixDependencyManagerShellVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jacksonCoreVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jacksonAnnotationVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jacksonDatabindVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
@@ -929,11 +842,6 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.http.jetty</artifactId>
                 <version>${felixJettyVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.service.remoteserviceadmin</artifactId>
-                <version>${org.osgi.service.remoteserviceadmin-version}</version>
             </dependency>
             <dependency>
                 <groupId>htsjdk-igb</groupId>

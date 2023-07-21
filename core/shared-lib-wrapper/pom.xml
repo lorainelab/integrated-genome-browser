@@ -251,41 +251,6 @@
                                     <version>${gitKevinsawickiHttpReq}</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.lorainelab.igb</groupId>
-                                    <artifactId>org.lorainelab.igb.error.reporter.api</artifactId>
-                                    <version>1.0.0</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.gogo.runtime</artifactId>
-                                    <version>${felixRuntimeVersion}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.gogo.shell</artifactId>
-                                    <version>${felixGogoShellVersion}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.gogo.command</artifactId>
-                                    <version>${felixGogoCommandVersion}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.shell.remote</artifactId>
-                                    <version>${felixShellRemoteVersion}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.dependencymanager</artifactId>
-                                    <version>${felixDependencyManagerVersion}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.dependencymanager.shell</artifactId>
-                                    <version>${felixDependencyManagerShellVersion}</version>
-                                </artifactItem>
-                                <artifactItem>
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.http.servlet-api</artifactId>
                                     <version>${felixHttpServletApiVerison}</version>
@@ -294,51 +259,6 @@
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.http.jetty</artifactId>
                                     <version>${felixJettyVersion}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.log</artifactId>
-                                    <version>${felixLog}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.osgi</groupId>
-                                    <artifactId>org.osgi.service.remoteserviceadmin</artifactId>
-                                    <version>${org.osgi.service.remoteserviceadmin-version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.lorainelab.igb</groupId>
-                                    <artifactId>org.lorainelab.igb.remote.services.commons</artifactId>
-                                    <version>${org.lorainelab.igb.remote.services-version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.lorainelab.igb</groupId>
-                                    <artifactId>org.lorainelab.igb.remote.services.discovery.provider.configured</artifactId>
-                                    <version>${org.lorainelab.igb.remote.services-version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.lorainelab.igb</groupId>
-                                    <artifactId>org.lorainelab.igb.remote.services.topology.manager</artifactId>
-                                    <version>${org.lorainelab.igb.remote.services-version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.lorainelab.igb</groupId>
-                                    <artifactId>org.lorainelab.igb.remote.services.distribution.provider.http</artifactId>
-                                    <version>${org.lorainelab.igb.remote.services-version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.fasterxml.jackson.core</groupId>
-                                    <artifactId>jackson-core</artifactId>
-                                    <version>${jacksonCoreVersion}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.fasterxml.jackson.core</groupId>
-                                    <artifactId>jackson-annotations</artifactId>
-                                    <version>${jacksonAnnotationVersion}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.fasterxml.jackson.core</groupId>
-                                    <artifactId>jackson-databind</artifactId>
-                                    <version>${jacksonDatabindVersion}</version>
                                 </artifactItem>
                                 <!-- End of development only bundles -->
                                 <!-- Start of Apache Felix Web Console bundles-->

@@ -436,11 +436,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.dependencymanager</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.http.servlet-api</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -450,58 +445,8 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.service.remoteserviceadmin</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>org.lorainelab.igb.remote.services.commons</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>org.lorainelab.igb.remote.services.discovery.provider.configured</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>org.lorainelab.igb.remote.services.topology.manager</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>org.lorainelab.igb.remote.services.distribution.provider.http</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.http.bundle</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>org.lorainelab.igb.error.reporter.api</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>org.lorainelab.igb.error.reporter.manager</artifactId>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

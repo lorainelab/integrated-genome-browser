@@ -27,6 +27,7 @@ import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import com.affymetrix.igb.swing.JRPTable;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.MenuUtil;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.jidesoft.hints.ListDataIntelliHints;
 import org.lorainelab.igb.services.IgbService;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.SEARCH_VIEW_TAB;
@@ -39,8 +40,12 @@ import org.lorainelab.igb.services.search.SearchListener;
 import org.lorainelab.igb.services.search.SearchResults;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,6 +53,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,16 +91,17 @@ public final class SearchView extends IgbTabPanel implements
         GroupSelectionListener, SeqSelectionListener, SearchListener, IStatus {
 
     private static final long serialVersionUID = 0;
+    private static final Logger LOG = LoggerFactory.getLogger(SearchView.class);
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("search");
     private static final String DEFAULT_SEARCH_MODE_CLASS = "SearchModeID";
     private static final int TAB_POSITION = 3;
     private static String[] regexChars = new String[]{"|"};
     private IgbService igbService;
+    private static final String ADVANCED_SEARCH_URI= "https://bioviz.org/advancedSearch.html";
 
     public class SearchModeAction extends GenericAction {
 
         private static final long serialVersionUID = 1L;
-
         private SearchModeAction() {
             super(null, null, null);
         }
@@ -231,6 +238,23 @@ public final class SearchView extends IgbTabPanel implements
             searchTF.setText("");
         }
     }
+    public class AdvancedSearchAction extends GenericAction{
+        private static final long serialVersionUID = 1L;
+        public AdvancedSearchAction(){super(null,null,null);}
+        @Override
+        public void actionPerformed(ActionEvent e){
+            super.actionPerformed(e);
+            try{
+                URI uri = new URI(ADVANCED_SEARCH_URI);
+                Desktop dt = Desktop.getDesktop();
+                dt.browse(uri);
+            }catch (Exception ex){
+                LOG.error("an error occurred while opening the advanced search wiki page");
+            }
+        }
+
+    }
+
 
     ItemListener itemListener = new ItemListener() {
 
@@ -243,7 +267,7 @@ public final class SearchView extends IgbTabPanel implements
         }
 
     };
-
+    private AdvancedSearchAction advancedSearchAction = new AdvancedSearchAction();
     private ClearAction clearAction = new ClearAction();
     // A maximum number of hits that can be found in a search.
     // This helps protect against out-of-memory errors.
@@ -260,6 +284,8 @@ public final class SearchView extends IgbTabPanel implements
     private final JRPButton customButton = new JRPButton("SearchView_optionCheckBox");
     private final Icon infoIcon = MenuUtil.getIcon("16x16/actions/info.png");
     private final JRPButton infoButton = new JRPButton("SearchView_infoButton", infoIcon);
+
+    private final JRPButton advInfoButton = new JRPButton("AdvSearch_infoButton", infoIcon);
     private final JRPButton searchButton = new JRPButton("SearchView_searchButton", MenuUtil.getIcon("16x16/actions/search.png"));
     private final JRPButton clearButton = new JRPButton("SearchView_clearButton", MenuUtil.getIcon("16x16/actions/delete.png"));
     //private final CancelButton cancel = new CancelButton("SearchView_CancelButton",MenuUtil.getIcon("16x16/actions/stop.png"));
@@ -336,7 +362,7 @@ public final class SearchView extends IgbTabPanel implements
 
         pan1.add(searchButton);
         pan1.add(clearButton);
-
+        pan1.add(advInfoButton);
         pan1.add(Box.createRigidArea(new Dimension(2, 0)));
         pan1.add(optionCheckBox);
         //pan1.add(customButton);
@@ -375,6 +401,7 @@ public final class SearchView extends IgbTabPanel implements
         searchTF.addActionListener(searchAction);
         searchButton.addActionListener(searchAction);
         clearButton.addActionListener(clearAction);
+        advInfoButton.addActionListener(advancedSearchAction);
         optionCheckBox.addItemListener(itemListener);
     }
 
@@ -515,7 +542,7 @@ public final class SearchView extends IgbTabPanel implements
 
         searchButton.setToolTipText("Search");
         searchButton.setEnabled(true);
-
+        advInfoButton.setToolTipText("About Advanced Search");
         clearButton.setToolTipText("Clear All");
 //		cancel.setEnabled(false);
     }
@@ -657,6 +684,7 @@ public final class SearchView extends IgbTabPanel implements
         searchCB.setEnabled(enabled);
         searchButton.setEnabled(enabled);
         clearButton.setEnabled(enabled);
+        advInfoButton.setEnabled(enabled);
     }
 
     @Override
@@ -796,8 +824,7 @@ public final class SearchView extends IgbTabPanel implements
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int col) {
+        public Component getTableCellRendererComponent(JTable table, Object value,boolean isSelected, boolean hasFocus, int row, int col) {
             Component c = table.getTableHeader().getDefaultRenderer().getTableCellRendererComponent(table, value,
                     isSelected, hasFocus, row, col);
             JLabel label = (JLabel) c;

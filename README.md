@@ -64,7 +64,7 @@ To contribute to the IGB code base, please use a fork-and-branch workflow:
 
 1. Fork the [team repository](https://www.bitbucket.org/lorainelab/integrated-genome-browser).
 2. Create branches specific to the changes you want to make, push to your fork.
-3. Issue pull requests to the team repository's master branch from the branch on your fork.
+3. Issue pull requests to the team repository's main-JDK8 branch from the branch on your fork.
 
 ***
 

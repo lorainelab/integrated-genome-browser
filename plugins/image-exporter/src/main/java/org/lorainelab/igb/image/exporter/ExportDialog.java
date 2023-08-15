@@ -1,6 +1,6 @@
 package org.lorainelab.igb.image.exporter;
 
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.util.DisplayUtils;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.FileTracker;
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author nick
  */
-@aQute.bnd.annotation.component.Component(name = ExportDialog.COMPONENT_NAME, immediate = true, provide = {ExportDialog.class, ImageExportService.class})
+@org.osgi.service.component.annotations.Component(name = ExportDialog.COMPONENT_NAME, immediate = true, service = {ExportDialog.class, ImageExportService.class})
 public class ExportDialog extends HeadLessExport implements ImageExportService {
 
     public static final String COMPONENT_NAME = "ExportDialog";

@@ -1,8 +1,9 @@
 package com.affymetrix.igb.tabs.annotation;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.igb.shared.SelectAllAction;
 import com.affymetrix.igb.shared.Selections;
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author hiralv
  */
-@Component(name = ANNOTATION_TRACK_PANEL_TAB, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = ANNOTATION_TRACK_PANEL_TAB, service = IgbTabPanelI.class, immediate = true)
 public class AnnotationTrackPanel extends TrackViewPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnotationTrackPanel.class);
@@ -59,12 +60,12 @@ public class AnnotationTrackPanel extends TrackViewPanel {
         this.addPanel(operationsPanel);
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setOperationsPanel(OperationsPanelService operationsPanelService) {
         operationsPanel = operationsPanelService.getAnnotationOperationsPanel();
     }

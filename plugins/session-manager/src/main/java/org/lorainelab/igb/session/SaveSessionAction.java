@@ -1,7 +1,8 @@
 package org.lorainelab.igb.session;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.FileTracker;
@@ -35,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
-@Component(name = SaveSessionAction.COMPONENT_NAME, immediate = true, provide = {MenuBarEntryProvider.class, GenericAction.class})
+@Component(name = SaveSessionAction.COMPONENT_NAME, immediate = true, service = {MenuBarEntryProvider.class, GenericAction.class})
 public class SaveSessionAction extends GenericAction implements MenuBarEntryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(SaveSessionAction.class);
@@ -156,12 +157,12 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
         }
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setBookmarkService(BookmarkService bookmarkService) {
         this.bookmarkService = bookmarkService;
     }

@@ -26,7 +26,7 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author dcnorris
  */
-@aQute.bnd.annotation.component.Component(name = ExportDialogGui.COMPONENT_NAME, immediate = true, provide = ExportDialogGui.class)
+@org.osgi.service.component.annotations.Component(name = ExportDialogGui.COMPONENT_NAME, immediate = true, service = ExportDialogGui.class)
 public class ExportDialogGui extends JPanel {
 
     public static final String COMPONENT_NAME = "ExportDialogGui";

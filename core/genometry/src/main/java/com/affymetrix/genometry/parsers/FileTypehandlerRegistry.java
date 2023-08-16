@@ -5,17 +5,14 @@
  */
 package com.affymetrix.genometry.parsers;
 
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 
 /**
  *
  * @author dcnorris
  */
-@Component(immediate = true, service = {FileTypehandlerRegistry.class})
+@Component(immediate = true, provide = {FileTypehandlerRegistry.class})
 public class FileTypehandlerRegistry {
 
     private static final FileTypeHolder FILE_TYPE_HOLDER = new FileTypeHolder();
@@ -23,7 +20,7 @@ public class FileTypehandlerRegistry {
     public FileTypehandlerRegistry() {
     }
 
-    @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, unbind = "removeFileTypeHandler", policy = ReferencePolicy.DYNAMIC)
+    @Reference(optional = false, multiple = true, unbind = "removeFileTypeHandler", dynamic = true)
     public void addFileTypeHandler(FileTypeHandler fileTypeHandler) {
         FILE_TYPE_HOLDER.addFileTypeHandler(fileTypeHandler);
     }

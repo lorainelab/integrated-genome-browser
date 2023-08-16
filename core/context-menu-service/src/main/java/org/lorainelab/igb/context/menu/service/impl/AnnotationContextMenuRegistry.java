@@ -5,11 +5,14 @@
  */
 package org.lorainelab.igb.context.menu.service.impl;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.google.common.collect.Sets;
 import org.lorainelab.igb.menu.api.AnnotationContextMenuProvider;
 import org.lorainelab.igb.context.menu.service.AnnotationContextMenuRegistryI;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
 import java.util.Set;
 
 /**
@@ -25,7 +28,7 @@ public class AnnotationContextMenuRegistry implements AnnotationContextMenuRegis
         annotationContextMenuItems = Sets.newConcurrentHashSet();
     }
 
-    @Reference(optional = true, multiple = true, dynamic = true, unbind = "removeAnnotationContextMenuItems")
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, unbind = "removeAnnotationContextMenuItems")
     public void addAnnotationContextMenuItems(AnnotationContextMenuProvider annotationContextMenuProvider) {
         annotationContextMenuItems.add(annotationContextMenuProvider);
     }

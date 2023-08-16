@@ -5,9 +5,6 @@
  */
 package org.lorainelab.igb.frame;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import org.lorainelab.igb.services.IgbService;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.ALT_SPLICE_VIEW_TAB;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.ANNOTATION_TRACK_PANEL_TAB;
@@ -26,6 +23,10 @@ import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(immediate = true, provide = FrameVisibilityManager.class)
+@Component(immediate = true, service = FrameVisibilityManager.class)
 public class FrameVisibilityManager {
 
     private static final Logger logger = LoggerFactory.getLogger(FrameVisibilityManager.class);

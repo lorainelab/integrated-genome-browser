@@ -5,10 +5,11 @@
  */
 package org.lorainelab.igb.synonymlookup.services.impl;
 
-import aQute.bnd.annotation.component.Component;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tarun
  */
-@Component(name = GenomeVersionSynonymLookupImpl.COMPONENT_NAME, immediate = true, provide = GenomeVersionSynonymLookup.class)
+@Component(name = GenomeVersionSynonymLookupImpl.COMPONENT_NAME, immediate = true, service = GenomeVersionSynonymLookup.class)
 public class GenomeVersionSynonymLookupImpl extends SynonymLookup implements GenomeVersionSynonymLookup {
 
     private static final Logger logger = LoggerFactory.getLogger(GenomeVersionSynonymLookupImpl.class);

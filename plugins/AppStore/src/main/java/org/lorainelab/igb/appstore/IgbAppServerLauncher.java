@@ -9,9 +9,9 @@
  */
 package org.lorainelab.igb.appstore;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.swing.SwingUtilities;
@@ -37,7 +37,7 @@ import org.lorainelab.igb.plugin.manager.service.PluginManagerService;
  * Question: Do we really need to pass App version to REST endpoint for
  * everything to work properly? Maybe not.
  */
-@Component(immediate=true, provide = {IgbAppServerLauncher.class})
+@Component(immediate=true, service = {IgbAppServerLauncher.class})
 public final class IgbAppServerLauncher {
 
     private static final Logger logger = LoggerFactory.getLogger(IgbAppServerLauncher.class);

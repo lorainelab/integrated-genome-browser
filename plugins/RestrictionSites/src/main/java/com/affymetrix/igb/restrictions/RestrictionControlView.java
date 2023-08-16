@@ -9,8 +9,9 @@
  */
 package com.affymetrix.igb.restrictions;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.GenericAction;
@@ -36,7 +37,7 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.event.*;
 
-@Component(name = RESTRICTIONS_TAB, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = RESTRICTIONS_TAB, service = IgbTabPanelI.class, immediate = true)
 public final class RestrictionControlView extends IgbTabPanel
         implements ListSelectionListener, ActionListener {
 
@@ -330,7 +331,7 @@ public final class RestrictionControlView extends IgbTabPanel
         return true;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

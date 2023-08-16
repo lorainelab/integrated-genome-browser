@@ -1,8 +1,9 @@
 package com.affymetrix.igb.tabs.graph;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.igb.shared.SelectAllAction;
@@ -20,7 +21,7 @@ import org.lorainelab.igb.track.operations.api.OperationsPanelService;
  *
  * @author hiralv
  */
-@Component(name = GRAPH_TRACK_PANEL_TAB, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = GRAPH_TRACK_PANEL_TAB, service = IgbTabPanelI.class, immediate = true)
 public class GraphTrackPanel extends TrackViewPanel {
 
     private static final long serialVersionUID = 1L;
@@ -61,12 +62,12 @@ public class GraphTrackPanel extends TrackViewPanel {
         addPanel(operationsPanel);
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setOperationsPanel(OperationsPanelService operationsPanelService) {
         operationsPanel = operationsPanelService.getGraphOperationsPanel();
     }
@@ -120,7 +121,7 @@ public class GraphTrackPanel extends TrackViewPanel {
         return true;
     }
 
-    @Reference(optional = false, target = "(name=ThresholdingAction)")
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, target = "(name=ThresholdingAction)")
     public void setThresholdingAction(GenericAction thresholdingAction) {
         this.thresholdingAction = thresholdingAction;
     }

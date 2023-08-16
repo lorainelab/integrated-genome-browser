@@ -5,9 +5,12 @@
  */
 package com.affymetrix.genometry.operator.service;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.operator.Operator;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +29,7 @@ public class OperatorServiceRegistry {
     public OperatorServiceRegistry() {
     }
 
-    @Reference(multiple = true, optional = true, dynamic = true, unbind = "removeOperator")
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, unbind = "removeOperator")
     public void addOperator(Operator operator) {
         checkNotNull(operator);
         operators.add(operator);

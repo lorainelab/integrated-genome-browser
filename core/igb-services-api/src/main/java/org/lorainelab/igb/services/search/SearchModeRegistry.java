@@ -5,11 +5,14 @@
  */
 package org.lorainelab.igb.services.search;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.google.common.collect.Sets;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +20,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = SearchModeRegistry.COMPONENT_NAME, immediate = true, provide = SearchModeRegistry.class)
+@Component(name = SearchModeRegistry.COMPONENT_NAME, immediate = true, service = SearchModeRegistry.class)
 public class SearchModeRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchModeRegistry.class);
@@ -31,7 +34,7 @@ public class SearchModeRegistry {
         searchModes.remove(searchMode);
     }
 
-    @Reference(multiple = true, optional = false, dynamic = true, unbind = "removeSearchModeService")
+    @Reference( cardinality = ReferenceCardinality.AT_LEAST_ONE, policy = ReferencePolicy.DYNAMIC, unbind = "removeSearchModeService")
     public void addSearchModeService(ISearchMode searchMode) {
         searchModes.add(searchMode);
     }

@@ -5,14 +5,14 @@
  */
 package org.lorainelab.igb.menu.api;
 
-import aQute.bnd.annotation.component.Component;
 import com.google.common.eventbus.EventBus;
+import org.osgi.service.component.annotations.Component;
 
 /**
  *
  * @author dcnorris
  */
-@Component(immediate = true, provide = MenuItemEventService.class)
+@Component(immediate = true, service = MenuItemEventService.class)
 public class MenuItemEventService {
 
     private EventBus eventBus;

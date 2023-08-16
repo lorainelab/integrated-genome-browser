@@ -1,7 +1,6 @@
 package org.lorainelab.igb.preferences.weblink.action;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+
 import com.affymetrix.genometry.event.GenericAction;
 import java.awt.event.ActionEvent;
 import java.io.InputStream;
@@ -15,6 +14,9 @@ import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
 import org.lorainelab.igb.preferences.weblink.view.WebLinkDisplayProvider;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
@@ -22,7 +24,7 @@ import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 /**
  * A panel for viewing and editing weblinks.
  */
-@Component(name = WebLinksAction.COMPONENT_NAME, immediate = true, provide = {MenuBarEntryProvider.class, GenericAction.class})
+@Component(name = WebLinksAction.COMPONENT_NAME, immediate = true, service = {MenuBarEntryProvider.class, GenericAction.class})
 public class WebLinksAction extends GenericAction implements MenuBarEntryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebLinksAction.class);
@@ -41,7 +43,7 @@ public class WebLinksAction extends GenericAction implements MenuBarEntryProvide
         webLinksMenuEntry = new JMenuItem(this);
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setWebLinksViewGUI(WebLinkDisplayProvider webLinkDisplayProvider) {
         this.webLinkDisplayProvider = webLinkDisplayProvider;
     }

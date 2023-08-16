@@ -5,11 +5,12 @@
  */
 package com.affymetrix.igb.window.service.def;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.igb.window.service.IWindowService;
 import com.google.common.collect.Sets;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
-import org.osgi.service.component.annotations.*;
-
 import java.util.Set;
 
 /**
@@ -33,7 +34,7 @@ public class IgbTabPanelRegistry {
         }
     }
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, unbind = "removeIgbTabPanel", policy = ReferencePolicy.DYNAMIC)
+    @Reference(multiple = true, unbind = "removeIgbTabPanel", optional = true, dynamic = true)
     public void addIgbTabPanel(final IgbTabPanelI tabPanel) {
         if (windowService != null) {
             addTabToWindowService(tabPanel);

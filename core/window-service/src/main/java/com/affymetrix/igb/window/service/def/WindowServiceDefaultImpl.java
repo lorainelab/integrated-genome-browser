@@ -1,5 +1,8 @@
 package com.affymetrix.igb.window.service.def;
 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.swing.JRPMenu;
@@ -46,11 +49,10 @@ import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel.TabState;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import org.lorainelab.igb.services.window.tabs.TabHolder;
-import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(service = {IWindowService.class})
+@Component(provide = {IWindowService.class})
 public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler, TrayStateChangeListener {
     
     private static final Logger logger = LoggerFactory.getLogger(WindowServiceDefaultImpl.class);
@@ -96,7 +98,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         innerPanel.add(topComponent1, "north");
     }
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC, unbind = "unsetIgbService")
+    @Reference(optional = true, dynamic = true, multiple = false, unbind = "unsetIgbService")
     public void setIgbService(IgbService igbService) {
         igbService.addParentMenuBarEntry(tabsMenu, 12);
         
@@ -456,7 +458,7 @@ public class WindowServiceDefaultImpl implements IWindowService, TabStateHandler
         });
     }
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, unbind = "removeStopRoutine", policy = ReferencePolicy.DYNAMIC)
+    @Reference(multiple = true, unbind = "removeStopRoutine", optional = true, dynamic = true)
     void addStopRoutine(WindowServiceLifecycleHook routine) {
         stopRoutines.add(routine);
     }

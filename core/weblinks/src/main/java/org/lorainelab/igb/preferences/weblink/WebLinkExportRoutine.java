@@ -1,8 +1,8 @@
 package org.lorainelab.igb.preferences.weblink;
 
+import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
 import org.lorainelab.igb.services.window.WindowServiceLifecycleHook;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = WebLinkExportRoutine.COMPONENT_NAME, immediate = true, service = WindowServiceLifecycleHook.class)
+@Component(name = WebLinkExportRoutine.COMPONENT_NAME, immediate = true, provide = WindowServiceLifecycleHook.class)
 public class WebLinkExportRoutine implements WindowServiceLifecycleHook {
 
     private static final Logger logger = LoggerFactory.getLogger(WebLinkExportRoutine.class);

@@ -1,9 +1,10 @@
 package com.affymetrix.igb.property;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Deactivate;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.*;
 import com.affymetrix.genometry.symmetry.SymWithProps;
@@ -29,7 +30,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-@Component(name = SELECTION_INFO_TAB, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = SELECTION_INFO_TAB, service = IgbTabPanelI.class, immediate = true)
 public final class PropertyView extends IgbTabPanel implements SymSelectionListener, PropertyHandler, GroupSelectionListener {
 
     private static final long serialVersionUID = 1L;
@@ -70,7 +71,7 @@ public final class PropertyView extends IgbTabPanel implements SymSelectionListe
         igbService.getSeqMapView().setPropertyHandler(null);
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

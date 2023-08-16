@@ -1,6 +1,6 @@
 package org.lorainelab.igb.image.exporter;
 
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.ErrorHandler;
 import java.awt.Component;
@@ -27,7 +27,7 @@ import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
  *
  * @author nick
  */
-@aQute.bnd.annotation.component.Component(name = SaveImageAction.COMPONENT_NAME, immediate = true, provide = {MenuBarEntryProvider.class, GenericAction.class})
+@org.osgi.service.component.annotations.Component(name = SaveImageAction.COMPONENT_NAME, immediate = true, service = {MenuBarEntryProvider.class, GenericAction.class})
 public class SaveImageAction extends GenericAction implements MenuBarEntryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(SaveImageAction.class);

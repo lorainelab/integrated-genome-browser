@@ -1,7 +1,8 @@
 package com.affymetrix.igb.search;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
@@ -86,7 +87,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
-@aQute.bnd.annotation.component.Component(name = SEARCH_VIEW_TAB, provide = {IgbTabPanelI.class, SearchListener.class})
+@org.osgi.service.component.annotations.Component(name = SEARCH_VIEW_TAB, service = {IgbTabPanelI.class, SearchListener.class})
 public final class SearchView extends IgbTabPanel implements
         GroupSelectionListener, SeqSelectionListener, SearchListener, IStatus {
 
@@ -405,7 +406,7 @@ public final class SearchView extends IgbTabPanel implements
         optionCheckBox.addItemListener(itemListener);
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }
@@ -496,7 +497,7 @@ public final class SearchView extends IgbTabPanel implements
         initSearchCB();
     }
 
-    @Reference(multiple = true, optional = true, unbind = "removeSearchModeService")
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, unbind = "removeSearchModeService")
     public void addSearchModeService(ISearchMode searchMode) {
         searchModes.add(searchMode);
         initSearchCB();

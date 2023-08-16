@@ -1,19 +1,20 @@
 package org.lorainelab.igb.preferences.weblink.view;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.util.DisplayUtils;
 import org.lorainelab.igb.services.IgbService;
 import java.awt.Point;
 import javax.swing.JFrame;
 import org.lorainelab.igb.preferences.weblink.view.WebLinkDisplayProvider;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 /**
  *
  * @author dcnorris
  */
-@Component(name = WebLinksViewFrame.COMPONENT_NAME, immediate = true, provide = WebLinkDisplayProvider.class)
+@Component(name = WebLinksViewFrame.COMPONENT_NAME, immediate = true, service = WebLinkDisplayProvider.class)
 public class WebLinksViewFrame extends JFrame implements WebLinkDisplayProvider {
 
     public static final String COMPONENT_NAME = "WebLinksViewFrame";
@@ -29,7 +30,7 @@ public class WebLinksViewFrame extends JFrame implements WebLinkDisplayProvider 
         initComponents();
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

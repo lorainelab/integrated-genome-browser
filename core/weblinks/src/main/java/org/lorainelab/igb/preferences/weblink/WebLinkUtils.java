@@ -1,8 +1,5 @@
 package org.lorainelab.igb.preferences.weblink;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,6 +17,10 @@ import org.lorainelab.igb.preferences.model.JsonWrapper;
 import org.lorainelab.igb.preferences.weblink.model.WebLink;
 import org.lorainelab.igb.preferences.weblink.model.WebLinkList;
 import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -168,7 +169,7 @@ public class WebLinkUtils implements WebLinkExporter {
         return LOCAL_WEBLINK_LIST;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbPreferencesService(IgbPreferencesService igbPreferencesService) {
         WebLinkUtils.igbPreferencesService = igbPreferencesService;
     }

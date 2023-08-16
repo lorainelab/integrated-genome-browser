@@ -1,6 +1,5 @@
 package org.lorainelab.igb.frame;
 
-import aQute.bnd.annotation.component.Component;
 import static com.affymetrix.common.CommonUtils.IGB_NAME;
 import static com.affymetrix.common.CommonUtils.IGB_VERSION;
 import com.affymetrix.common.PreferenceUtils;
@@ -8,6 +7,7 @@ import org.lorainelab.igb.frame.api.FrameManagerService;
 import java.awt.Rectangle;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
+import org.osgi.service.component.annotations.Component;
 
 @Component(immediate = true)
 public class FrameManager implements FrameManagerService {

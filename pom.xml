@@ -37,6 +37,7 @@
         <felix-webconsole-version>4.8.8</felix-webconsole-version>
         <felix-bundlerepository-version>2.0.10</felix-bundlerepository-version>
         <org.osgi.compendium-version>5.0.0</org.osgi.compendium-version>
+        <org.osgi.service.component.annotations-version>1.5.1</org.osgi.service.component.annotations-version>
         <bindlib-version>6.4.0</bindlib-version>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
         <bigWigVersion>2.0.0</bigWigVersion>
@@ -699,6 +700,11 @@
                 <groupId>org.osgi</groupId>
                 <artifactId>osgi.cmpn</artifactId>
                 <version>${org.osgi.compendium-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.service.component.annotations</artifactId>
+                <version>${org.osgi.service.component.annotations-version}</version>
             </dependency>
             <dependency>
                 <groupId>biz.aQute.bnd</groupId>

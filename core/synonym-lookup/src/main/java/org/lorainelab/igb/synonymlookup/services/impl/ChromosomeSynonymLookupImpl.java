@@ -5,17 +5,18 @@
  */
 package org.lorainelab.igb.synonymlookup.services.impl;
 
-import aQute.bnd.annotation.component.Component;
 import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Tarun
  */
-@Component(name = ChromosomeSynonymLookupImpl.COMPONENT_NAME, immediate = true, provide = ChromosomeSynonymLookup.class)
+@Component(name = ChromosomeSynonymLookupImpl.COMPONENT_NAME, immediate = true, service = ChromosomeSynonymLookup.class)
 public class ChromosomeSynonymLookupImpl extends SynonymLookup implements ChromosomeSynonymLookup {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ChromosomeSynonymLookupImpl.class);

@@ -5,9 +5,9 @@
  */
 package org.lorainelab.igb.plugin.manager;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -74,7 +74,7 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(immediate = true, provide = AppManagerFxPanel.class)
+@Component(immediate = true, service = AppManagerFxPanel.class)
 public class AppManagerFxPanel extends JFXPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(AppManagerFxPanel.class);

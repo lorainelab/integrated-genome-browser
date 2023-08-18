@@ -1,8 +1,9 @@
 package org.lorainelab.igb.plugin.manager.repos;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.google.common.base.Charsets;
@@ -27,7 +28,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = PluginRepositoryList.COMPONENT_NAME, immediate = true, provide = PluginRepositoryList.class)
+@Component(name = PluginRepositoryList.COMPONENT_NAME, immediate = true, service = PluginRepositoryList.class)
 public class PluginRepositoryList {
 
     public static final String COMPONENT_NAME = "PluginRepositoryList";
@@ -85,12 +86,12 @@ public class PluginRepositoryList {
         }
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbPreferencesService(IgbPreferencesService igbPreferencesService) {
         this.igbPreferencesService = igbPreferencesService;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setPluginsView(RepositoryInfoManager repositoryInfoManager) {
         this.repositoryInfoManager = repositoryInfoManager;
     }

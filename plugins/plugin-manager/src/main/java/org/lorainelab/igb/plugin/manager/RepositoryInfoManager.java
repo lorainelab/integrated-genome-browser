@@ -5,8 +5,8 @@
  */
 package org.lorainelab.igb.plugin.manager;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.google.common.collect.Lists;
@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.List;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
 import org.osgi.framework.Bundle;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(immediate = true, provide = RepositoryInfoManager.class)
+@Component(immediate = true, service = RepositoryInfoManager.class)
 public class RepositoryInfoManager {
 
     private static final Logger logger = LoggerFactory.getLogger(RepositoryInfoManager.class);
@@ -45,7 +46,7 @@ public class RepositoryInfoManager {
         this.bundleInfoManager = bundleInfoManager;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setRepositoryAdmin(RepositoryAdmin repositoryAdmin) {
         repoAdmin = repositoryAdmin;
     }

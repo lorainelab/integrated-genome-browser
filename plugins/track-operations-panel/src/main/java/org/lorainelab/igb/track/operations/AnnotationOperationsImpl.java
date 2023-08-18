@@ -5,13 +5,16 @@
  */
 package org.lorainelab.igb.track.operations;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.track.operations.api.OperationsPanel;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +22,7 @@ import java.util.List;
  *
  * @author dcnorris
  */
-@Component(name = AnnotationOperationsImpl.COMPONENT_NAME, immediate = true, provide = AnnotationOperationsImpl.class)
+@Component(name = AnnotationOperationsImpl.COMPONENT_NAME, immediate = true, service = AnnotationOperationsImpl.class)
 public class AnnotationOperationsImpl extends OperationsPanel {
 
     public static final String COMPONENT_NAME = "AnnotationOperationsImpl";
@@ -38,7 +41,7 @@ public class AnnotationOperationsImpl extends OperationsPanel {
         initializationHolder.clear();
     }
 
-    @Reference(multiple = true, unbind = "removeTrackOperator", optional = true, dynamic = true)
+    @Reference(unbind = "removeTrackOperator", cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addTrackOperator(Operator operator) {
         if (igbService == null) {
             initializationHolder.add(operator);
@@ -55,7 +58,7 @@ public class AnnotationOperationsImpl extends OperationsPanel {
         }
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

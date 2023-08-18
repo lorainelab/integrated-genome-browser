@@ -1,13 +1,15 @@
 package org.lorainelab.igb.track.operations;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import static com.affymetrix.igb.shared.Selections.graphGlyphs;
 import static com.affymetrix.igb.shared.Selections.isAnyJoined;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.track.operations.api.OperationsPanel;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 
@@ -15,7 +17,7 @@ import javax.swing.JButton;
  *
  * @author hiralv
  */
-@Component(name = GraphOperationsImpl.COMPONENT_NAME, immediate = true, provide = GraphOperationsImpl.class)
+@Component(name = GraphOperationsImpl.COMPONENT_NAME, immediate = true, service = GraphOperationsImpl.class)
 public class GraphOperationsImpl extends OperationsPanel {
 
     public static final String COMPONENT_NAME = "GraphOperationsImpl";
@@ -34,7 +36,7 @@ public class GraphOperationsImpl extends OperationsPanel {
         init(igbService);
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

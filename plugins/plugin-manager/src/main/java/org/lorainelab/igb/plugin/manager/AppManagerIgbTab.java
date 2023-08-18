@@ -1,8 +1,8 @@
 package org.lorainelab.igb.plugin.manager;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.APP_MANAGER_TAB;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Tab Panel for managing plugins / bundles.
  */
-@Component(name = APP_MANAGER_TAB, provide = {IgbTabPanelI.class}, immediate = true)
+@Component(name = APP_MANAGER_TAB, service = {IgbTabPanelI.class}, immediate = true)
 public class AppManagerIgbTab extends IgbTabPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(AppManagerIgbTab.class);

@@ -5,8 +5,8 @@
  */
 package org.lorainelab.igb.plugin.manager.menu;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;

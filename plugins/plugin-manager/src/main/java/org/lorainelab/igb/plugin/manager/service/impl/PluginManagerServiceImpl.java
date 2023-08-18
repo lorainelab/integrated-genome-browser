@@ -5,8 +5,8 @@
  */
 package org.lorainelab.igb.plugin.manager.service.impl;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.common.CommonUtils;
 import com.google.gson.JsonObject;
 import com.google.gson.Gson;

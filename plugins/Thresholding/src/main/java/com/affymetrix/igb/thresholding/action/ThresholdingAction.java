@@ -1,8 +1,8 @@
 package com.affymetrix.igb.thresholding.action;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.swing.JRPMenuItem;
@@ -20,11 +20,12 @@ import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
 import org.lorainelab.igb.services.IgbService;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
-@Component(name = ThresholdingAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, MenuBarEntryProvider.class}, properties = "name=" + ThresholdingAction.COMPONENT_NAME)
+@Component(name = ThresholdingAction.COMPONENT_NAME, immediate = true, service = {GenericAction.class, MenuBarEntryProvider.class}, property = {"name=" + ThresholdingAction.COMPONENT_NAME})
 public class ThresholdingAction extends GenericAction implements MenuBarEntryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThresholdingAction.class);
@@ -53,7 +54,7 @@ public class ThresholdingAction extends GenericAction implements MenuBarEntryPro
         Selections.addRefreshSelectionListener(selectionListener);
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

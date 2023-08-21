@@ -5,8 +5,8 @@
  */
 package org.lorainelab.igb.cache.configuration.panel;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.igb.swing.JRPJPanel;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jeckstei
  */
-@aQute.bnd.annotation.component.Component(name = CacheConfigurationPanel.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
+@org.osgi.service.component.annotations.Component(name = CacheConfigurationPanel.COMPONENT_NAME, immediate = true, service = PreferencesPanelProvider.class)
 public class CacheConfigurationPanel extends JRPJPanel implements PreferencesPanelProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(CacheConfigurationPanel.class);

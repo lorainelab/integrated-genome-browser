@@ -1,6 +1,6 @@
 package com.gene.bigbedhandler;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;
@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@Component(name = BigBedHandler.COMPONENT_NAME, immediate = true, provide = FileTypeHandler.class)
+@Component(name = BigBedHandler.COMPONENT_NAME, immediate = true, service = FileTypeHandler.class)
 public class BigBedHandler implements FileTypeHandler {
 
     public static final String COMPONENT_NAME = "BigBedHandler";

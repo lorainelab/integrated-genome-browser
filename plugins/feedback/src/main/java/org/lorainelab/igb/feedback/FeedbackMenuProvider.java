@@ -5,7 +5,7 @@
  */
 package org.lorainelab.igb.feedback;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.GeneralUtils;
 import java.awt.event.ActionEvent;
@@ -26,7 +26,7 @@ import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
  *
  * @author dcnorris
  */
-@Component(name = FeedbackMenuProvider.COMPONENT_NAME, immediate = true, provide = MenuBarEntryProvider.class)
+@Component(name = FeedbackMenuProvider.COMPONENT_NAME, immediate = true, service = MenuBarEntryProvider.class)
 public class FeedbackMenuProvider extends GenericAction implements MenuBarEntryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackMenuProvider.class);

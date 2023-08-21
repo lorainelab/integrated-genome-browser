@@ -1,7 +1,8 @@
 package com.affymetrix.sequenceviewer;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.SymSelectionEvent;
@@ -34,7 +35,7 @@ import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 *Also changed the structure of the if conditions.
 */
 
-@Component(name = ViewReadSequenceInSeqViewerAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, MenuBarEntryProvider.class})
+@Component(name = ViewReadSequenceInSeqViewerAction.COMPONENT_NAME, immediate = true, service = {GenericAction.class, MenuBarEntryProvider.class})
 public class ViewReadSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener, MenuBarEntryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewReadSequenceInSeqViewerAction.class);

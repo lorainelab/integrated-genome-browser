@@ -1,8 +1,8 @@
 package com.affymetrix.sequenceviewer;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.SymSelectionEvent;
@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
 
-@Component(name = ViewGenomicSequenceInSeqViewerAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, MenuBarEntryProvider.class})
+@Component(name = ViewGenomicSequenceInSeqViewerAction.COMPONENT_NAME, immediate = true, service = {GenericAction.class, MenuBarEntryProvider.class})
 public class ViewGenomicSequenceInSeqViewerAction extends GenericAction implements SymSelectionListener, MenuBarEntryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewGenomicSequenceInSeqViewerAction.class);

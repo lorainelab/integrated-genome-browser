@@ -5,9 +5,9 @@
  */
 package org.lorainelab.igb.cache.disk;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.thread.CThreadHolder;
@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jeckstei
  */
-@Component(provide = RemoteFileCacheService.class)
+@Component(service = RemoteFileCacheService.class)
 public class RemoteFileDiskCacheService implements RemoteFileCacheService {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileDiskCacheService.class);

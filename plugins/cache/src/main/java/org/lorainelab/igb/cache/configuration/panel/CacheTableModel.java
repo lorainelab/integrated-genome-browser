@@ -5,9 +5,9 @@
  */
 package org.lorainelab.igb.cache.configuration.panel;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.lorainelab.igb.cache.api.CacheStatus;
 import org.lorainelab.igb.cache.api.RemoteFileCacheService;
 import java.math.BigInteger;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jeckstei
  */
-@Component(provide = CacheTableModel.class)
+@Component(service = CacheTableModel.class)
 public class CacheTableModel extends AbstractTableModel {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(CacheTableModel.class);

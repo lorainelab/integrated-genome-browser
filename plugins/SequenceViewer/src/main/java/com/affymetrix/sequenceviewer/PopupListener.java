@@ -1,7 +1,7 @@
 package com.affymetrix.sequenceviewer;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.AxisPopupListener;
 import com.affymetrix.genometry.event.SymSelectionEvent;
@@ -23,6 +23,7 @@ import org.lorainelab.igb.menu.api.model.ContextMenuSection;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
 import org.lorainelab.igb.menu.api.util.MenuUtils;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 is enabled, else disabled.
 */
 
-@Component(immediate = true, provide = {AnnotationContextMenuProvider.class, AxisPopupListener.class})
+@Component(immediate = true, service = {AnnotationContextMenuProvider.class, AxisPopupListener.class})
 public class PopupListener implements AnnotationContextMenuProvider, AxisPopupListener, SymSelectionListener{
 
     private static final Logger LOG = LoggerFactory.getLogger(PopupListener.class);
@@ -54,7 +55,7 @@ public class PopupListener implements AnnotationContextMenuProvider, AxisPopupLi
         popup.add(genomicSequenceViewer);
     }
 
-    @Reference(optional = false, target = "(&(component.name=ViewGenomicSequenceInSeqViewerAction))")
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, target = "(&(component.name=ViewGenomicSequenceInSeqViewerAction))")
     public void setGenomicSequenceViewer(MenuBarEntryProvider genomicSequenceViewer) {
         if (genomicSequenceViewer.getMenuItems().isPresent()) {
             Optional<MenuItem> menuItem = genomicSequenceViewer.getMenuItems().get().stream().findFirst();
@@ -64,7 +65,7 @@ public class PopupListener implements AnnotationContextMenuProvider, AxisPopupLi
         }
     }
 
-    @Reference(optional = false, target = "(&(component.name=ViewReadSequenceInSeqViewerAction))")
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, target = "(&(component.name=ViewReadSequenceInSeqViewerAction))")
     public void setReadSequenceViewer(MenuBarEntryProvider readSequenceViewer) {
         if (readSequenceViewer.getMenuItems().isPresent()) {
             Optional<MenuItem> menuItem = readSequenceViewer.getMenuItems().get().stream().findFirst();

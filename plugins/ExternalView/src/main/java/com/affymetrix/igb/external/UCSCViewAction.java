@@ -4,9 +4,9 @@
  */
 package com.affymetrix.igb.external;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
@@ -41,6 +41,7 @@ import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
@@ -50,7 +51,7 @@ import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
  * @author sgblanch
  * @version $Id: UCSCViewAction.java 7258 2010-12-17 21:40:02Z lfrohman $
  */
-@Component(name = UCSCViewAction.COMPONENT_NAME, provide = {UCSCViewAction.class, MenuBarEntryProvider.class}, immediate = true)
+@Component(name = UCSCViewAction.COMPONENT_NAME, service = {UCSCViewAction.class, MenuBarEntryProvider.class}, immediate = true)
 public class UCSCViewAction extends GenericAction implements SeqSelectionListener, MenuBarEntryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(UCSCViewAction.class);
@@ -81,7 +82,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
         this.seqSelectionChanged(new SeqSelectionEvent(this, Collections.singletonList(selectedSeq.orElse(null))));
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

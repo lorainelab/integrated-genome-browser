@@ -1,6 +1,5 @@
 package com.affymetrix.genometry.operator;
 
-import aQute.bnd.annotation.component.Component;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -10,6 +9,7 @@ import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithResidues;
 import com.affymetrix.genometry.GenometryConstants;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * operation for sequenc tracks that returns the complement base at each

@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view.factories;
 
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.SeqSpan;
@@ -36,6 +35,8 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import org.lorainelab.igb.genoviz.extensions.SeqMapViewExtendedI;
 import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.osgi.service.component.annotations.Reference;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;

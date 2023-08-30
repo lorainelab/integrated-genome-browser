@@ -113,11 +113,6 @@
         </dependency>
         <!--End of logging dependencies--> 
         <dependency>
-            <groupId>biz.aQute.bnd</groupId>
-            <artifactId>biz.aQute.bndlib</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>

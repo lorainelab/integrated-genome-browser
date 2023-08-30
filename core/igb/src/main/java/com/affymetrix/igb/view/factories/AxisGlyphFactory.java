@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view.factories;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -24,12 +24,13 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.Set;
 import java.util.regex.Pattern;
+import com.affymetrix.igb.view.factories.TransformTierGlyph;
 
 /**
  *
  * @author hiralv
  */
-@Component(name = AxisGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
+@Component(name = AxisGlyphFactory.COMPONENT_NAME, service = {MapTierGlyphFactoryI.class}, immediate = true)
 public class AxisGlyphFactory extends MapTierGlyphFactoryA {
 
     public static final String COMPONENT_NAME = "AxisGlyphFactory";

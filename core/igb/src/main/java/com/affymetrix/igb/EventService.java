@@ -1,13 +1,13 @@
 package com.affymetrix.igb;
 
-import aQute.bnd.annotation.component.Component;
 import com.google.common.eventbus.EventBus;
+import org.osgi.service.component.annotations.Component;
 
 /**
  *
  * @author dcnorris
  */
-@Component(name = EventService.COMPONENT_NAME, immediate = true, provide = EventService.class)
+@Component(name = EventService.COMPONENT_NAME, immediate = true, service = EventService.class)
 public class EventService {
 
     public static final String COMPONENT_NAME = "EventService";

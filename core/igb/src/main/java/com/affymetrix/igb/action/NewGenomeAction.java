@@ -1,7 +1,6 @@
 package com.affymetrix.igb.action;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.DataContainer;
@@ -26,6 +25,8 @@ import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
@@ -34,7 +35,7 @@ import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
  *
  * @author hiralv
  */
-@Component(name = NewGenomeAction.COMPONENT_NAME, immediate = true, provide = {GenericAction.class, MenuBarEntryProvider.class})
+@Component(name = NewGenomeAction.COMPONENT_NAME, immediate = true, service = {GenericAction.class, MenuBarEntryProvider.class})
 public class NewGenomeAction extends OpenURIAction implements MenuBarEntryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(NewGenomeAction.class);

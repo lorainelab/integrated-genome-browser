@@ -1,8 +1,5 @@
 package com.affymetrix.igb.general;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.google.common.collect.Lists;
 import com.affymetrix.genometry.GenomeVersion;
@@ -35,6 +32,9 @@ import org.lorainelab.igb.javafx.FileChooserUtil;
 import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.SynonymLookupService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = SynonymsControlPanel.COMPONENT_NAME, immediate = true, provide = SynonymsControlPanel.class)
+@Component(name = SynonymsControlPanel.COMPONENT_NAME, immediate = true, service = SynonymsControlPanel.class)
 public class SynonymsControlPanel {
 
     public static final String COMPONENT_NAME = "SynonymsControlPanel";

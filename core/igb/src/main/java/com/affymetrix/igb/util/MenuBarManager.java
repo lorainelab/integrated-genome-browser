@@ -1,8 +1,5 @@
 package com.affymetrix.igb.util;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genoviz.swing.AMenuItem;
 import com.affymetrix.igb.IGBConstants;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -57,11 +54,16 @@ import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuItem;
 import static org.lorainelab.igb.menu.api.util.MenuUtils.convertContextMenuItemToJMenuItem;
 import org.lorainelab.igb.services.IgbService;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.Activate;
 import org.slf4j.LoggerFactory;
 import javax.swing.SwingConstants;
 import javax.swing.Action;
 
-@Component(immediate = true, provide = MenuBarManager.class)
+@Component(immediate = true, service = MenuBarManager.class)
 public class MenuBarManager {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MenuBarManager.class);
@@ -117,7 +119,7 @@ public class MenuBarManager {
         menuItemEventService.getEventBus().register(this);
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }
@@ -225,7 +227,7 @@ public class MenuBarManager {
         helpMenuEntries.put(10, new JMenuItem(ShowConsoleAction.getAction()));
     }
 
-    @Reference(optional = true, multiple = true, unbind = "removeAMenuItem", dynamic = true)
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, unbind = "removeAMenuItem", policy = ReferencePolicy.DYNAMIC)
     public void addAMenuItem(AMenuItem aMenuItem) {
         if (componentActivated) {
             JMenu parent = parentMenuReference.get(MenuBarParentMenu.valueOf(aMenuItem.getParentMenu()));
@@ -238,7 +240,7 @@ public class MenuBarManager {
         parent.remove(aMenuItem.getMenuItem());
     }
 
-    @Reference(optional = true, multiple = true, unbind = "removeMenuBarExtension", dynamic = true)
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, unbind = "removeMenuBarExtension", policy = ReferencePolicy.DYNAMIC)
     public void addMenuBarExtension(MenuBarEntryProvider menuBarExtension) {
         if (componentActivated) {
             Optional<List<MenuItem>> menuItems = menuBarExtension.getMenuItems();

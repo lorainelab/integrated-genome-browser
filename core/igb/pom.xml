@@ -171,6 +171,10 @@
             <artifactId>context-menu-service</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.component.annotations</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

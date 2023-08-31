@@ -40,8 +40,8 @@
         </dependency>
         <!-- to generate SCR annotations for OSGI/OSGI-INF -->
         <dependency>
-            <groupId>biz.aQute.bnd</groupId>
-            <artifactId>biz.aQute.bndlib</artifactId>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.component.annotations</artifactId>
             <scope>provided</scope>
         </dependency>
         <!-- for String manipulation -->

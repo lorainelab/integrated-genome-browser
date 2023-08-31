@@ -1,6 +1,6 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.swing.Action;
 
-@Component(name = SearchModeID.COMPONENT_NAME, provide = ISearchMode.class, immediate = true)
+@Component(name = SearchModeID.COMPONENT_NAME, service = ISearchMode.class, immediate = true)
 public class SearchModeID extends SearchModeIDOrProps implements ISearchModeSym, ISearchModeExtended, ISearchHints {
 
     public static final String COMPONENT_NAME = "SearchModeID";

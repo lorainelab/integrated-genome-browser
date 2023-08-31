@@ -1,6 +1,6 @@
 package com.affymetrix.igb.searchmodeidorprops;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.search.SearchUtils;
 import org.lorainelab.igb.services.search.ISearchHints;

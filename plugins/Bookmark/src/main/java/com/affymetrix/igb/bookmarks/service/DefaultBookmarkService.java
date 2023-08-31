@@ -1,23 +1,24 @@
 package com.affymetrix.igb.bookmarks.service;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.google.common.base.Optional;
 import org.lorainelab.igb.services.IgbService;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 /**
  *
  * @author dcnorris
  */
-@Component(name = DefaultBookmarkService.COMPONENT_NAME, immediate = true, provide = BookmarkService.class)
+@Component(name = DefaultBookmarkService.COMPONENT_NAME, immediate = true, service = BookmarkService.class)
 public class DefaultBookmarkService implements BookmarkService {
 
     public static final String COMPONENT_NAME = "DefaultBookmarkService";
     private IgbService igbService;
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

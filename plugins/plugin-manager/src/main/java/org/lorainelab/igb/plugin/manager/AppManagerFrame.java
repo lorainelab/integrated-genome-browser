@@ -5,9 +5,9 @@
  */
 package org.lorainelab.igb.plugin.manager;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
@@ -17,7 +17,7 @@ import org.lorainelab.igb.services.IgbService;
  *
  * @author dcnorris
  */
-@Component(immediate = true, provide = AppManagerFrame.class)
+@Component(immediate = true, service = AppManagerFrame.class)
 public class AppManagerFrame extends JFrame {
 
     private AppManagerFxPanel fxPanel;

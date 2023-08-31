@@ -1,6 +1,6 @@
 package org.lorainelab.igb.genotyping;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Component(name = GenotypingResultsFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
+@Component(name = GenotypingResultsFactory.COMPONENT_NAME, service = {MapTierGlyphFactoryI.class}, immediate = true)
 public class GenotypingResultsFactory extends MapTierGlyphFactoryA {
     public static final String COMPONENT_NAME = "GenotypingResultsFactory";
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(GenotypingResultsFactory.class);

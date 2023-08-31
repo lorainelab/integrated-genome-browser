@@ -1,13 +1,15 @@
 package com.affymetrix.igb.external;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.igb.swing.JRPComboBox;
 import org.lorainelab.igb.services.IgbService;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.EXTERNAL_VIEWER_TAB;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+
 import java.awt.CardLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -21,7 +23,7 @@ import java.util.ResourceBundle;
  *
  * @author Ido M. Tamir
  */
-@Component(name = EXTERNAL_VIEWER_TAB, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = EXTERNAL_VIEWER_TAB, service = IgbTabPanelI.class, immediate = true)
 public class ExternalViewer extends IgbTabPanel implements ItemListener {
 
     private static final long serialVersionUID = 1L;
@@ -51,12 +53,12 @@ public class ExternalViewer extends IgbTabPanel implements ItemListener {
         add(ensembl, ensembl.getViewName());
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setUcscViewAction(UCSCViewAction ucscViewAction) {
         this.ucscViewAction = ucscViewAction;
     }

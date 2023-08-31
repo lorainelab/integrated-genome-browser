@@ -1,8 +1,8 @@
 package org.lorainelab.igb.plugin.manager.repos.view;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ButtonTableCellEditor;
@@ -28,6 +28,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = BundleRepositoryPrefsView.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
+@Component(name = BundleRepositoryPrefsView.COMPONENT_NAME, immediate = true, service = PreferencesPanelProvider.class)
 public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesPanelProvider, HtmlHelpProvider {
 
     public static final String COMPONENT_NAME = "BundleRepositoryPrefsView";
@@ -148,7 +150,7 @@ public class BundleRepositoryPrefsView extends JRPJPanel implements PreferencesP
         table.setRowSelectionAllowed(true);
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setPluginRepositoryList(PluginRepositoryList pluginRepositoryList) {
         this.pluginRepositoryList = pluginRepositoryList;
     }

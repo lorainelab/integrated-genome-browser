@@ -5,7 +5,7 @@
  */
 package org.lorainelab.igb.narrowpeak;
 
-import org.osgi.service.component.annotations.Component;
+import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeHandler;

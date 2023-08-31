@@ -1,6 +1,6 @@
 package org.lorainelab.igb.preprocessor;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = PairedReadPreprocessor.COMPONENT_NAME, immediate = true, provide = {SeqSymmetryPreprocessorI.class})
+@Component(name = PairedReadPreprocessor.COMPONENT_NAME, immediate = true, service = {SeqSymmetryPreprocessorI.class})
 public class PairedReadPreprocessor implements SeqSymmetryPreprocessorI {
 
     public static final String COMPONENT_NAME = "PairedReadPreprocessor";

@@ -707,11 +707,6 @@
                 <version>${org.osgi.service.component.annotations-version}</version>
             </dependency>
             <dependency>
-                <groupId>biz.aQute.bnd</groupId>
-                <artifactId>biz.aQute.bndlib</artifactId>
-                <version>${bindlib-version}</version>
-            </dependency>
-            <dependency>
                 <groupId>be.pwnt</groupId>
                 <artifactId>jflow</artifactId>
                 <version>${jflowVersion}</version>

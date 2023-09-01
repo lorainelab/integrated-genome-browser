@@ -29,29 +29,33 @@ public class QuickloadUtilsTest {
     
     @Test
     public void getUriTest() {
-        String absoluteOnline_fileName = "http://igbquickload.org/quickload/A_thaliana_Jun_2009/Araport11.bed.gz";
-        String relative_fileName = "../down stream/E_unicornis_Jul_2043_up.bed.gz";
-        String absoluteLocal_fileName = "/Users/lorainelab/Desktop/2805/relative space/E_unicornis_Jul_2043/down stream/E_unicornis_Jul_2043_down.bed.gz";
-        String online_url = "http://igbquickload.org/quickload/";
-        String local_url = "/Users/lorainelab/Desktop/2805/relative space/";
+        String absoluteOnlineFileName = "http://igbquickload.org/quickload/A_thaliana_Jun_2009/Araport11.bed.gz";
+        String relativeFileName = "../down stream/E_unicornis_Jul_2043_up.bed.gz";
+        String absoluteLocal_fileName = new File("/Users/lorainelab/Desktop/2805/relative space/E_unicornis_Jul_2043/down stream/E_unicornis_Jul_2043_down.bed.gz").getAbsolutePath();
+        String onlineUrl = "http://igbquickload.org/quickload/";
+        String localUrl = "/Users/lorainelab/Desktop/2805/relative space/";
         String genomeVersionName = "A_thaliana_Apr_2008";
+        String fileName = "E_unicornis_Jul_2043_down.bed.gz";
         URI uri = null;
         
         //test absolute online
-        uri = getUri(absoluteOnline_fileName, online_url, genomeVersionName);
+        uri = getUri(absoluteOnlineFileName, onlineUrl, genomeVersionName);
         Assert.assertEquals("http://igbquickload.org/quickload/A_thaliana_Jun_2009/Araport11.bed.gz", uri.toString());
         
         //test relative online
-        uri = getUri(relative_fileName, online_url, genomeVersionName);
+        uri = getUri(relativeFileName, onlineUrl, genomeVersionName);
         Assert.assertEquals("http://igbquickload.org/quickload/A_thaliana_Apr_2008/../down%20stream/E_unicornis_Jul_2043_up.bed.gz", uri.toString());
         
         //test absolute local
-        uri = getUri(absoluteLocal_fileName, local_url, genomeVersionName);
-        Assert.assertEquals("file:/Users/lorainelab/Desktop/2805/relative%20space/E_unicornis_Jul_2043/down%20stream/E_unicornis_Jul_2043_down.bed.gz", uri.toString());
-        
+        uri = getUri(absoluteLocal_fileName, localUrl, genomeVersionName);
+        Assert.assertEquals(new File("/Users/lorainelab/Desktop/2805/relative space/E_unicornis_Jul_2043/down stream/E_unicornis_Jul_2043_down.bed.gz").toURI().toString(), uri.toString());
+
+        uri = getUri(fileName, localUrl, genomeVersionName);
+        Assert.assertEquals(new File("/Users/lorainelab/Desktop/2805/relative space/A_thaliana_Apr_2008/E_unicornis_Jul_2043_down.bed.gz").toURI().toString(), uri.toString());
+
         //test relative local
-        uri = getUri(relative_fileName, local_url, genomeVersionName);
-        Assert.assertEquals("file:/Users/lorainelab/Desktop/2805/relative%20space/A_thaliana_Apr_2008/../down%20stream/E_unicornis_Jul_2043_up.bed.gz", uri.toString());
+        uri = getUri(relativeFileName, localUrl, genomeVersionName);
+        Assert.assertEquals(new File("/Users/lorainelab/Desktop/2805/relative space/A_thaliana_Apr_2008/../down stream/E_unicornis_Jul_2043_up.bed.gz").toURI().toString(), uri.toString());
     }
     
 }

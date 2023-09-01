@@ -1,14 +1,15 @@
 package com.affymetrix.igb.action;
 
-import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenomeVersionSelectionEvent;
 import com.affymetrix.igb.view.SeqGroupView;
+import org.osgi.service.component.annotations.Component;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-@Component(name = HomeAction.COMPONENT_NAME, immediate = true, provide = GenericAction.class)
+@Component(name = HomeAction.COMPONENT_NAME, immediate = true, service = GenericAction.class)
 public class HomeAction extends GenericAction {
 
     public static final String COMPONENT_NAME = "HomeAction";

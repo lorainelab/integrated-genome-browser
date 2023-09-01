@@ -1,7 +1,5 @@
 package com.affymetrix.igb.general;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.util.LoadUtils;
@@ -45,6 +43,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import net.miginfocom.swing.MigLayout;
 import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@aQute.bnd.annotation.component.Component(name = DataProviderManagementGui.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
+@org.osgi.service.component.annotations.Component(name = DataProviderManagementGui.COMPONENT_NAME, immediate = true, service = PreferencesPanelProvider.class)
 public class DataProviderManagementGui extends JRPJPanel implements PreferencesPanelProvider {
 
     public static final String COMPONENT_NAME = "DataProviderManagementGui";

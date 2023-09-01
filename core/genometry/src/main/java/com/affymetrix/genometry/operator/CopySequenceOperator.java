@@ -1,6 +1,5 @@
 package com.affymetrix.genometry.operator;
 
-import aQute.bnd.annotation.component.Component;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -10,8 +9,9 @@ import com.affymetrix.genometry.GenometryConstants;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleSymWithResidues;
+import org.osgi.service.component.annotations.Component;
 
-@Component(name = CopySequenceOperator.COMPONENT_NAME, provide = Operator.class, immediate = true)
+@Component(name = CopySequenceOperator.COMPONENT_NAME, service = Operator.class, immediate = true)
 public final class CopySequenceOperator implements Operator, ICopy {
 
     public static final String COMPONENT_NAME = "CopySequenceOperator";

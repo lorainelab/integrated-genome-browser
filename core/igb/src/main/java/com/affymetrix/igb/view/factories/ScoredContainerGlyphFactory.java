@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view.factories;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import cern.colt.list.FloatArrayList;
 import cern.colt.list.IntArrayList;
 import com.affymetrix.genometry.GenomeVersion;
@@ -27,7 +27,7 @@ import java.util.Set;
  *
  * @author hiralv
  */
-@Component(name = ScoredContainerGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
+@Component(name = ScoredContainerGlyphFactory.COMPONENT_NAME, service = {MapTierGlyphFactoryI.class}, immediate = true)
 public class ScoredContainerGlyphFactory extends MapTierGlyphFactoryA {
 
     public static final String COMPONENT_NAME = "ScoredContainerGlyphFactory";

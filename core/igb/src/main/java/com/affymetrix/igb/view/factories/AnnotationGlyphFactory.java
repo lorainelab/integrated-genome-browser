@@ -9,7 +9,7 @@
  */
 package com.affymetrix.igb.view.factories;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SupportsCdsSpan;
@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version $Id: AnnotationGlyphFactory.java 10247 2012-02-10 16:36:20Z lfrohman $
  */
-@Component(name = AnnotationGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
+@Component(name = AnnotationGlyphFactory.COMPONENT_NAME, service = {MapTierGlyphFactoryI.class}, immediate = true)
 public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
 
     public static final String COMPONENT_NAME = "AnnotationGlyphFactory";

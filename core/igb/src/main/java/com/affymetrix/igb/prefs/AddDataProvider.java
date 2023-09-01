@@ -5,8 +5,6 @@
  */
 package com.affymetrix.igb.prefs;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.DataProvider;
@@ -38,9 +36,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.lorainelab.igb.javafx.DirectoryChooserUtil;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
-@aQute.bnd.annotation.component.Component(name = AddDataProvider.COMPONENT_NAME, immediate = true, provide = AddDataProvider.class)
+@Component(name = AddDataProvider.COMPONENT_NAME, immediate = true, service = AddDataProvider.class)
 public class AddDataProvider extends JFrame {
 
     public static final String COMPONENT_NAME = "AddDataProvider";

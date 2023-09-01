@@ -5,16 +5,17 @@
  */
 package com.affymetrix.igb.shared;
 
-import aQute.bnd.annotation.component.Component;
 import com.affymetrix.genometry.AminoAcid;
 import com.affymetrix.igb.util.ResidueColorHelper;
+import org.osgi.service.component.annotations.Component;
+
 import java.awt.Color;
 
 /**
  *
  * @author jeckstei
  */
-@Component(provide = ResidueColorService.class)
+@Component(service = ResidueColorService.class)
 public class ResidueColorService {
 
     public Color getDefaultColor(AminoAcid aminoAcid) {

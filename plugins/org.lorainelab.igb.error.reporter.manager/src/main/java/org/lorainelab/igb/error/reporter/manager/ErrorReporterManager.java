@@ -1,8 +1,8 @@
 package org.lorainelab.igb.error.reporter.manager;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Deactivate;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.Deactivate;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;

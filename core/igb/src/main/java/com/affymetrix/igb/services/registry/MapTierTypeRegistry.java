@@ -1,7 +1,5 @@
 package com.affymetrix.igb.services.registry;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.igb.view.factories.MapTierGlyphFactoryI;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -9,6 +7,11 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import java.util.Collection;
 import java.util.Collections;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +51,7 @@ public class MapTierTypeRegistry {
         }
     }
 
-    @Reference(multiple = true, unbind = "removeViewFactory", dynamic = true)
+    @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, unbind = "removeViewFactory", policy = ReferencePolicy.DYNAMIC)
     public void addViewFactory(MapTierGlyphFactoryI factory) {
         checkNotNull(factory);
         factory.getSupportedCategories().stream().filter(category -> !mapTierTypeReferenceTable.contains(factory.getName(), category)).forEach(category -> {

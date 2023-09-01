@@ -1,8 +1,5 @@
 package com.affymetrix.genometry.operator.service;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Deactivate;
 import com.affymetrix.genometry.operator.AddMathTransform;
 import com.affymetrix.genometry.operator.ComplementSequenceOperator;
 import com.affymetrix.genometry.operator.CopyGraphOperator;
@@ -39,6 +36,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 
 /**
  *

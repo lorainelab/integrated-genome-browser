@@ -1,14 +1,18 @@
 package com.affymetrix.igb.action;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.igb.IGB;
 import com.google.common.collect.Sets;
 import org.lorainelab.igb.services.IgbService;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+
+
 import java.util.Set;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
@@ -34,7 +38,7 @@ public class GenericActionRegister {
         QUEUE.clear();
     }
 
-    @Reference(optional = true, multiple = true, dynamic = true, unbind = "removeGenericAction")
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, unbind = "removeGenericAction")
     public void addGenericAction(GenericAction genericAction) {
         if (igbService != null) {
             processAction(genericAction);

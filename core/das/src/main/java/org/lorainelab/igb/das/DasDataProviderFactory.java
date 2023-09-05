@@ -1,10 +1,11 @@
 package org.lorainelab.igb.das;
 
-import aQute.bnd.annotation.component.Component;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
+import org.osgi.service.component.annotations.Component;
+
 import static org.lorainelab.igb.das.utils.DasServerUtils.toExternalForm;
 
 /**

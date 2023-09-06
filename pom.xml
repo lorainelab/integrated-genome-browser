@@ -36,7 +36,7 @@
         <felix-metatype-version>1.2.4</felix-metatype-version>
         <felix-webconsole-version>4.8.8</felix-webconsole-version>
         <felix-bundlerepository-version>2.0.10</felix-bundlerepository-version>
-        <org.osgi.compendium-version>5.0.0</org.osgi.compendium-version>
+        <org.osgi.service.log-version>1.5.0</org.osgi.service.log-version>
         <org.osgi.service.component.annotations-version>1.5.1</org.osgi.service.component.annotations-version>
         <bindlib-version>6.4.0</bindlib-version>
         <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
@@ -698,8 +698,8 @@
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>osgi.cmpn</artifactId>
-                <version>${org.osgi.compendium-version}</version>
+                <artifactId>org.osgi.service.log</artifactId>
+                <version>${org.osgi.service.log-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>

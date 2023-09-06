@@ -324,7 +324,7 @@
         <!-- Why are these two here and not in the external bundle section?-->
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>osgi.cmpn</artifactId>
+            <artifactId>org.osgi.service.log</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

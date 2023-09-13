@@ -161,8 +161,8 @@
                                 </artifactItem>                               
                                 <artifactItem>
                                     <groupId>org.osgi</groupId>
-                                    <artifactId>osgi.cmpn</artifactId>
-                                    <version>${org.osgi.compendium-version}</version>
+                                    <artifactId>org.osgi.service.log</artifactId>
+                                    <version>${org.osgi.service.log-version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.osgi</groupId>

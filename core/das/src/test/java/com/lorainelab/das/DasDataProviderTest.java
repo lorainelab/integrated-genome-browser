@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public class DasDataProviderTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DasDataProviderTest.class);
-    private final static String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/dsn";
+    private final static String UCSC_DAS_URL = "https://genome.cse.ucsc.edu/cgi-bin/das/dsn";
     private static final String HUMAN_GENOME_ID = "hg38";
     private static DasDataProvider dasDataProvider;
 

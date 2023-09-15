@@ -35,7 +35,7 @@
             {
                 "factoryName": "das",
                 "name": "UCSC",
-                "url": "http://genome.cse.ucsc.edu/cgi-bin/das",
+                "url": "https://genome.cse.ucsc.edu/cgi-bin/das",
                 "loadPriority": "5",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },

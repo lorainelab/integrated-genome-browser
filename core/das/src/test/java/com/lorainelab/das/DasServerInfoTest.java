@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class DasServerInfoTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DasServerInfoTest.class);
-    private final String UCSC_DAS_URL = "http://genome.cse.ucsc.edu/cgi-bin/das/dsn/";
+    private final String UCSC_DAS_URL = "https://genome.cse.ucsc.edu/cgi-bin/das/dsn/";
 
     @Ignore
     @Test

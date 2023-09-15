@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import static org.lorainelab.igb.das.utils.DasServerUtils.checkValidAndSetUrl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,8 @@ public class DasSymloader extends SymLoader {
         String segmentParam = getChromosomeSynonym(overlapSpan) + ":" + min + "," + max + ";";
         //e.g. http://genome.cse.ucsc.edu/cgi-bin/das/hg38/features?type=altLocations;segment=chr1%3A1%2C14422303;
         final String request = toExternalForm(contextRoot) + "features";
-        HttpRequest remoteHttpRequest = HttpRequest.get(request, true, "type", featureName, "segment", segmentParam)
+        String url = checkValidAndSetUrl(request.trim());
+        HttpRequest remoteHttpRequest = HttpRequest.get(url, true, "type", featureName, "segment", segmentParam)
                 .acceptGzipEncoding()
                 .uncompress(true)
                 .trustAllCerts()

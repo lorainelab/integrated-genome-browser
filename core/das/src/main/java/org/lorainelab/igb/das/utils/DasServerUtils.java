@@ -12,6 +12,10 @@ import org.lorainelab.igb.das.model.types.DasTypes;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -53,7 +57,8 @@ public class DasServerUtils {
     private GenomeVersion genomeVersion;
 
     public static Optional<DasDsn> retrieveDsnResponse(String rootUrl) throws HttpRequestException {
-        HttpRequest remoteHttpRequest = HttpRequest.get(toExternalForm(rootUrl) + DSN)
+        String url = checkValidAndSetUrl(rootUrl.trim());
+        HttpRequest remoteHttpRequest = HttpRequest.get(toExternalForm(url) + DSN)
                 .acceptGzipEncoding()
                 .uncompress(true)
                 .trustAllCerts()
@@ -77,7 +82,8 @@ public class DasServerUtils {
 
     public static String retrieveDna(String genomeContextRoot, SeqSpan seqSpan) throws HttpRequestException {
         String segmentParam = seqSpan.getBioSeq().getId() + ":" + seqSpan.getMin() + "," + seqSpan.getMax();
-        HttpRequest remoteHttpRequest = HttpRequest.get(toExternalForm(genomeContextRoot) + SEQUENCE_REQUEST_PREFIX, true, SEGMENT, segmentParam)
+        String url = checkValidAndSetUrl(genomeContextRoot.trim());
+        HttpRequest remoteHttpRequest = HttpRequest.get(toExternalForm(url) + SEQUENCE_REQUEST_PREFIX, true, SEGMENT, segmentParam)
                 .acceptGzipEncoding()
                 .uncompress(true)
                 .trustAllCerts()
@@ -93,7 +99,8 @@ public class DasServerUtils {
     }
 
     public static synchronized Optional<DasEp> retrieveDasEpResponse(String genomeContextRoot) throws HttpRequestException {
-        final String request = toExternalForm(genomeContextRoot) + ENTRY_POINTS;
+        String url = checkValidAndSetUrl(genomeContextRoot.trim());
+        final String request = toExternalForm(url) + ENTRY_POINTS;
         HttpRequest remoteHttpRequest = HttpRequest.get(request)
                 .acceptGzipEncoding()
                 .uncompress(true)
@@ -149,8 +156,9 @@ public class DasServerUtils {
         return Optional.empty();
     }
 
-    public static Optional<DasTypes> retrieveDasTypesResponse(String genomeContextRoot) throws HttpRequestException {
-        HttpRequest remoteHttpRequest = HttpRequest.get(toExternalForm(genomeContextRoot) + TYPES)
+    public static Optional<DasTypes> retrieveDasTypesResponse(String genomeContextRoot) throws HttpRequestException { 
+        String url = checkValidAndSetUrl(genomeContextRoot.trim());
+        HttpRequest remoteHttpRequest = HttpRequest.get(toExternalForm(url) + TYPES)
                 .acceptGzipEncoding()
                 .uncompress(true)
                 .trustAllCerts()
@@ -174,7 +182,8 @@ public class DasServerUtils {
         final int min = seqSpan.getMin() == 0 ? 1 : seqSpan.getMin();
         final int max = seqSpan.getMax() - 1;
         String segmentParam = seqSpan.getBioSeq().getId() + ":" + min + "," + max;
-        HttpRequest remoteHttpRequest = HttpRequest.get(toExternalForm(genomeContextRoot) + FEATURES, true, TYPE, type, SEGMENT, segmentParam)
+        String url = checkValidAndSetUrl(genomeContextRoot.trim());
+        HttpRequest remoteHttpRequest = HttpRequest.get(toExternalForm(url) + FEATURES, true, TYPE, type, SEGMENT, segmentParam)
                 .acceptGzipEncoding()
                 .uncompress(true)
                 .trustAllCerts()
@@ -209,6 +218,28 @@ public class DasServerUtils {
         XMLReader xr = (XMLReader) spf.newSAXParser().getXMLReader();
         SAXSource source = new SAXSource(xr, new InputSource(inputSteam));
         return source;
+    }
+    
+    public static String checkValidAndSetUrl(String uriString) {
+        try {
+            URL obj = new URL(uriString);
+            HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+            conn.setReadTimeout(5000);
+            int code = conn.getResponseCode();
+            if (code != HttpURLConnection.HTTP_OK) {
+                if (code == HttpURLConnection.HTTP_MOVED_TEMP || code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_SEE_OTHER) {
+                    String newUrl = conn.getHeaderField("Location");
+                    return newUrl;
+                }
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return uriString;
     }
 
 }

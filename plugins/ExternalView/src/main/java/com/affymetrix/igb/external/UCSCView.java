@@ -93,7 +93,7 @@ public class UCSCView extends BrowserView {
             String text = "<h1>Setting the UCSC user id</h1>";
             text += "<table><tr><td width='20'/><td>";
             text += "<font face='" + font.getFontName() + "'><p>If you have already customized the USCS view in a web browser, IGB can use those settings. Follow the instructions below to link your settings to IGB.</p>";
-            text += "<ol><li><p>Obtain your user id by clicking on the \"UCSC info\" button.</p><p>Or open <a href=\"http://genome.ucsc.edu/cgi-bin/cartDump\">http://genome.ucsc.edu/cgi-bin/cartDump</a> in your browser</p></li>";
+            text += "<ol><li><p>Obtain your user id by clicking on the \"UCSC info\" button.</p><p>Or open <a href=\"https://genome.ucsc.edu/cgi-bin/cartDump\">https://genome.ucsc.edu/cgi-bin/cartDump</a> in your browser</p></li>";
             text += "<li>Then scroll down in the opened window and copy the value of hguid into the \"UCSC user id\" field.</li>";
             text += "<li>Click the submit button.</li>";
             text += "<li>Your IGB UCSC View is now synchronized with your browser track configuration.</br>";
@@ -124,7 +124,7 @@ public class UCSCView extends BrowserView {
                 }
             });
             okButton.setToolTipText(ExternalViewer.BUNDLE.getString("ucscUserIdTT"));
-            ucscInfo.addActionListener(e -> GeneralUtils.browse("http://genome.ucsc.edu/cgi-bin/cartDump"));
+            ucscInfo.addActionListener(e -> GeneralUtils.browse("https://genome.ucsc.edu/cgi-bin/cartDump"));
             ucscInfo.setToolTipText("<html>" + ExternalViewer.BUNDLE.getString("ucscTT1") + "</br>" + ExternalViewer.BUNDLE.getString("ucscTT2") + "</br>" + ExternalViewer.BUNDLE.getString("ucscTT3") + "</html>");
             getContentPane().add("Center", pane);
             getContentPane().add("South", panel);

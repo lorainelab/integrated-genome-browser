@@ -58,7 +58,7 @@ public class UCSCViewAction extends GenericAction implements SeqSelectionListene
     private static final int MENU_WEIGHT = 75;
     private static final long serialVersionUID = 1L;
     protected static final String UCSC_JSON_ENDPOINT = "https://api.genome.ucsc.edu/list/ucscGenomes"; 
-    private static final String UCSC_URL = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
+    private static final String UCSC_URL = "https://genome.ucsc.edu/cgi-bin/hgTracks?";
     private static final Set<String> UCSCSources = Collections.synchronizedSet(new HashSet<>());
     private IgbService igbService;
     private GenomeVersionSynonymLookup genomeVersionSynonymLookup;

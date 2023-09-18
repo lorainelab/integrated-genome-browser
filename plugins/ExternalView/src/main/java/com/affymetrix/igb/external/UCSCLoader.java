@@ -24,12 +24,12 @@ public class UCSCLoader extends BrowserLoader {
     private static final Pattern fileNamePattern = Pattern.compile("(hgt_genome.*png)");
     private static final Pattern sideNamePattern = Pattern.compile("(side_genome.*png)");
 
-    private static final String fileNameBaseUrl = "http://genome.ucsc.edu/trash/hgt/";
-    private static final String sideNameBaseUrl = "http://genome.ucsc.edu/trash/hgtSide/";
+    private static final String fileNameBaseUrl = "https://genome.ucsc.edu/trash/hgt/";
+    private static final String sideNameBaseUrl = "https://genome.ucsc.edu/trash/hgtSide/";
 
     public String getUrlForView(Loc loc, int pixWidth) {
         String width = "pix=" + pixWidth + "&";
-        return "http://genome.ucsc.edu/cgi-bin/hgTracks?" + width + "db=" + loc.db + "&position=" + loc.chr + ":" + loc.start + "-" + loc.end;
+        return "https://genome.ucsc.edu/cgi-bin/hgTracks?" + width + "db=" + loc.db + "&position=" + loc.chr + ":" + loc.start + "-" + loc.end;
     }
 
     public BufferedImage getImage(Loc loc, int pixWidth, Map<String, String> cookies) throws ImageUnavailableException {

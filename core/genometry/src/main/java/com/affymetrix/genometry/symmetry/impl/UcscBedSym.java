@@ -129,18 +129,20 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
 
         if (children[index] == null) {
             if (forward) {
-                children[index] = new BedChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq);
+                children[index] = new BedChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq, index+1);
             } else {
-                children[index] = new BedChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq);
+                children[index] = new BedChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq, blockMins.length-index);
             }
         }
         return children[index];
     }
 
-    protected class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps, Scored {
 
-        public BedChildSingletonSeqSym(int start, int end, BioSeq seq) {
+    protected class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps, Scored {
+        int block;
+        public BedChildSingletonSeqSym(int start, int end, BioSeq seq, int block) {
             super(start, end, seq);
+            this.block=block;
         }
 
         // For the web links to be constructed properly, this class must implement getId(),
@@ -168,7 +170,9 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
         public float getScore() {
             return UcscBedSym.this.getScore();
         }
-
+        public int getBlock(){
+            return this.block;
+        }
         @Override
         public Object clone() throws CloneNotSupportedException {
             return super.clone(); //To change body of generated methods, choose Tools | Templates.
@@ -177,6 +181,13 @@ public class UcscBedSym extends BasicSeqSymmetry implements SupportsCdsSpan, Sym
 
     public static boolean isBedChildSingletonSeqSymClass(SeqSymmetry seq) {
         return (seq instanceof BedChildSingletonSeqSym);
+    }
+    /**
+     * Type casting UcscBedSym.BedChildSingletonSeqSym to seq to access BedChildSingletonSeqSym properties(block number).
+     * BedChildSingletonSeqSym is protected, hence it cannot be accessed outside the package.
+     * */
+    public static int getBlockNumber(SeqSymmetry seq){
+        return ((UcscBedSym.BedChildSingletonSeqSym)seq).getBlock();
     }
 
     public float getScore() {

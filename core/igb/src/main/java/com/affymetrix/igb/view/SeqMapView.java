@@ -32,6 +32,8 @@ import com.affymetrix.genometry.symmetry.impl.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SingletonSymWithProps;
+
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.BLOCK_NUMBER;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.CDS_END;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.CDS_START;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.CHROMOSOME;
@@ -50,6 +52,8 @@ import static com.affymetrix.genometry.tooltip.ToolTipConstants.START;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.STRAND;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
 import static com.affymetrix.genometry.tooltip.ToolTipConstants.TYPE;
+
+import com.affymetrix.genometry.symmetry.impl.UcscBedSym;
 import com.affymetrix.genometry.util.BioSeqUtils;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.util.ThreadUtils;
@@ -2272,6 +2276,13 @@ public class SeqMapView extends JPanel
                         NumberFormat.getIntegerInstance().format(span.getEnd()));
 
             }
+        }
+        /**
+         * checking if the sym is the instance of BedChildSingletonSeqSym (object that stores single block information).
+         * if yes, get the block number and add it to the props map.
+         */
+        if(UcscBedSym.isBedChildSingletonSeqSymClass(sym)){
+            props.put(BLOCK_NUMBER, UcscBedSym.getBlockNumber(sym));
         }
         return props;
     }

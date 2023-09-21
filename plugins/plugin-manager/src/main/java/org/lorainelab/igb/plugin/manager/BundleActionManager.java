@@ -5,12 +5,11 @@
  */
 package org.lorainelab.igb.plugin.manager;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.lorainelab.igb.plugin.manager.model.PluginListItemMetadata;
 import org.lorainelab.igb.services.IgbService;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -32,6 +31,7 @@ import org.apache.felix.bundlerepository.Resource;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(immediate = true, provide = BundleActionManager.class)
+@Component(immediate = true, service = BundleActionManager.class)
 public class BundleActionManager {
 
     private static final Logger logger = LoggerFactory.getLogger(BundleActionManager.class);
@@ -64,7 +64,7 @@ public class BundleActionManager {
         this.igbService = igbService;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setRepositoryAdmin(RepositoryAdmin repositoryAdmin) {
         repoAdmin = repositoryAdmin;
     }

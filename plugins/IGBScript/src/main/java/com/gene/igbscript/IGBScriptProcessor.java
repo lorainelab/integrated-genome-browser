@@ -1,14 +1,14 @@
 package com.gene.igbscript;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.igb.swing.Operation;
 import com.affymetrix.igb.swing.script.ScriptProcessor;
 import com.affymetrix.igb.swing.script.ScriptProcessorHolder;
 import javax.script.ScriptEngineFactory;
 
-@Component(name = IGBScriptProcessor.COMPONENT_NAME, immediate = true, provide = ScriptProcessor.class)
+@Component(name = IGBScriptProcessor.COMPONENT_NAME, immediate = true, service = ScriptProcessor.class)
 public class IGBScriptProcessor implements ScriptProcessor {
 
     public static final String COMPONENT_NAME = "IGBScriptProcessor";

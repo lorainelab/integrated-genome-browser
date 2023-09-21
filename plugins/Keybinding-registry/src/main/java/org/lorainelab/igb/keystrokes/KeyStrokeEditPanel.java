@@ -9,9 +9,9 @@
  */
 package org.lorainelab.igb.keystrokes;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.util.ModalUtils;
@@ -35,10 +35,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(name = KeyStrokeEditPanel.COMPONENT_NAME, immediate = true, provide = KeyStrokeEditPanel.class)
+@Component(name = KeyStrokeEditPanel.COMPONENT_NAME, immediate = true, service = KeyStrokeEditPanel.class)
 public final class KeyStrokeEditPanel extends JPanel {
 
     public static final String COMPONENT_NAME = "KeyStrokeEditPanel";
@@ -56,7 +58,7 @@ public final class KeyStrokeEditPanel extends JPanel {
     private IgbService igbService;
     private static final Logger logger = LoggerFactory.getLogger(KeyStrokeEditPanel.class);
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

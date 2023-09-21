@@ -4,9 +4,6 @@
  */
 package com.affymetrix.igb.prefs;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IgbServiceDependencyManager;
 import com.affymetrix.igb.swing.JRPJPanel;
@@ -15,10 +12,14 @@ import com.google.common.io.Resources;
 import org.lorainelab.igb.services.window.HtmlHelpProvider;
 import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
 import java.io.IOException;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(name = TrackDefaultsPanel.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
+@Component(name = TrackDefaultsPanel.COMPONENT_NAME, immediate = true, service = PreferencesPanelProvider.class)
 public class TrackDefaultsPanel extends TrackPreferencesPanel implements PreferencesPanelProvider, HtmlHelpProvider {
 
     public static final String COMPONENT_NAME = "TrackDefaultsPanel";

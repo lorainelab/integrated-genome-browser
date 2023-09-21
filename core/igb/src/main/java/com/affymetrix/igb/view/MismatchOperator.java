@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.symmetry.impl.SeqSymSummarizer;
@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author hiralv
  */
-@Component(name = MismatchOperator.COMPONENT_NAME, provide = Operator.class, immediate = true)
+@Component(name = MismatchOperator.COMPONENT_NAME, service = Operator.class, immediate = true)
 public class MismatchOperator extends AbstractMismatchOperator implements Operator {
 
     public static final String COMPONENT_NAME = "MismatchOperator";

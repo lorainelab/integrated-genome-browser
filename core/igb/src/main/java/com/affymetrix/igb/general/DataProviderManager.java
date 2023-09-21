@@ -1,8 +1,5 @@
 package com.affymetrix.igb.general;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
@@ -62,6 +59,12 @@ import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +72,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = DataProviderManager.COMPONENT_NAME, immediate = true, provide = DataProviderManager.class)
+@Component(name = DataProviderManager.COMPONENT_NAME, immediate = true, service = DataProviderManager.class)
 public class DataProviderManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataProviderManager.class);
@@ -317,7 +320,7 @@ public class DataProviderManager {
         });
     }
 
-    @Reference(optional = true, multiple = true, dynamic = true, unbind = "removeDataProvider")
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, unbind = "removeDataProvider")
     public void addDataProvider(DataProvider dataProvider) {
         SwingUtilities.invokeLater(() -> {
             dataProviders.add(dataProvider);

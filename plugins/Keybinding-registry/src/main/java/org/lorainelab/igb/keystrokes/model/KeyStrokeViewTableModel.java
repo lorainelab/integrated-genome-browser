@@ -8,9 +8,9 @@
  */
 package org.lorainelab.igb.keystrokes.model;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import static com.affymetrix.common.CommonUtils.IS_MAC;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.event.GenericAction;
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = KeyStrokeViewTableModel.COMPONENT_NAME, immediate = true, provide = KeyStrokeViewTableModel.class)
+@Component(name = KeyStrokeViewTableModel.COMPONENT_NAME, immediate = true, service = KeyStrokeViewTableModel.class)
 public class KeyStrokeViewTableModel extends AbstractTableModel implements GenericActionListener {
 
     public static final String COMPONENT_NAME = "KeyStrokeViewTableModel";

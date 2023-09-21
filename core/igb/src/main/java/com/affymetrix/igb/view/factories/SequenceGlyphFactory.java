@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view.factories;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
@@ -15,7 +15,7 @@ import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.util.Set;
 
-@Component(name = SequenceGlyphFactory.COMPONENT_NAME, provide = {MapTierGlyphFactoryI.class}, immediate = true)
+@Component(name = SequenceGlyphFactory.COMPONENT_NAME, service = {MapTierGlyphFactoryI.class}, immediate = true)
 public class SequenceGlyphFactory extends MapTierGlyphFactoryA {
 
     public static final String COMPONENT_NAME = "SequenceGlyphFactory";

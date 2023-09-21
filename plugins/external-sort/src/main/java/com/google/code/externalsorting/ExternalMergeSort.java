@@ -1,6 +1,6 @@
 package com.google.code.externalsorting;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.google.common.base.Strings;
 import org.lorainelab.igb.externalsort.api.ComparatorInstance;
 import org.lorainelab.igb.externalsort.api.ComparatorMetadata;

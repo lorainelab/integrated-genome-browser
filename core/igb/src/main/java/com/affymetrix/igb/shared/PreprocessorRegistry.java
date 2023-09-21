@@ -1,12 +1,15 @@
 package com.affymetrix.igb.shared;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import org.lorainelab.igb.services.visualization.SeqSymmetryPreprocessorI;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
 import java.util.Collection;
 import java.util.Collections;
 
@@ -28,7 +31,7 @@ public class PreprocessorRegistry {
         return Collections.<SeqSymmetryPreprocessorI>emptyList();
     }
 
-    @Reference(multiple = true, optional = true, dynamic = true, unbind = "removePreprocessor")
+    @Reference( cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, unbind = "removePreprocessor")
     public void addPreprocessor(SeqSymmetryPreprocessorI factory) {
         checkNotNull(factory);
         if (!preprocessorTypeReferenceTable.contains(factory.getName(), factory.getCategory())) {

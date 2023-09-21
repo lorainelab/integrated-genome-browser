@@ -5,7 +5,7 @@
  */
 package org.lorainelab.igb.bed;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.parsers.BedParser;
 import com.affymetrix.genometry.parsers.FileTypeCategory;

@@ -1,8 +1,8 @@
 package com.affymetrix.igb.view;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genoviz.swing.CustomTitleBorder;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -12,13 +12,16 @@ import static org.lorainelab.igb.services.ServiceComponentNameReference.SEQ_GROU
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
 
-@Component(name = SEQ_GROUP_TAB, immediate = true, provide = IgbTabPanelI.class)
+@Component(name = SEQ_GROUP_TAB, immediate = true, service = IgbTabPanelI.class)
 public class SeqGroupViewGUI extends IgbTabPanel {
 
     private static final long serialVersionUID = 1L;
@@ -50,7 +53,7 @@ public class SeqGroupViewGUI extends IgbTabPanel {
         initComponents();
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

@@ -9,9 +9,9 @@
  */
 package org.lorainelab.igb.keystrokes;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genoviz.swing.ExistentialTriad;
 import com.affymetrix.genoviz.swing.SuperBooleanCellEditor;
@@ -40,12 +40,13 @@ import org.lorainelab.igb.keystrokes.model.KeyStrokeViewTableModel;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.services.window.HtmlHelpProvider;
 import org.lorainelab.igb.services.window.preferences.PreferencesPanelProvider;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.LoggerFactory;
 
 /**
  * A panel that shows the preferences mapping between KeyStroke's and Actions.
  */
-@Component(name = KeyStrokesView.COMPONENT_NAME, immediate = true, provide = {PreferencesPanelProvider.class})
+@Component(name = KeyStrokesView.COMPONENT_NAME, immediate = true, service = {PreferencesPanelProvider.class})
 public final class KeyStrokesView implements PreferencesPanelProvider, HtmlHelpProvider {
 
     public static final String COMPONENT_NAME = "KeyStrokesView";
@@ -167,7 +168,7 @@ public final class KeyStrokesView implements PreferencesPanelProvider, HtmlHelpP
         return htmlText;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setModel(KeyStrokeViewTableModel model) {
         this.model = model;
     }

@@ -4,7 +4,6 @@
  */
 package org.lorainelab.igb.synonymlookup.services.impl;
 
-import aQute.bnd.annotation.component.Component;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.lorainelab.igb.synonymlookup.services.SpeciesInfo;
@@ -17,6 +16,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author dcnorris
  *
  */
-@Component(name = SpeciesSynonymsLookupImpl.COMPONENT_NAME, immediate = true, provide = SpeciesSynonymsLookup.class)
+@Component(name = SpeciesSynonymsLookupImpl.COMPONENT_NAME, immediate = true, service = SpeciesSynonymsLookup.class)
 public class SpeciesSynonymsLookupImpl extends SynonymLookup implements SpeciesSynonymsLookup {
 
     private static final Logger logger = LoggerFactory.getLogger(SpeciesSynonymsLookupImpl.class);

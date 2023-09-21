@@ -1,8 +1,5 @@
 package com.affymetrix.igb.prefs;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderUtils;
@@ -30,6 +27,10 @@ import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public class IgbPreferencesLoadingOrchestrator {
         this.dataProviderManager = dataProviderManager;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbPreferencesService(IgbPreferencesService igbPreferencesService) {
         this.igbPreferencesService = igbPreferencesService;
     }

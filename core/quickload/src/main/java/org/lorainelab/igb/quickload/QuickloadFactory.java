@@ -1,17 +1,18 @@
 package org.lorainelab.igb.quickload;
 
-import aQute.bnd.annotation.component.Component;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
+import org.osgi.service.component.annotations.Component;
+
 import static org.lorainelab.igb.quickload.util.QuickloadUtils.toExternalForm;
 
 /**
  *
  * @author dcnorris
  */
-@Component(name = QuickloadFactory.COMPONENT_NAME, immediate = true, provide = DataProviderFactory.class)
+@Component(name = QuickloadFactory.COMPONENT_NAME, immediate = true, service = DataProviderFactory.class)
 public class QuickloadFactory implements DataProviderFactory {
 
     public static final String COMPONENT_NAME = "QuickloadFactory";

@@ -1,8 +1,8 @@
 package com.gene.igbscript;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.lorainelab.igb.services.IgbService;
 import org.lorainelab.igb.image.exporter.service.ImageExportService;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import javax.script.ScriptEngineFactory;
  * @see
  * http://today.java.net/pub/a/today/2006/09/21/making-scripting-languages-jsr-223-aware.html
  */
-@Component(name = IGBScriptEngineFactory.COMPONENT_NAME, immediate = true, provide = IGBScriptEngineFactory.class)
+@Component(name = IGBScriptEngineFactory.COMPONENT_NAME, immediate = true, service = IGBScriptEngineFactory.class)
 public class IGBScriptEngineFactory implements ScriptEngineFactory {
 
     public static final String COMPONENT_NAME = "IGBScriptEngineFactory";

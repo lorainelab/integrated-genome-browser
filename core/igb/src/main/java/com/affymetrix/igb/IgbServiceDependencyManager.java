@@ -1,8 +1,5 @@
 package com.affymetrix.igb;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.igb.window.service.IWindowService;
 import org.lorainelab.igb.context.menu.service.AnnotationContextMenuRegistryI;
@@ -10,6 +7,9 @@ import org.lorainelab.igb.frame.api.FrameManagerService;
 import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
@@ -18,7 +18,7 @@ import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
  *
  * @author dcnorris
  */
-@Component(name = IgbServiceDependencyManager.COMPONENT_NAME, immediate = true, provide = IgbServiceDependencyManager.class)
+@Component(name = IgbServiceDependencyManager.COMPONENT_NAME, immediate = true, service = IgbServiceDependencyManager.class)
 public class IgbServiceDependencyManager {
 
     private static final Logger logger = LoggerFactory.getLogger(IgbServiceDependencyManager.class);

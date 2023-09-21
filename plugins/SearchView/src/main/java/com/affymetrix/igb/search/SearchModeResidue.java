@@ -1,8 +1,9 @@
 package com.affymetrix.igb.search;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.GenometryModel;
@@ -56,7 +57,7 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-@Component(name = SearchModeResidue.COMPONENT_NAME, immediate = true, provide = ISearchMode.class)
+@Component(name = SearchModeResidue.COMPONENT_NAME, immediate = true, service = ISearchMode.class)
 public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, SeqSelectionListener {
 
     public static final String COMPONENT_NAME = "SearchModeResidue";
@@ -148,7 +149,7 @@ public class SearchModeResidue implements ISearchModeExtended, SeqMapRefreshed, 
         gmodel.addSeqSelectionListener(this);
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

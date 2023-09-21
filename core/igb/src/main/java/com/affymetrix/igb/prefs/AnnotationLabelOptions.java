@@ -1,8 +1,5 @@
 package com.affymetrix.igb.prefs;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import static com.affymetrix.common.PreferenceUtils.getAnnotationLabelPrefsNode;
 import com.affymetrix.genoviz.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.igb.IGB;
@@ -22,12 +19,15 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  *
  * @author dcnorris
  */
-@Component(name = AnnotationLabelOptions.COMPONENT_NAME, immediate = true, provide = PreferencesPanelProvider.class)
+@Component(name = AnnotationLabelOptions.COMPONENT_NAME, immediate = true, service = PreferencesPanelProvider.class)
 public final class AnnotationLabelOptions extends JRPJPanel implements PreferencesPanelProvider {
 
     public static final String COMPONENT_NAME = "AnnotationLabelOptions";

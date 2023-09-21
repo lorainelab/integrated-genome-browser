@@ -2,8 +2,9 @@ package org.lorainelab.igb.track.operations;
 
 import org.lorainelab.igb.track.operations.api.OperationsPanel;
 import org.lorainelab.igb.track.operations.api.OperationsPanelService;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,12 +20,12 @@ public class OperationsPanelServiceImpl implements OperationsPanelService {
     private AnnotationOperationsImpl annotationOperationsImpl;
     private GraphOperationsImpl graphOperationsImpl;
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setAnnotationOperationsImpl(AnnotationOperationsImpl annotationOperationsImpl) {
         this.annotationOperationsImpl = annotationOperationsImpl;
     }
 
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setGraphOperationsImpl(GraphOperationsImpl graphOperationsImpl) {
         this.graphOperationsImpl = graphOperationsImpl;
     }

@@ -4,7 +4,7 @@
  */
 package com.affymetrix.igb.view;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.filter.ChildThresholdFilter;
@@ -65,7 +65,7 @@ import java.util.Map.Entry;
  * multiply-mapped reads can be used, but this appears to be broken as of
  * IGB 8.5 as only singly-mapped reads are used.
  */
-@Component(name = FindJunctionOperator.COMPONENT_NAME, provide = Operator.class, immediate = true)
+@Component(name = FindJunctionOperator.COMPONENT_NAME, service = Operator.class, immediate = true)
 public class FindJunctionOperator extends AbstractAnnotationTransformer implements Operator, IParameters, Style {
 
     public static final String COMPONENT_NAME = "FindJunctionOperator";

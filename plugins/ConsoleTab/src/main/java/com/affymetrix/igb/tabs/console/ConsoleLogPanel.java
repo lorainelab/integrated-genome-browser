@@ -1,7 +1,8 @@
 package com.affymetrix.igb.tabs.console;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import javax.swing.text.DefaultCaret;
@@ -25,7 +26,7 @@ import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
  *
  * @author pruthakulkarni
  */
-@Component(name = CONSOLE_TAB, provide = IgbTabPanelI.class, immediate = true)
+@Component(name = CONSOLE_TAB, service = IgbTabPanelI.class, immediate = true)
 public class ConsoleLogPanel extends IgbTabPanel {
     private static final Logger logger = LoggerFactory.getLogger(ConsoleLogPanel.class);
     private static final long serialVersionUID = 1L;
@@ -71,7 +72,7 @@ public class ConsoleLogPanel extends IgbTabPanel {
     }
    
     
-    @Reference(optional = false)
+    @Reference(cardinality = ReferenceCardinality.MANDATORY)
     public void setIgbService(IgbService igbService) {
         this.igbService = igbService;
     }

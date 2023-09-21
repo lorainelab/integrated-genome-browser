@@ -1,12 +1,15 @@
 package com.affymetrix.genometry.data;
 
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.google.common.collect.Sets;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = DataProviderFactoryManager.COMPONENT_NAME, immediate = true, provide = DataProviderFactoryManager.class)
+@Component(name = DataProviderFactoryManager.COMPONENT_NAME, immediate = true, service = DataProviderFactoryManager.class)
 public class DataProviderFactoryManager {
 
     public static final String COMPONENT_NAME = "DataProviderFactoryManager";
@@ -26,7 +29,7 @@ public class DataProviderFactoryManager {
         factories = Sets.newConcurrentHashSet();
     }
 
-    @Reference(optional = false, multiple = true, unbind = "removeDataProviderFactory", dynamic = true)
+    @Reference(cardinality = ReferenceCardinality.AT_LEAST_ONE, unbind = "removeDataProviderFactory", policy = ReferencePolicy.DYNAMIC)
     public void addDataProviderFactory(DataProviderFactory factory) {
         factories.add(factory);
     }

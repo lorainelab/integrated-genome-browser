@@ -1,8 +1,5 @@
 package com.affymetrix.igb.general;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Reference;
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.GenometryModel;
 import com.affymetrix.genometry.data.BaseDataProvider;
@@ -35,6 +32,8 @@ import java.util.concurrent.CompletableFuture;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import org.lorainelab.igb.services.IgbService;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author dcnorris
  */
-@Component(name = DataProviderTableModel.COMPONENT_NAME, immediate = true, provide = DataProviderTableModel.class)
+@org.osgi.service.component.annotations.Component(name = DataProviderTableModel.COMPONENT_NAME, immediate = true, service = DataProviderTableModel.class)
 public final class DataProviderTableModel extends AbstractTableModel {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataProviderTableModel.class);

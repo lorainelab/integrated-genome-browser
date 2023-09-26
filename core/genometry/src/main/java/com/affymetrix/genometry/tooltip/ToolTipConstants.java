@@ -52,6 +52,8 @@ public class ToolTipConstants {
 
     public static final String DESCRIPTION = "description";
     public static final String CDS_START = "cds start";
+
+    public static final String BLOCK_NUMBER = "block number";
     public static final String CDS_END = "cds end";
 
     public static final String BAM_FLAG = "raw sam record flag";

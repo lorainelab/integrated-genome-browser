@@ -35,6 +35,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,19 +185,20 @@ public final class BookmarkActionManager implements ActionListener, TreeModelLis
             listMenu = addBookmarkListMenu(pp, bl);
         }
         @SuppressWarnings("unchecked")
-        Enumeration<BookmarkList> e = bl.children();
+        Enumeration<? extends TreeNode> e = bl.children();
         while (e.hasMoreElements()) {
-            BookmarkList node = e.nextElement();
-            Object o = node.getUserObject();
-            if (o instanceof String) {
-                buildMenus(listMenu, node);
-            } else if (o instanceof Bookmark) {
-                addBookmarkMI(listMenu, (Bookmark) o);
-            } else if (o instanceof Separator) {
-                addSeparator(listMenu, (Separator) o);
+            TreeNode tnNode = e.nextElement();
+            if (tnNode instanceof BookmarkList node) {
+                Object o = node.getUserObject();
+                if (o instanceof String) {
+                    buildMenus(listMenu, node);
+                } else if (o instanceof Bookmark) {
+                    addBookmarkMI(listMenu, (Bookmark) o);
+                } else if (o instanceof Separator) {
+                    addSeparator(listMenu, (Separator) o);
+                }
             }
         }
-
     }
 
     /**

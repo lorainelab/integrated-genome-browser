@@ -14,8 +14,13 @@
         <!-- [WARNING] Using platform encoding (UTF-8 actually) to copy filtered 
         resources, i.e. build is platform dependent! -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        
+        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version> 
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+        <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
         <!-- Dependency versions controlled via properties -->
         <!-- Define properties as [artifactId].version -->        
         <!-- External bundle version declarations -->
@@ -103,7 +108,7 @@
         </repository>
     </repositories>
     <modules>
-<!--        <module>core/taglets</module>-->
+        <!--        <module>core/taglets</module>-->
         <module>core/heatmap-editor</module>
         <module>core/common</module>
         <module>core/genometry</module>
@@ -118,7 +123,7 @@
         <module>core/weblinks</module>
         <module>core/quickload</module>
         <module>core/das</module>
-       <!--<module>core/das2</module>-->
+        <!--<module>core/das2</module>-->
         <module>core/frameManager</module>
         <module>core/synonym-lookup</module>
         <module>core/igb-javafx-util</module>
@@ -175,7 +180,9 @@
         <profile>
             <id>windows</id>
             <activation>
-                <os><family>windows</family></os>
+                <os>
+                    <family>windows</family>
+                </os>
             </activation>
             <properties>
                 <!--cacheDirecotory property will be used in mvn-clean-plugin to delete users local cache folder-->
@@ -188,7 +195,9 @@
         <profile>
             <id>unix</id>
             <activation>
-                <os><family>unix</family></os>
+                <os>
+                    <family>unix</family>
+                </os>
             </activation>
             <properties>
                 <cacheDirectory>${user.home}/.igb/bundles/v${project.version}-bundle-cache</cacheDirectory>
@@ -308,7 +317,7 @@
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
-<!--            <dependency>
+            <!--            <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>das2</artifactId>
                 <version>${project.parent.version}</version>
@@ -851,79 +860,77 @@
             </dependency>
             <!-- Start of Apache Felix Web Console bundles-->
             <dependency>
-               <groupId>org.apache.felix</groupId>
-               <artifactId>org.apache.felix.webconsole</artifactId>
-               <version>${felix-webconsole-version}</version>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.webconsole</artifactId>
+                <version>${felix-webconsole-version}</version>
             </dependency>
             <dependency>
-               <groupId>commons-fileupload</groupId>
-               <artifactId>commons-fileupload</artifactId>
-               <version>${commonsFileUpload}</version>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commonsFileUpload}</version>
             </dependency>
             <dependency>
-               <groupId>org.apache.felix</groupId>
-               <artifactId>org.apache.felix.eventadmin</artifactId>
-               <version>${felix-eventadmin-version}</version>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.eventadmin</artifactId>
+                <version>${felix-eventadmin-version}</version>
             </dependency>
-             <!-- End of Apache Felix Web Console bundles -->
+            <!-- End of Apache Felix Web Console bundles -->
+            
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-controls</artifactId>
+                <version>17.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-swing</artifactId>
+                <version>17.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-fxml</artifactId>
+                <version>17.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-web</artifactId>
+                <version>17.0.8</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
-		<resources>
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-				<include>*/.java</include>
-				</includes>
-				</resource>
-				<resource>
-				<directory>src/main/resources</directory>
-				</resource>
-			</resources>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>*/.java</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
-                    <configuration>
-                        <compilerId>javac-with-errorprone</compilerId>
-                        <forceJavacCompilerUse>true</forceJavacCompilerUse>
-                        <compilerArgs>
-                            <!--                            <arg>-verbose</arg>
-                            <arg>-Xlint:all,-options,-path</arg>-->
-                            <arg>-Xep:StringEquality:ERROR</arg>
-                            <arg>-Xep:ElementsCountedInLoop:ERROR</arg>
-                            <arg>-Xep:Finally:ERROR</arg>
-                            <arg>-Xep:WaitNotInLoop:ERROR</arg>
-                            <arg>-Xep:SynchronizeOnNonFinalField:ERROR</arg>
-                            <arg>-Xep:StaticAccessedFromInstance:ERROR</arg>
-                            <arg>-Xep:NonAtomicVolatileUpdate:ERROR</arg>
-                            <arg>-Xep:ClassCanBeStatic:ERROR</arg>
-                            <arg>-Xep:DivZero:ERROR</arg>
-                            <arg>-Xep:EmptyIf:ERROR</arg>
-                            <arg>-Xep:CovariantEquals:ERROR</arg>
-                            <arg>-Xep:CollectionIncompatibleType:ERROR</arg>
-                            <arg>-Xep:ArraysAsListPrimitiveArray:ERROR</arg>
-                            <arg>-Xep:ModifyingCollectionWithItself:ERROR</arg>
-                            <arg>-Xep:NumericEquality:ERROR</arg>
-                            <arg>-Xep:SelfEquality:ERROR</arg>
-                            <arg>-Xep:SizeGreaterThanOrEqualsZero:ERROR</arg>
-                            <arg>-Xep:TypeParameterUnusedInFormals:ERROR</arg>
-                        </compilerArgs>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.codehaus.plexus</groupId>
-                            <artifactId>plexus-compiler-javac-errorprone</artifactId>
-                            <version>2.5</version>
-                        </dependency>
-                    </dependencies>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -984,6 +991,9 @@
                             </configuration>
                         </execution>
                     </executions>
+                    <configuration>
+                        <ignoreChecksumFailure>true</ignoreChecksumFailure>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>

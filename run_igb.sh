@@ -1,63 +1,59 @@
 #!/bin/bash
-#
-# $Id$
-#
-# Simple bash launcher for IGB.  This launcher should be compatible with
-# all UNIX-like systems with a bash interperter.
-#
-# Ways to Specify Java:
-#  - Set JAVA_HOME to point to an installed JDK
-#  - Set JRE_HOME to point to an installed JRE
-#  - Set JAVACMD to point to a working java executable
-#  - Have a java executable in your path
-#
-# Specifying options to the underlying VM.
-#  - Specify on the command line using -J<vmarg>
-#
-# Specifying options to IGB
-#  - Specify directly on command line
 
-# Find out where we are installed
-PREFIX=`readlink -f $0 2>/dev/null`
+JAVA_OPTS="\
+--add-opens java.base/java.net=ALL-UNNAMED \
+--add-opens java.base/java.lang.ref=ALL-UNNAMED \
+--add-opens java.base/java.lang=ALL-UNNAMED \
+--add-opens java.base/java.security=ALL-UNNAMED \
+--add-opens java.base/java.util=ALL-UNNAMED \
+--add-opens java.base/java.nio=ALL-UNNAMED \
+--add-exports java.base/sun.reflect.annotation=ALL-UNNAMED \
+--add-opens java.prefs/java.util.prefs=ALL-UNNAMED \
+--add-opens java.desktop/javax.swing.plaf.basic=ALL-UNNAMED \
+--add-opens java.desktop/javax.swing.text=ALL-UNNAMED \
+--add-opens java.desktop/javax.swing=ALL-UNNAMED \
+--add-opens java.desktop/java.awt=ALL-UNNAMED \
+--add-opens java.desktop/java.awt.event=ALL-UNNAMED \
+--add-opens java.desktop/sun.awt.X11=ALL-UNNAMED \
+--add-opens java.desktop/javax.swing.plaf.synth=ALL-UNNAMED \
+--add-opens java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED \
+--add-opens java.desktop/sun.awt.shell=ALL-UNNAMED \
+--add-opens java.desktop/sun.awt.im=ALL-UNNAMED \
+--add-exports java.desktop/sun.awt=ALL-UNNAMED \
+--add-exports java.desktop/java.awt.peer=ALL-UNNAMED \
+--add-exports java.desktop/com.sun.beans.editors=ALL-UNNAMED \
+--add-exports java.desktop/sun.swing=ALL-UNNAMED \
+--add-exports java.desktop/sun.awt.im=ALL-UNNAMED \
+--add-exports java.desktop/com.sun.java.swing.plaf.motif=ALL-UNNAMED \
+--add-exports java.desktop/com.apple.eio=ALL-UNNAMED \
+--add-opens jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \
+--add-opens jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED \
+--add-opens jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED \
+--add-opens jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED \
+--add-opens jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED \
+--add-opens jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED \
+--add-opens jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED \
+--add-opens jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED \
+--add-opens jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED \
+--add-opens jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED \
+--add-opens jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED \
+--add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \
+--add-exports jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED \
+--add-exports jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED \
+--add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED \
+--add-exports jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED \
+--add-exports jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED \
+--add-exports jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED \
+--add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED \
+--add-exports jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED \
+--add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED \
+--add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED \
+--add-modules jdk.jshell \
+--add-opens jdk.jshell/jdk.jshell=ALL-UNNAMED \
+--add-exports jdk.jdeps/com.sun.tools.classfile=ALL-UNNAMED \
+--add-exports jdk.jdeps/com.sun.tools.javap=ALL-UNNAMED \
+--add-exports jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED \
+--add-exports java.management/sun.management=ALL-UNNAMED"
 
-# Not all readlinks support -f.  Ideally, this should run recursively to
-# determine its real path.  Currently it only will resolve the first
-# link.
-if [ $? -ne 0 ]; then
-	PREFIX=`readlink $0`
-	[ $? -ne 0  ] && PREFIX=$0
-fi
+java $JAVA_OPTS -jar igb_exe.jar
 
-PREFIX=`dirname $PREFIX`
-
-# Do our best to find java
-test -z "$JAVACMD" -a -n "$JAVA_HOME" && JAVACMD=$JAVA_HOME/bin/java
-test -z "$JAVACMD" -a -n "$JRE_HOME"  && JAVACMD=$JRE_HOME/bin/java
-test -z "$JAVACMD" && JAVACMD=`which java` 2> /dev/null
-test -z "$JAVACMD" && echo "$0: could not find java" >&2 && exit 127
-
-# Find VM arguments 
-while (( "$#" )); do # for each command line argument
-        echo $1 | grep -q '^-D' # does it start with -D ? 
-	if [ $? -eq 0 ]; then # if grep found -D
-		VMARGS[${#VMARGS[*]}]=$1 # add to the VM arguments
-	else
-		ARGS[${#ARGS[*]}]=$1 # add to the ordinary options, arguments
-	fi
-	shift
-done
-
-# For Apple computers
-if [[ `uname -s` == "Darwin" ]]; then
-        # put the menu at the top of the screen, not on IGB itself
-	VMARGS[${#VMARGS[*]}]="-Dapple.laf.useScreenMenuBar=true"
-        # display IGB's name at the top of the screen, not "main"
-	VMARGS[${#VMARGS[*]}]="-Xdock:name=Integrated Genome Browser"
-        # assume 64 bit environment
-	VMARGS[${#VMARGS[*]}]="-d64"
-fi
-
-# Launch IGB
-IFS="
-"
-$JAVACMD ${VMARGS[*]} -jar $PREFIX/igb_exe.jar ${ARGS[*]}

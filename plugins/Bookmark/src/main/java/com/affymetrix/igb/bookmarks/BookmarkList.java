@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.StringTokenizer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 /**
  * Holds a list of bookmarks. This is a simple extension of
@@ -133,15 +134,17 @@ public final class BookmarkList extends DefaultMutableTreeNode {
      */
     private BookmarkList getSubListByName(String name, boolean create) {
         BookmarkList result = null;
-        @SuppressWarnings("unchecked")
-        Enumeration<BookmarkList> childs = children();
+        Enumeration<? extends TreeNode> childs = children();
         while (childs.hasMoreElements()) {
-            BookmarkList tn = childs.nextElement();
-            Object o = tn.getUserObject();
-            if (o instanceof String) {
-                if (name.equals(o)) {
-                    result = tn;
-                    break;
+            TreeNode tnNode = childs.nextElement();
+            if (tnNode instanceof BookmarkList) {
+                BookmarkList tn = (BookmarkList) tnNode;
+                Object o = tn.getUserObject();
+                if (o instanceof String) {
+                    if (name.equals(o)) {
+                        result = tn;
+                        break;
+                    }
                 }
             }
         }
@@ -179,19 +182,22 @@ public final class BookmarkList extends DefaultMutableTreeNode {
     private void printTextRecursively(PrintStream out, String indent) {
         out.println(indent + "Bookmark List: '" + this.toString() + "'  length: " + this.getChildCount());
         @SuppressWarnings("unchecked")
-        Enumeration<BookmarkList> e = children();
+        Enumeration<? extends TreeNode> e = children();
+
         while (e.hasMoreElements()) {
-            BookmarkList btn = e.nextElement();
-            Object o = btn.getUserObject();
-            if (o instanceof String) {
-                btn.printTextRecursively(out, indent + " -> ");
-            } else if (o instanceof Separator) {
-                out.println(indent + "  --------------------------");
-            } else if (o instanceof Bookmark) {
-                Bookmark b = (Bookmark) o;
-                out.println(indent + "  Bookmark: '" + b.getName() + "' -> '" + b.getURL().toExternalForm() + "'");
-            } else {
-                out.println(indent + "  Unknown object: " + o);
+            TreeNode tnNode = e.nextElement();
+            if (tnNode instanceof BookmarkList btn) {
+                Object o = btn.getUserObject();
+                if (o instanceof String) {
+                    btn.printTextRecursively(out, indent + " -> ");
+                } else if (o instanceof Separator) {
+                    out.println(indent + "  --------------------------");
+                } else if (o instanceof Bookmark) {
+                    Bookmark b = (Bookmark) o;
+                    out.println(indent + "  Bookmark: '" + b.getName() + "' -> '" + b.getURL().toExternalForm() + "'");
+                } else {
+                    out.println(indent + "  Unknown object: " + o);
+                }
             }
         }
     }
@@ -276,7 +282,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
     private static void exportAsTEXT_recursive(BookmarkList list, Writer bw, String indent, boolean isSelectedNode) throws IOException {
         // Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
         @SuppressWarnings("unchecked")
-        Enumeration<BookmarkList> e = list.children();
+        Enumeration<? extends TreeNode> e = list.children();
         Object currentNode = list.getUserObject();
 
         if (list.getChildCount() == 0 && currentNode instanceof Bookmark) { // Export the selected single bookmark
@@ -292,21 +298,23 @@ public final class BookmarkList extends DefaultMutableTreeNode {
             }
 
             while (e.hasMoreElements()) { // Export the children
-                BookmarkList btn = e.nextElement();
-                Object o = btn.getUserObject();
-                if (o instanceof String) {
-                    bw.write(indent + " " + o + " " + btn.getComment() + "\n");
-                    bw.write(indent + "\n");
-                    exportAsTEXT_recursive(btn, bw, indent + "\t", false);
-                    bw.write(indent + "\n");
-                } else if (o instanceof Bookmark) {
-                    Bookmark bm = (Bookmark) o;
-                    bw.write(bm.getName());
-                    bw.write(indent);
-                    bw.write(indent + "COMMENT =" + formatComment(bm.getComment()) + "");
-                    bw.write("\n\n");
-                } else if (o instanceof Separator) {
-                    bw.write(indent + "\n");
+                TreeNode tnNode = e.nextElement();
+                if (tnNode instanceof BookmarkList btn) {
+                    Object o = btn.getUserObject();
+                    if (o instanceof String) {
+                        bw.write(indent + " " + o + " " + btn.getComment() + "\n");
+                        bw.write(indent + "\n");
+                        exportAsTEXT_recursive(btn, bw, indent + "\t", false);
+                        bw.write(indent + "\n");
+                    } else if (o instanceof Bookmark) {
+                        Bookmark bm = (Bookmark) o;
+                        bw.write(bm.getName());
+                        bw.write(indent);
+                        bw.write(indent + "COMMENT =" + formatComment(bm.getComment()) + "");
+                        bw.write("\n\n");
+                    } else if (o instanceof Separator) {
+                        bw.write(indent + "\n");
+                    }
                 }
             }
         }
@@ -316,7 +324,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
     private static void exportAsHTML_recursive(BookmarkList list, Writer bw, String indent, boolean isSelectedNode) throws IOException {
         // Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
         @SuppressWarnings("unchecked")
-        Enumeration<BookmarkList> e = list.children();
+        Enumeration<TreeNode> e = list.children();
         Object currentNode = list.getUserObject();
 
         if (list.getChildCount() == 0 && currentNode instanceof Bookmark) { // Export the selected single bookmark
@@ -334,21 +342,23 @@ public final class BookmarkList extends DefaultMutableTreeNode {
             }
 
             while (e.hasMoreElements()) { // Export the children
-                BookmarkList btn = e.nextElement();
-                Object o = btn.getUserObject();
-                if (o instanceof String) {
-                    bw.write(indent + "<DT><H3>" + o + "</H3>" + "<DD>" + (btn.getComment() == null ? " " : btn.getComment()) + "</DD>" + "\n");//tK
-                    bw.write(indent + "<DL><p>\n");
-                    exportAsHTML_recursive(btn, bw, indent + "  ", false);
-                    bw.write(indent + "</DL><p>\n");
-                } else if (o instanceof Bookmark) {
-                    Bookmark bm = (Bookmark) o;
-                    bw.write(indent + "<DT><A HREF=\"" + bm.getURL().toExternalForm() + "\"");
-                    bw.write(indent + "COMMENT=\"" + formatComment(bm.getComment()) + "\">");
-                    bw.write(bm.getName());
-                    bw.write("</A>\n");
-                } else if (o instanceof Separator) {
-                    bw.write(indent + "<HR>\n");
+                TreeNode tnNode = e.nextElement();
+                if (tnNode instanceof BookmarkList btn) {
+                    Object o = btn.getUserObject();
+                    if (o instanceof String) {
+                        bw.write(indent + "<DT><H3>" + o + "</H3>" + "<DD>" + (btn.getComment() == null ? " " : btn.getComment()) + "</DD>" + "\n");//tK
+                        bw.write(indent + "<DL><p>\n");
+                        exportAsHTML_recursive(btn, bw, indent + "  ", false);
+                        bw.write(indent + "</DL><p>\n");
+                    } else if (o instanceof Bookmark) {
+                        Bookmark bm = (Bookmark) o;
+                        bw.write(indent + "<DT><A HREF=\"" + bm.getURL().toExternalForm() + "\"");
+                        bw.write(indent + "COMMENT=\"" + formatComment(bm.getComment()) + "\">");
+                        bw.write(bm.getName());
+                        bw.write("</A>\n");
+                    } else if (o instanceof Separator) {
+                        bw.write(indent + "<HR>\n");
+                    }
                 }
             }
         }

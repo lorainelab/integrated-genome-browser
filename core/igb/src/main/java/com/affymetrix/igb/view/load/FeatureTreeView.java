@@ -14,7 +14,6 @@ import com.affymetrix.igb.swing.JRPTree;
 import com.affymetrix.igb.swing.util.Idable;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -180,7 +179,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
         if (node.getChildCount() > 0) {
             @SuppressWarnings("unchecked")
-            Enumeration<TreeNode> e = node.children();
+            Enumeration<? extends TreeNode> e = node.children();
             while (e.hasMoreElements()) {
                 TreeNode n = e.nextElement();
                 expand(tree, path.pathByAddingChild(n));
@@ -275,25 +274,27 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
         String featureRight = featureName.substring(featureName.indexOf(path_separator) + 1);
 
         @SuppressWarnings("unchecked")
-        Enumeration<DefaultMutableTreeNode> en = root.children();	// no way to avoid compiler warning in Java 6
+        Enumeration<? extends TreeNode> en = root.children();
 
         while (en.hasMoreElements()) {
-            DefaultMutableTreeNode candidate = en.nextElement();
-            Object nodeData = candidate.getUserObject();
-            if (nodeData instanceof TreeNodeUserInfo) {
-                nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
-            }
-            DataSet candidateFeature = (DataSet) nodeData;
-            String candidateName = candidateFeature.getDataSetName();
-            // See if this can go under a previous node.  Be sure we're working with the same version/server.
-            if (candidateName.equals(featureLeft)) {
-                // Make sure we are really dealing with a non-leaf node.  This will
-                // fix bug caused by name collision when a folder and feature are
-                // named the same thing.
-                if (candidate.getAllowsChildren()) {
-                    addOrFindNode(candidate, feature, featureRight);
-                    return;
+            TreeNode candidate = en.nextElement();
+            if (candidate instanceof DefaultMutableTreeNode c) {
+                Object nodeData = c.getUserObject();
+                if (nodeData instanceof TreeNodeUserInfo) {
+                    nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
+                }
+                DataSet candidateFeature = (DataSet) nodeData;
+                String candidateName = candidateFeature.getDataSetName();
+                // See if this can go under a previous node.  Be sure we're working with the same version/server.
+                if (candidateName.equals(featureLeft)) {
+                    // Make sure we are really dealing with a non-leaf node.  This will
+                    // fix bug caused by name collision when a folder and feature are
+                    // named the same thing.
+                    if (c.getAllowsChildren()) {
+                        addOrFindNode(c, feature, featureRight);
+                        return;
 
+                    }
                 }
             }
         }
@@ -533,7 +534,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             String osName = System.getProperty("os.name");
             if (osName != null && osName.contains("Windows")) {
                 borderPaintedFlat = true;
-                border = new DashedBorder(selectionBorderColor);
+//                border = new DashedBorder(selectionBorderColor); //TODO look into replacement
+                border = null;
             } else {
                 borderPaintedFlat = false;
                 border = null;
@@ -689,7 +691,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
                             // prevent from adding duplicated features
                             List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
-                            Optional<DataSet> loadedDataSet = GeneralLoadUtils.getLoadedDataSet(dataSet.getURI(),visibleFeatures);
+                            Optional<DataSet> loadedDataSet = GeneralLoadUtils.getLoadedDataSet(dataSet.getURI(), visibleFeatures);
                             if (loadedDataSet.isPresent()) {
                                 message = "The feature " + dataSet.getURI() + " has already been added.";
                                 ErrorHandler.errorPanel("Cannot add same feature", message, Level.WARNING);
@@ -856,20 +858,21 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
     @SuppressWarnings("unchecked")
     public void updateTree(URI uri) {
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
-        DefaultMutableTreeNode node;
-        Enumeration<DefaultMutableTreeNode> nodes = root.breadthFirstEnumeration();
+        Enumeration<TreeNode> nodes = root.breadthFirstEnumeration();
         DataSet feature = null;
         while (nodes.hasMoreElements()) {
-            node = nodes.nextElement();
-            Object nodeData = node.getUserObject();
-            if (nodeData instanceof TreeNodeUserInfo) {
-                TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
-                if (tn.genericObject instanceof DataSet) {
-                    feature = (DataSet) tn.genericObject;
-                    if (!feature.isVisible()) {
-                        URI fUri = feature.getURI();
-                        if (uri.equals(fUri)) {
-                            GeneralLoadView.getLoadView().addFeature(feature);
+            TreeNode nextElement = nodes.nextElement();
+            if (nextElement instanceof DefaultMutableTreeNode dmt) {
+                Object nodeData = dmt.getUserObject();
+                if (nodeData instanceof TreeNodeUserInfo) {
+                    TreeNodeUserInfo tn = (TreeNodeUserInfo) nodeData;
+                    if (tn.genericObject instanceof DataSet) {
+                        feature = (DataSet) tn.genericObject;
+                        if (!feature.isVisible()) {
+                            URI fUri = feature.getURI();
+                            if (uri.equals(fUri)) {
+                                GeneralLoadView.getLoadView().addFeature(feature);
+                            }
                         }
                     }
                 }

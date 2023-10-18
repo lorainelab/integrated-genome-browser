@@ -11,10 +11,10 @@
     <artifactId>annotation-tab</artifactId>
     <packaging>bundle</packaging>
     <!-- This project shows the Annotation Tab GUI in IGB's
-         tabbed panel display.
-         Note: To work on the GUI, you must use NetBeans
-         GUI builder.
-     -->
+        tabbed panel display.
+        Note: To work on the GUI, you must use NetBeans
+        GUI builder.
+    -->
     <name>Plugin - Annotation Tab</name>
     <dependencies>
         <dependency>
@@ -45,6 +45,16 @@
         <dependency>
             <groupId>com.jidesoft</groupId>
             <artifactId>jide-ultimate</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -86,7 +96,10 @@
                     <instructions>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Import-Package>*</Import-Package>
+                        <Import-Package>
+                            com.jidesoft.combobox,
+                            *,
+                        </Import-Package>
                         <Export-Package/>
                         <Service-Component>*</Service-Component>
                     </instructions>

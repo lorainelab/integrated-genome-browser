@@ -3,9 +3,12 @@ package com.affymetrix.main;
 import com.affymetrix.common.CommonUtils;
 import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -17,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.ServiceLoader;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.net.ssl.HttpsURLConnection;
@@ -48,9 +53,9 @@ public class OSGiHandler {
             clearCache();
             System.exit(1);
         }
-        if (isDevelopmentMode()) {
-            clearCache();
-        }
+//        if (isDevelopmentMode()) {
+        clearCache();
+//        }
     }
 
     public void startOSGi() {
@@ -155,7 +160,6 @@ public class OSGiHandler {
 
     private void loadFramework(String argArray) {
         try {
-            System.setProperty("jsse.enableSNIExtension", "false");
             Map<String, String> configProps = new HashMap<>();
             configProps.put(FRAMEWORK_STORAGE, getCacheDir());
             CONFIG_BUNDLE.keySet().stream().forEach((key) -> configProps.put(key, CONFIG_BUNDLE.getString(key)));
@@ -203,15 +207,14 @@ public class OSGiHandler {
                 locationURL = new File(filePrefix + fileName).toURI().toURL();
             }
             if (locationURL != null) {
-                try {
-                    bundleContext.installBundle(locationURL.toString());
-                    logger.info("loading {}", new Object[]{fileName});
+                try (InputStream is = locationURL.openStream()) {
+                    bundleContext.installBundle(locationURL.toString(), is);  
+                    logger.info("loading {}", fileName);
                 } catch (Exception ex) {
-                    ex.printStackTrace(System.err);
-                    logger.warn("Could not install {}", new Object[]{fileName});
+                    logger.warn("Could not install {}", fileName, ex);
                 }
             } else {
-                logger.warn("Could not find {}", new Object[]{fileName});
+                logger.warn("Could not find {}", fileName);
             }
         }
     }
@@ -249,23 +252,17 @@ public class OSGiHandler {
     }
 
     private List<String> getDevelopmentModeJarFileNames() {
-        List<String> entries = new ArrayList<>();
-        File dir = new File("bundles");
-        if (!dir.exists()) {
-            dir = new File("../bundles");
-        }
-        FilenameFilter ff = (File dir1, String name) -> name.endsWith(".jar");
-        entries.addAll(Arrays.asList(dir.list(ff)));
-        if (entries.isEmpty()) {
-            String messageWrapper = "------------------------------------------------------------------------";
-            System.out.println(messageWrapper);
-            System.out.println("ERROR: Bundles directory is empty, you must build the project and run again. (i.e. run mvn install from the root (i.e. parent project) of the repo)");
-            System.out.println(messageWrapper);
+        try (Stream<Path> paths = Files.list(Paths.get("../bundles"))) {
+            return paths.filter(path -> path.toString().endsWith(".jar"))
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .sorted()
+                    .collect(Collectors.toList());
+        } catch (IOException ex) {
+            logger.error("Error listing jar files, try rebuilding the project before running again: ", ex);
             System.exit(0);
+            return Collections.emptyList();
         }
-        //this shouldn't be needed, but since windowservicedef needs all tabs to already registered it is... also this ordering is consistent with the jar ordering
-        Collections.sort(entries);
-        return entries;
     }
 
     public BundleContext getBundleContext() {

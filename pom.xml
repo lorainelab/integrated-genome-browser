@@ -87,6 +87,7 @@
         <org.apache.felix.http.servlet-api.version>2.1.0</org.apache.felix.http.servlet-api.version>
         <felixJettyVersion>4.2.12</felixJettyVersion>
         <commonsFileUpload>1.5</commonsFileUpload>
+        <openjfx.version>17.0.8</openjfx.version>
     </properties>
     <repositories>
         <repository>
@@ -109,6 +110,7 @@
     </repositories>
     <modules>
         <!--        <module>core/taglets</module>-->
+        <module>core/javafx-bundle</module>
         <module>core/heatmap-editor</module>
         <module>core/common</module>
         <module>core/genometry</module>
@@ -176,6 +178,28 @@
                 <module>main</module>
             </modules>            
         </profile>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>linux</javafx.platform>
+            </properties>
+        </profile>
+        <profile>
+            <id>mac</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>mac</javafx.platform>
+            </properties>
+        </profile>
         <!-- ~Kiran:IGBF:-1196:Added two profiles to run in windows and Unix-->
         <profile>
             <id>windows</id>
@@ -187,6 +211,7 @@
             <properties>
                 <!--cacheDirecotory property will be used in mvn-clean-plugin to delete users local cache folder-->
                 <cacheDirectory>${user.home}\AppData\Roaming\IGB\bundles\v${project.version}-bundle-cache</cacheDirectory>
+                <javafx.platform>win</javafx.platform>
             </properties>
             <modules>
                 <module>main</module>
@@ -239,6 +264,12 @@
     <dependencyManagement>
         <dependencies>
             <!--Start of core module dependencies-->
+            <dependency>
+                <groupId>org.lorainelab.igb</groupId>
+                <artifactId>javafx-bundle</artifactId>
+                <version>${project.parent.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>heatmap-editor</artifactId>
@@ -875,36 +906,67 @@
                 <version>${felix-eventadmin-version}</version>
             </dependency>
             <!-- End of Apache Felix Web Console bundles -->
-            
-            <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>4.0.1</version>
-            </dependency>
+            <!-- JAXB API -->
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>4.0.1</version>
+                <artifactId>txw2</artifactId>
+                <version>2.3.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.istack</groupId>
+                <artifactId>istack-commons-runtime</artifactId>
+                <version>3.0.12</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.activation</groupId>
+                <artifactId>javax.activation</artifactId>
+                <version>1.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>2.3.4</version>
             </dependency>
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-controls</artifactId>
-                <version>17.0.8</version>
+                <version>${openjfx.version}</version>
+                <classifier>${javafx.platform}</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-graphics</artifactId>
+                <version>${openjfx.version}</version>
+                <classifier>${javafx.platform}</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-media</artifactId>
+                <version>${openjfx.version}</version>
+                <classifier>${javafx.platform}</classifier>
             </dependency>
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-swing</artifactId>
-                <version>17.0.8</version>
+                <version>${openjfx.version}</version>
+                <classifier>${javafx.platform}</classifier>
             </dependency>
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-fxml</artifactId>
-                <version>17.0.8</version>
+                <version>${openjfx.version}</version>
+                <classifier>${javafx.platform}</classifier>
             </dependency>
             <dependency>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-web</artifactId>
-                <version>17.0.8</version>
+                <version>${openjfx.version}</version>
+                <classifier>${javafx.platform}</classifier>
             </dependency>
         </dependencies>
     </dependencyManagement>

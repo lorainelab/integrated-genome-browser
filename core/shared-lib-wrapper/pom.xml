@@ -73,6 +73,10 @@
             <groupId>fi.iki.elonen</groupId>
             <artifactId>NanoHTTPD</artifactId>		
         </dependency>
+        <dependency>
+            <groupId>com.sun.istack</groupId>
+            <artifactId>istack-commons-runtime</artifactId>
+        </dependency>
     </dependencies>
 
     
@@ -204,6 +208,31 @@
                                     <artifactId>commons-jexl</artifactId>
                                     <version>${commonsJexl}</version>
                                 </artifactItem>
+                                <!--                                <artifactItem>
+                                    <groupId>org.glassfish.jaxb</groupId>
+                                    <artifactId>txw2</artifactId>
+                                    <version>2.3.3</version>
+                                </artifactItem>-->
+                                <artifactItem>
+                                    <groupId>com.sun.istack</groupId>
+                                    <artifactId>istack-commons-runtime</artifactId>
+                                    <version>3.0.12</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.sun.activation</groupId>
+                                    <artifactId>javax.activation</artifactId>
+                                    <version>1.2.0</version>  
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>javax.xml.bind</groupId>
+                                    <artifactId>jaxb-api</artifactId>
+                                    <version>2.3.1</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.sun.xml.bind</groupId>
+                                    <artifactId>jaxb-impl</artifactId>
+                                    <version>2.3.4</version>
+                                </artifactItem>  
                                 <artifactItem>
                                     <groupId>com.jidesoft</groupId>
                                     <artifactId>jide-ultimate</artifactId>
@@ -326,7 +355,10 @@
                             net.miginfocom.layout,
                             net.miginfocom.swing,
                             com.github.kevinsawicki.http,
-                            fi.iki.elonen
+                            fi.iki.elonen,
+                            com.sun.xml.txw2,
+                            com.sun.xml.txw2.annotation,
+                            com.sun.xml.txw2.output
                         </Export-Package>
                     </instructions>
                     <archive>

@@ -12,8 +12,8 @@
     <artifactId>keybinding-registry</artifactId>
     <packaging>bundle</packaging>
     <!-- Used to configure the toolbar and associate
-         key board shortcuts with actions
-     -->
+        key board shortcuts with actions
+    -->
     <name>Plugin - Toolbar Preferences GUI</name>
     
     <dependencies>
@@ -60,6 +60,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+         <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>shared-lib-wrapper</artifactId>
             <scope>provided</scope>
@@ -74,7 +84,7 @@
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout-core</artifactId>
             <scope>provided</scope>
@@ -100,7 +110,15 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>    
-                        <Import-Package>*</Import-Package>
+                        <Import-Package>
+                            javax.xml.bind,
+                            javax.xml.bind.annotation,
+                            javax.xml.bind.annotation.adapters,
+                            javax.xml.bind.attachment,
+                            javax.xml.bind.helpers,
+                            javax.xml.bind.util,
+                            *
+                        </Import-Package>
                         <Export-Package/>                        
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Service-Component>*</Service-Component>

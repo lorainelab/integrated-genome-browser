@@ -80,7 +80,15 @@
                         <Export-Package>
                             org.lorainelab.igb.services.*                            
                         </Export-Package>
-                        <Import-Package>*</Import-Package>
+                        <Import-Package>
+                            javax.xml.bind,
+                            javax.xml.bind.annotation,
+                            javax.xml.bind.annotation.adapters,
+                            javax.xml.bind.attachment,
+                            javax.xml.bind.helpers,
+                            javax.xml.bind.util,
+                            *
+                        </Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Service-Component>*</Service-Component>
                     </instructions>

@@ -88,19 +88,14 @@
             <artifactId>igb-javafx-util</artifactId>
             <scope>provided</scope>
         </dependency>
-          <dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>org.lorainelab.igb.menu.api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-swing</artifactId>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>javafx-bundle</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

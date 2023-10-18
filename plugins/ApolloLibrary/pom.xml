@@ -11,10 +11,10 @@
     <artifactId>apollo-library</artifactId>
     <packaging>bundle</packaging>
     <!-- This code came orginally from the Apollo project, a 
-         genome browser that was also an editor. Biologists
-         used it to create gene model annotations interactively,
-         from data.
-     -->
+        genome browser that was also an editor. Biologists
+        used it to create gene model annotations interactively,
+        from data.
+    -->
     <name>Plugin - Apollo Library</name>
     <dependencies>
         <!--Start of logging dependencies-->
@@ -42,7 +42,16 @@
                     <instructions>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Import-Package>com.affymetrix.igb.shared,*;resolution:=optional</Import-Package>
+                        <Import-Package>
+                            javax.xml.bind,
+                            javax.xml.bind.annotation,
+                            javax.xml.bind.annotation.adapters,
+                            javax.xml.bind.attachment,
+                            javax.xml.bind.helpers,
+                            javax.xml.bind.util,
+                            com.affymetrix.igb.shared,
+                            *;resolution:=optional
+                        </Import-Package>
                         <Export-Package>
                             apollo.datamodel,
                             apollo.util

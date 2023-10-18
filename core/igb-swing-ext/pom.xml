@@ -35,6 +35,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.component.annotations</artifactId>
             <scope>provided</scope>
@@ -72,7 +82,15 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>  
-                        <Import-Package>*</Import-Package>
+                        <Import-Package>
+                            javax.xml.bind,
+                            javax.xml.bind.annotation,
+                            javax.xml.bind.annotation.adapters,
+                            javax.xml.bind.attachment,
+                            javax.xml.bind.helpers,
+                            javax.xml.bind.util,
+                            *
+                        </Import-Package>
                         <Export-Package>
                             com.affymetrix.igb.swing,
                             com.affymetrix.igb.swing.script,

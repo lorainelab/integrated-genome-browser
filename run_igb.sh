@@ -1,6 +1,15 @@
 #!/bin/bash
 
 JAVA_OPTS="\
+--add-exports=java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED \
+--add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED \
+--add-exports=java.management/sun.management=ALL-UNNAMED \
+--add-exports=java.management/sun.management.counter.perf=ALL-UNNAMED \
+--add-exports=jdk.management.agent/jdk.internal.agent=ALL-UNNAMED \
+--add-exports=jdk.attach/sun.tools.attach=ALL-UNNAMED \
+--add-opens=java.base/java.net=ALL-UNNAMED \
+--add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED \
+--add-exports=java.desktop/sun.awt.X11=ALL-UNNAMED \
 --add-opens java.base/java.net=ALL-UNNAMED \
 --add-opens java.base/java.lang.ref=ALL-UNNAMED \
 --add-opens java.base/java.lang=ALL-UNNAMED \
@@ -55,5 +64,28 @@ JAVA_OPTS="\
 --add-exports jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED \
 --add-exports java.management/sun.management=ALL-UNNAMED"
 
-java $JAVA_OPTS -jar igb_exe.jar
+# Explicitly define JavaFX JAR paths
+FX_PATH="/home/dcnorris/.m2/repository/org/openjfx"
+FX_VERSION="17.0.8"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  OS_CLASSIFIER="-mac"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  OS_CLASSIFIER="-linux"
+else
+  echo "OS not supported."
+  exit 1
+fi
 
+MODULE_PATH_ARG="${FX_PATH}/javafx-base/${FX_VERSION}/javafx-base-${FX_VERSION}${OS_CLASSIFIER}.jar:\
+${FX_PATH}/javafx-controls/${FX_VERSION}/javafx-controls-${FX_VERSION}${OS_CLASSIFIER}.jar:\
+${FX_PATH}/javafx-graphics/${FX_VERSION}/javafx-graphics-${FX_VERSION}${OS_CLASSIFIER}.jar:\
+${FX_PATH}/javafx-media/${FX_VERSION}/javafx-media-${FX_VERSION}${OS_CLASSIFIER}.jar:\
+${FX_PATH}/javafx-swing/${FX_VERSION}/javafx-swing-${FX_VERSION}${OS_CLASSIFIER}.jar:\
+${FX_PATH}/javafx-fxml/${FX_VERSION}/javafx-fxml-${FX_VERSION}${OS_CLASSIFIER}.jar:\
+${FX_PATH}/javafx-web/${FX_VERSION}/javafx-web-${FX_VERSION}${OS_CLASSIFIER}.jar"
+
+echo $MODULE_PATH_ARG
+# Update the java command
+#java $JAVA_OPTS --module-path $MODULE_PATH_ARG --add-modules javafx.controls,javafx.graphics,javafx.media,javafx.swing,javafx.fxml,javafx.web -jar igb_exe.jar
+
+java $JAVA_OPTS -jar igb_exe.jar

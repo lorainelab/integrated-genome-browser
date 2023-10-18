@@ -65,11 +65,12 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
             initialize();
         }
     }
-    
-        public DasDataProvider(String dasUrl, String name, int loadPriority, String id) {
+
+    public DasDataProvider(String dasUrl, String name, int loadPriority, String id) {
         super(dasUrl, name, loadPriority, id);
         genomeContextRootMap = Maps.newLinkedHashMap();
         try {
+            logger.info("dasDsnUrl:{}", url);
             URL dasDsnUrl = new URL(url);
         } catch (MalformedURLException ex) {
             logger.error(ex.getMessage(), ex);

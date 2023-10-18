@@ -60,6 +60,16 @@
             <artifactId>jide-ultimate</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!--Start of logging dependencies-->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -143,23 +153,32 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>javafx-bundle</artifactId>
+            <scope>provided</scope>
+        </dependency>
+<!--        <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <scope>provided</scope>
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
             <scope>provided</scope>
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-        </dependency>
+            <classifier>${javafx.platform}</classifier>
+        </dependency>-->
 
     </dependencies>
 
@@ -178,7 +197,15 @@
                 <configuration>
                     <instructions>   
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency> 
-                        <Import-Package>!${project.artifactId},*</Import-Package>
+                        <Import-Package>!${project.artifactId},
+                            javax.xml.bind,
+                            javax.xml.bind.annotation,
+                            javax.xml.bind.annotation.adapters,
+                            javax.xml.bind.attachment,
+                            javax.xml.bind.helpers,
+                            javax.xml.bind.util,	
+                            *
+                        </Import-Package>
                         <Export-Package>org.lorainelab.igb.plugin.manager.service</Export-Package>
                         <Bundle-Description>An IgbTabPanel for managing OSGi OBR repositories for installing IGB plugins</Bundle-Description>
                         <Service-Component>*</Service-Component>

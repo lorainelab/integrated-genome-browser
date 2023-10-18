@@ -67,6 +67,16 @@
             <artifactId>jide-ultimate</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!--Start of logging dependencies-->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -105,13 +115,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-swing</artifactId>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>javafx-bundle</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -132,7 +137,15 @@
                     <instructions>
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       
-                        <Import-Package>*</Import-Package>
+                        <Import-Package>
+                            javax.xml.bind,
+                            javax.xml.bind.annotation,
+                            javax.xml.bind.annotation.adapters,
+                            javax.xml.bind.attachment,
+                            javax.xml.bind.helpers,
+                            javax.xml.bind.util,
+                            *
+                        </Import-Package>
                         <Export-Package>com.affymetrix.igb.bookmarks.model,com.affymetrix.igb.bookmarks.service</Export-Package>
                         <Bundle-Activator>com.affymetrix.igb.bookmarks.Activator</Bundle-Activator>                        
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>

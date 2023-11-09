@@ -1,7 +1,6 @@
 package com.affymetrix.igb.swing.jide;
 
 import com.affymetrix.genoviz.swing.PartialLineBorder;
-import com.jidesoft.grid.JideTable;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -28,6 +27,7 @@ import javax.swing.table.TableModel;
 public class StyledJTable extends JideTable {
 
     private static final long serialVersionUID = 1L;
+    private static final Object AUTO_RESIZE_LAST_COLUMN_FILL = 0;
     private Color selectionBackgroundColor, selectionForegroundColor,
             notEditableColor;
 
@@ -72,7 +72,6 @@ public class StyledJTable extends JideTable {
 
     @SuppressWarnings("deprecation")
     private void init() {
-        // Jidesoft table configuration methods
         setAutoResizeMode(AUTO_RESIZE_LAST_COLUMN_FILL);
         setFillsGrids(true);
 
@@ -168,4 +167,6 @@ public class StyledJTable extends JideTable {
             tce.cancelCellEditing();
         }
     }
+
+
 }

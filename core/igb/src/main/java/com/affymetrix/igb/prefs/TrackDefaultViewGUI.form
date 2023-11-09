@@ -111,7 +111,7 @@
             <Property name="text" type="java.lang.String" value="-"/>
           </Properties>
         </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="possitiveColorComboBox">
+        <Component class="ColorComboBox" name="possitiveColorComboBox">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -134,7 +134,7 @@
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="tdv.getPossitiveColorCombo()"/>
           </AuxValues>
         </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="negativeColorComboBox">
+        <Component class="ColorComboBox" name="negativeColorComboBox">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -383,7 +383,7 @@
             <Property name="text" type="java.lang.String" value="Background:"/>
           </Properties>
         </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="bgColorComboBox">
+        <Component class="ColorComboBox" name="bgColorComboBox">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -461,7 +461,7 @@
             <Property name="text" type="java.lang.String" value="Max Stack Depth:"/>
           </Properties>
         </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="fgColorComboBox">
+        <Component class="ColorComboBox" name="fgColorComboBox">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">

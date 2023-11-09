@@ -28,11 +28,7 @@
             <artifactId>org.osgi.service.component.annotations</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.jidesoft</groupId>
-            <artifactId>jide-ultimate</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

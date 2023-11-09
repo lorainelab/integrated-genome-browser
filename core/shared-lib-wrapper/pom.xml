@@ -93,7 +93,6 @@
                                 <include>felix.jar</include>
                                 <include>org.apache.felix*.jar</include>
                                 <include>bigwig*.jar</include>
-                                <include>jide-ultimate*.jar</include>
                             </includes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
@@ -203,11 +202,6 @@
                                     <groupId>org.apache.commons</groupId>
                                     <artifactId>commons-jexl</artifactId>
                                     <version>${commonsJexl}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.jidesoft</groupId>
-                                    <artifactId>jide-ultimate</artifactId>
-                                    <version>${jide.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>com.google.code.gson</groupId>

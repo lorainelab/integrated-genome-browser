@@ -54,10 +54,13 @@ import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
+import javax.swing.JOptionPane;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
@@ -291,6 +294,33 @@ public final class TierLabelManager implements PropertyHolder {
                 double y = nevt.getCoordY();
                 IGB.getInstance().getMapView().setZoomSpotY(y);
             }
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent evt) {
+            if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
+                NeoMouseEvent nevt = (NeoMouseEvent) evt;
+                TierLabelGlyph selected_glyph = (TierLabelGlyph) nevt.getItems().get(0);
+                double middle = (selected_glyph.getCoordBox().getY())
+                        + (selected_glyph.getCoordBox().getHeight()/2);
+                if(!selected_glyph.getReferenceTier().getAnnotStyle().getTrackName().equals(TrackConstants.NAME_OF_COORDINATE_INSTANCE)
+                && (nevt.getCoordY() >= middle-50 && nevt.getCoordY() <= middle+50)
+                && nevt.getClickCount() == 2){
+                    ITrackStyleExtended style = selected_glyph.getReferenceTier().getAnnotStyle();
+                    boolean setNewName = setNewName(style, (String) JOptionPane.showInputDialog(labelmap ,BUNDLE.getString("track") + ": ", "Rename", JOptionPane.INFORMATION_MESSAGE, null, null, style.getTrackName()));
+                    if(setNewName){
+                        tiermap.updateWidget();
+                    }
+                }
+            }
+        }
+
+        private boolean setNewName(ITrackStyleExtended style, String new_label) {
+            if (new_label != null && !new_label.isEmpty()) {
+                style.setTrackName(new_label);
+                return true;
+            }
+            return false;
         }
 
         private void transformTier(TierLabelGlyph gl) {

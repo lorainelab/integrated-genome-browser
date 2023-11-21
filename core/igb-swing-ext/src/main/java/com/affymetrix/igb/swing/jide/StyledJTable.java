@@ -28,7 +28,6 @@ import javax.swing.table.TableModel;
 public class StyledJTable extends JTable {
 
     private static final long serialVersionUID = 1L;
-    private static final int AUTO_RESIZE_LAST_COLUMN_FILL = 259;
     private Color selectionBackgroundColor, selectionForegroundColor,
             notEditableColor;
 
@@ -73,7 +72,6 @@ public class StyledJTable extends JTable {
 
     @SuppressWarnings("deprecation")
     private void init() {
-        setAutoResizeMode(AUTO_RESIZE_LAST_COLUMN_FILL);
 
         // Java Default Table Configuration methods
         setCellSelectionEnabled(true);

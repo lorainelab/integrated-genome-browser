@@ -47,6 +47,11 @@
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -83,14 +88,14 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-			    <Import-Package>
+                        <Import-Package>
                             javax.xml.bind,
                             javax.xml.bind.annotation,
                             javax.xml.bind.annotation.adapters,
                             javax.xml.bind.attachment,
                             javax.xml.bind.helpers,
                             javax.xml.bind.util,
-					    *</Import-Package>
+                            *</Import-Package>
                         <Export-Package/>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Service-Component>*</Service-Component>

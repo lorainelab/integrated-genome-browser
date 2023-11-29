@@ -230,6 +230,11 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>com.sun.xml.bind</groupId>
+                                    <artifactId>jaxb-core</artifactId>
+                                    <version>2.3.0.1</version>
+                                </artifactItem>  
+                                <artifactItem>
+                                    <groupId>com.sun.xml.bind</groupId>
                                     <artifactId>jaxb-impl</artifactId>
                                     <version>2.3.4</version>
                                 </artifactItem>  

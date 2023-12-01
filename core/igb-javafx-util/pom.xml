@@ -12,11 +12,7 @@
     <packaging>bundle</packaging>
     <name>Core - JavaFX Utilities</name>
     <dependencies>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>javafx-bundle</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

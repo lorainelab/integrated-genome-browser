@@ -26,6 +26,10 @@
     <!--    Dependencies which need to be "wrapped" into OSGI bundles-->
     <dependencies>
         <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>txw2</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
         </dependency>
@@ -73,10 +77,6 @@
             <groupId>fi.iki.elonen</groupId>
             <artifactId>NanoHTTPD</artifactId>		
         </dependency>
-        <dependency>
-            <groupId>com.sun.istack</groupId>
-            <artifactId>istack-commons-runtime</artifactId>
-        </dependency>
     </dependencies>
 
     
@@ -97,7 +97,7 @@
                                 <include>felix.jar</include>
                                 <include>org.apache.felix*.jar</include>
                                 <include>bigwig*.jar</include>
-                                <include>jide-ultimate*.jar</include>
+                                <include>jide-ultimate-jakarta*.jar</include>
                             </includes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
@@ -219,28 +219,8 @@
                                     <version>3.0.12</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>com.sun.activation</groupId>
-                                    <artifactId>javax.activation</artifactId>
-                                    <version>1.2.0</version>  
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>javax.xml.bind</groupId>
-                                    <artifactId>jaxb-api</artifactId>
-                                    <version>2.3.1</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.sun.xml.bind</groupId>
-                                    <artifactId>jaxb-core</artifactId>
-                                    <version>2.3.0.1</version>
-                                </artifactItem>  
-                                <artifactItem>
-                                    <groupId>com.sun.xml.bind</groupId>
-                                    <artifactId>jaxb-impl</artifactId>
-                                    <version>2.3.4</version>
-                                </artifactItem>  
-                                <artifactItem>
                                     <groupId>com.jidesoft</groupId>
-                                    <artifactId>jide-ultimate</artifactId>
+                                    <artifactId>jide-ultimate-jakarta</artifactId>
                                     <version>${jide.version}</version>
                                 </artifactItem>
                                 <artifactItem>
@@ -338,6 +318,7 @@
                         <Import-Package>*;resolution:=optional</Import-Package>
                         <Private-Package>*</Private-Package>
                         <Export-Package>
+                           com.sun.xml.txw2.*;version="4.0.1",
                             affymetrix.calvin.*,
                             affymetrix.fusion,
                             affymetrix.fusion.*,

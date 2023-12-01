@@ -1,6 +1,7 @@
 #!/bin/bash
 
 JAVA_OPTS="\
+--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED \
 --add-exports=java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED \
 --add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED \
 --add-exports=java.management/sun.management=ALL-UNNAMED \
@@ -64,28 +65,8 @@ JAVA_OPTS="\
 --add-exports jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED \
 --add-exports java.management/sun.management=ALL-UNNAMED"
 
-# Explicitly define JavaFX JAR paths
-FX_PATH="/home/dcnorris/.m2/repository/org/openjfx"
-FX_VERSION="17.0.8"
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  OS_CLASSIFIER="-mac"
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  OS_CLASSIFIER="-linux"
-else
-  echo "OS not supported."
-  exit 1
-fi
-
-MODULE_PATH_ARG="${FX_PATH}/javafx-base/${FX_VERSION}/javafx-base-${FX_VERSION}${OS_CLASSIFIER}.jar:\
-${FX_PATH}/javafx-controls/${FX_VERSION}/javafx-controls-${FX_VERSION}${OS_CLASSIFIER}.jar:\
-${FX_PATH}/javafx-graphics/${FX_VERSION}/javafx-graphics-${FX_VERSION}${OS_CLASSIFIER}.jar:\
-${FX_PATH}/javafx-media/${FX_VERSION}/javafx-media-${FX_VERSION}${OS_CLASSIFIER}.jar:\
-${FX_PATH}/javafx-swing/${FX_VERSION}/javafx-swing-${FX_VERSION}${OS_CLASSIFIER}.jar:\
-${FX_PATH}/javafx-fxml/${FX_VERSION}/javafx-fxml-${FX_VERSION}${OS_CLASSIFIER}.jar:\
-${FX_PATH}/javafx-web/${FX_VERSION}/javafx-web-${FX_VERSION}${OS_CLASSIFIER}.jar"
-
-echo $MODULE_PATH_ARG
 # Update the java command
 #java $JAVA_OPTS --module-path $MODULE_PATH_ARG --add-modules javafx.controls,javafx.graphics,javafx.media,javafx.swing,javafx.fxml,javafx.web -jar igb_exe.jar
 
 java $JAVA_OPTS -jar igb_exe.jar
+#java $JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=127.0.0.1:5005 -jar igb_exe.jar

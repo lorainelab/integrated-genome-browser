@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class Main {
 
-    private static final Logger log = LoggerFactory.getLogger(Main.class); 
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     /**
      * Start the program. Nothing to it, just start OSGi and all the bundles.

@@ -54,7 +54,7 @@ public class OSGiHandler {
             System.exit(1);
         }
 //        if (isDevelopmentMode()) {
-        clearCache();
+            clearCache();
 //        }
     }
 

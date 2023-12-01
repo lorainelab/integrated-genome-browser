@@ -11,14 +11,17 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.Optional;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.wiring.BundleWiring;
 /**
  *
  * @author dcnorris
@@ -35,7 +38,7 @@ public class IgbPreferencesParser implements IgbPreferencesService {
 
     public IgbPreferencesParser() {
         try {
-            jaxbContext = JAXBContext.newInstance(IgbPreferences.class);
+            jaxbContext = JAXBContext.newInstance(IgbPreferences.class.getPackage().getName(), IgbPreferences.class.getClassLoader());
             unmarshaller = jaxbContext.createUnmarshaller();
         } catch (JAXBException ex) {
             logger.error("Could not initialize JAXBContext for igb preferences", ex);

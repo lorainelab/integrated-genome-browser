@@ -14,9 +14,8 @@
         <!-- [WARNING] Using platform encoding (UTF-8 actually) to copy filtered 
         resources, i.e. build is platform dependent! -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version> 
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
@@ -87,7 +86,6 @@
         <org.apache.felix.http.servlet-api.version>2.1.0</org.apache.felix.http.servlet-api.version>
         <felixJettyVersion>4.2.12</felixJettyVersion>
         <commonsFileUpload>1.5</commonsFileUpload>
-        <openjfx.version>17.0.8</openjfx.version>
     </properties>
     <repositories>
         <repository>
@@ -109,8 +107,7 @@
         </repository>
     </repositories>
     <modules>
-        <!--        <module>core/taglets</module>-->
-        <module>core/javafx-bundle</module>
+        <module>core/jaxb-wrapper</module>
         <module>core/heatmap-editor</module>
         <module>core/common</module>
         <module>core/genometry</module>
@@ -266,7 +263,7 @@
             <!--Start of core module dependencies-->
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
-                <artifactId>javafx-bundle</artifactId>
+                <artifactId>jaxb-wrapper</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -866,7 +863,7 @@
             </dependency>
             <dependency>
                 <groupId>com.jidesoft</groupId>
-                <artifactId>jide-ultimate</artifactId>
+                <artifactId>jide-ultimate-jakarta</artifactId>
                 <version>${jide.version}</version>
             </dependency>
             <dependency>
@@ -906,72 +903,57 @@
                 <version>${felix-eventadmin-version}</version>
             </dependency>
             <!-- End of Apache Felix Web Console bundles -->
+            <dependency>
+                <groupId>org.glassfish.hk2</groupId>
+                <artifactId>osgi-resource-locator</artifactId>
+                <version>2.5.0-b42</version>
+            </dependency>
+
             <!-- JAXB API -->
             <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>txw2</artifactId>
-                <version>2.3.3</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.istack</groupId>
-                <artifactId>istack-commons-runtime</artifactId>
-                <version>3.0.12</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.activation</groupId>
-                <artifactId>javax.activation</artifactId>
-                <version>1.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-core</artifactId>
-                <version>2.3.0.1</version>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
-                <version>2.3.4</version>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-controls</artifactId>
-                <version>${openjfx.version}</version>
-                <classifier>${javafx.platform}</classifier>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-graphics</artifactId>
-                <version>${openjfx.version}</version>
-                <classifier>${javafx.platform}</classifier>
+                <groupId>jakarta.activation</groupId>
+                <artifactId>jakarta.activation-api</artifactId>
+                <version>2.1.2</version>
             </dependency>
             <dependency>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-media</artifactId>
-                <version>${openjfx.version}</version>
-                <classifier>${javafx.platform}</classifier>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-swing</artifactId>
-                <version>${openjfx.version}</version>
-                <classifier>${javafx.platform}</classifier>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-fxml</artifactId>
-                <version>${openjfx.version}</version>
-                <classifier>${javafx.platform}</classifier>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>txw2</artifactId>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-web</artifactId>
-                <version>${openjfx.version}</version>
-                <classifier>${javafx.platform}</classifier>
+                <groupId>com.sun.istack</groupId>
+                <artifactId>istack-commons-runtime</artifactId>
+                <version>4.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.fastinfoset</groupId>
+                <artifactId>FastInfoset</artifactId>
+                <version>2.1.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

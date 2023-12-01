@@ -116,6 +116,11 @@
             <artifactId>htsjdk-igb</artifactId>
             <scope>provided</scope>
         </dependency>
+         <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>jaxb-wrapper</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

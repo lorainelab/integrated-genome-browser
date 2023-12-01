@@ -47,6 +47,11 @@
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.main</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!--Start of logging dependencies-->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -54,20 +59,45 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>jaxb-wrapper</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
+        <!--        <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>txw2</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.istack</groupId>
+            <artifactId>istack-commons-runtime</artifactId>
+            <scope>provided</scope>
+        </dependency>-->
         <!--End of logging dependencies-->
     </dependencies>
 
@@ -86,11 +116,11 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Import-Package>*</Import-Package>
                         <Export-Package>
                             org.lorainelab.igb.preferences.model, 
                             org.lorainelab.igb.preferences
                         </Export-Package>
+                        <Import-Package>org.glassfish.jaxb.runtime.v2,*</Import-Package>
                         <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>

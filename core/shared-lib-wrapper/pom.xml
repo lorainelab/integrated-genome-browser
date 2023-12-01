@@ -26,6 +26,10 @@
     <!--    Dependencies which need to be "wrapped" into OSGI bundles-->
     <dependencies>
         <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>txw2</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
         </dependency>
@@ -314,6 +318,7 @@
                         <Import-Package>*;resolution:=optional</Import-Package>
                         <Private-Package>*</Private-Package>
                         <Export-Package>
+                           com.sun.xml.txw2.*;version="4.0.1",
                             affymetrix.calvin.*,
                             affymetrix.fusion,
                             affymetrix.fusion.*,

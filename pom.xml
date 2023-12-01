@@ -107,7 +107,6 @@
         </repository>
     </repositories>
     <modules>
-        <module>core/jaxb-wrapper</module>
         <module>core/heatmap-editor</module>
         <module>core/common</module>
         <module>core/genometry</module>
@@ -261,12 +260,6 @@
     <dependencyManagement>
         <dependencies>
             <!--Start of core module dependencies-->
-            <dependency>
-                <groupId>org.lorainelab.igb</groupId>
-                <artifactId>jaxb-wrapper</artifactId>
-                <version>${project.parent.version}</version>
-                <scope>provided</scope>
-            </dependency>
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>heatmap-editor</artifactId>
@@ -943,7 +936,7 @@
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>txw2</artifactId>
-                <version>4.0.1</version>
+                <version>4.0.4</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.istack</groupId>

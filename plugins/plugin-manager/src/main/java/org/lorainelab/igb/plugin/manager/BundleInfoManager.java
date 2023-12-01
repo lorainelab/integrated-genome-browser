@@ -147,11 +147,13 @@ public class BundleInfoManager {
 
     public boolean isVersionOfBundleInstalled(Bundle bundle) {
         return Arrays.asList(bundleContext.getBundles()).stream()
+                .filter(installedBundle -> installedBundle.getSymbolicName() != null)
                 .anyMatch(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName()));
     }
 
     public boolean isUpdateable(Bundle bundle) {
         if (Arrays.asList(bundleContext.getBundles()).stream()
+                .filter(installedBundle -> installedBundle.getSymbolicName() != null)
                 .anyMatch(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName()))) {
             Bundle installedBundle = Arrays.asList(bundleContext.getBundles()).stream()
                     .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName())).findFirst().get();
@@ -179,7 +181,9 @@ public class BundleInfoManager {
     }
 
     public String getBundleVersion(Bundle bundle) {
-        Optional<Bundle> installedBundleMatch = Arrays.asList(bundleContext.getBundles()).stream().filter(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName())).findFirst();
+        Optional<Bundle> installedBundleMatch = Arrays.asList(bundleContext.getBundles()).stream()
+                .filter(installedBundle -> installedBundle.getSymbolicName() != null)
+                .filter(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName())).findFirst();
         if (installedBundleMatch.isPresent()) {
             return installedBundleMatch.get().getVersion().toString();
         }

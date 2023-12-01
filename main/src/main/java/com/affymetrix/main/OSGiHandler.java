@@ -5,6 +5,7 @@ import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,7 +55,7 @@ public class OSGiHandler {
             System.exit(1);
         }
 //        if (isDevelopmentMode()) {
-            clearCache();
+        clearCache();
 //        }
     }
 
@@ -65,7 +66,21 @@ public class OSGiHandler {
         String commandLineArguments = Arrays.toString(args);
         commandLineArguments = commandLineArguments.substring(1, commandLineArguments.length() - 1); // remove brackets
         loadFramework(commandLineArguments);
+        unsetURLStreamHandlerFactory();
         loadBundles();
+    }
+
+    public static String unsetURLStreamHandlerFactory() {
+        try {
+            Field f = URL.class.getDeclaredField("factory");
+            f.setAccessible(true);
+            Object curFac = f.get(null);
+            f.set(null, null);
+            URL.setURLStreamHandlerFactory(null);
+            return curFac.getClass().getName();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     //This is important for metric gathering, do not modify without thinking about the implications
@@ -208,7 +223,7 @@ public class OSGiHandler {
             }
             if (locationURL != null) {
                 try (InputStream is = locationURL.openStream()) {
-                    bundleContext.installBundle(locationURL.toString(), is);  
+                    bundleContext.installBundle(locationURL.toString(), is);
                     logger.info("loading {}", fileName);
                 } catch (Exception ex) {
                     logger.warn("Could not install {}", fileName, ex);

@@ -47,6 +47,7 @@ public class OSGiHandler {
     private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
     private static final Logger logger = LoggerFactory.getLogger(OSGiHandler.class);
     private Framework framework;
+    private static DefaultURLStreamHandlerFactory streamHandlerFactory = new DefaultURLStreamHandlerFactory();
     private final String[] args;
 
     public OSGiHandler(String[] args) {
@@ -77,8 +78,8 @@ public class OSGiHandler {
             f.setAccessible(true);
             Object curFac = f.get(null);
             // Wrap the current factory in the DefaultURLStreamHandlerFactory
-            URLStreamHandlerFactory newFactory = new DefaultURLStreamHandlerFactory((URLStreamHandlerFactory) curFac);
-            f.set(null, newFactory);
+            streamHandlerFactory.setDelegate((URLStreamHandlerFactory) curFac);
+            f.set(null, streamHandlerFactory);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }

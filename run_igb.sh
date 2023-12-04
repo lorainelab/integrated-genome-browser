@@ -8,8 +8,6 @@ JAVA_OPTS="\
 --add-exports=java.management/sun.management.counter.perf=ALL-UNNAMED \
 --add-exports=jdk.management.agent/jdk.internal.agent=ALL-UNNAMED \
 --add-exports=jdk.attach/sun.tools.attach=ALL-UNNAMED \
---add-opens=java.base/java.net=ALL-UNNAMED \
---add-opens=jdk.attach/sun.tools.attach=ALL-UNNAMED \
 --add-exports=java.desktop/sun.awt.X11=ALL-UNNAMED \
 --add-opens java.base/java.net=ALL-UNNAMED \
 --add-opens java.base/java.lang.ref=ALL-UNNAMED \

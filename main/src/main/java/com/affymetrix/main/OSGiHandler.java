@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.net.URLStreamHandlerFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,9 +55,9 @@ public class OSGiHandler {
             clearCache();
             System.exit(1);
         }
-//        if (isDevelopmentMode()) {
-        clearCache();
-//        }
+        if (isDevelopmentMode()) {
+            clearCache();
+        }
     }
 
     public void startOSGi() {
@@ -66,20 +67,20 @@ public class OSGiHandler {
         String commandLineArguments = Arrays.toString(args);
         commandLineArguments = commandLineArguments.substring(1, commandLineArguments.length() - 1); // remove brackets
         loadFramework(commandLineArguments);
-        unsetURLStreamHandlerFactory();
+        wrapFelixURLStreamHandlerFactory();
         loadBundles();
     }
 
-    public static String unsetURLStreamHandlerFactory() {
+    public static void wrapFelixURLStreamHandlerFactory() {
         try {
             Field f = URL.class.getDeclaredField("factory");
             f.setAccessible(true);
             Object curFac = f.get(null);
-            f.set(null, null);
-            URL.setURLStreamHandlerFactory(null);
-            return curFac.getClass().getName();
-        } catch (Exception e) {
-            return null;
+            // Wrap the current factory in the DefaultURLStreamHandlerFactory
+            URLStreamHandlerFactory newFactory = new DefaultURLStreamHandlerFactory((URLStreamHandlerFactory) curFac);
+            f.set(null, newFactory);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
         }
     }
 

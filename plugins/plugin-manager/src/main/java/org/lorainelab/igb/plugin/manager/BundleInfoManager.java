@@ -156,8 +156,10 @@ public class BundleInfoManager {
                 .filter(installedBundle -> installedBundle.getSymbolicName() != null)
                 .anyMatch(installedBundle -> installedBundle.getSymbolicName().equals(bundle.getSymbolicName()))) {
             Bundle installedBundle = Arrays.asList(bundleContext.getBundles()).stream()
+                    .filter(b -> b.getSymbolicName() != null)
                     .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName())).findFirst().get();
             return repositoryManagedBundles.stream()
+                    .filter(b -> b.getSymbolicName() != null)
                     .filter(repoBundle -> repoBundle.getSymbolicName().equals(bundle.getSymbolicName()))
                     .anyMatch(repoBundle -> repoBundle.getVersion().compareTo(installedBundle.getVersion()) >= 1);
         } else {
@@ -168,6 +170,7 @@ public class BundleInfoManager {
     public Bundle getLatestBundle(Bundle bundle) {
         if (isUpdateable(bundle)) {
             List<Bundle> updateableVersions = repositoryManagedBundles.stream()
+                    .filter(b -> b.getSymbolicName() != null)
                     .filter(b -> b.getSymbolicName().equals(bundle.getSymbolicName()))
                     .collect(Collectors.toList());
             Collections.sort(updateableVersions, (Bundle o1, Bundle o2) -> {

@@ -68,7 +68,6 @@ public class OSGiHandler {
         String commandLineArguments = Arrays.toString(args);
         commandLineArguments = commandLineArguments.substring(1, commandLineArguments.length() - 1); // remove brackets
         loadFramework(commandLineArguments);
-        wrapFelixURLStreamHandlerFactory();
         loadBundles();
     }
 
@@ -188,6 +187,7 @@ public class OSGiHandler {
             FrameworkFactory factory = getFrameworkFactory();
             framework = factory.newFramework(configProps);
             framework.init();
+            wrapFelixURLStreamHandlerFactory();
             framework.start();
             addShutdownHook();
         } catch (Exception ex) {

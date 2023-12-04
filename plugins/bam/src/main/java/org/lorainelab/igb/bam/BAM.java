@@ -15,6 +15,8 @@ import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LocalUrlCacher;
+import htsjdk.samtools.util.FileExtensions;
+import org.lorainelab.igb.Exception.IndexFileNotFoundException;
 import org.lorainelab.igb.cache.api.CacheStatus;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -44,6 +46,7 @@ import htsjdk.samtools.seekablestream.SeekableHTTPStream;
 import htsjdk.samtools.util.CloseableIterator;
 import htsjdk.samtools.SAMFileWriterFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.lorainelab.igb.util.IndexFileUtil;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -55,6 +58,8 @@ public final class BAM extends XAM implements Das2SliceSupport {
     public final static List<String> pref_list = new ArrayList<>();
     /*SAMFileReader was changed to SamReader to accommodate the changes in the new library.*/
     private SamReader mateReader;
+
+    private static final Integer BAM_EXTENSION_LENGTH = 3;
     
     //FYI: the variable reader is inherited from the parent class XAM.java
 
@@ -71,7 +76,7 @@ public final class BAM extends XAM implements Das2SliceSupport {
         strategyList.add(LoadStrategy.AUTOLOAD);
     }
 
-    private SamReader getSAMFileReader() throws IOException, BamIndexNotFoundException {
+    private SamReader getSAMFileReader() throws IOException, IndexFileNotFoundException {
 
         final SamReaderFactory factory = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT);
         SamInputResource resource = null;
@@ -82,7 +87,7 @@ public final class BAM extends XAM implements Das2SliceSupport {
             // BAM is file.
             //indexFile = new File(uri.)
             File f = new File(uri);
-            indexFile = findIndexFile(f);
+            indexFile = IndexFileUtil.findIndexFile(f, FileExtensions.BAI_INDEX, BAM_EXTENSION_LENGTH);
             resource = SamInputResource.of(f).index(indexFile);
             samFileReader = factory.open(resource);
         } else if (StringUtils.equals(scheme, HTTP_PROTOCOL_SCHEME) || StringUtils.equals(scheme, HTTPS_PROTOCOL_SCHEME)) {
@@ -134,21 +139,21 @@ public final class BAM extends XAM implements Das2SliceSupport {
         return samFileReader;
     }
 
-    private String getBamIndexUriStr(URI uri) throws BamIndexNotFoundException {
+    private String getBamIndexUriStr(URI uri) throws IndexFileNotFoundException {
         // BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
-        String baiUriStr = findIndexFile(uri.toString());
+        String baiUriStr = IndexFileUtil.findIndexFile(uri.toString(), FileExtensions.BAI_INDEX, BAM_EXTENSION_LENGTH);
         // Guess at the location of the .bai URL as BAM URL + ".bai"
         if (StringUtils.isBlank(baiUriStr)) {
             ErrorHandler.errorPanel("No BAM index file",
                     "Could not find URL of BAM index at " + uri.toString() + ". Please be sure this is in the same directory as the BAM file.", Level.SEVERE);
             this.isInitialized = false;
-            throw new BamIndexNotFoundException();
+            throw new IndexFileNotFoundException();
         }
         return baiUriStr;
     }
 
     @Override
-    public void init() throws IOException, BamIndexNotFoundException {
+    public void init() throws IOException, IndexFileNotFoundException {
         if (this.isInitialized) {
             return;
         }
@@ -378,61 +383,6 @@ public final class BAM extends XAM implements Das2SliceSupport {
         }
     }
 
-    /**
-     * Modified to look for both xxx.bai and xxx.bam.bai files in parent directory.
-     *
-     * @param bamfile
-     * @return file
-     * @throws org.lorainelab.igb.bam.BAM.BamIndexNotFoundException
-     */
-    public static File findIndexFile(File bamfile) throws BamIndexNotFoundException {
-        //look for xxx.bam.bai
-        try {
-            String path = bamfile.getPath();
-            File f = new File(path + ".bai");
-            if (f.exists()) {
-                return f;
-            }
-
-            //look for xxx.bai
-            path = path.substring(0, path.length() - 3) + "bai";
-            f = new File(path);
-            if (f.exists()) {
-                return f;
-            }
-        } catch (Exception e) {
-            if (!(e instanceof IOException)) {
-                Logger.getLogger(BAM.class.getName()).log(
-                        Level.WARNING, null, e);
-            }
-
-        }
-        throw new BamIndexNotFoundException();
-    }
-
-    public static String findIndexFile(String bamfile) throws BamIndexNotFoundException {
-        // Guess at the location of the .bai URL as BAM URL + ".bai"
-        try {
-            String baiUriStr = bamfile + ".bai";
-            if (LocalUrlCacher.isValidURL(baiUriStr)) {
-                return baiUriStr;
-            }
-
-            baiUriStr = bamfile.substring(0, bamfile.length() - 3) + "bai";
-
-            //look for xxx.bai
-            if (LocalUrlCacher.isValidURL(baiUriStr)) {
-                return baiUriStr;
-            }
-        } catch (Exception e) {
-            if (!(e instanceof IOException)) {
-                Logger.getLogger(BAM.class.getName()).log(
-                        Level.WARNING, null, e);
-            }
-        }
-        throw new BamIndexNotFoundException();
-    }
-
     public String getMimeType() {
         return "binary/BAM";
     }
@@ -509,18 +459,5 @@ public final class BAM extends XAM implements Das2SliceSupport {
             return null;
         }
 
-    }
-
-    public static class BamIndexNotFoundException extends Exception {
-
-        private static final long serialVersionUID = -3711705910840303497L;
-
-        public BamIndexNotFoundException() {
-            super("Could not find Bam Index File.");
-        }
-
-        public BamIndexNotFoundException(String message) {
-            super(message);
-        }
     }
 }

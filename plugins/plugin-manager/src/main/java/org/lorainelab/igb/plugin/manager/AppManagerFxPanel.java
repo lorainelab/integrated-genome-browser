@@ -19,6 +19,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -55,7 +57,6 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -79,13 +80,19 @@ public class AppManagerFxPanel extends JFXPanel {
     private static final Logger logger = LoggerFactory.getLogger(AppManagerFxPanel.class);
     private final String PLUGIN_INFO_TEMPLATE = "pluginInfoTemplate.html";
 
-    private AppManagerPanel appManagerPanel;
+    @FXML
     private WebView description;
+    @FXML
     private TextField search;
+    @FXML
     private ComboBox filterOptions;
+    @FXML
     private ListView<PluginListItemMetadata> listView;
+    @FXML
     private Button updateAllBtn;
+    @FXML
     private Button manageReposBtn;
+    @FXML
     private SplitPane splitPane;
     private VBox pane;
     private WebEngine webEngine;
@@ -196,8 +203,10 @@ public class AppManagerFxPanel extends JFXPanel {
         this.repositoryInfoManager = repositoryInfoManager;
     }
 
-    private void setupView() {
+    @FXML
+    private void initialize() {
         Font.loadFont(bundleContext.getBundle().getEntry("Roboto-Regular.ttf").toExternalForm(), 35);
+
         filterOptions.getItems().addAll(FilterOption.ALL_APPS, FilterOption.INSTALLED, FilterOption.UNINSTALLED);
         filterOptions.valueProperty().addListener(new ChangeListener<FilterOption>() {
             @Override
@@ -209,8 +218,8 @@ public class AppManagerFxPanel extends JFXPanel {
         refreshUpdateAllBtn();
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
-                        PluginListItemMetadata previousSelection,
-                        PluginListItemMetadata selectedPlugin) -> {
+                                PluginListItemMetadata previousSelection,
+                                PluginListItemMetadata selectedPlugin) -> {
                     if (selectedPlugin != null) {
                         updateWebContent();
                     }
@@ -218,10 +227,8 @@ public class AppManagerFxPanel extends JFXPanel {
         listView.setCellFactory((ListView<PluginListItemMetadata> l) -> new BuildCell());
         description.setContextMenuEnabled(false);
         webEngine = description.getEngine();
-        /*
-         * ~kiran: IGBF-1244- Creating instance variables to avoid garbage collection of the weak references
-         * causing subsequent accesses to the JavaScript objects to have no effect.
-         */
+        /*~kiran: IGBF-1244- Creating instance variables to avoid garbage collection of the weak references
+         causing subsequent accesses to the JavaScript objects to have no effect.*/
         jsBridge = new JSBridge();
         jsLogger = new JSLogger();
         description.getEngine().getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
@@ -234,7 +241,7 @@ public class AppManagerFxPanel extends JFXPanel {
                 }
             }
         });
-
+        
         String htmlUrl;
         if (bundleContext != null) {
             htmlUrl = bundleContext.getBundle().getEntry(PLUGIN_INFO_TEMPLATE).toExternalForm();
@@ -275,10 +282,21 @@ public class AppManagerFxPanel extends JFXPanel {
 
     private void init() {
         repoToColor = new HashMap<>();
-        appManagerPanel = new AppManagerPanel();
-        Scene scene = new Scene(appManagerPanel);
+        final URL resource = AppManagerFxPanel.class.getClassLoader().getResource("PluginConfigurationPanel.fxml");
+        FXMLLoader loader = new FXMLLoader(resource);
+        loader.setController(this);
+        try {
+            loader.load();
+        } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        pane = loader.getRoot();
+        Platform.runLater(this::createScene);
+    }
+
+    private void createScene() {
+        Scene scene = new Scene(pane);
         setScene(scene);
-        setupView();
     }
 
     @FXML
@@ -413,10 +431,7 @@ public class AppManagerFxPanel extends JFXPanel {
                         updateWebContent();
                         listView.setItems(listView.getItems());
                     });
-                } else {
-                    /*
-                     * ~kiran:IGBF-1108:Added to update UI if no network connection
-                     */
+                }else{ /*~kiran:IGBF-1108:Added to update UI if no network connection*/
                     Platform.runLater(() -> {
                         plugin.setIsBusy(Boolean.FALSE);
                         updateWebContent();
@@ -554,51 +569,14 @@ public class AppManagerFxPanel extends JFXPanel {
             updateWebContent();
         });
     }
-
     //IGBF-1608 : Update the installation status in the Local App Store
     /**
      * This method will return the list of Apps available in IGB to the Web App Manager
-     *
+     * 
      * @return ListView<PluginListItemMetaData>
      */
     public ListView<PluginListItemMetadata> getListView() {
         return listView;
     }
-
     //IGBF-1608 : end
-    class AppManagerPanel extends VBox {
-
-        public AppManagerPanel() {
-            listView = new ListView<>();
-            description = new WebView();
-            search = new TextField();
-            search.setPromptText("Search");
-            search.getStyleClass().add("searchTextField");
-            filterOptions = new ComboBox<>();
-            filterOptions.setPromptText("All Apps");
-            updateAllBtn = new Button("Update All");
-            manageReposBtn = new Button("Manage Repositories...");
-            splitPane = new SplitPane();
-            setPrefSize(885, 541);
-            HBox topPane = new HBox();
-            topPane.setMinHeight(46);
-            topPane.setPrefWidth(640);
-
-            Insets margin = new Insets(10);
-            HBox.setMargin(search, margin);
-            HBox.setMargin(filterOptions, margin);
-            HBox.setMargin(updateAllBtn, margin);
-            HBox.setMargin(manageReposBtn, margin);
-            VBox.setMargin(topPane, margin);
-
-            topPane.getChildren().addAll(search, filterOptions, new Pane(),
-                    updateAllBtn, manageReposBtn);
-            VBox.setMargin(topPane, new Insets(10));
-            splitPane.setDividerPositions(0.3488);
-            splitPane.setPrefHeight(305);
-            splitPane.setPrefWidth(640);
-            splitPane.getItems().addAll(listView, description);
-            getChildren().addAll(topPane, splitPane);
-        }
-    }
 }

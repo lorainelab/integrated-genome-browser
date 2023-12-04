@@ -252,6 +252,12 @@ public class CommonUtils {
         if (isNotBlank(developmentMode)) {
             return System.getProperty("developmentMode").equals("true");
         }
+
+        String envDevMode = System.getenv("IGB_DEV_MODE");
+        if (isNotBlank(envDevMode)) {
+            return envDevMode.equals("true");
+        }
+
         return false;
     }
 }

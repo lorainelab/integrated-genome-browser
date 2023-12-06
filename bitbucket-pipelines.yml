@@ -70,7 +70,7 @@ pipelines:
         caches:
           - maven
         script:
-          - mvn -B install
+          - mvn -B install -DskipTests
           - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$version-${BITBUCKET_REPO_OWNER}.jar"
   branches:

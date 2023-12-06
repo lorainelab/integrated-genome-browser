@@ -43,7 +43,7 @@ definitions:
             - curl -s -S -L -O https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/lorainelab/iipc/src/master/env.sh
             - source env.sh
             - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-            - mvn install -P release-bitbucket-pipelines
+            - mvn install -P release-bitbucket-pipelines -DskipTests
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=$BITBUCKET_BRANCH.jar"
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-unix-$version.sh; filename=$BITBUCKET_BRANCH.sh"
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-x64-$version.exe; filename=$BITBUCKET_BRANCH.exe"

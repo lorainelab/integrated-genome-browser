@@ -31,7 +31,7 @@
 #
 
 image:
-  name: lorainelab/igb-maven-install4j:I4J9-jre-1.8.0_332
+  name: hillrunner2008/igb-maven-install4j:I4J10-jre-21.0.1
 
 definitions:
   steps:
@@ -74,7 +74,7 @@ pipelines:
           - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$version-${BITBUCKET_REPO_OWNER}.jar"
   branches:
-    IGBF-*: 
+    main-JDK21: 
       - step: *build-installers-for-dev
     release-*:
       - step: *build-installers-and-artifacts-for-release

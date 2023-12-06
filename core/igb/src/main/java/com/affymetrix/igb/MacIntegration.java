@@ -1,12 +1,10 @@
 package com.affymetrix.igb;
 
-import com.affymetrix.igb.action.AboutIGBAction;
-import com.affymetrix.igb.action.ExitAction;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.Image;
-import java.lang.reflect.InvocationHandler;
+import java.awt.desktop.PreferencesEvent;
+import java.awt.desktop.PreferencesHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -19,7 +17,7 @@ import javax.swing.JFrame;
  * @author sgblanch
  * @version $Id: MacIntegration.java 11085 2012-04-13 16:09:40Z lfrohman $
  */
-public class MacIntegration {
+public class MacIntegration implements PreferencesHandler {
 
     /**
      * private instance of MacIntegration for singleton pattern
@@ -56,19 +54,10 @@ public class MacIntegration {
             Method getApplication = applicationClass.getDeclaredMethod("getApplication");
             application = getApplication.invoke(null);
 
-            Method setEnabledPreferencesMenu = applicationClass.getDeclaredMethod("setEnabledPreferencesMenu", Boolean.TYPE);
-            setEnabledPreferencesMenu.invoke(application, true);
-
-            Method addApplicationListener = applicationClass.getDeclaredMethod(
-                    "addApplicationListener",
-                    Class.forName("com.apple.eawt.ApplicationListener"));
-
-            Class<?> applicationAdapterClass = Class.forName("com.apple.eawt.ApplicationAdapter");
-            Object proxy = ApplicationListenerProxy.newInstance(applicationAdapterClass.newInstance());
-            addApplicationListener.invoke(application, proxy);
+            Method setEnabledPreferencesMenu = applicationClass.getDeclaredMethod("setPreferencesHandler", PreferencesHandler.class);
+            setEnabledPreferencesMenu.invoke(application, this);
 
         } catch (Exception ex) {
-            ourLogger.log(Level.SEVERE, "?", ex);
         }
     }
 
@@ -86,54 +75,11 @@ public class MacIntegration {
         }
     }
 
-}
-
-class ApplicationListenerProxy implements InvocationHandler {
-
-    private static final Logger ourLogger
-            = Logger.getLogger(ApplicationListenerProxy.class.getPackage().getName());
-
-    public static Object newInstance(Object o) {
-        return Proxy.newProxyInstance(
-                o.getClass().getClassLoader(),
-                o.getClass().getInterfaces(),
-                new ApplicationListenerProxy(o));
-    }
-    private final Object o;
-
-    private ApplicationListenerProxy(Object o) {
-        this.o = o;
-    }
-
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Object result = null;
-        try {
-            switch (method.getName()) {
-                case "handleAbout": {
-                    AboutIGBAction a = AboutIGBAction.getAction();
-                    a.actionPerformed(null);
-                    Method setHandled = Class.forName("com.apple.eawt.ApplicationEvent").getDeclaredMethod("setHandled", Boolean.TYPE);
-                    setHandled.invoke(args[0], true);
-                    break;
-                }
-                case "handleQuit": {
-                    ExitAction a = ExitAction.getAction();
-                    a.actionPerformed(null);
-                    break;
-                }
-                case "handlePreferences":
-                    PreferencesPanel pv = PreferencesPanel.getSingleton();
-                    JFrame f = pv.getFrame();
-                    f.setVisible(true);
-                    break;
-                default:
-                    result = method.invoke(o, args);
-                    break;
-            }
-        } catch (Exception ex) {
-            ourLogger.log(Level.SEVERE, "?", ex);
-        }
-        return result;
+    public void handlePreferences(PreferencesEvent e) {
+        PreferencesPanel pv = PreferencesPanel.getSingleton();
+        JFrame f = pv.getFrame();
+        f.setVisible(true);
     }
+
 }

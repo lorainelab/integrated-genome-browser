@@ -195,22 +195,35 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
             }
         } else if (IS_LINUX) {
             try {
-                // If this is Windows and Nimbus is not installed, then use the Windows look and feel.
                 Class<?> cl = Class.forName(LookAndFeelFactory.METAL_LNF);
                 LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
 
                 if (look_and_feel.isSupportedLookAndFeel()) {
                     LookAndFeelFactory.installJideExtension();
-                    // Is there a better way to do it? HV 03/02/12
                     look_and_feel.getDefaults().entrySet().stream().forEach(entry -> {
                         UIManager.getDefaults().put(entry.getKey(), entry.getValue());
                     });
                     UIManager.setLookAndFeel(look_and_feel);
                 }
             } catch (Exception ulfe) {
-                // Windows look and feel is only supported on Windows, and only in
-                // some version of the jre.  That is perfectly ok.
             }
+
+        } else if (IS_MAC) {
+            try {
+                Class<?> cl = Class.forName(LookAndFeelFactory.AQUA_LNF);
+                LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
+
+                UIManager.setLookAndFeel(look_and_feel);
+                if (look_and_feel.isSupportedLookAndFeel()) {
+                    LookAndFeelFactory.installJideExtension();
+                    look_and_feel.getDefaults().entrySet().stream().forEach(entry -> {
+                        UIManager.getDefaults().put(entry.getKey(), entry.getValue());
+                    });
+                }
+            } catch (Exception ex) {
+                logger.warn(ex.getMessage(), ex);
+            }
+
         }
 
     }
@@ -305,10 +318,10 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
         MenuUtil.setAccelerators(
                 new AbstractMap<String, KeyStroke>() {
 
-                    @Override
-                    public Set<java.util.Map.Entry<String, KeyStroke>> entrySet() {
-                        return null;
-                    }
+            @Override
+            public Set<java.util.Map.Entry<String, KeyStroke>> entrySet() {
+                return null;
+            }
 
             @Override
             public KeyStroke get(Object action_command) {
@@ -351,7 +364,8 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
                 return LocalUrlCacher.getInputStream(relativeToAbsolute(fileName).toURL());
             }
 
-            /* This method is used to convert the given file path from relative to absolute.
+            /*
+             * This method is used to convert the given file path from relative to absolute.
              */
             private URI relativeToAbsolute(String path) throws URISyntaxException {
                 if (!(path.startsWith(FILE_PROTOCOL)) && !(path.startsWith(HTTP_PROTOCOL)) && !(path.startsWith(HTTPS_PROTOCOL)) && !(path.startsWith(FTP_PROTOCOL))) {
@@ -360,7 +374,8 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
                 return new URI(path);
             }
 
-            /*Returns the File object at given path
+            /*
+             * Returns the File object at given path
              */
             private File getAbsoluteFile(String path) {
                 return new File(path).getAbsoluteFile();

@@ -208,23 +208,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
             } catch (Exception ulfe) {
             }
 
-        } else if (IS_MAC) {
-            try {
-                Class<?> cl = Class.forName(LookAndFeelFactory.AQUA_LNF);
-                LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
-
-                UIManager.setLookAndFeel(look_and_feel);
-                if (look_and_feel.isSupportedLookAndFeel()) {
-                    LookAndFeelFactory.installJideExtension();
-                    look_and_feel.getDefaults().entrySet().stream().forEach(entry -> {
-                        UIManager.getDefaults().put(entry.getKey(), entry.getValue());
-                    });
-                }
-            } catch (Exception ex) {
-                logger.warn(ex.getMessage(), ex);
-            }
-
-        }
+        } 
 
     }
 

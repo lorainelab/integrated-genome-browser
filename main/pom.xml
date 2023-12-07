@@ -379,12 +379,6 @@
         </dependency>
         <!--End of plugin module dependencies-->
         <dependency>
-            <groupId>com.jidesoft</groupId>
-            <artifactId>jide-ultimate</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <!--End of plugin module dependencies-->
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <scope>compile</scope>

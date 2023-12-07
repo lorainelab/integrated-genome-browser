@@ -1,6 +1,7 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometry.event.SeqMapRefreshed;
+import com.affymetrix.igb.swing.jide.ColorComboBox;
 import com.affymetrix.igb.tiers.TrackConstants;
 import javax.swing.JPanel;
 
@@ -372,21 +373,21 @@ public class TrackDefaultViewGUI extends JPanel implements SeqMapRefreshed {
     private javax.swing.JLabel TrackTypeNameLabel;
     private javax.swing.JButton addTrackDefaultButton;
     private javax.swing.JCheckBox arrowCheckBox;
-    private com.jidesoft.combobox.ColorComboBox bgColorComboBox;
+    private ColorComboBox bgColorComboBox;
     private javax.swing.JLabel bgLabel;
     private javax.swing.JCheckBox collapsedCheckBox;
     private javax.swing.JCheckBox colorCheckBox;
     private javax.swing.JButton deleteTrackDefaultButton;
-    private com.jidesoft.combobox.ColorComboBox fgColorComboBox;
+    private ColorComboBox fgColorComboBox;
     private javax.swing.JLabel fgLabel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox labelFieldComboBox;
     private javax.swing.JLabel labelFieldLabel;
     private javax.swing.JLabel maxDepthLabel;
     private javax.swing.JTextField maxDepthTextField;
-    private com.jidesoft.combobox.ColorComboBox negativeColorComboBox;
+    private ColorComboBox negativeColorComboBox;
     private javax.swing.JLabel negativeLabel;
-    private com.jidesoft.combobox.ColorComboBox possitiveColorComboBox;
+    private ColorComboBox possitiveColorComboBox;
     private javax.swing.JLabel possitiveLabel;
     private javax.swing.JPanel propertiesPanel;
     private javax.swing.JPanel selectTrackDefaultPanel;

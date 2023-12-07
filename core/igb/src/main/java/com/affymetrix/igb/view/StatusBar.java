@@ -10,7 +10,8 @@ import com.affymetrix.genometry.util.StatusAlert;
 import com.affymetrix.igb.action.CancelAllAction;
 import com.affymetrix.igb.action.ThreadHandlerAction;
 import com.affymetrix.igb.swing.JRPButton;
-import com.jidesoft.status.MemoryStatusBarItem;
+import com.affymetrix.igb.swing.jide.MemoryStatusBarItem;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;

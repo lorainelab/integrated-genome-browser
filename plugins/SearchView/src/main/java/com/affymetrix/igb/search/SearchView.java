@@ -1,5 +1,6 @@
 package com.affymetrix.igb.search;
 
+import com.affymetrix.igb.swing.jide.ListDataIntelliHints;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -28,8 +29,6 @@ import com.affymetrix.igb.swing.JRPComboBoxWithSingleListener;
 import com.affymetrix.igb.swing.JRPTable;
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.igb.swing.MenuUtil;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import com.jidesoft.hints.ListDataIntelliHints;
 import org.lorainelab.igb.services.IgbService;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.SEARCH_VIEW_TAB;
 import org.lorainelab.igb.services.search.ISearchHints;

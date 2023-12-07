@@ -1,7 +1,6 @@
 package com.affymetrix.igb.swing.jide;
 
 import com.affymetrix.genoviz.swing.PartialLineBorder;
-import com.jidesoft.grid.JideTable;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -13,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIDefaults;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
@@ -25,7 +25,7 @@ import javax.swing.table.TableModel;
  *
  * @author david, modified by nick
  */
-public class StyledJTable extends JideTable {
+public class StyledJTable extends JTable {
 
     private static final long serialVersionUID = 1L;
     private Color selectionBackgroundColor, selectionForegroundColor,
@@ -72,9 +72,6 @@ public class StyledJTable extends JideTable {
 
     @SuppressWarnings("deprecation")
     private void init() {
-        // Jidesoft table configuration methods
-        setAutoResizeMode(AUTO_RESIZE_LAST_COLUMN_FILL);
-        setFillsGrids(true);
 
         // Java Default Table Configuration methods
         setCellSelectionEnabled(true);
@@ -168,4 +165,6 @@ public class StyledJTable extends JideTable {
             tce.cancelCellEditing();
         }
     }
+
+
 }

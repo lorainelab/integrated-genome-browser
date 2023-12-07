@@ -102,7 +102,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="labelSizeComboBoxActionPerformed"/>
           </Events>
         </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="foregroundColorComboBox">
+        <Component class="ColorComboBox" name="foregroundColorComboBox">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -122,7 +122,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="foregroundColorComboBoxActionPerformed"/>
           </Events>
         </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="backgroundColorComboBox">
+        <Component class="ColorComboBox" name="backgroundColorComboBox">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -142,7 +142,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="backgroundColorComboBoxActionPerformed"/>
           </Events>
         </Component>
-        <Component class="com.jidesoft.combobox.ColorComboBox" name="labelColorComboBox">
+        <Component class="ColorComboBox" name="labelColorComboBox">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">

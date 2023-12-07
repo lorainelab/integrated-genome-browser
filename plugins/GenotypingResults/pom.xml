@@ -81,6 +81,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-services</artifactId>
             <scope>compile</scope>

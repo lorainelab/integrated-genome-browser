@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="10.0.6" transformSequenceNumber="10">
-  <application name="Integrated Genome Browser" applicationId="1717-8724-7098-6386" mediaDir="${compiler:projectHomeDirectory}/distribution/build" mediaFilePattern="${compiler:sys.shortName}-${compiler:sys.platform}-${compiler:sys.version}" lzmaCompression="true" shrinkRuntime="false" shortName="IGB" publisher="Loraine Lab" publisherWeb="https://bioviz.org" version="${compiler:igbVersion}" allPathsRelative="true" convertDotsToUnderscores="false" macVolumeId="a1638eb14df51528" javaMinVersion="21" jdkMode="runtimeJre">
+  <application name="Integrated Genome Browser" applicationId="1717-8724-7098-6386" mediaDir="${compiler:projectHomeDirectory}/distribution/build" mediaFilePattern="${compiler:sys.shortName}-${compiler:sys.jreBundleArch}-${compiler:sys.version}" lzmaCompression="true" shrinkRuntime="false" shortName="IGB" publisher="Loraine Lab" publisherWeb="https://bioviz.org" version="${compiler:igbVersion}" allPathsRelative="true" convertDotsToUnderscores="false" macVolumeId="a1638eb14df51528" javaMinVersion="21" jdkMode="runtimeJre">
     <variables>
       <variable name="projectHomeDirectory" value=".." description="Path to the source control root of the IGB project, relative to main" />
       <variable name="igbVersion" value="9.1.12" />
@@ -16,7 +16,6 @@
     <entries>
       <dirEntry mountPoint="26" file="${compiler:projectHomeDirectory}" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" subDirectory="integrated-genome-browser">
         <exclude>
-          <entry location=".gitignore" />
           <entry location="nbactions-development.xml" />
           <entry location="run_igb.bat" />
           <entry location=".git" />
@@ -33,6 +32,8 @@
           <entry location="nb-configuration.xml" />
           <entry location="pom.xml" />
           <entry location="run_igb.sh" />
+          <entry location=".gitignore" />
+          <entry location="env.sh" />
         </exclude>
       </dirEntry>
     </entries>
@@ -1149,7 +1150,7 @@ context.goForward(1, true, true);
       <jreBundle jreBundleSource="preCreated" includedJre="macos-aarch64-21.0.1" />
     </macosFolder>
   </mediaSets>
-  <buildIds buildAll="false">
+  <buildIds>
     <mediaSet refId="25" />
   </buildIds>
   <buildOptions verbose="true" faster="true" />

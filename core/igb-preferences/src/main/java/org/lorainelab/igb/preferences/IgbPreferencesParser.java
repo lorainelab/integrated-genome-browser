@@ -14,14 +14,10 @@ import java.util.Optional;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.wiring.BundleWiring;
 /**
  *
  * @author dcnorris

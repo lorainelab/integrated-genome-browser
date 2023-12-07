@@ -17,7 +17,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
-        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version> 
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
         <!-- Dependency versions controlled via properties -->
@@ -85,6 +85,7 @@
         <org.apache.felix.http.servlet-api.version>2.1.0</org.apache.felix.http.servlet-api.version>
         <felixJettyVersion>5.1.4</felixJettyVersion>
         <commonsFileUpload>1.5</commonsFileUpload>
+        <lombokVersion>1.18.20</lombokVersion>
     </properties>
     <repositories>
         <repository>
@@ -125,7 +126,8 @@
         <module>core/weblinks</module>
         <module>core/quickload</module>
         <module>core/das</module>
-        <!--<module>core/das2</module>-->
+        <module>core/ucsc-rest-api-service</module>
+       <!--<module>core/das2</module>-->
         <module>core/frameManager</module>
         <module>core/synonym-lookup</module>
         <module>core/igb-javafx-util</module>
@@ -238,7 +240,7 @@
             </activation>
             <!-- passed to mvn using environment variables, e.g., mvn -D install4j.macKeystorePassword=${MACKPW} -->
             <properties>
-                <install4j.home>${INSTALL4J_HOME}</install4j.home> <!-- exists in Docker image --> 
+                <install4j.home>${INSTALL4J_HOME}</install4j.home> <!-- exists in Docker image -->
                 <install4j.licenseKey>${INSTALL4Jv10_LICENSE}</install4j.licenseKey>
                 <install4j.winKeystorePassword>${WIN_KEYSTORE_PASSWORD}</install4j.winKeystorePassword>
                 <install4j.macKeystorePassword>${MAC_KEYSTORE_PASSWORD}</install4j.macKeystorePassword>
@@ -251,14 +253,14 @@
             <id>release-snapshots</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
-            </activation>            
+            </activation>
             <distributionManagement>
                 <repository>
                     <id>igb-dev</id>
                     <name>igb-dev</name>
                     <url>https://nexus.bioviz.org/repository/igb-dev/</url>
                 </repository>
-            </distributionManagement> 
+            </distributionManagement>
         </profile>
         <profile>
             <id>release-to-nexus.bioviz.org</id>
@@ -352,6 +354,12 @@
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>das</artifactId>
+                <version>${project.parent.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.lorainelab.igb</groupId>
+                <artifactId>ucsc-rest-api-service</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -683,6 +691,12 @@
                 <groupId>org.tukaani</groupId>
                 <artifactId>xz</artifactId>
                 <version>${xzVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombokVersion}</version>
                 <scope>provided</scope>
             </dependency>
 

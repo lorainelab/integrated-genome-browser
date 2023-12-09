@@ -170,6 +170,11 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.osgi</groupId>
+                                    <artifactId>org.osgi.service.component</artifactId>
+                                    <version>${org.osgi.service.component.annotations-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.osgi</groupId>
                                     <artifactId>org.osgi.service.component.annotations</artifactId>
                                     <version>${org.osgi.service.component.annotations-version}</version>
                                 </artifactItem>
@@ -251,7 +256,7 @@
                                 <!-- Start of development only bundles (i.e. they will not be included in main pom for igb_exe.jar)-->
                                 <artifactItem>
                                     <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.http.bundle</artifactId>
+                                    <artifactId>org.apache.felix.http.base</artifactId>
                                     <version>${felix-http-version}</version>
                                 </artifactItem>
                                 <artifactItem>
@@ -318,7 +323,7 @@
                         <Import-Package>*;resolution:=optional</Import-Package>
                         <Private-Package>*</Private-Package>
                         <Export-Package>
-                           com.sun.xml.txw2.*;version="4.0.1",
+                            com.sun.xml.txw2.*;version="4.0.1",
                             affymetrix.calvin.*,
                             affymetrix.fusion,
                             affymetrix.fusion.*,

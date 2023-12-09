@@ -112,7 +112,6 @@ public class AppManagerFxPanel extends JFXPanel {
     private BundleActionManager bundleActionManager;
     private RepositoryInfoManager repositoryInfoManager;
 
-    private JSBridge jsBridge;
     private JSLogger jsLogger;
 
     private void refreshUpdateAllBtn() {
@@ -218,8 +217,8 @@ public class AppManagerFxPanel extends JFXPanel {
         refreshUpdateAllBtn();
         listView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends PluginListItemMetadata> observable,
-                                PluginListItemMetadata previousSelection,
-                                PluginListItemMetadata selectedPlugin) -> {
+                        PluginListItemMetadata previousSelection,
+                        PluginListItemMetadata selectedPlugin) -> {
                     if (selectedPlugin != null) {
                         updateWebContent();
                     }
@@ -227,21 +226,24 @@ public class AppManagerFxPanel extends JFXPanel {
         listView.setCellFactory((ListView<PluginListItemMetadata> l) -> new BuildCell());
         description.setContextMenuEnabled(false);
         webEngine = description.getEngine();
-        /*~kiran: IGBF-1244- Creating instance variables to avoid garbage collection of the weak references
-         causing subsequent accesses to the JavaScript objects to have no effect.*/
-        jsBridge = new JSBridge();
+        /*
+         * ~kiran: IGBF-1244- Creating instance variables to avoid garbage collection of the weak references
+         * causing subsequent accesses to the JavaScript objects to have no effect.
+         */
         jsLogger = new JSLogger();
+        AppManagerFxPanel appManager = this;
         description.getEngine().getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
             @Override
             public void changed(ObservableValue ov, State oldState, State newState) {
                 if (newState == State.SUCCEEDED) {
                     JSObject jsobj = (JSObject) description.getEngine().executeScript("window");
-                    jsobj.setMember("Bridge", jsBridge);
                     jsobj.setMember("logger", jsLogger);
+                    jsobj.setMember("javaAppManager", appManager);
+                    addCustomEventListeners();
                 }
             }
         });
-        
+
         String htmlUrl;
         if (bundleContext != null) {
             htmlUrl = bundleContext.getBundle().getEntry(PLUGIN_INFO_TEMPLATE).toExternalForm();
@@ -252,6 +254,107 @@ public class AppManagerFxPanel extends JFXPanel {
 
         search.textProperty().addListener((observable, oldValue, newValue) -> {
             changeSearchFilter(newValue);
+        });
+    }
+
+    private void addCustomEventListeners() {
+        webEngine.executeScript(
+                "document.addEventListener('pluginInstallEvent', function(e) {"
+                + "    javaAppManager.handlePluginInstallEvent(e.detail.action);"
+                + "});"
+                + "document.addEventListener('pluginUpdateEvent', function(e) {"
+                + "    javaAppManager.handlePluginUpdateEvent();"
+                + "});"
+        );
+    }
+
+    public void handlePluginInstallEvent(String action) {
+        logger.info("Received plugin install event. Action: " + action);
+        Platform.runLater(() -> {
+            final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
+            if (plugin == null) {
+                logger.warn("No plugin selected for action: " + action);
+                return; // No plugin selected, or handle this scenario appropriately
+            }
+
+            if ("install".equals(action)) {
+                logger.info("Installing plugin: " + plugin.getPluginName().getValue());
+                installPlugin(plugin);
+            } else if ("uninstall".equals(action)) {
+                logger.info("Uninstalling plugin: " + plugin.getPluginName().getValue());
+                uninstallPlugin(plugin);
+            }
+        });
+    }
+
+    private void installPlugin(PluginListItemMetadata plugin) {
+        if (plugin == null) {
+            Platform.runLater(() -> {
+                updateWebContent();
+            });
+            return;
+        }
+        final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
+            if (t) {
+                Platform.runLater(() -> {
+                    plugin.setIsInstalled(Boolean.TRUE);
+                    plugin.setIsBusy(Boolean.FALSE);
+                    updateWebContent();
+                    listView.setItems(listView.getItems());
+                });
+            } else {
+                /*
+                 * ~kiran:IGBF-1108:Added to update UI if no network connection
+                 */
+                Platform.runLater(() -> {
+                    plugin.setIsBusy(Boolean.FALSE);
+                    updateWebContent();
+                });
+            }
+            return Void.TYPE;
+        };
+        plugin.setIsBusy(Boolean.TRUE);
+        updateWebContent();
+        bundleActionManager.installBundle(plugin, functionCallback);
+    }
+
+    private void uninstallPlugin(PluginListItemMetadata plugin) {
+        logger.info("UninstallPlugin method called for: " + plugin.getPluginName().getValue());
+        if (plugin == null) {
+            logger.error("Plugin is null in uninstallPlugin method");
+            Platform.runLater(() -> {
+                updateWebContent();
+            });
+            return;
+        }
+        final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
+            if (t) {
+                logger.info("Uninstallation successful for plugin: " + plugin.getPluginName().getValue());
+                Platform.runLater(() -> {
+                    plugin.setIsBusy(Boolean.FALSE);
+                    plugin.setIsInstalled(Boolean.FALSE);
+                    plugin.setIsUpdatable(Boolean.FALSE);
+                    updateWebContent();
+                });
+            } else {
+                logger.warn("Uninstallation failed for plugin: " + plugin.getPluginName().getValue());
+            }
+            return Void.TYPE;
+        };
+        Platform.runLater(() -> {
+            plugin.setIsBusy(Boolean.TRUE);
+            updateWebContent();
+        });
+        bundleActionManager.uninstallBundle(plugin, functionCallback);
+    }
+
+    public void handlePluginUpdateEvent() {
+        Platform.runLater(() -> {
+            final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
+            if (plugin == null) {
+                return;
+            }
+            updatePlugin(plugin);
         });
     }
 
@@ -413,87 +516,18 @@ public class AppManagerFxPanel extends JFXPanel {
         }
     }
 
-    public class JSBridge {
-
-        public void installPlugin() {
-            final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            if (plugin == null) {
-                Platform.runLater(() -> {
-                    updateWebContent();
+    public void openWebpage(String uriString) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            if (StringUtils.isNotBlank(uriString)) {
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        URI uri = new URI(uriString);
+                        desktop.browse(uri);
+                    } catch (IOException | URISyntaxException ex) {
+                        logger.error(ex.getMessage(), ex);
+                    }
                 });
-                return;
-            }
-            final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
-                if (t) {
-                    Platform.runLater(() -> {
-                        plugin.setIsInstalled(Boolean.TRUE);
-                        plugin.setIsBusy(Boolean.FALSE);
-                        updateWebContent();
-                        listView.setItems(listView.getItems());
-                    });
-                }else{ /*~kiran:IGBF-1108:Added to update UI if no network connection*/
-                    Platform.runLater(() -> {
-                        plugin.setIsBusy(Boolean.FALSE);
-                        updateWebContent();
-                    });
-                }
-                return Void.TYPE;
-            };
-            plugin.setIsBusy(Boolean.TRUE);
-            updateWebContent();
-            bundleActionManager.installBundle(plugin, functionCallback);
-        }
-
-        public void handleUnInstallClick() {
-            final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            if (plugin == null) {
-                Platform.runLater(() -> {
-                    updateWebContent();
-                });
-                return;
-            }
-            final Function<Boolean, ? extends Class<Void>> functionCallback = (Boolean t) -> {
-                if (t) {
-                    Platform.runLater(() -> {
-                        plugin.setIsBusy(Boolean.FALSE);
-                        plugin.setIsInstalled(Boolean.FALSE);
-                        plugin.setIsUpdatable(Boolean.FALSE);
-                        updateWebContent();
-                    });
-                }
-                return Void.TYPE;
-            };
-            Platform.runLater(() -> {
-                plugin.setIsBusy(Boolean.TRUE);
-                updateWebContent();
-            });
-            bundleActionManager.uninstallBundle(plugin, functionCallback);
-        }
-
-        public void handleUpdateClick() {
-            final PluginListItemMetadata plugin = listView.getSelectionModel().getSelectedItem();
-            if (plugin == null) {
-                Platform.runLater(() -> {
-                    updateWebContent();
-                });
-                return;
-            }
-            updatePlugin(plugin);
-        }
-
-        public void openWebpage(String uriString) {
-            Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-            if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-                if (StringUtils.isNotBlank(uriString)) {
-                    SwingUtilities.invokeLater(() -> {
-                        try {
-                            URI uri = new URI(uriString);
-                            desktop.browse(uri);
-                        } catch (IOException | URISyntaxException ex) {
-                            logger.error(ex.getMessage(), ex);
-                        }
-                    });
-                }
             }
         }
     }
@@ -569,10 +603,11 @@ public class AppManagerFxPanel extends JFXPanel {
             updateWebContent();
         });
     }
+
     //IGBF-1608 : Update the installation status in the Local App Store
     /**
      * This method will return the list of Apps available in IGB to the Web App Manager
-     * 
+     *
      * @return ListView<PluginListItemMetaData>
      */
     public ListView<PluginListItemMetadata> getListView() {

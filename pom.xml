@@ -32,18 +32,17 @@
         <commons-net.version>3.9.0</commons-net.version>
         <commons-fileupload-version>1.3.1</commons-fileupload-version>
         <genovizVersion>1.1.9</genovizVersion>
-        <felixMainVersion>6.0.3</felixMainVersion>
-        <felix-scr-version>2.0.14</felix-scr-version>
-        <felix-http-version>3.0.0</felix-http-version>
+        <felixMainVersion>7.0.5</felixMainVersion>
+        <felix-scr-version>2.2.6</felix-scr-version>
+        <felix-http-version>5.1.2</felix-http-version>
         <felix-configadmin-version>1.9.26</felix-configadmin-version>
         <felix-eventadmin-version>1.6.4</felix-eventadmin-version>   
         <felix-metatype-version>1.2.4</felix-metatype-version>
         <felix-webconsole-version>4.8.8</felix-webconsole-version>
         <felix-bundlerepository-version>2.0.10</felix-bundlerepository-version>
         <org.osgi.service.log-version>1.5.0</org.osgi.service.log-version>
-        <org.osgi.service.component.annotations-version>1.3.0</org.osgi.service.component.annotations-version>
+        <org.osgi.service.component.annotations-version>1.5.1</org.osgi.service.component.annotations-version>
         <bindlib-version>6.4.0</bindlib-version>
-        <osgiObrServiceVersion>1.0.2</osgiObrServiceVersion>
         <bigWigVersion>2.0.1</bigWigVersion>
         <commonsCompressVersion>1.23.0</commonsCompressVersion>
         <commonsCodecVersion>1.15</commonsCodecVersion>
@@ -84,7 +83,7 @@
         <luceneCoreVersion>9.5.0</luceneCoreVersion>
         <tangoIconVersion>0.8.90</tangoIconVersion>
         <org.apache.felix.http.servlet-api.version>2.1.0</org.apache.felix.http.servlet-api.version>
-        <felixJettyVersion>4.2.12</felixJettyVersion>
+        <felixJettyVersion>5.1.4</felixJettyVersion>
         <commonsFileUpload>1.5</commonsFileUpload>
     </properties>
     <repositories>
@@ -698,7 +697,7 @@
             
             <dependency>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.http.bundle</artifactId>
+                <artifactId>org.apache.felix.http.base</artifactId>
                 <version>${felix-http-version}</version>
             </dependency>
             <dependency>
@@ -734,6 +733,21 @@
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.service.component.annotations</artifactId>
+                <version>${org.osgi.service.component.annotations-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.util.function</artifactId>
+                <version>1.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.util.promise</artifactId>
+                <version>1.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.service.component</artifactId>
                 <version>${org.osgi.service.component.annotations-version}</version>
             </dependency>
             <dependency>
@@ -930,11 +944,6 @@
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-core</artifactId>
-                <version>4.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>txw2</artifactId>
                 <version>4.0.4</version>
             </dependency>
@@ -947,6 +956,11 @@
                 <groupId>com.sun.xml.fastinfoset</groupId>
                 <artifactId>FastInfoset</artifactId>
                 <version>2.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.formdev</groupId>
+                <artifactId>flatlaf</artifactId>
+                <version>3.2.5</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

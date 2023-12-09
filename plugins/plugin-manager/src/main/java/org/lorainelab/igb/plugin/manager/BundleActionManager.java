@@ -17,6 +17,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
@@ -95,37 +96,38 @@ public class BundleActionManager {
             return true;
         });
     }
-    /*~Kiran:IGBF-1108:Added this method as we cannot believe in InetAddress.isReachable method.*/
-    private static boolean isInternetReachable(URL url)
-    {   
+
+    /*
+     * ~Kiran:IGBF-1108:Added this method as we cannot believe in InetAddress.isReachable method.
+     */
+    private static boolean isInternetReachable(URL url) {
         try {
             //Do this test only if it is http or https url skip for local url's
-            if(url.toString().toLowerCase().startsWith("http")){
+            if (url.toString().toLowerCase().startsWith("http")) {
                 //open a connection to that source
                 /*
-                Author : Sameer Shanbhag
-                IGBF-2164
-                URL Input to this function might have the link to jar which will 
-                increase download count for that app (Refer to Issue for more 
-                information)
-                */
+                 * Author : Sameer Shanbhag
+                 * IGBF-2164
+                 * URL Input to this function might have the link to jar which will
+                 * increase download count for that app (Refer to Issue for more
+                 * information)
+                 */
                 // Get the Domain Name from the URL
                 String urlHost = url.getAuthority();
                 String urlProtocol = url.getProtocol();
                 // Build URL to check the connection
                 URL connectURL = new URL(urlProtocol + "://" + urlHost);
-                HttpURLConnection urlConnect = (HttpURLConnection)connectURL.openConnection();
+                HttpURLConnection urlConnect = (HttpURLConnection) connectURL.openConnection();
                 //try connecting to the source, If there is no connection, this line will fail and throw exception
                 Object objData = urlConnect.getContent();
             }
         } catch (UnknownHostException ex) {
             logger.error(ex.getMessage());
             return false;
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             logger.error(ex.getMessage());
             return false;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             logger.error(ex.getMessage());
             return false;
         }
@@ -137,13 +139,16 @@ public class BundleActionManager {
         Resource resource = ((ResourceWrapper) bundle).getResource();
         CompletableFuture.supplyAsync(new Supplier<Boolean>() {
             boolean tryToRecover = true;
+
             @Override
             public Boolean get() {
                 try {
-                    /*~Kiran:IGBF-1108:Added to make sure an active internet connection exists*/
-                    if (isInternetReachable(new URL(resource.getURI()))){
+                    /*
+                     * ~Kiran:IGBF-1108:Added to make sure an active internet connection exists
+                     */
+                    if (isInternetReachable(new URL(resource.getURI()))) {
                         installBundle(resource, bundle);
-                    }else{
+                    } else {
                         return false;
                     }
                 } catch (IllegalStateException ex) {
@@ -186,23 +191,46 @@ public class BundleActionManager {
     }
 
     public void uninstallBundle(final PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {
+        logger.info("Starting uninstallation process for plugin: " + plugin.getPluginName().getValue());
+
         CompletableFuture.supplyAsync(() -> {
             Bundle bundle = plugin.getBundle();
+            String symbolicName = bundle.getSymbolicName(); 
+
             try {
-                for (Bundle b : Arrays.asList(bundleContext.getBundles())) {
-                    if (b.getSymbolicName().equals(bundle.getSymbolicName())) {
-                        if (b.getState() == Bundle.ACTIVE) {
-                            b.uninstall();
-                            logger.info("Uninstalled app: " + b.getSymbolicName() + "," + b.getVersion());
+                final List<Bundle> currentBundlesInRuntime = Arrays.asList(bundleContext.getBundles());
+                boolean foundBundle = false;
+                for (Bundle b : currentBundlesInRuntime) {
+                    String bundleSymbolicName = b != null ? b.getSymbolicName() : null;
+
+                    if (symbolicName != null && bundleSymbolicName != null) {
+                        logger.info(bundleSymbolicName + " : " + symbolicName);
+                        if (symbolicName.equals(bundleSymbolicName)) {
+                            foundBundle = true;
+                            logger.info("Found matching bundle for uninstallation: " + bundleSymbolicName + ", State: " + b.getState());
+
+                            if (b.getState() == Bundle.ACTIVE) {
+                                b.uninstall();
+                                logger.info("Uninstalled app: " + bundleSymbolicName + ", Version: " + b.getVersion());
+                            } else {
+                                logger.warn("Bundle is not active and cannot be uninstalled: " + bundleSymbolicName + ", State: " + b.getState());
+                            }
                         }
                     }
                 }
+                if (!foundBundle) {
+                    logger.warn("No matching bundle found for uninstallation: " + symbolicName);
+                }
 
-            } catch (BundleException bex) {
+            } catch (Exception bex) {
                 String msg = BUNDLE.getString("bundleUninstallError");
-                logger.error(msg);
+                logger.error(msg + ", Bundle: " + symbolicName, bex);
+                return false;
             }
-            return true;
+
+            logger.info("Uninstallation process completed for plugin: " + plugin.getPluginName().getValue());
+            return true; 
         }).thenApply(callback);
     }
+
 }

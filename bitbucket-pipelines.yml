@@ -45,10 +45,10 @@ definitions:
             - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
             - mvn install -P release-bitbucket-pipelines -DskipTests
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=$BITBUCKET_BRANCH.jar"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-linux-amd64-$version.sh; filename=${BITBUCKET_BRANCH}_amd64.sh"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-amd64-$version.exe; filename=${BITBUCKET_BRANCH}_amd64.exe"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-macos-aarch64-$version.dmg; filename=${BITBUCKET_BRANCH}_aarch64.dmg"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-macos-amd64-$version.dmg; filename=${BITBUCKET_BRANCH}_amd64.dmg"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-linux-amd64-$version.sh; filename=IGB-linux-${BITBUCKET_BRANCH}_amd64.sh"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-amd64-$version.exe; filename=IGB-windows-${BITBUCKET_BRANCH}_amd64.exe"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-macos-aarch64-$version.dmg; filename=IGB-macos-${BITBUCKET_BRANCH}_aarch64.dmg"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-macos-amd64-$version.dmg; filename=IGB-macos-${BITBUCKET_BRANCH}_amd64.dmg"
      - step: &build-installers-and-artifacts-for-release
          name: Build and copy Windows, MacOS, and Linux installers, executable jar file, updates.xml, and md5sums file for release to user community.
          caches:

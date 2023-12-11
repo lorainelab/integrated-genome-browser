@@ -31,7 +31,7 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.swing.JRPTextField;
-import com.affymetrix.igb.swing.jide.ListDataIntelliHints;
+import com.jidesoft.hints.ListDataIntelliHints;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

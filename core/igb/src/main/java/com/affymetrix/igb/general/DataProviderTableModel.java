@@ -2,6 +2,7 @@ package com.affymetrix.igb.general;
 
 import com.affymetrix.common.PreferenceUtils;
 import com.affymetrix.genometry.GenometryModel;
+import com.affymetrix.genometry.data.BaseDataProvider;
 import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderComparator;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
@@ -11,6 +12,9 @@ import com.affymetrix.genometry.util.ThreadUtils;
 import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeEvent;
+import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Enabled;
+import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Name;
+import static com.affymetrix.igb.general.DataProviderTableModel.DataProviderTableColumn.Refresh;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import com.google.common.base.Strings;

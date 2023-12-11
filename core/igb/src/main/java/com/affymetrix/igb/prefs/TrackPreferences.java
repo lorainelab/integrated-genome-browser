@@ -10,11 +10,10 @@ import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.igb.swing.JRPButton;
 import com.affymetrix.igb.swing.JRPCheckBox;
 import com.affymetrix.igb.swing.JRPTextField;
-
-import com.affymetrix.igb.swing.jide.ColorExComboBox;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.affymetrix.igb.tiers.TrackConstants;
-import com.affymetrix.igb.swing.jide.ColorComboBox;
+import com.jidesoft.combobox.ColorComboBox;
+import com.jidesoft.combobox.ColorExComboBox;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.DefaultCellEditor;

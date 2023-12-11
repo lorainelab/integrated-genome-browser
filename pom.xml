@@ -46,6 +46,7 @@
         <commonsPoolVersion>1.6</commonsPoolVersion>
         <htsjdk-igb-Version>3.0.5</htsjdk-igb-Version>
         <commonsVfsVersion>2.9.0</commonsVfsVersion>
+        <jide.version>3.5.15</jide.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <logback-core.version>1.2.12</logback-core.version>
         <logback-classic.version>1.2.12</logback-classic.version>
@@ -822,6 +823,11 @@
                 <groupId>org.freedesktop.tango</groupId>
                 <artifactId>tango-icon-theme</artifactId>
                 <version>${tangoIconVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jidesoft</groupId>
+                <artifactId>jide-ultimate</artifactId>
+                <version>${jide.version}</version>
             </dependency>
             <dependency>
                 <groupId>fi.iki.elonen</groupId>

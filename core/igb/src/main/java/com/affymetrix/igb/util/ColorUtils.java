@@ -1,8 +1,7 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.common.PreferenceUtils;
-import com.affymetrix.igb.swing.jide.ColorComboBox;
-
+import com.jidesoft.combobox.ColorComboBox;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.HashMap;

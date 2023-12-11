@@ -6,7 +6,6 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.action.ClearPreferencesAction;
 import com.affymetrix.igb.glyph.CodonGlyph;
 import com.affymetrix.igb.swing.JRPJPanel;
-import com.affymetrix.igb.swing.jide.ColorComboBox;
 import com.affymetrix.igb.tiers.AccordionTierResizer;
 import com.affymetrix.igb.tiers.CoordinateStyle;
 import com.affymetrix.igb.tiers.TierResizer;
@@ -480,16 +479,16 @@ public class OtherOptionsView extends JRPJPanel implements PreferencesPanelProvi
 	}//GEN-LAST:event_displayOptionStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private ColorComboBox AColorComboBox;
-    private ColorComboBox CColorComboBox;
-    private ColorComboBox DynamicORFColorComboBox;
-    private ColorComboBox GColorComboBox;
-    private ColorComboBox OtherColorComboBox;
-    private ColorComboBox StopCodonColorComboBox;
-    private ColorComboBox TColorComboBox;
+    private com.jidesoft.combobox.ColorComboBox AColorComboBox;
+    private com.jidesoft.combobox.ColorComboBox CColorComboBox;
+    private com.jidesoft.combobox.ColorComboBox DynamicORFColorComboBox;
+    private com.jidesoft.combobox.ColorComboBox GColorComboBox;
+    private com.jidesoft.combobox.ColorComboBox OtherColorComboBox;
+    private com.jidesoft.combobox.ColorComboBox StopCodonColorComboBox;
+    private com.jidesoft.combobox.ColorComboBox TColorComboBox;
     private javax.swing.JLabel aLabel;
     private javax.swing.JCheckBox askBeforeExitCheckBox;
-    private ColorComboBox bgComboBox;
+    private com.jidesoft.combobox.ColorComboBox bgComboBox;
     private javax.swing.JLabel bgLabel;
     private javax.swing.JLabel cLabel;
     private javax.swing.JButton clear_prefsB;
@@ -500,7 +499,7 @@ public class OtherOptionsView extends JRPJPanel implements PreferencesPanelProvi
     private javax.swing.JComboBox coordinates_label_format_CB;
     private javax.swing.JCheckBox displayOption;
     private javax.swing.JLabel dynamicORFLabel;
-    private ColorComboBox edgeMatchColorComboBox;
+    private com.jidesoft.combobox.ColorComboBox edgeMatchColorComboBox;
     private javax.swing.JLabel edgeMatchLabel;
     private javax.swing.JPanel edgeMatchPanel;
     private javax.swing.JLabel gLabel;

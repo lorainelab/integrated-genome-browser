@@ -207,12 +207,12 @@
             <Property name="text" type="java.lang.String" value="Dynamic ORF:"/>
           </Properties>
         </Component>
-        <Component class="ColorComboBox" name="StopCodonColorComboBox">
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="StopCodonColorComboBox">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color, null)"/>
           </AuxValues>
         </Component>
-        <Component class="ColorComboBox" name="DynamicORFColorComboBox">
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="DynamicORFColorComboBox">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color, null)"/>
           </AuxValues>
@@ -222,7 +222,7 @@
             <Property name="text" type="java.lang.String" value="Background: "/>
           </Properties>
         </Component>
-        <Component class="ColorComboBox" name="bgComboBox">
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="bgComboBox">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(OrfAnalyzer.PREF_BACKGROUND_COLOR, OrfAnalyzer.default_background_color, null)"/>
           </AuxValues>
@@ -315,7 +315,7 @@
             <Property name="text" type="java.lang.String" value="Other:"/>
           </Properties>
         </Component>
-        <Component class="ColorComboBox" name="AColorComboBox">
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="AColorComboBox">
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AColorComboBoxActionPerformed"/>
           </Events>
@@ -323,7 +323,7 @@
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_A_COLOR, ResidueColorHelper.default_A_color, null)"/>
           </AuxValues>
         </Component>
-        <Component class="ColorComboBox" name="TColorComboBox">
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="TColorComboBox">
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TColorComboBoxActionPerformed"/>
           </Events>
@@ -331,7 +331,7 @@
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_T_COLOR, ResidueColorHelper.default_T_color, null)"/>
           </AuxValues>
         </Component>
-        <Component class="ColorComboBox" name="GColorComboBox">
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="GColorComboBox">
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GColorComboBoxActionPerformed"/>
           </Events>
@@ -339,7 +339,7 @@
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_G_COLOR, ResidueColorHelper.default_G_color, null)"/>
           </AuxValues>
         </Component>
-        <Component class="ColorComboBox" name="CColorComboBox">
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="CColorComboBox">
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CColorComboBoxActionPerformed"/>
           </Events>
@@ -347,7 +347,7 @@
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(ResidueColorHelper.PREF_C_COLOR, ResidueColorHelper.default_C_color, null)"/>
           </AuxValues>
         </Component>
-        <Component class="ColorComboBox" name="OtherColorComboBox">
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="OtherColorComboBox">
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="OtherColorComboBoxActionPerformed"/>
           </Events>
@@ -421,7 +421,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="ColorComboBox" name="edgeMatchColorComboBox">
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="edgeMatchColorComboBox">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="ColorUtils.createColorComboBox(PREF_EDGE_MATCH_COLOR, default_edge_match_color, null)"/>
           </AuxValues>

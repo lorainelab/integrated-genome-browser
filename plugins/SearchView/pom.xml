@@ -43,7 +43,11 @@
             <artifactId>igbSwingExt</artifactId>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-ultimate</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!--Start of logging dependencies-->
         <dependency>
             <groupId>org.slf4j</groupId>

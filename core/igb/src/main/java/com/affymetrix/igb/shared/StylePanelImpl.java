@@ -1,9 +1,9 @@
 package com.affymetrix.igb.shared;
 
-import com.affymetrix.igb.swing.jide.ColorComboBox;
 import com.affymetrix.igb.tiers.TrackstylePropertyMonitor;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.util.ThreadUtils;
+import com.jidesoft.combobox.ColorComboBox;
 import org.lorainelab.igb.services.IgbService;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -61,7 +61,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
         if (igbService.getSeqMap() == null) {
             return;
         }
-        Color color = (Color) foregroundColorComboBox.getSelectedColor();
+        Color color = foregroundColorComboBox.getSelectedColor();
         Actions.setForegroundColor(color);
         updateDisplay();
         TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
@@ -73,7 +73,7 @@ public abstract class StylePanelImpl extends StylePanel implements Selections.Re
         if (igbService.getSeqMap() == null) {
             return;
         }
-        Color color = (Color) backgroundColorComboBox.getSelectedColor();
+        Color color = backgroundColorComboBox.getSelectedColor();
         Actions.setBackgroundColor(color);
         updateDisplay();
         TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);

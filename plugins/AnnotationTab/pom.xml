@@ -42,7 +42,11 @@
             <artifactId>genoviz</artifactId>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-ultimate</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>track-operations-panel</artifactId>

@@ -2,7 +2,6 @@ package com.affymetrix.igb.tabs.annotation;
 
 import com.affymetrix.igb.swing.JRPTextField;
 import com.affymetrix.genoviz.swing.NumericFilter;
-import com.affymetrix.igb.swing.jide.ColorComboBox;
 
 /**
  *
@@ -37,8 +36,8 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         strandsLabel = new javax.swing.JLabel();
         strandsForwardColorLabel = new javax.swing.JLabel();
         strandsReverseColorLabel = new javax.swing.JLabel();
-        strandsReverseColorComboBox = new ColorComboBox();
-        strandsForwardColorComboBox = new ColorComboBox();
+        strandsReverseColorComboBox = new com.jidesoft.combobox.ColorComboBox();
+        strandsForwardColorComboBox = new com.jidesoft.combobox.ColorComboBox();
         stackHeightPanel = new javax.swing.JPanel();
         stackDepthTextField = new JRPTextField("trackPreference_maxDepth");
         ((javax.swing.text.AbstractDocument)stackDepthTextField.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter());
@@ -360,7 +359,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         return strandsColorCheckBox;
     }
 
-    public ColorComboBox getStrandsForwardColorComboBox() {
+    public com.jidesoft.combobox.ColorComboBox getStrandsForwardColorComboBox() {
         return strandsForwardColorComboBox;
     }
 
@@ -372,7 +371,7 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
         return strandsLabel;
     }
 
-    public ColorComboBox getStrandsReverseColorComboBox() {
+    public com.jidesoft.combobox.ColorComboBox getStrandsReverseColorComboBox() {
         return strandsReverseColorComboBox;
     }
 
@@ -511,10 +510,10 @@ public abstract class AnnotationPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox strands2TracksCheckBox;
     private javax.swing.JCheckBox strandsArrowCheckBox;
     private javax.swing.JCheckBox strandsColorCheckBox;
-    private ColorComboBox strandsForwardColorComboBox;
+    private com.jidesoft.combobox.ColorComboBox strandsForwardColorComboBox;
     private javax.swing.JLabel strandsForwardColorLabel;
     private javax.swing.JLabel strandsLabel;
-    private ColorComboBox strandsReverseColorComboBox;
+    private com.jidesoft.combobox.ColorComboBox strandsReverseColorComboBox;
     private javax.swing.JLabel strandsReverseColorLabel;
     private javax.swing.JPanel trackHeightPanel;
     // End of variables declaration//GEN-END:variables

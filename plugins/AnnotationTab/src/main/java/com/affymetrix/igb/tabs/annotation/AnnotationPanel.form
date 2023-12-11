@@ -184,7 +184,7 @@
             <Property name="text" type="java.lang.String" value="-"/>
           </Properties>
         </Component>
-        <Component class="ColorComboBox" name="strandsReverseColorComboBox">
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="strandsReverseColorComboBox">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -205,7 +205,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="strandsReverseColorComboBoxActionPerformed"/>
           </Events>
         </Component>
-        <Component class="ColorComboBox" name="strandsForwardColorComboBox">
+        <Component class="com.jidesoft.combobox.ColorComboBox" name="strandsForwardColorComboBox">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">

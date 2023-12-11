@@ -26,7 +26,7 @@ import static com.affymetrix.igb.shared.Selections.isAnyLockable;
 import static com.affymetrix.igb.shared.Selections.isAnyLocked;
 import static com.affymetrix.igb.shared.Selections.isAnyShowAsPaired;
 import com.affymetrix.igb.shared.UnlockTierHeightAction;
-import com.affymetrix.igb.swing.jide.ColorComboBox;
+import com.jidesoft.combobox.ColorComboBox;
 import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import static org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph.Direction.FORWARD;
 import static org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph.Direction.REVERSE;

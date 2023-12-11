@@ -6,6 +6,7 @@ import com.affymetrix.genometry.util.FileTracker;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.UniFileChooser;
+import com.affymetrix.igb.swing.jide.JideTable;
 import com.affymetrix.igb.swing.jide.StyledJTable;
 import com.google.common.collect.Lists;
 import org.lorainelab.igb.preferences.weblink.WebLinkUtils;
@@ -49,8 +50,8 @@ import org.lorainelab.igb.javafx.FileChooserUtil;
 public final class WebLinksView {
 
     private final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
-    public StyledJTable serverTable;
-    public StyledJTable localTable;
+    public JideTable serverTable;
+    public JideTable localTable;
     public WebLinksTableModel serverModel;
     public WebLinksTableModel localModel;
     private static JFileChooser static_chooser = null;

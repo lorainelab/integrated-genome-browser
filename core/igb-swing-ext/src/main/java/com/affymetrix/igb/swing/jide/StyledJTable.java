@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIDefaults;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
@@ -25,10 +24,10 @@ import javax.swing.table.TableModel;
  *
  * @author david, modified by nick
  */
-public class StyledJTable extends JTable {
+public class StyledJTable extends JideTable {
 
     private static final long serialVersionUID = 1L;
-    private static final int AUTO_RESIZE_LAST_COLUMN_FILL = 259;
+    private static final Object AUTO_RESIZE_LAST_COLUMN_FILL = 0;
     private Color selectionBackgroundColor, selectionForegroundColor,
             notEditableColor;
 
@@ -74,6 +73,7 @@ public class StyledJTable extends JTable {
     @SuppressWarnings("deprecation")
     private void init() {
         setAutoResizeMode(AUTO_RESIZE_LAST_COLUMN_FILL);
+        setFillsGrids(true);
 
         // Java Default Table Configuration methods
         setCellSelectionEnabled(true);

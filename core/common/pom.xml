@@ -93,7 +93,7 @@
                         <Export-Package>
                             com.affymetrix.common
                         </Export-Package>
-                        <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>                      
+                        <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                     </instructions>
                 </configuration>
             </plugin>

@@ -106,6 +106,7 @@
         </repository>
     </repositories>
     <modules>
+        <module>plugins/flatlaf</module>
         <module>core/heatmap-editor</module>
         <module>core/common</module>
         <module>core/genometry</module>
@@ -259,6 +260,13 @@
     <dependencyManagement>
         <dependencies>
             <!--Start of core module dependencies-->
+            
+            <dependency>
+                <groupId>org.lorainelab.igb</groupId>
+                <artifactId>flatlaf</artifactId>
+                <version>${project.parent.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>heatmap-editor</artifactId>
@@ -960,6 +968,11 @@
             <dependency>
                 <groupId>com.formdev</groupId>
                 <artifactId>flatlaf</artifactId>
+                <version>3.2.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.formdev</groupId>
+                <artifactId>flatlaf-jide-oss</artifactId>
                 <version>3.2.5</version>
             </dependency>
         </dependencies>

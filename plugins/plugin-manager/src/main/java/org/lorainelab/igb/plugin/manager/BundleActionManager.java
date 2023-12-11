@@ -12,7 +12,6 @@ import org.lorainelab.igb.plugin.manager.model.PluginListItemMetadata;
 import org.lorainelab.igb.services.IgbService;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;

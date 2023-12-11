@@ -1,7 +1,11 @@
 #!/bin/bash
 
 JAVA_OPTS="\
+--add-opens=java.desktop/sun.swing=ALL-UNNAMED \
+--add-opens=java.desktop/sun.awt.shell=ALL-UNNAMED \
 --add-opens=java.desktop/java.awt.event=ALL-UNNAMED \
+--add-opens=java.desktop/sun.awt.windows=ALL-UNNAMED \
+--add-opens=java.desktop/sun.java2d=ALL-UNNAMED \
 --add-opens=java.desktop/sun.font=ALL-UNNAMED \
 --add-opens=java.desktop/java.awt=ALL-UNNAMED \
 --add-opens=java.desktop/sun.awt=ALL-UNNAMED \

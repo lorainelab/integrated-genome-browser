@@ -2,6 +2,12 @@ package com.affymetrix.main;
 
 import com.affymetrix.common.CommonUtils;
 import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import com.formdev.flatlaf.util.SystemInfo;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.ServiceLoader;
@@ -30,6 +37,10 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
@@ -59,12 +70,34 @@ public class OSGiHandler {
         if (isDevelopmentMode()) {
             clearCache();
         }
+        setupLaf();
+    }
+
+    private void setupLaf() {
+        UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo("FlatLaf Light", FlatLightLaf.class.getName()));
+        UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo("FlatLaf Dark", FlatDarkLaf.class.getName()));
+        UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo("FlatLaf Cupertino Light", FlatMacLightLaf.class.getName()));
+        UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo("FlatLaf Cupertino Dark", FlatMacDarkLaf.class.getName()));
+        UIDefaults defaults = UIManager.getDefaults();
+        defaults.put("TitlePane.unifiedBackground", true);
+        defaults.put("TitlePane.menuBarEmbedded", true);
+        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("linux")) {
+            JFrame.setDefaultLookAndFeelDecorated(true);
+            JDialog.setDefaultLookAndFeelDecorated(true);
+        }
+        FlatLaf.registerCustomDefaultsSource(OSGiHandler.class.getPackageName(), getClass().getClassLoader());
+        // tell FlatLaf to look for possible user .properties files in LookAndFeel folder of config file system
+//        FileObject customFolder = FileUtil.getConfigFile("LookAndFeel");
+//        if (customFolder != null && customFolder.isFolder()) {
+//            FlatLaf.registerCustomDefaultsSource(customFolder.toURL());
+//        }
+        FlatMacDarkLaf.setup();
     }
 
     public void startOSGi() {
         logger.info("Loading OSGi framework");
         setUserAgent();
-        disableSSLCertValidation();
+//        disableSSLCertValidation();
         String commandLineArguments = Arrays.toString(args);
         commandLineArguments = commandLineArguments.substring(1, commandLineArguments.length() - 1); // remove brackets
         loadFramework(commandLineArguments);
@@ -293,32 +326,32 @@ public class OSGiHandler {
         return string == null || string.length() == 0;
     }
 
-    private void disableSSLCertValidation() {
-        TrustManager[] trustAllCerts = new TrustManager[]{
-            new X509TrustManager() {
-                @Override
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
-                }
-
-                @Override
-                public void checkClientTrusted(
-                        java.security.cert.X509Certificate[] certs, String authType) {
-                }
-
-                @Override
-                public void checkServerTrusted(
-                        java.security.cert.X509Certificate[] certs, String authType) {
-                }
-            }
-        };
-
-// Install the all-trusting trust manager
-        try {
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-        } catch (GeneralSecurityException e) {
-        }
-    }
+//    private void disableSSLCertValidation() {
+//        TrustManager[] trustAllCerts = new TrustManager[]{
+//            new X509TrustManager() {
+//                @Override
+//                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+//                    return new X509Certificate[0];
+//                }
+//
+//                @Override
+//                public void checkClientTrusted(
+//                        java.security.cert.X509Certificate[] certs, String authType) {
+//                }
+//
+//                @Override
+//                public void checkServerTrusted(
+//                        java.security.cert.X509Certificate[] certs, String authType) {
+//                }
+//            }
+//        };
+//
+//// Install the all-trusting trust manager
+//        try {
+//            SSLContext sc = SSLContext.getInstance("SSL");
+//            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+//            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+//        } catch (GeneralSecurityException e) {
+//        }
+//    }
 }

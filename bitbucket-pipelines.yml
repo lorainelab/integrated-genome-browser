@@ -43,7 +43,7 @@ definitions:
             - curl -s -S -L -O https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/lorainelab/iipc/src/master/env.sh
             - source env.sh
             - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-            - mvn install -P release-bitbucket-pipelines -DskipTests
+            - mvn install -P release-bitbucket-pipelines
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=$BITBUCKET_BRANCH.jar"
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-linux-amd64-$version.sh; filename=IGB-linux-${BITBUCKET_BRANCH}_amd64.sh"
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-amd64-$version.exe; filename=IGB-windows-${BITBUCKET_BRANCH}_amd64.exe"
@@ -71,7 +71,7 @@ pipelines:
         caches:
           - maven
         script:
-          - mvn -B install -DskipTests
+          - mvn -B install
           - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$version-${BITBUCKET_REPO_OWNER}.jar"
   branches:

@@ -97,7 +97,7 @@ public class OSGiHandler {
     public void startOSGi() {
         logger.info("Loading OSGi framework");
         setUserAgent();
-//        disableSSLCertValidation();
+        disableSSLCertValidation();
         String commandLineArguments = Arrays.toString(args);
         commandLineArguments = commandLineArguments.substring(1, commandLineArguments.length() - 1); // remove brackets
         loadFramework(commandLineArguments);
@@ -326,32 +326,32 @@ public class OSGiHandler {
         return string == null || string.length() == 0;
     }
 
-//    private void disableSSLCertValidation() {
-//        TrustManager[] trustAllCerts = new TrustManager[]{
-//            new X509TrustManager() {
-//                @Override
-//                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-//                    return new X509Certificate[0];
-//                }
-//
-//                @Override
-//                public void checkClientTrusted(
-//                        java.security.cert.X509Certificate[] certs, String authType) {
-//                }
-//
-//                @Override
-//                public void checkServerTrusted(
-//                        java.security.cert.X509Certificate[] certs, String authType) {
-//                }
-//            }
-//        };
-//
-//// Install the all-trusting trust manager
-//        try {
-//            SSLContext sc = SSLContext.getInstance("SSL");
-//            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-//            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-//        } catch (GeneralSecurityException e) {
-//        }
-//    }
+    private void disableSSLCertValidation() {
+        TrustManager[] trustAllCerts = new TrustManager[]{
+            new X509TrustManager() {
+                @Override
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+
+                @Override
+                public void checkClientTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+
+                @Override
+                public void checkServerTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+            }
+        };
+
+        // Install the all-trusting trust manager
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (GeneralSecurityException e) {
+        }
+    }
 }

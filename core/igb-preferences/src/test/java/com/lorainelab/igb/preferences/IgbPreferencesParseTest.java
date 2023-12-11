@@ -9,9 +9,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ public class IgbPreferencesParseTest {
     private IgbPreferencesParser igbPreferencesParser;
     private IgbPreferences prefs;
 
-    @Before
+    @BeforeEach
     public void init() {
         igbPreferencesParser = new IgbPreferencesParser();
         Reader reader = new InputStreamReader(IgbPreferencesParseTest.class.getClassLoader().getResourceAsStream("igbDefaultPrefs.json"));

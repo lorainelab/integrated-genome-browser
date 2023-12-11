@@ -1,4 +1,4 @@
-package org.lorainelab.igb.synonymlookup.test;
+package com.lorainelab.synonymlookup.test;
 
 import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
 import org.lorainelab.igb.synonymlookup.services.impl.SynonymLookup;
@@ -9,12 +9,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * A class to test the SynonymLookup class. Specifially tests the effect of
@@ -26,7 +23,7 @@ public class SynonymLookupTest {
 
     static SynonymLookup sl;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         sl = new GenomeVersionSynonymLookupImpl();
 
@@ -63,10 +60,12 @@ public class SynonymLookupTest {
             //System.out.println("synonym:    " + synonym);
             synonymSet = sl.getSynonyms(synonym, cs);
             //System.out.println("synonymSet: " + synonymSet);
-            assertEquals("synonymSet is the wrong size for synonym " + synonym + ".", 7, synonymSet.size());
+            assertEquals(7, synonymSet.size(), "synonymSet is the wrong size for synonym " + synonym + ".");
+
             for (String current : testSynonymValues) {
-                assertTrue("Could not find synonym " + current + "in list.", synonymSet.contains(current));
+                assertTrue(synonymSet.contains(current), "Could not find synonym " + current + " in list.");
             }
+
         }
     }
 
@@ -98,10 +97,12 @@ public class SynonymLookupTest {
 
         //System.out.println("synonym:    " + test);
         //System.out.println("synonymSet: " + synonymSet);
-        assertEquals("Size of synonymSet does not match size expected", expected.size(), synonymSet.size());
+        assertEquals(expected.size(), synonymSet.size(), "Size of synonymSet does not match size expected");
+
         for (String synonym : expected) {
-            assertTrue("Could not find synonym " + synonym + " in list.", synonymSet.contains(synonym));
+            assertTrue(synonymSet.contains(synonym), "Could not find synonym " + synonym + " in list.");
         }
+
     }
 
     /**

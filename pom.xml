@@ -79,7 +79,7 @@
         <coltVersion>1.2.0</coltVersion>
         <jlfgrVersion>1.0</jlfgrVersion>
         <commonsNetVersion>2.0</commonsNetVersion>
-        <junitVersion>4.13.2</junitVersion>
+        <junitVersion>5.8.2</junitVersion>
         <luceneCoreVersion>9.5.0</luceneCoreVersion>
         <tangoIconVersion>0.8.90</tangoIconVersion>
         <org.apache.felix.http.servlet-api.version>2.1.0</org.apache.felix.http.servlet-api.version>
@@ -856,8 +856,14 @@
                 <version>${bigWigVersion}</version>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junitVersion}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junitVersion}</version>
                 <scope>test</scope>
             </dependency>

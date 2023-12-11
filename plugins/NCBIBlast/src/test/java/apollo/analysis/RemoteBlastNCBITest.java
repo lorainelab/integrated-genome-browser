@@ -8,9 +8,8 @@ package apollo.analysis;
 import apollo.datamodel.Sequence;
 import apollo.datamodel.StrandedFeatureSet;
 import apollo.datamodel.StrandedFeatureSetI;
-import org.junit.Assert;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 /**
  *
  * @author tkanapar
@@ -41,7 +40,7 @@ public class RemoteBlastNCBITest {
             rid = null;
         }
 
-        Assert.assertNotNull(rid);
+        assertNotNull(rid);
     }
 
     @Test

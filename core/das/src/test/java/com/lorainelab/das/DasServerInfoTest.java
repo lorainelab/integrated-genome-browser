@@ -12,9 +12,9 @@ import static org.lorainelab.igb.das.utils.DasServerUtils.retrieveDsnResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Optional;
-import org.junit.Ignore;
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
+import static org.junit.jupiter.api.Assertions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,7 @@ public class DasServerInfoTest {
     private static final Logger logger = LoggerFactory.getLogger(DasServerInfoTest.class);
     private final String UCSC_DAS_URL = "https://genome.cse.ucsc.edu/cgi-bin/das/dsn/";
 
-    @Ignore
+    @Disabled
     @Test
     public void retrieveDsnResponseTest() throws MalformedURLException, IOException {
         Optional<DasDsn> dasSources = retrieveDsnResponse(UCSC_DAS_URL);
@@ -40,7 +40,7 @@ public class DasServerInfoTest {
         });
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void retrieveDnaTest() {
         String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
@@ -49,7 +49,7 @@ public class DasServerInfoTest {
         assertEquals(result,testSeqSpanDnaString);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void retrieveDasEpResponseTest() {
         String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
@@ -62,7 +62,7 @@ public class DasServerInfoTest {
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void retrieveDasTypesResponseTest() {
         String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
@@ -75,7 +75,7 @@ public class DasServerInfoTest {
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void retrieveDasFeatureResponseTest() {
         String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";

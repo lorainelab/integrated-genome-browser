@@ -12,10 +12,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 
 /**
  *
@@ -42,7 +41,7 @@ public class ScoredIntervalParserTest {
         assertEquals("chr1.1", unique_container_name);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testMakeNewSeq() {
 
@@ -60,7 +59,7 @@ public class ScoredIntervalParserTest {
         assertEquals("chr1", aseq.getId());
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testwriteEgrFormat() throws IOException {
         String string = "# genome_version = H_sapiens_Mar_2006\n"

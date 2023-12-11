@@ -9,14 +9,9 @@ import com.affymetrix.genometry.symmetry.MutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.SingletonSeqSymmetry;
-import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 public class SeqUtilsTest {
 
@@ -26,14 +21,10 @@ public class SeqUtilsTest {
     public SeqUtilsTest() {
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         seqA = new BioSeq("Seq A", 1000000);
         seqB = new BioSeq("Seq B", 1000000);
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     @Test

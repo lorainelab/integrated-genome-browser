@@ -3,7 +3,6 @@ package com.affymetrix.genometry.parsers;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.util.GeneralUtils;
-import com.affymetrix.genometry.util.LocalUrlCacher;
 import org.lorainelab.igb.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
 import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
 import org.lorainelab.igb.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
@@ -13,9 +12,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Random;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -33,7 +31,6 @@ public class TwoBitParserTest {
     String mnblocks_file = "data/2bit/mnblocks.2bit";
     String residues, file;
     File infile = null;
-
 
     @Test
     public void testCaseFiles() throws Exception {

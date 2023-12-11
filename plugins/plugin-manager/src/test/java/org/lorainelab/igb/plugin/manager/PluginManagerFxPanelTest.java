@@ -14,8 +14,9 @@ import java.io.InputStreamReader;
 import java.util.List;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -24,7 +25,7 @@ import org.junit.Test;
 public class PluginManagerFxPanelTest {
 
     @Test
-    @Ignore
+    @Disabled
     public void testPanelUI() throws InterruptedException, IOException {
         JFrame testFrame = new JFrame("");
         MigLayout migLayout = new MigLayout("fill");

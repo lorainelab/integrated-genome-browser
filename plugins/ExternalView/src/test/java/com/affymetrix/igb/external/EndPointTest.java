@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.igb.external;
 
 import com.google.gson.Gson;
@@ -13,41 +8,37 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 import com.google.common.io.Resources;
 import com.google.common.reflect.TypeToken;
-import static junit.framework.Assert.assertTrue;
 
 /**
  * Check that UCSC JSON REST API is available and working as required.
- * @author aloraine
  */
 public class EndPointTest {
     
-    public static URL url = null;
-    public static HttpURLConnection connection = null;
-    public static String data = null;
+    private static URL url = null;
+    private static HttpURLConnection connection = null;
+    private static String data = null;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAllTestMethods() {
         try {
             url = new URL(UCSCViewAction.UCSC_JSON_ENDPOINT);
         } catch (MalformedURLException ex) {
-            fail("UCSC JSON API endpoint should be a URL.");
+            Assertions.fail("UCSC JSON API endpoint should be a URL.");
         }
         try {
             connection = (HttpURLConnection) url.openConnection();
         } catch (IOException ex) {
-            fail("UCSC JSON API endpoint should allow opening a connection.");
+            Assertions.fail("UCSC JSON API endpoint should allow opening a connection.");
         }
         try {
             data = Resources.toString(url, Charsets.UTF_8);
         } catch (IOException ex) {
-            fail("UCSC JSON API endpoint should provide content.");
+            Assertions.fail("UCSC JSON API endpoint should provide content.");
         }
     }
 
@@ -59,61 +50,51 @@ public class EndPointTest {
         try {
             given_answer = connection.getResponseCode();
         } catch (IOException ex) {
-            fail(message);
+            Assertions.fail(message);
         }
-        assertEquals(message, right_answer, given_answer);
+        Assertions.assertEquals(right_answer, given_answer, message);
     }
 
     @Test
     public void testEndpointContentType() {
         String right_answer = "application/json";
-        String message = "Content should be "+right_answer+".";
+        String message = "Content should be " + right_answer + ".";
         String given_answer = connection.getContentType();
-        assertEquals(message, right_answer, given_answer);
+        Assertions.assertEquals(right_answer, given_answer, message);
     }
 
     @Test
     public void testContent() {
         String message = "Content should be parseable JSON";
         Map<String, Object> map = new Gson().fromJson(
-                data, new TypeToken<HashMap<String, Object>>() {
-                }.getType()
+                data, new TypeToken<HashMap<String, Object>>() {}.getType()
         );
-        assertNotNull(message,map);
+        Assertions.assertNotNull(map, message);
     }
 
     @Test
     public void testHasRightKey() {
         String message = "Content should contain key ucscGenomes.";
         Map<String, Object> map = new Gson().fromJson(
-                data, new TypeToken<HashMap<String, Object>>() {
-                }.getType()
+                data, new TypeToken<HashMap<String, Object>>() {}.getType()
         );
-        boolean result = false;
-        try {
-            result = map.containsKey("ucscGenomes");
-        } catch (NullPointerException ex) {
-            fail(message);
-        }
-        assertTrue(message,result);
+        boolean result = map != null && map.containsKey("ucscGenomes");
+        Assertions.assertTrue(result, message);
     }
     
     @Test
     public void testSomeGenomes() {
         String message = "Genome versions should be available.";
         Map<String, Object> map = new Gson().fromJson(
-                data, new TypeToken<HashMap<String, Object>>() {
-                }.getType()
+                data, new TypeToken<HashMap<String, Object>>() {}.getType()
         ); 
         Map submap = null;
-        if (map.containsKey("ucscGenomes")) {
-            try {
-                submap = (Map) ((Map) map.get("ucscGenomes")).get("hg19");
-            } catch (NullPointerException ex) {
-                fail(message);
+        if (map != null && map.containsKey("ucscGenomes")) {
+            submap = (Map) map.get("ucscGenomes");
+            if (submap != null) {
+                submap = (Map) submap.get("hg19");
             }
         }
-        assertNotNull(message,submap);
+        Assertions.assertNotNull(submap, message);
     }
-
 }

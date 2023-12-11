@@ -21,12 +21,12 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import junit.framework.Assert;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -67,7 +67,7 @@ public class ExternalSortTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.fileList = new ArrayList<>(1);
         this.file1 = new File(this.getClass().getClassLoader()
@@ -83,7 +83,7 @@ public class ExternalSortTest {
     /**
      * @throws Exception
      */
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         this.file1 = null;
         for (File f : this.fileList) {
@@ -127,14 +127,14 @@ public class ExternalSortTest {
         ArrayList<String> result = readLines(output.get());
         ArrayList<String> answer = readLines(new File(this.getClass().getClassLoader()
                 .getResource(TEST1_FILE_ANSWER).toURI()));
-        Assert.assertEquals(result.size(), answer.size());
+        assertEquals(result.size(), answer.size());
         for (int i = 0; i < result.size(); i++) {
             String actualLine = result.get(i);
             String answerLine = answer.get(i);
             try {
-                Assert.assertTrue(isLinesEqual(actualLine, answerLine));
+                assertTrue(isLinesEqual(actualLine, answerLine));
             } catch (Exception ex) {
-                Assert.fail();
+                fail();
             }
 
         }

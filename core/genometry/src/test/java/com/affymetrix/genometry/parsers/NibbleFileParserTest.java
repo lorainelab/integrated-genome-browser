@@ -3,15 +3,14 @@ package com.affymetrix.genometry.parsers;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.util.GeneralUtils;
-import org.lorainelab.igb.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
-import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
-import org.lorainelab.igb.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.lorainelab.igb.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
+import org.lorainelab.igb.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 
 /**
  * About this test - and bnib: Affymetrix many years ago created a random access
@@ -20,6 +19,7 @@ import org.junit.Test;
  * we are leaving it in the code base for now. However, we are using 2bit for
  * IGB Quickload because Jim Kent has made various programs for 2bit that make
  * 2bit more convenient.
+ *
  * @author hiralv
  */
 public class NibbleFileParserTest {

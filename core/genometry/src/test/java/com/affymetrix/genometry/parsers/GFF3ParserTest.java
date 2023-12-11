@@ -18,11 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * Tests of class
@@ -32,7 +30,7 @@ public class GFF3ParserTest {
     /**
      * Test of parse method using a canonical example.
      */
-    @Ignore
+    @Disabled
     @Test
     public void testParseCanonical() throws Exception {
         //System.out.println("parse");
@@ -48,7 +46,7 @@ public class GFF3ParserTest {
             genomeVersion.setChrSynLookup(new ChromosomeSynonymLookupImpl());
             genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
             genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
-            
+
             assertNotNull(genomeVersion);
 
 //			GFFParser instance = new GFFParser(); // the parser should be able to recognized
@@ -113,7 +111,7 @@ public class GFF3ParserTest {
 
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testParseErrors() throws IOException {
         //System.out.println("parse");
@@ -140,7 +138,7 @@ public class GFF3ParserTest {
      * Test of processDirective method, of class
      * com.affymetrix.igb.parsers.GFF3Parser.
      */
-    @Ignore
+    @Disabled
     @Test
     public void testProcessDirective() throws Exception {
         //System.out.println("processDirective");

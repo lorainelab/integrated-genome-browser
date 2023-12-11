@@ -9,8 +9,6 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.util.LoadUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.lorainelab.igb.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
 import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
 import org.lorainelab.igb.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
@@ -19,10 +17,10 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import org.apache.commons.lang3.reflect.TypeUtils;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import java.util.logging.Logger;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -36,7 +34,7 @@ public class TwentyThreeAndMeSymLoaderTest {
     public static BioSeq seq;
     Logger log = Logger.getLogger(TwentyThreeAndMeSymLoaderTest.class.getName());
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         assertTrue(new File(TEST_FILE_NAME).exists());
         mockGenomeVersion = new GenomeVersion("Human_Dec_2013");

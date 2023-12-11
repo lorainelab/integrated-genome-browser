@@ -1,24 +1,14 @@
 package com.affymetrix.genometry;
 
 import com.affymetrix.genometry.util.NibbleIterator;
-import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NibbleBioSeqTest {
 
     static GenometryModel gmodel = GenometryModel.getInstance();
 
     public NibbleBioSeqTest() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     /**

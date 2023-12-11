@@ -11,13 +11,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
 
-
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  *
@@ -28,7 +25,7 @@ public class QuickloadDataProviderTest {
     private static QuickloadDataProvider dataProvider;
     private static GenomeVersion version;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws InterruptedException, MalformedURLException {
         GenomeVersion genomeVersion = new GenomeVersion("Quickload sample");
         ClassLoader classLoader = QuickloadDataProviderTest.class.getClassLoader();

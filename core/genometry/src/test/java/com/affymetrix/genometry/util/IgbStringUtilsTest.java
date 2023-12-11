@@ -3,12 +3,10 @@ package com.affymetrix.genometry.util;
 import java.awt.Canvas;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 
 /**
  *
@@ -25,15 +23,12 @@ public final class IgbStringUtilsTest {
             + "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat "
             + "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.canvas = new Canvas();
     }
 
-    /**
-     * Test of wrap method, of class StringUtils.
-     */
-    @Ignore
+    @Disabled
     @Test
     public void testWrap_3args() {
         String toWrap = loremIpsum;
@@ -41,27 +36,19 @@ public final class IgbStringUtilsTest {
         int pixels;
         String[] result;
 
-        /**
-         * **********************************
-         */
-
-        /* Normal case */
+        // Normal case
         pixels = 300;
         result = IgbStringUtils.wrap(toWrap, metrics, pixels);
 
         verifyWrap(result, metrics, pixels);
-        assertTrue("Wrapped text does not appear to be complete", result[result.length - 1].endsWith("laborum. "));
+        Assertions.assertTrue(result[result.length - 1].endsWith("laborum. "), "Wrapped text does not appear to be complete");
 
-        /**
-         * **********************************
-         */
-
-        /* Extreme test.  Most words should be wider than 50 pixels. */
+        // Extreme test
         pixels = 50;
         result = IgbStringUtils.wrap(toWrap, metrics, pixels);
 
         verifyWrap(result, metrics, pixels);
-        assertTrue("Wrapped text does not appear to be complete", result[result.length - 1].endsWith("laborum. "));
+        Assertions.assertTrue(result[result.length - 1].endsWith("laborum. "), "Wrapped text does not appear to be complete");
     }
 
     /**
@@ -75,69 +62,46 @@ public final class IgbStringUtilsTest {
         int maxLines;
         String[] result;
 
-        /**
-         * **********************************
-         */
-
-        /* Normal case */
+        // Normal case
         maxLines = 3;
         result = IgbStringUtils.wrap(toWrap, metrics, pixels, maxLines);
 
-        assertEquals("Wrong number of lines in wrapped text", maxLines, result.length);
+        Assertions.assertEquals(maxLines, result.length, "Wrong number of lines in wrapped text");
         verifyWrap(result, metrics, pixels);
 
-        /* Check for the ellipsis */
         String lastLine = result[result.length - 1];
-        assertEquals("Wrapped text does not end with ellipsis (\u2026)", '\u2026', lastLine.charAt(lastLine.length() - 1));
+        Assertions.assertEquals('\u2026', lastLine.charAt(lastLine.length() - 1), "Wrapped text does not end with ellipsis (\u2026)");
 
-        /**
-         * **********************************
-         */
-
-        /* One line is a special case in the code */
+        // One line case
         maxLines = 1;
         result = IgbStringUtils.wrap(toWrap, metrics, pixels, maxLines);
 
-        assertEquals("Wrong number of lines in wrapped text", maxLines, result.length);
+        Assertions.assertEquals(maxLines, result.length, "Wrong number of lines in wrapped text");
         verifyWrap(result, metrics, pixels);
 
-        /* Check for the ellipsis */
         lastLine = result[result.length - 1];
-        assertEquals("Wrapped text does not end with ellipsis (\u2026)", '\u2026', lastLine.charAt(lastLine.length() - 1));
+        Assertions.assertEquals('\u2026', lastLine.charAt(lastLine.length() - 1), "Wrapped text does not end with ellipsis (\u2026)");
     }
 
-    /**
-     * Verify word-by-word that every word in the original text exists in the
-     * wrapped text. Will break on the ellipsis (\u2026) character as that
-     * is used when the text was truncated to a certain number of lines. This
-     * function will also verify that every line containing a space is less than
-     * or equal to the wrap width.
-     *
-     * @param result Array of strings, one per line of wrapped text
-     * @param metrics Font metrics used to calculate widths
-     * @param pixels Number of pixels to wrap text to.
-     */
     private static void verifyWrap(String[] result, FontMetrics metrics, int pixels) {
         String current;
         int width;
         int i = 0;
         String[] words = loremIpsum.split("\\s+");
         for (String line : result) {
-            /* Check that line lengths are not greater than maximum */
             if (line.endsWith(" ")) {
                 current = line.substring(0, line.length() - 1);
             } else {
                 current = line;
             }
             width = metrics.stringWidth(current);
-            assertFalse("Current line is larger than wrap width ", current.contains(" ") && width > pixels);
+            Assertions.assertFalse(current.contains(" ") && width > pixels, "Current line is larger than wrap width ");
 
-            /* check that wrapped text contains every word */
             for (String word : line.split("\\s+")) {
                 if ("\u2026".equals(word)) {
                     break;
                 }
-                assertEquals("Found incorrect word in text", words[i], word);
+                Assertions.assertEquals(words[i], word, "Found incorrect word in text");
                 i++;
             }
         }

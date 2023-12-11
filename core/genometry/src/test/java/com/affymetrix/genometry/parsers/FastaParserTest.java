@@ -7,12 +7,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FastaParserTest {
 
@@ -32,12 +28,14 @@ public class FastaParserTest {
             expected_result[i + 1] = (byte) expected_string.charAt(i);
         }
 
-        /*for (int i=0;i<result.length;i++)
-         System.out.print(":" + (char)result[i]);
-         System.out.println();
-         for (int i=0;i<expected_result.length;i++)
-         System.out.print(":" + (char)result[i]);
-         System.out.println();*/
+        /*
+         * for (int i=0;i<result.length;i++)
+         * System.out.print(":" + (char)result[i]);
+         * System.out.println();
+         * for (int i=0;i<expected_result.length;i++)
+         * System.out.print(":" + (char)result[i]);
+         * System.out.println();
+         */
         assertEquals(expected_result.length, result.length);
         for (int i = 0; i < expected_result.length; i++) {
             assertEquals((char) expected_result[i], (char) result[i]);
@@ -93,7 +91,6 @@ public class FastaParserTest {
 //        fasta = FastaParser.readFASTA(new File(filename), 290, 291);
 //        assertNull(fasta);
 //    }
-
     @Test
     public void testReadBadFASTA_1() throws Exception {
         String filename = "data/fasta/FASTA_not_obey_70.fasta";
@@ -139,9 +136,11 @@ public class FastaParserTest {
 
         //System.out.print("TEST: header is ");
         assertNotNull(fasta);
-        /*for (int i =0;i<fasta.length;i++)
-         System.out.print((char)fasta[i]);
-         System.out.println("");*/
+        /*
+         * for (int i =0;i<fasta.length;i++)
+         * System.out.print((char)fasta[i]);
+         * System.out.println("");
+         */
     }
 
     /**
@@ -157,9 +156,11 @@ public class FastaParserTest {
         assertTrue(new File(filename).exists());
 
         byte[] fasta = FastaParser.readFASTA(new File(filename), start, end);
-        /*for (int i=0;i<fasta.length;i++)
-         System.out.print((char)fasta[i]);
-         System.out.println();*/
+        /*
+         * for (int i=0;i<fasta.length;i++)
+         * System.out.print((char)fasta[i]);
+         * System.out.println();
+         */
     }
 
     /*
@@ -236,11 +237,13 @@ public class FastaParserTest {
         //System.out.println("expected, header, actual " + expected_fasta.length + ":" + header_len + ":" + fasta.length);
         assertTrue(end - start >= fasta.length - header_len);
 
-        /*System.out.print("actual:");
-         for (int i=header_len;i<fasta.length;i++)
-         System.out.print((char)fasta[i]);
-         System.out.println();*/
-        assertTrue(filename + ": Expected expected_fasta.length (" + expected_fasta.length + ") >= fasta.length (" + fasta.length + ") - header_len (" + header_len + ")", expected_fasta.length >= fasta.length - header_len);
+        /*
+         * System.out.print("actual:");
+         * for (int i=header_len;i<fasta.length;i++)
+         * System.out.print((char)fasta[i]);
+         * System.out.println();
+         */
+        assertTrue(expected_fasta.length >= fasta.length - header_len, filename + ": Expected expected_fasta.length (" + expected_fasta.length + ") >= fasta.length (" + fasta.length + ") - header_len (" + header_len + ")");
 
         //System.out.print("testing against expected:");
         for (int i = 0; i < fasta.length - header_len; i++) {

@@ -6,23 +6,10 @@
  */
 package com.affymetrix.genometry.parsers;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TrackLineParserTest {
-
-    public TrackLineParserTest() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void testSetTrackProperties() {

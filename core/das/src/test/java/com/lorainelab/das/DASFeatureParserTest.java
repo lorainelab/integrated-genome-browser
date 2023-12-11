@@ -14,17 +14,15 @@ import org.lorainelab.igb.das.parser.DASSymmetry;
 import org.lorainelab.igb.synonymlookup.services.impl.ChromosomeSynonymLookupImpl;
 import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
 import org.lorainelab.igb.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import org.junit.Test;
 
 /**
  *
@@ -73,7 +71,8 @@ public class DASFeatureParserTest {
             }
         }
         assertNotNull(newSym);
-        assertTrue("Result is not a DASSymmetry", newSym instanceof DASSymmetry);
+        final boolean isDASSymmetryType = newSym instanceof DASSymmetry;
+        assertTrue(isDASSymmetryType, "Result is not a DASSymmetry");
         DASSymmetry sym = (DASSymmetry) newSym;
 
         String link = (String) sym.getProperty("link");

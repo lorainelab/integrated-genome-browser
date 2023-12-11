@@ -7,69 +7,61 @@
 package com.affymetrix.genometry;
 
 import com.affymetrix.genometry.symmetry.impl.GFF3Sym;
-import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GFF3SymTest {
 
     public GFF3SymTest() {
     }
 
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
     /*
-     @Test
-     public void testGetSource() {
-     fail("test not implemented");
-     }
-
-     @Test
-     public void testGetFeatureType() {
-     fail("test not implemented");
-     }
-
-     @Test
-     public void testGetScore() {
-     fail("test not implemented");
-     }
-
-     @Test
-     public void testGetFrame() {
-     fail("test not implemented");
-     }
-
-     @Test
-     public void testGetAttributes() {
-     fail("test not implemented");
-     }
-
-     @Test
-     public void testGetProperty() {
-     fail("test not implemented");
-     }
-
-     @Test
-     public void testSetProperty() {
-     fail("test not implemented");
-     }
-
-     @Test
-     public void testGetProperties() {
-     fail("test not implemented");
-     }
-
-     @Test
-     public void testCloneProperties() {
-     fail("test not implemented");
-     }
+     * @Test
+     * public void testGetSource() {
+     * fail("test not implemented");
+     * }
+     *
+     * @Test
+     * public void testGetFeatureType() {
+     * fail("test not implemented");
+     * }
+     *
+     * @Test
+     * public void testGetScore() {
+     * fail("test not implemented");
+     * }
+     *
+     * @Test
+     * public void testGetFrame() {
+     * fail("test not implemented");
+     * }
+     *
+     * @Test
+     * public void testGetAttributes() {
+     * fail("test not implemented");
+     * }
+     *
+     * @Test
+     * public void testGetProperty() {
+     * fail("test not implemented");
+     * }
+     *
+     * @Test
+     * public void testSetProperty() {
+     * fail("test not implemented");
+     * }
+     *
+     * @Test
+     * public void testGetProperties() {
+     * fail("test not implemented");
+     * }
+     *
+     * @Test
+     * public void testCloneProperties() {
+     * fail("test not implemented");
+     * }
      */
     @Test
     public void testGetIdFromGFF3Attributes() {
@@ -86,14 +78,14 @@ public class GFF3SymTest {
     }
 
     /*
-     @Test
-     public void testAddAllAttributesFromGFF3() {
-     fail("test not implemented");
-     }
-
-     @Test
-     public void testGetGFF3PropertyFromAttributes() {
-     fail("test not implemented");
-     }
+     * @Test
+     * public void testAddAllAttributesFromGFF3() {
+     * fail("test not implemented");
+     * }
+     *
+     * @Test
+     * public void testGetGFF3PropertyFromAttributes() {
+     * fail("test not implemented");
+     * }
      */
 }

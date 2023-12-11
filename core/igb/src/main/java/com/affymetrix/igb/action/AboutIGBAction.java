@@ -123,18 +123,17 @@ public class AboutIGBAction extends GenericAction implements HtmlHelpProvider {
             replace(DATA_DIR_COMMENT, dataDirInfo.toString(), sb);
         }
         replace(VERSION_COMMENT, CommonUtils.getInstance().getIgbVersion(), sb);
-        try {
-            InputStream input = this.getClass().getClassLoader().getResourceAsStream("git.properties");
+        try (InputStream input = this.getClass().getClassLoader().getResourceAsStream("git.properties");) {
             Properties prop = new Properties();
             prop.load(input);
             StringBuilder buildInfo = new StringBuilder();
             buildInfo.append("<p>").append("The current Branch Name : ").append(prop.getProperty("git.branch")).append("</p>");
             buildInfo.append("<p>").append("The build date/time : ").append(prop.getProperty("git.build.time")).append("</p>");
-            buildInfo.append("<p>").append("The latest commit id : ").append(prop.getProperty("git.commit.id")).append("</p>");              
-            replace(BUILD_COMMENT, buildInfo.toString(), sb);   
-        } catch(IOException ex) {
-            logger.error("An error has occured while reading git.properties files :",ex);
-        }    
+            buildInfo.append("<p>").append("The latest commit id : ").append(prop.getProperty("git.commit.id")).append("</p>");
+            replace(BUILD_COMMENT, buildInfo.toString(), sb);
+        } catch (IOException ex) {
+            logger.error("An error has occured while reading git.properties files :", ex);
+        }
         return sb.toString();
     }
 

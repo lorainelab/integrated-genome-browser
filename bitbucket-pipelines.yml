@@ -81,6 +81,10 @@ pipelines:
     release-*:
       - step: *build-installers-and-artifacts-for-release
   custom:
+    release-dev-snapshots-to-nexus:
+      - script:
+        - mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-SNAPSHOT -DgenerateBackupPoms=false
+        - mvn deploy -P release-snapshots -s /root/.m2/settings.xml -Drepo.username=${DEV_NEXUS_USER} -Drepo.password=${DEV_NEXUS_PASSWORD} -Drepo.id=${DEV_NEXUS_REPOSITORY_ID}
     build-master-branch-installers:
       - step: *build-installers-for-dev
     release-to-nexus.bioviz.org:

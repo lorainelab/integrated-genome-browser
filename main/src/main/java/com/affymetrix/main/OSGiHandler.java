@@ -91,7 +91,7 @@ public class OSGiHandler {
 //        if (customFolder != null && customFolder.isFolder()) {
 //            FlatLaf.registerCustomDefaultsSource(customFolder.toURL());
 //        }
-        FlatMacDarkLaf.setup();
+        FlatMacLightLaf.setup();
     }
 
     public void startOSGi() {

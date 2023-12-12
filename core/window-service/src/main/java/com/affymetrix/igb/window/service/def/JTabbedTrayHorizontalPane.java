@@ -34,9 +34,9 @@ public abstract class JTabbedTrayHorizontalPane extends JTabbedTrayPane {
      */
     @Override
     protected JRPTabbedPane createTabbedPane(String id, int tabPlacement) {
-        if (isMac()) {
-            return new JRPTabbedPane(id, tabPlacement);
-        }
+//        if (isMac()) {
+//            return new JRPTabbedPane(id, tabPlacement);
+//        }
 
         Object textIconGap = UIManager.get("TabbedPane.textIconGap");
         Insets tabInsets = UIManager.getInsets("TabbedPane.tabInsets");

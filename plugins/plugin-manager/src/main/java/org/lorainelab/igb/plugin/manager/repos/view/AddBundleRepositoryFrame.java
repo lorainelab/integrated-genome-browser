@@ -12,7 +12,6 @@ import com.affymetrix.igb.swing.JRPTextField;
 import com.google.common.base.Strings;
 import org.lorainelab.igb.plugin.manager.repos.PluginRepositoryList;
 import org.lorainelab.igb.preferences.model.PluginRepository;
-import org.lorainelab.igb.javafx.DirectoryChooserUtil;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.Point;

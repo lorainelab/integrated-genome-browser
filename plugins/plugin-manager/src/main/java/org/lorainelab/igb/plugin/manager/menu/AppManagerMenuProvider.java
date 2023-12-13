@@ -11,15 +11,14 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import javafx.application.Platform;
-import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
 import org.lorainelab.igb.menu.api.model.MenuItem;
-import org.lorainelab.igb.plugin.manager.AppManagerFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
+import org.lorainelab.igb.plugin.manager.AppManager;
 
 /**
  *
@@ -31,18 +30,17 @@ public class AppManagerMenuProvider implements MenuBarEntryProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AppManagerMenuProvider.class);
     private static final int MENU_ITEM_WEIGHT = 8;
 
-    private AppManagerFrame frame;
+    private AppManager frame;
 
     @Reference
-    public void setFxPanel(AppManagerFrame frame) {
+    public void setFxPanel(AppManager frame) {
         this.frame = frame;
     }
 
     @Override
     public Optional<List<MenuItem>> getMenuItems() {
         MenuItem menuItem = new MenuItem(APP_MANAGER_MENU_LABEL, (Void t) -> {
-            Platform.runLater(() -> {
-                frame.setState(JFrame.NORMAL);
+            SwingUtilities.invokeLater(() -> {
                 frame.setVisible(true);
             });
             return t;

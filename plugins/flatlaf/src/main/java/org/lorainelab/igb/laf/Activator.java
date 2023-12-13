@@ -4,14 +4,8 @@
  */
 package org.lorainelab.igb.laf;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
-import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.swing.UIManager;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

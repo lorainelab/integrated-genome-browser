@@ -26,6 +26,18 @@
     <!--    Dependencies which need to be "wrapped" into OSGI bundles-->
     <dependencies>
         <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.weisj</groupId>
+            <artifactId>jsvg</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>txw2</artifactId>
         </dependency>
@@ -349,7 +361,10 @@
                             fi.iki.elonen,
                             com.sun.xml.txw2,
                             com.sun.xml.txw2.annotation,
-                            com.sun.xml.txw2.output
+                            com.sun.xml.txw2.output,
+                            com.github.weisj.*,
+                            com.formdev.flatlaf.icons.*,
+                            com.formdev.flatlaf.extras.*
                         </Export-Package>
                     </instructions>
                     <archive>

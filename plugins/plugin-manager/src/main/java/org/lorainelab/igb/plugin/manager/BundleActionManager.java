@@ -22,7 +22,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import javafx.application.Platform;
 import org.apache.felix.bundlerepository.InterruptedResolutionException;
 import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
@@ -82,11 +81,9 @@ public class BundleActionManager {
                 }
                 installBundle(plugin, installSucceeded -> {
                     if (installSucceeded) {
-                        Platform.runLater(() -> {
-                            plugin.setBundle(bundle);
-                            plugin.setVersion(bundle.getVersion().toString());
-                            plugin.setIsUpdatable(Boolean.FALSE);
-                        });
+                        plugin.setBundle(bundle);
+                        plugin.setVersion(bundle.getVersion().toString());
+                        plugin.setUpdateable(Boolean.FALSE);
                         callback.apply(installSucceeded);
                     }
                     return Void.TYPE;
@@ -190,11 +187,11 @@ public class BundleActionManager {
     }
 
     public void uninstallBundle(final PluginListItemMetadata plugin, final Function<Boolean, ? extends Class<Void>> callback) {
-        logger.info("Starting uninstallation process for plugin: " + plugin.getPluginName().getValue());
+        logger.info("Starting uninstallation process for plugin: " + plugin.getPluginName());
 
         CompletableFuture.supplyAsync(() -> {
             Bundle bundle = plugin.getBundle();
-            String symbolicName = bundle.getSymbolicName(); 
+            String symbolicName = bundle.getSymbolicName();
 
             try {
                 final List<Bundle> currentBundlesInRuntime = Arrays.asList(bundleContext.getBundles());
@@ -227,8 +224,8 @@ public class BundleActionManager {
                 return false;
             }
 
-            logger.info("Uninstallation process completed for plugin: " + plugin.getPluginName().getValue());
-            return true; 
+            logger.info("Uninstallation process completed for plugin: " + plugin.getPluginName());
+            return true;
         }).thenApply(callback);
     }
 

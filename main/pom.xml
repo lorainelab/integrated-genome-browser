@@ -445,6 +445,11 @@
         </dependency>
         <dependency>
             <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
             <artifactId>flatlaf-jide-oss</artifactId>
             <scope>compile</scope>
         </dependency>

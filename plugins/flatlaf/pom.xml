@@ -41,9 +41,14 @@
             <artifactId>org.osgi.service.component.annotations</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -55,7 +60,7 @@
             <groupId>com.jidesoft</groupId>
             <artifactId>jide-ultimate-jakarta</artifactId>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
     </dependencies>
     <build>
         <plugins>
@@ -106,7 +111,7 @@
                     <instructions>    
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>*</Import-Package>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Dependency>*;scope=runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>       
                         <Export-Package>
                             com.formdev.flatlaf,

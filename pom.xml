@@ -996,6 +996,16 @@
             </dependency>
             <dependency>
                 <groupId>com.formdev</groupId>
+                <artifactId>flatlaf-extras</artifactId>
+                <version>3.2.5</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.weisj</groupId>
+                <artifactId>jsvg</artifactId>
+                <version>1.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.formdev</groupId>
                 <artifactId>flatlaf-jide-oss</artifactId>
                 <version>3.2.5</version>
             </dependency>

@@ -110,11 +110,26 @@
         <dependency>
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout-core</artifactId>
-            <scope>provided</scope>
+            <scope></scope>
         </dependency>
         <dependency>
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout-swing</artifactId>
+            <scope></scope>
+        </dependency>
+        <dependency>
+            <groupId>org.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>0.17.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-tables</artifactId>
+            <version>0.17.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -130,11 +145,6 @@
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>org.lorainelab.igb.menu.api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>igb-javafx-util</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -166,7 +176,9 @@
                 <configuration>
                     <instructions>   
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency> 
-                        <Import-Package>!${project.artifactId},
+                        <Import-Package>
+                            !${project.artifactId},
+                           com.apple.eawt;resolution:=optional,
                             *
                         </Import-Package>
                         <Export-Package>org.lorainelab.igb.plugin.manager.service</Export-Package>

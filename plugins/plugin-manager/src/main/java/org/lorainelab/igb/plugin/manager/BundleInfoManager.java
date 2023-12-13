@@ -69,8 +69,12 @@ public class BundleInfoManager {
     }
 
     private void refreshBundleInfo() {
-        repositoryManagedBundles = getFilteredRepositoryBundles();
-        defaultBundles.stream().filter(IS_PLUGIN).forEach(repositoryManagedBundles::add);
+        try {
+            repositoryManagedBundles = getFilteredRepositoryBundles();
+            defaultBundles.stream().filter(IS_PLUGIN).forEach(repositoryManagedBundles::add);
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage(), ex);
+        }
     }
 
     private void initalizeBundleListener() {

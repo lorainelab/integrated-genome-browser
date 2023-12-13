@@ -10,7 +10,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.affymetrix.genometry.thread.CThreadHolder;
 import com.affymetrix.genometry.thread.CThreadWorker;
 import com.google.common.collect.Lists;
-import java.lang.reflect.Field;
 import org.lorainelab.igb.preferences.model.PluginRepository;
 import java.net.ConnectException;
 import java.net.MalformedURLException;

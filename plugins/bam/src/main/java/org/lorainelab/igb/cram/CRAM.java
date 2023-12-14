@@ -121,8 +121,8 @@ public class CRAM extends XAM implements Das2SliceSupport {
     public List<SeqSymmetry> parse(SeqSpan span) throws Exception {
         init();
         BioSeq seq = span.getBioSeq();
-        int min = seq.getMin();
-        int max = seq.getMax();
+        int min = span.getStart();
+        int max = span.getEnd();
         List<SeqSymmetry> symList = new ArrayList<>(1000);
         List<Throwable> errors = new ArrayList<>(10);
         CloseableIterator<SAMRecord> iterator = null;

@@ -1143,11 +1143,8 @@ context.goForward(1, true, true);
     <unixInstaller name="Unix Installer" id="25">
       <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-21.0.1" />
     </unixInstaller>
-    <macosFolder name="Mac_OS X_amd64" id="552" architecture="universal" signLaunchers="true">
-      <jreBundle jreBundleSource="preCreated" includedJre="macos-amd64-21.0.1" />
-    </macosFolder>
-    <macosFolder name="macOS_aarch64" id="834" architecture="aarch64">
-      <jreBundle jreBundleSource="preCreated" includedJre="macos-aarch64-21.0.1" />
+    <macosFolder name="Mac_OS X_universal" id="552" architecture="universal" signLaunchers="true">
+      <jreBundle jreBundleSource="preCreated" includedJre="macos-universal-21.0.1" />
     </macosFolder>
   </mediaSets>
   <buildIds>

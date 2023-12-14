@@ -2,6 +2,7 @@ package com.affymetrix.igb;
 
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import java.awt.Image;
+import java.awt.Taskbar;
 import java.awt.desktop.PreferencesEvent;
 import java.awt.desktop.PreferencesHandler;
 import java.lang.reflect.Method;
@@ -68,8 +69,7 @@ public class MacIntegration implements PreferencesHandler {
      */
     public void setDockIconImage(Image image) {
         try {
-            Method setDockIconImage = applicationClass.getDeclaredMethod("setDockIconImage", Image.class);
-            setDockIconImage.invoke(application, image);
+            Taskbar.getTaskbar().setIconImage(image);
         } catch (Exception ex) {
             ourLogger.log(Level.SEVERE, "?", ex);
         }

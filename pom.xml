@@ -86,6 +86,7 @@
         <felixJettyVersion>5.1.4</felixJettyVersion>
         <commonsFileUpload>1.5</commonsFileUpload>
         <lombokVersion>1.18.20</lombokVersion>
+        <httpclient.version>4.5.13</httpclient.version>
     </properties>
     <repositories>
         <repository>
@@ -697,6 +698,12 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombokVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
                 <scope>provided</scope>
             </dependency>
 

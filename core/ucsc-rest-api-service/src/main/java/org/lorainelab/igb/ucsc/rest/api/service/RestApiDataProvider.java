@@ -8,14 +8,18 @@ import com.affymetrix.genometry.data.sequence.ReferenceSequenceProvider;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.LoadUtils;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.URIBuilder;
 import org.lorainelab.igb.ucsc.rest.api.service.model.GenomesData;
+import org.lorainelab.igb.ucsc.rest.api.service.model.TrackDetails;
+import org.lorainelab.igb.ucsc.rest.api.service.model.UCSCRestTracks;
 import org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
@@ -116,7 +120,32 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
 
     @Override
     public Set<DataSet> getAvailableDataSets(DataContainer dataContainer) {
-        return null;
+        GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
+        final String genomeVersionName = genomeVersion.getName();
+        Optional<String> contextRootkey = UCSCRestServerUtils.getContextRootKey(genomeVersionName, availableGenomesSet, genomeVersion.getGenomeVersionSynonymLookup());
+        Set<DataSet> dataSets = Sets.newLinkedHashSet();
+        if (contextRootkey.isPresent()) {
+            String contextRoot = url;
+            Optional<UCSCRestTracks> tracksResponse = UCSCRestServerUtils.retrieveTracksResponse(contextRoot, contextRootkey.get());
+            if (tracksResponse.isPresent()) {
+                UCSCRestTracks tracks = tracksResponse.get();
+                Map<String, TrackDetails> trackDetailsMap = tracks.getTracks().get(contextRootkey.get());
+                trackDetailsMap.forEach((track, trackDetail) -> {
+                    try {
+                        URIBuilder uriBuilder = new URIBuilder(contextRoot + "/getData/track");
+                        uriBuilder.addParameter("genome", genomeVersionName);
+                        uriBuilder.addParameter("track", track);
+                        URI uri = uriBuilder.build();
+                        UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(uri, Optional.empty(), trackDetail.getType(), track, genomeVersion);
+                        DataSet dataSet = new DataSet(uri, track, null, dataContainer, ucscRestSymLoader, false);
+                        dataSets.add(dataSet);
+                    } catch (URISyntaxException ex) {
+                        log.error("Invalid URI format for DAS context root: {}, skipping this resource", contextRoot, ex);
+                    }
+                });
+            }
+        }
+        return dataSets;
     }
 
     @Override

@@ -13,8 +13,8 @@ import static org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils
 public class UCSCRestDataProviderFactory implements DataProviderFactory {
 
     public static final String COMPONENT_NAME = "RestApiDataProviderFactory";
-    public static final String FACTORY_NAME = "REST";
-    private static final int WEIGHT = 2;
+    public static final String FACTORY_NAME = "UCSC REST";
+    private static final int WEIGHT = 3;
 
     @Override
     public String getFactoryName() {

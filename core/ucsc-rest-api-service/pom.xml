@@ -45,7 +45,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
+            <scope>provided</scope>
         </dependency>
         <!--Start of logging dependencies-->
         <dependency>
@@ -73,11 +73,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.kevinsawicki</groupId>
-            <artifactId>http-request</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

@@ -2,12 +2,6 @@ package com.affymetrix.main;
 
 import com.affymetrix.common.CommonUtils;
 import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
-import com.formdev.flatlaf.themes.FlatMacLightLaf;
-import com.formdev.flatlaf.util.SystemInfo;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,28 +64,6 @@ public class OSGiHandler {
         if (isDevelopmentMode()) {
             clearCache();
         }
-        setupLaf();
-    }
-
-    private void setupLaf() {
-        UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo("FlatLaf Light", FlatLightLaf.class.getName()));
-        UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo("FlatLaf Dark", FlatDarkLaf.class.getName()));
-        UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo("FlatLaf Cupertino Light", FlatMacLightLaf.class.getName()));
-        UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo("FlatLaf Cupertino Dark", FlatMacDarkLaf.class.getName()));
-        UIDefaults defaults = UIManager.getDefaults();
-        defaults.put("TitlePane.unifiedBackground", true);
-        defaults.put("TitlePane.menuBarEmbedded", true);
-        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("linux")) {
-            JFrame.setDefaultLookAndFeelDecorated(true);
-            JDialog.setDefaultLookAndFeelDecorated(true);
-        }
-        FlatLaf.registerCustomDefaultsSource(OSGiHandler.class.getPackageName(), getClass().getClassLoader());
-        // tell FlatLaf to look for possible user .properties files in LookAndFeel folder of config file system
-//        FileObject customFolder = FileUtil.getConfigFile("LookAndFeel");
-//        if (customFolder != null && customFolder.isFolder()) {
-//            FlatLaf.registerCustomDefaultsSource(customFolder.toURL());
-//        }
-        FlatMacLightLaf.setup();
     }
 
     public void startOSGi() {

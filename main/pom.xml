@@ -16,11 +16,6 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>flatlaf</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
@@ -439,16 +434,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf-jide-oss</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <scope>compile</scope>
@@ -635,8 +620,6 @@
                                         <include name="org.apache.felix.main-*.jar"/>
                                         <include name="slf4j-api-*.jar"/>
                                         <include name="logback-*.jar"/>
-                                        <include name="flatlaf-*.jar"/>
-                                        <include name="jide-ultimate-*.jar"/>
                                     </zipgroupfileset>
                                     <fileset dir="${basedir}/target/lib">
                                         <include name="*.jar"/>

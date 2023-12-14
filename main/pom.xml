@@ -16,6 +16,11 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jide-ultimate-jakarta</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
@@ -416,13 +421,6 @@
             <artifactId>appstore</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!--End of plugin module dependencies-->
-        <dependency>
-            <groupId>com.jidesoft</groupId>
-            <artifactId>jide-ultimate-jakarta</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <!--End of plugin module dependencies-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -615,6 +613,7 @@
                                         <include name="org.apache.felix.main-*.jar"/>
                                         <include name="slf4j-api-*.jar"/>
                                         <include name="logback-*.jar"/>
+                                        <include name="jide-ultimate-*.jar"/>
                                     </zipgroupfileset>
                                     <fileset dir="${basedir}/target/lib">
                                         <include name="*.jar"/>

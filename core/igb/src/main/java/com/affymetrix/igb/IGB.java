@@ -167,33 +167,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
     }
 
     private static void setLaf() {
-        // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
-        System.setProperty("swing.aatext", "true");
-
-        // Letting the look-and-feel determine the window decorations would
-        // allow exporting the whole frame, including decorations, to an eps file.
-        // But it also may take away some things, like resizing buttons, that the
-        // user is used to in their operating system, so leave as false.
-        JFrame.setDefaultLookAndFeelDecorated(false);
-        if (IS_WINDOWS) {
-            try {
-                // If this is Windows and Nimbus is not installed, then use the Windows look and feel.
-                Class<?> cl = Class.forName(LookAndFeelFactory.WINDOWS_LNF);
-                LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
-
-                if (look_and_feel.isSupportedLookAndFeel()) {
-                    LookAndFeelFactory.installJideExtension();
-                    // Is there a better way to do it? HV 03/02/12
-                    look_and_feel.getDefaults().entrySet().stream().forEach(entry -> {
-                        UIManager.getDefaults().put(entry.getKey(), entry.getValue());
-                    });
-                    UIManager.setLookAndFeel(look_and_feel);
-                }
-            } catch (Exception ulfe) {
-                // Windows look and feel is only supported on Windows, and only in
-                // some version of the jre.  That is perfectly ok.
-            }
-        } else if (IS_LINUX) {
+        if (IS_LINUX) {
             try {
                 Class<?> cl = Class.forName(LookAndFeelFactory.METAL_LNF);
                 LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
@@ -207,9 +181,7 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
                 }
             } catch (Exception ulfe) {
             }
-
-        } 
-
+        }
     }
 
     //credit http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java

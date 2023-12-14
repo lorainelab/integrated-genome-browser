@@ -1,6 +1,8 @@
 package com.affymetrix.main;
 
 import com.affymetrix.common.CommonUtils;
+import static com.affymetrix.common.CommonUtils.IS_LINUX;
+import static com.affymetrix.common.CommonUtils.IS_WINDOWS;
 import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import java.io.File;
 import java.io.IOException;
@@ -30,10 +32,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import static org.osgi.framework.Constants.FRAMEWORK_STORAGE;
@@ -42,6 +41,9 @@ import org.osgi.framework.launch.FrameworkFactory;
 import org.osgi.framework.wiring.BundleRevision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.swing.LookAndFeel;
+import com.jidesoft.plaf.LookAndFeelFactory;
+import javax.swing.UIManager;
 
 /**
  * all OSGi functionality is handled here. Singleton pattern.
@@ -73,6 +75,37 @@ public class OSGiHandler {
         commandLineArguments = commandLineArguments.substring(1, commandLineArguments.length() - 1); // remove brackets
         loadFramework(commandLineArguments);
         loadBundles();
+    }
+
+    private static void setLaf() {
+        // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
+        System.setProperty("swing.aatext", "true");
+
+        // Letting the look-and-feel determine the window decorations would
+        // allow exporting the whole frame, including decorations, to an eps file.
+        // But it also may take away some things, like resizing buttons, that the
+        // user is used to in their operating system, so leave as false.
+        JFrame.setDefaultLookAndFeelDecorated(false);
+        if (IS_WINDOWS) {
+            try {
+                // If this is Windows and Nimbus is not installed, then use the Windows look and feel.
+                Class<?> cl = Class.forName(LookAndFeelFactory.WINDOWS_LNF);
+                LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
+
+                if (look_and_feel.isSupportedLookAndFeel()) {
+                    LookAndFeelFactory.installJideExtension();
+                    // Is there a better way to do it? HV 03/02/12
+                    look_and_feel.getDefaults().entrySet().stream().forEach(entry -> {
+                        UIManager.getDefaults().put(entry.getKey(), entry.getValue());
+                    });
+                    UIManager.setLookAndFeel(look_and_feel);
+                }
+            } catch (Exception ulfe) {
+                // Windows look and feel is only supported on Windows, and only in
+                // some version of the jre.  That is perfectly ok.
+            }
+        }
+
     }
 
     public static void wrapFelixURLStreamHandlerFactory() {

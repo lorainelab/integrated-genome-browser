@@ -17,11 +17,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.prefs.InvalidPreferencesFormatException;
-import javafx.stage.FileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.lorainelab.igb.javafx.FileChooserUtil;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
@@ -62,13 +63,12 @@ public class LoadSessionAction extends GenericAction implements MenuBarEntryProv
         // while loading a session. Instead we want OS Native file choooser. 
         // Thus we are turning to FileChooser for opening a dialog.
         FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
-        FileChooser.ExtensionFilter extFilter = 
-                    new FileChooser.ExtensionFilter("XML File", "*.xml");
+        FileNameExtensionFilter extFilter = new FileNameExtensionFilter("XML File", "xml");
         Optional<File> selectedFile = FileChooserUtil.build()
                 .setContext(fileTracker.getFile())
                 .setTitle("Load Session")
-                .setFileExtensionFilters(Lists.newArrayList(extFilter))
-                .retrieveFileFromFxChooser();
+                .setFileExtensionFilters(Collections.singletonList(extFilter))
+                .retrieveFileFromDialog();
 
         if (selectedFile.isPresent()) {
             fileTracker.setFile(selectedFile.get().getParentFile());

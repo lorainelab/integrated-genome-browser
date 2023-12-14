@@ -378,18 +378,13 @@ public class AddDataProvider extends JFrame {
     private static javax.swing.JTextField urlText;
     // End of variables declaration//GEN-END:variables
 
-    // <Ashwini Kadam> IGBF-1140
-    // JFileChooser displays JavaFX Swing version of file chooser. 
-    // To diplsay operating system's native file chooser, I am using class FileChooser.
-    // DirectoryChooserUtil (based on FileChooserUtil) opens and allows user to
-    // choose only directory (and not file)
     protected static File dirChooser() {
         FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
         File dir = null;
         Optional<File> selectedDir = DirectoryChooserUtil.build()
                 .setContext(fileTracker.getFile())
                 .setTitle("Choose Local Folder")
-                .retrieveDirFromFxChooser();
+                .retrieveDirFromDialog();
         
         if (selectedDir.isPresent()) {
             dir = selectedDir.get();

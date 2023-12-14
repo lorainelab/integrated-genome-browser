@@ -6,10 +6,7 @@
 package org.lorainelab.igb.feedback;
 
 import org.osgi.service.component.annotations.Component;
-import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.util.GeneralUtils;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -27,28 +24,13 @@ import org.lorainelab.igb.menu.api.MenuBarEntryProvider;
  * @author dcnorris
  */
 @Component(name = FeedbackMenuProvider.COMPONENT_NAME, immediate = true, service = MenuBarEntryProvider.class)
-public class FeedbackMenuProvider extends GenericAction implements MenuBarEntryProvider {
+public class FeedbackMenuProvider implements MenuBarEntryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackMenuProvider.class);
     public static final String COMPONENT_NAME = "FeedbackMenuProvider";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
     private static final int MENU_WEIGHT = 20;
-    private FeedbackWidget feedbackWidget;
     private static final String BIOVIZ_HELP_PAGE = "https://bioviz.org/help.html";
-
-    public FeedbackMenuProvider() {
-        super(BUNDLE.getString("menu.name"),
-                BUNDLE.getString("menu.tooltip"),
-                "16x16/actions/help.png",
-                "22x22/actions/help.png",
-                KeyEvent.VK_UNDEFINED);
-        feedbackWidget = new FeedbackWidget();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        feedbackWidget.showPanel();
-    }
 
     @Override
     public Optional<List<MenuItem>> getMenuItems() {

@@ -19,16 +19,17 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import javafx.stage.FileChooser;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -322,9 +323,14 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
                 }
             }
         }
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image File", "*.png", "*.jpeg", "*.svg");
-        Optional<File> fileFromChooser = FileChooserUtil.build().setTitle("Save Image").setContext(new File(directory.getAbsolutePath()))
-                .setDefaultFileName(fileName).setFileExtensionFilters(Lists.newArrayList(extFilter)).saveFilesFromFxChooser();
+       FileNameExtensionFilter extFilter = new FileNameExtensionFilter("Image File", "png", "jpeg", "svg");
+        Optional<File> fileFromChooser = FileChooserUtil.build()
+                .setTitle("Save Image")
+                .setContext(new File(directory.getAbsolutePath()))
+                .setDefaultFileName(fileName)
+                .setFileExtensionFilters(Arrays.asList(extFilter))
+                .saveFileFromDialog();
+
         if (fileFromChooser.isPresent()) {
             completeSaveButtonAction(fileFromChooser.get());
             exportDialogGui.getExportDialogFrame().setVisible(false);

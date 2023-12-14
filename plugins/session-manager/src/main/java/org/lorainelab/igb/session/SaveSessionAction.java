@@ -10,8 +10,6 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.bookmarks.model.Bookmark;
 import com.affymetrix.igb.bookmarks.service.BookmarkService;
 import com.google.common.base.Charsets;
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -20,13 +18,15 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.prefs.Preferences;
-import javafx.stage.FileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.lorainelab.igb.javafx.FileChooserUtil;
 import org.lorainelab.igb.menu.api.model.MenuBarParentMenu;
 import org.lorainelab.igb.menu.api.model.MenuIcon;
@@ -65,62 +65,40 @@ public class SaveSessionAction extends GenericAction implements MenuBarEntryProv
         showJFileChooser(defaultFileName);
     }
 
-    private void showJFileChooser(String defaultFileName) {
-        // IGBF-1151: JFileChooser displays JavaFX style dialog. 
-        // Instead we want OS Native file choooser (Windows and Linux). 
-        // Thus we are using FileChooser for opening a dialog.
-        int extensionIndex;
-        String filePath;
-        File fil;
-        boolean extSet = false;
-        String file_ext;
-        FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XML File", "*.xml"); 
-        fileTracker.setFile(new File(System.getProperty("user.home")));
-        FileChooserUtil fileChooser = FileChooserUtil.build() ;
-        java.util.Optional<File> selectedFile = fileChooser
-                    .setContext(fileTracker.getFile())
-                    .setDefaultFileName(defaultFileName)
-                    .setTitle("Save Session")
-                    .setFileExtensionFilters(Lists.newArrayList(extFilter))
-                    .saveFilesFromFxChooser();
-        
-        FileChooser.ExtensionFilter ext = fileChooser.getSelectedFileExtension();
-        if (selectedFile.isPresent()) {
-            fileTracker.setFile(selectedFile.get().getParentFile());
-            try {
-                fil = selectedFile.get();
-                filePath = fil.getAbsolutePath().replace("*.", "");
+private void showJFileChooser(String defaultFileName) {
+    FileTracker fileTracker = FileTracker.DATA_DIR_TRACKER;
+    FileNameExtensionFilter extFilter = new FileNameExtensionFilter("XML File", "xml");
+    fileTracker.setFile(new File(System.getProperty("user.home")));
 
-                file_ext = filePath.substring(filePath.lastIndexOf(".") + 1);
-                extensionIndex = filePath.indexOf(file_ext);
+    FileChooserUtil fileChooser = FileChooserUtil.build();
+    Optional<File> selectedFile = fileChooser
+            .setContext(fileTracker.getFile())
+            .setDefaultFileName(defaultFileName)
+            .setTitle("Save Session")
+            .setFileExtensionFilters(Collections.singletonList(extFilter))
+            .saveFileFromDialog();
 
-                if (extensionIndex <= 0) {
-                    for (String extension : ext.getExtensions()) {
-                       if (filePath.endsWith(extension.replace("*", ""))) {
-                           extSet = true;
-                           break;
-                       }
-                    }
-                    if (!extSet) {
-                       filePath = filePath.concat(ext.getExtensions().get(0).replace("*", ""));
-                    }
-                   fil = new File(filePath);
-                } else {
-                   fil = new File(filePath.substring(0, extensionIndex + file_ext.length()));
-                }
-                
-                saveSession(fil);
-            } catch (Exception ex) {
-                com.affymetrix.genometry.util.ErrorHandler.errorPanel("Error exporting session", ex, Level.SEVERE);
+    if (selectedFile.isPresent()) {
+        fileTracker.setFile(selectedFile.get().getParentFile());
+        try {
+            File fil = selectedFile.get();
+            String filePath = fil.getAbsolutePath();
+
+            if (!filePath.toLowerCase().endsWith(".xml")) {
+                filePath = filePath.concat(".xml");
+                fil = new File(filePath);
             }
+
+            saveSession(fil);
+        } catch (Exception ex) {
+            com.affymetrix.genometry.util.ErrorHandler.errorPanel("Error exporting session", ex, Level.SEVERE);
         }
     }
-
+}
     public void saveSession(File f) {
         try {
             igbService.saveState();
-            Optional<Bookmark> bookmark = bookmarkService.getCurrentBookmark();
+            com.google.common.base.Optional<Bookmark> bookmark = bookmarkService.getCurrentBookmark();
             if (bookmark.isPresent()) {
                 String bk = URLEncoder.encode(bookmark.get().getURL().toString(), Charsets.UTF_8.displayName());
                 if (bk.length() < Preferences.MAX_VALUE_LENGTH) {

@@ -34,13 +34,12 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javax.swing.Action;
 import javax.swing.DropMode;
 import javax.swing.JButton;
@@ -62,6 +61,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -312,15 +312,14 @@ public final class BookmarkManagerView {
         bookmark_list.setComment("Created Time: " + createdTime);
 
         // IGBF-1152: Changing JavaFX swing style file chooser to native OS file chooser.
-        FileChooser.ExtensionFilter extFilter = 
-                new FileChooser.ExtensionFilter("HTML File(html, htm, xhtml)","*.html", "*.htm", "*.xhtml");
+        FileNameExtensionFilter extFilter = new FileNameExtensionFilter("HTML File (html, htm, xhtml)", "html", "htm", "xhtml");
         Optional<File> selectedFile = FileChooserUtil.build()
                 .setContext(getLoadDirectory())
                 .setTitle("Import")
-                .setFileExtensionFilters(Lists.newArrayList(extFilter))
-                .retrieveFileFromFxChooser();
-        
-        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+                .setFileExtensionFilters(Arrays.asList(extFilter))
+                .retrieveFileFromDialog();
+
+        if (selectedFile.isPresent() && selectedFile.get() != null) {
             setLoadDirectory(selectedFile.get().getParentFile());
             try {
                 BookmarksParser.parse(bookmark_list, selectedFile.get());
@@ -338,11 +337,12 @@ public final class BookmarkManagerView {
         File fil;
         boolean extSet = false;
         String file_ext;
-        /* //Uncomment if its desired to export the bookmark selected
-         TreePath path = tree.getSelectionPath();
-         try {
-         main_bookmark_list = (BookmarkList) path.getLastPathComponent(); // Export selected node
-         } catch(NullPointerException ex) {
+        /*
+         * //Uncomment if its desired to export the bookmark selected
+         * TreePath path = tree.getSelectionPath();
+         * try {
+         * main_bookmark_list = (BookmarkList) path.getLastPathComponent(); // Export selected node
+         * } catch(NullPointerException ex) {
          */
         main_bookmark_list = (BookmarkList) tree_model.getRoot(); // Export whole bookmarks if nothing selected
         //	}
@@ -351,54 +351,40 @@ public final class BookmarkManagerView {
             ErrorHandler.errorPanel("No bookmarks to save", (Exception) null, Level.SEVERE);
             return;
         }
-        
-        FileChooser.ExtensionFilter htmlExtFilter = 
-                new FileChooser.ExtensionFilter("HTML File","*.html");
-                FileChooser.ExtensionFilter textExtFilter = new FileChooser.ExtensionFilter("Text File","*.txt");
-                ArrayList<FileChooser.ExtensionFilter> extList = Lists.newArrayList(htmlExtFilter);
-                extList.add(textExtFilter);
-     
-        FileChooserUtil fileChooser = FileChooserUtil.build() ;
+
+        FileNameExtensionFilter htmlExtFilter = new FileNameExtensionFilter("HTML File", "html");
+        FileNameExtensionFilter textExtFilter = new FileNameExtensionFilter("Text File", "txt");
+        ArrayList<FileNameExtensionFilter> extList = new ArrayList<>(Arrays.asList(htmlExtFilter, textExtFilter));
+
+        FileChooserUtil fileChooser = FileChooserUtil.build();
         Optional<File> selectedFile = fileChooser.setContext(getLoadDirectory())
                 .setTitle("Export")
                 .setDefaultFileName("Untitled")
                 .setFileExtensionFilters(extList)
-                .saveFilesFromFxChooser();
-        
-        ExtensionFilter ext = fileChooser.getSelectedFileExtension();
-        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+                .saveFileFromDialog();
+
+        if (selectedFile.isPresent() && selectedFile.get() != null) {
             setLoadDirectory(selectedFile.get().getParentFile());
             try {
                 fil = selectedFile.get();
-                filePath = fil.getAbsolutePath().replace("*.", "");
-
-                file_ext = filePath.substring(filePath.lastIndexOf(".") + 1);
-                extensionIndex = filePath.indexOf(file_ext);
-
-                if (extensionIndex <= 0) {
-                    for (String extension : ext.getExtensions()) {
-                       if (filePath.endsWith(extension.replace("*", ""))) {
-                           extSet = true;
-                           break;
-                       }
-                    }
-                    if (!extSet) {
-                       filePath = filePath.concat(ext.getExtensions().get(0).replace("*", ""));
-                    }
-                   fil = new File(filePath);
-                } else {
-                   fil = new File(filePath.substring(0, extensionIndex + file_ext.length()));
+                filePath = fil.getAbsolutePath();
+                if (!filePath.toLowerCase().endsWith(".html") && !filePath.toLowerCase().endsWith(".txt")) {
+                    // Append a default extension if none is found
+                    filePath = filePath.concat(".html"); // Default to html if no extension is found
+                    fil = new File(filePath);
                 }
-                
-                if(ext.equals(htmlExtFilter))
+
+                // Determine which export format to use based on file extension
+                if (filePath.toLowerCase().endsWith(".html")) {
                     BookmarkList.exportAsHTML(main_bookmark_list, fil);
-                else
+                } else {
                     BookmarkList.exportAsTEXT(main_bookmark_list, fil);
-            }catch(Exception ex) {
+                }
+            } catch (Exception ex) {
                 ErrorHandler.errorPanel("Error exporting bookmarks", ex, Level.SEVERE);
             }
         }
-}
+    }
 
     public void deleteAction() {
         TreePath[] selectionPaths = tree.getSelectionPaths();

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +29,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import javafx.stage.FileChooser;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -39,6 +39,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import org.lorainelab.igb.javafx.FileChooserUtil;
 
@@ -55,7 +56,7 @@ public final class WebLinksView {
     public WebLinksTableModel serverModel;
     public WebLinksTableModel localModel;
     private static JFileChooser static_chooser = null;
-    private static FileChooserUtil file_chooser = null; 
+    private static FileChooserUtil file_chooser = null;
     public static final String NAME = "Name";
     public static final String URL = "URL Pattern";
     public static final String REGEX = "Regular Expression";
@@ -341,24 +342,25 @@ public final class WebLinksView {
 
     private static FileChooserUtil getFileChooser() {
         if (file_chooser == null) {
-            file_chooser =  FileChooserUtil.build();
+            file_chooser = FileChooserUtil.build();
         }
         file_chooser.setContext(FileTracker.DATA_DIR_TRACKER.getFile());
         return file_chooser;
     }
-    
+
     /**
      * Tracks to import weblinks.
      */
     public void importWebLinks() {
         // IGBF-1183: Change 'Tools->Configure Web Links->Import' file chooser window to OS native file chooser window style
         FileChooserUtil chooser = getFileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("JSON file","*.json", "*.JSON");
-        Optional<File> selectedFile = chooser.setTitle("Import")
-                .setFileExtensionFilters(Lists.newArrayList(extFilter))
-                .retrieveFileFromFxChooser();
-       
-        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+        FileNameExtensionFilter extFilter = new FileNameExtensionFilter("JSON file", "json", "JSON");
+        Optional<File> selectedFile = FileChooserUtil.build()
+                .setTitle("Import")
+                .setFileExtensionFilters(Arrays.asList(extFilter))
+                .retrieveFileFromDialog();
+
+        if (selectedFile.isPresent() && selectedFile.get() != null) {
             FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
             File fil = selectedFile.get();
             try {
@@ -388,42 +390,29 @@ public final class WebLinksView {
 
         // IGBF-1184: Change 'Tools->Configure Web Links->Export file chooser window style to Native OS window style
         FileChooserUtil chooser = getFileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("JSON File", "*.json");
+        FileNameExtensionFilter extFilter = new FileNameExtensionFilter("JSON file", "json", "JSON");
         Optional<File> selectedFile = chooser.setTitle("Export")
                 .setDefaultFileName("Untitled.json")
                 .setFileExtensionFilters(Lists.newArrayList(extFilter))
-                .saveFilesFromFxChooser();
-                
-        FileChooser.ExtensionFilter ext = chooser.getSelectedFileExtension();
-        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+                .saveFileFromDialog();
+
+        FileNameExtensionFilter selectedFileExtension = chooser.getSelectedFileExtension();
+        if (selectedFile.isPresent() && selectedFile.get() != null) {
             FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
             try {
                 fil = selectedFile.get();
-                filePath = fil.getAbsolutePath().replace("*.", "");
+                filePath = fil.getAbsolutePath();
 
-                file_ext = filePath.substring(filePath.lastIndexOf(".") + 1);
-                extensionIndex = filePath.indexOf(file_ext);
-
-                if (extensionIndex <= 0) {
-                    for (String extension : ext.getExtensions()) {
-                       if (filePath.endsWith(extension.replace("*", ""))) {
-                           extSet = true;
-                           break;
-                       }
-                    }
-                    if (!extSet) {
-                       filePath = filePath.concat(ext.getExtensions().get(0).replace("*", ""));
-                    }
-                   fil = new File(filePath);
-                } else {
-                   fil = new File(filePath.substring(0, extensionIndex + file_ext.length()));
+                if (!filePath.toLowerCase().endsWith(".json")) {
+                    filePath = filePath.concat(".json");
                 }
-                
+                fil = new File(filePath);
+
                 WebLinkUtils.exportWebLinks(fil);
             } catch (Exception ex) {
                 ErrorHandler.errorPanel("Error exporting web links", ex, Level.SEVERE);
             }
-        } 
+        }
     }
 
     public void clear() {
@@ -469,7 +458,6 @@ public final class WebLinksView {
         public List<WebLink> getLinks() {
             return this.webLinks;
         }
-
 
         @Override
         public Class<?> getColumnClass(int c) {

@@ -148,6 +148,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>igb-javafx-util</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>fi.iki.elonen</groupId>
             <artifactId>NanoHTTPD</artifactId>
             <scope>provided</scope>

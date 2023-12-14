@@ -11,31 +11,24 @@ import com.affymetrix.genometry.symmetry.RootSeqSymmetry;
 import com.affymetrix.genometry.util.ErrorHandler;
 import com.affymetrix.genometry.util.ExportFileModel;
 import com.affymetrix.genometry.util.FileTracker;
-import com.affymetrix.genometry.util.GFileChooser;
 import com.affymetrix.genometry.util.UniFileFilter;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.IgbServiceImpl;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import java.awt.event.ActionEvent;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
-import javafx.stage.FileChooser;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
+import java.util.stream.Collectors;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.lorainelab.igb.javafx.FileChooserUtil;
 
 public abstract class AbstractExportFileAction
@@ -89,93 +82,72 @@ public abstract class AbstractExportFileAction
     }
 
     private void saveAsFile(TierGlyph atier) {
-        int extensionIndex;
         String filePath;
         File fil;
-        boolean extSet = false;
-        String file_ext;
         RootSeqSymmetry rootSym = (RootSeqSymmetry) atier.getInfo();
 
         Optional<Map<UniFileFilter, AnnotationWriter>> filter2writers = model.getFilterToWriters(rootSym.getCategory());
         if (filter2writers.isPresent() && !filter2writers.get().isEmpty()) {
             File savedDir = FileTracker.DATA_DIR_TRACKER.getFile();
-            List<FileChooser.ExtensionFilter> filters = Lists.newArrayList();
             Set<UniFileFilter> keySet = filter2writers.get().keySet();
-            keySet.stream().forEach((filter) -> {
-                filter.getExtensions().forEach(filterName -> {
-                    FileChooser.ExtensionFilter extensionFilter
-                             = new FileChooser.ExtensionFilter(filter.getDescription(), "*." + filterName);
-                    filters.add(extensionFilter);
-                });
-
-            });
-            //<Ivory Blakley> issue IGBF-1149, make defualt file type consistent
-            Collections.sort(filters, new filterComparator());
+            List<FileNameExtensionFilter> filters = keySet.stream()
+                    .flatMap(filter -> filter.getExtensions().stream()
+                    .map(ext -> new FileNameExtensionFilter(filter.getDescription(), ext)))
+                    .collect(Collectors.toList());
+            filters.sort(new FilterComparator());
 
             FileChooserUtil fcUtil = FileChooserUtil.build()
                     .setDefaultFileName("Untitled")
                     .setFileExtensionFilters(filters)
                     .setContext(savedDir);
 
-            Optional<File> file = fcUtil.saveFilesFromFxChooser();
-            
-            FileChooser.ExtensionFilter ext = fcUtil.getSelectedFileExtension();
+            Optional<File> file = fcUtil.saveFileFromDialog();
+
+            FileNameExtensionFilter selectedFileExtension = fcUtil.getSelectedFileExtension();
             if (file.isPresent()) {
                 fil = file.get();
                 try {
-                filePath = fil.getAbsolutePath().replace("*.", "");
+                    filePath = fil.getAbsolutePath();
 
-                file_ext = filePath.substring(filePath.lastIndexOf(".") + 1);
-                extensionIndex = filePath.indexOf(file_ext);
-
-                if (extensionIndex <= 0) {
-                    for (String extension : ext.getExtensions()) {
-                       if (filePath.endsWith(extension.replace("*", ""))) {
-                           extSet = true;
-                           break;
-                       }
+                    if (selectedFileExtension != null) {
+                        String extFromFilter = selectedFileExtension.getDescription();
+                        if (!filePath.endsWith(extFromFilter)) {
+                            filePath = filePath.concat(".").concat(extFromFilter);
+                        }
+                        fil = new File(filePath);
                     }
-                    if (!extSet) {
-                       filePath = filePath.concat(ext.getExtensions().get(0).replace("*", ""));
-                    }
-                   fil = new File(filePath);
-                } else {
-                   fil = new File(filePath.substring(0, extensionIndex + file_ext.length()));
-                }
-            }catch(Exception ex) {
-                ErrorHandler.errorPanel("Error exporting bookmarks", ex, Level.SEVERE);
-            }
-                
-                
-                
-                Optional<BioSeq> aseq = gmodel.getSelectedSeq();
 
-                try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)))) {
+                    Optional<BioSeq> aseq = gmodel.getSelectedSeq();
 
-                    UniFileFilter swingSelectedFilter = null;
+                    try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)))) {
 
-                    String selectedFileName = fil.getName();
-                    String extension = selectedFileName.substring(selectedFileName.lastIndexOf(".") + 1);
-                    boolean isFound = false;
-                    for (UniFileFilter key : filter2writers.get().keySet()) {
-                        for (String exten : key.getExtensions()) {
-                            if (exten.equals(extension)) {
-                                swingSelectedFilter = key;
-                                isFound = true;
+                        UniFileFilter swingSelectedFilter = null;
+
+                        String selectedFileName = fil.getName();
+                        String extension = selectedFileName.substring(selectedFileName.lastIndexOf(".") + 1);
+                        boolean isFound = false;
+                        for (UniFileFilter key : filter2writers.get().keySet()) {
+                            for (String exten : key.getExtensions()) {
+                                if (exten.equals(extension)) {
+                                    swingSelectedFilter = key;
+                                    isFound = true;
+                                    break;
+                                }
+                            }
+                            if (isFound) {
                                 break;
                             }
                         }
-                        if (isFound) {
-                            break;
-                        }
-                    }
 
-                    preferredFilters.put(rootSym.getCategory(), swingSelectedFilter);
-                    exportFile(filter2writers.get().get(swingSelectedFilter), dos, aseq.orElse(null), atier);
+                        preferredFilters.put(rootSym.getCategory(), swingSelectedFilter);
+                        exportFile(filter2writers.get().get(swingSelectedFilter), dos, aseq.orElse(null), atier);
+                    } catch (Exception ex) {
+                        ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
+                    }
+                    FileTracker.DATA_DIR_TRACKER.setFile(fil);
                 } catch (Exception ex) {
-                    ErrorHandler.errorPanel("Problem saving file", ex, Level.SEVERE);
+                    ErrorHandler.errorPanel("Error exporting bookmarks", ex, Level.SEVERE);
                 }
-                FileTracker.DATA_DIR_TRACKER.setFile(fil);
             }
         } else {
             ErrorHandler.errorPanel("not supported yet", "cannot export files of type "
@@ -195,16 +167,11 @@ public abstract class AbstractExportFileAction
 
     protected abstract void exportFile(AnnotationWriter annotationWriter, DataOutputStream dos, BioSeq aseq, TierGlyph atier) throws java.io.IOException;
 
-    // Sort the file type options before creating the pop-up, so the order of items in the pull down menu is consistent.
-    // The first item is the default, so this makes the default consistent.  <Ivory Blakley> issue IGBF-1149
-    private final static class filterComparator implements Comparator<FileChooser.ExtensionFilter> {
+    private final static class FilterComparator implements Comparator<FileNameExtensionFilter> {
+
         @Override
-        public int compare(FileChooser.ExtensionFilter left, FileChooser.ExtensionFilter right) {
-            //sort alphabetically by file type (description) and then by file extention
-            if (left.getDescription().compareTo(right.getDescription()) != 0){
-                return left.getDescription().compareTo(right.getDescription());
-            }
-            return left.getExtensions().get(0).compareTo(right.getExtensions().get(0));
+        public int compare(FileNameExtensionFilter left, FileNameExtensionFilter right) {
+            return left.getDescription().compareTo(right.getDescription());
         }
     }
 }

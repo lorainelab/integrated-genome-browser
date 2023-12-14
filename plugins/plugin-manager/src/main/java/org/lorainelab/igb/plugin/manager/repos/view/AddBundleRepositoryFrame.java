@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.lorainelab.igb.javafx.DirectoryChooserUtil;
 
 public class AddBundleRepositoryFrame extends JFrame {
 
@@ -262,7 +263,7 @@ public class AddBundleRepositoryFrame extends JFrame {
         Optional<File> selectedDir = DirectoryChooserUtil.build()
                 .setContext(fileTracker.getFile())
                 .setTitle("Choose local folder")
-                .retrieveDirFromFxChooser();
+                .retrieveDirFromDialog();
         
         if (selectedDir.isPresent()) {
             dir = selectedDir.get();

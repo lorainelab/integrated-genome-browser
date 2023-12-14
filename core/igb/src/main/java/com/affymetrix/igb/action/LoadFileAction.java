@@ -178,7 +178,7 @@ public final class LoadFileAction extends OpenURIAction {
         List<File> files = null;
         Optional<List<File>> selectedFiles;
         //IGBF-1509 :  Open File... should work if no genome available
-        selectedFiles = FileChooserUtil.build().setContext(currDir).retrieveFilesFromFxChooser();
+        selectedFiles = FileChooserUtil.build().setContext(currDir).retrieveFilesFromDialog();
         if (selectedFiles.isPresent()) {
             files = selectedFiles.get();
         }

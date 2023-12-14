@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright (c) 2001-2007 Affymetrix, Inc.
  *
  * Licensed under the Common Public License, Version 1.0 (the "License"). A copy
@@ -22,11 +22,14 @@ import com.google.common.collect.Lists;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
 import java.util.logging.Level;
 import javafx.stage.FileChooser;
 import javax.swing.SwingWorker;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.lorainelab.igb.javafx.FileChooserUtil;
 
 public final class RunScriptAction extends GenericAction {
@@ -41,7 +44,7 @@ public final class RunScriptAction extends GenericAction {
     public static RunScriptAction getAction() {
         return ACTION;
     }
-    
+
     private RunScriptAction() {
         super(BUNDLE.getString("runScript"), null,
                 "16x16/actions/run_script.png",
@@ -54,7 +57,7 @@ public final class RunScriptAction extends GenericAction {
         super.actionPerformed(e);
         loadFile();
     }
-    
+
     // IGBF-1182: Change file chooser UI to OS native style for 'Run Script' command. 
     protected static File getSelectedFile() {
         // IGBF-1182: Currently we support only .igb files 
@@ -65,29 +68,30 @@ public final class RunScriptAction extends GenericAction {
             final String ext = i.next();
             i.set("*." + ext);
         }
-        
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Script File(.igb)",var);
+
+        FileNameExtensionFilter extFilter = new FileNameExtensionFilter("Script File (.igb)", "igb");
         Optional<File> selectedFile = FileChooserUtil.build()
                 .setContext(FileTracker.DATA_DIR_TRACKER.getFile())
                 .setTitle("Choose File")
-                .setFileExtensionFilters(Lists.newArrayList(extFilter))
-                .retrieveFileFromFxChooser();
-        
-        if (selectedFile.isPresent() && selectedFile.get()!= null) {
+                .setFileExtensionFilters(Collections.singletonList(extFilter))
+                .retrieveFileFromDialog();
+
+        if (selectedFile.isPresent() && selectedFile.get() != null) {
             FileTracker.DATA_DIR_TRACKER.setFile(selectedFile.get());
             return selectedFile.get();
         }
         return null;
     }
-    
+
     /**
      * Load a file into the global singleton genometry model.
      */
     private void loadFile() {
         final File file = getSelectedFile();
-        if (file == null)
+        if (file == null) {
             return;
-        
+        }
+
         if (ScriptManager.getInstance().isScript(file.getAbsolutePath())) {
             runScript(file.getAbsolutePath());
         } else {
@@ -107,7 +111,7 @@ public final class RunScriptAction extends GenericAction {
                     protected Void doInBackground() {
                         ScriptManager.getInstance().runScript(filePath);
                         return null;
-                    } 
+                    }
 
                     @Override
                     protected void done() {

@@ -4,6 +4,8 @@ import com.affymetrix.common.CommonUtils;
 import static com.affymetrix.common.CommonUtils.IS_LINUX;
 import static com.affymetrix.common.CommonUtils.IS_WINDOWS;
 import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
+import com.jidesoft.combobox.ExComboBox;
+import com.jidesoft.combobox.PopupPanel;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,6 +71,7 @@ public class OSGiHandler {
 
     public void startOSGi() {
         logger.info("Loading OSGi framework");
+        setLaf();
         setUserAgent();
         disableSSLCertValidation();
         String commandLineArguments = Arrays.toString(args);
@@ -89,7 +92,7 @@ public class OSGiHandler {
         if (IS_WINDOWS) {
             try {
                 // If this is Windows and Nimbus is not installed, then use the Windows look and feel.
-                Class<?> cl = Class.forName(LookAndFeelFactory.WINDOWS_LNF);
+                Class<?> cl = Class.forName(LookAndFeelFactory.METAL_LNF);
                 LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
 
                 if (look_and_feel.isSupportedLookAndFeel()) {

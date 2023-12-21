@@ -1,6 +1,7 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.common.CommonUtils;
+import static com.affymetrix.common.CommonUtils.IS_WINDOWS;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.common.ExtensionPointListener;
 import com.affymetrix.common.PreferenceUtils;
@@ -72,12 +73,15 @@ import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.view.AltSpliceView;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.window.service.IWindowService;
+import com.jidesoft.plaf.LookAndFeelFactory;
 import java.net.Authenticator;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
+import javax.swing.LookAndFeel;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 import org.lorainelab.igb.services.IgbService;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.ALT_SPLICE_VIEW_TAB;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.COMPONENT_NAME;
@@ -159,6 +163,25 @@ public class Activator implements BundleActivator {
 
         com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
                 "Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
+;         if (IS_WINDOWS) {
+            try {
+                // If this is Windows and Nimbus is not installed, then use the Windows look and feel.
+                Class<?> cl = Class.forName(LookAndFeelFactory.WINDOWS_LNF);
+                LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
+
+                if (look_and_feel.isSupportedLookAndFeel()) {
+                    LookAndFeelFactory.installJideExtension();
+                    // Is there a better way to do it? HV 03/02/12
+                    look_and_feel.getDefaults().entrySet().stream().forEach(entry -> {
+                        UIManager.getDefaults().put(entry.getKey(), entry.getValue());
+                    });
+                    UIManager.setLookAndFeel(look_and_feel);
+                }
+            } catch (Exception ulfe) {
+                // Windows look and feel is only supported on Windows, and only in
+                // some version of the jre.  That is perfectly ok.
+            }
+        }
     }
 
     /**

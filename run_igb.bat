@@ -1,6 +1,6 @@
 @echo off
 
-REM Set JAVA_OPTS
+REM Set JAVA_OPTS for debug mode
 set JAVA_OPTS=^
 --add-opens=java.desktop/sun.swing=ALL-UNNAMED ^
 --add-opens=java.desktop/sun.awt.shell=ALL-UNNAMED ^
@@ -38,7 +38,7 @@ for %%i in (%*) do (
 
 REM If the debug flag is set, add debug options to JAVA_OPTS
 if defined DEBUG_FLAG (
-    set "JAVA_OPTS=!JAVA_OPTS! -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=127.0.0.1:5005"
+    set "JAVA_OPTS=%JAVA_OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=127.0.0.1:5005"
 )
 
 REM Run the Java program with JAVA_OPTS

@@ -11,9 +11,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class IndexFileUtil {
-    public static File findIndexFile(File bamfile, String extension, int trimLength) throws IndexFileNotFoundException {
+    /**
+     * Check if the alignment file has the index file. Firstly, it looks for file ending with .bam.bai (for bam) or .cram.crai (for cram).
+     * If not found, it looks for the file ending with .bai or .crai.
+     * @param file an alignment file, for example, BAM or CRAM.
+     * @param extension extension of the alignment file (Example: .bam for BAM file).
+     * @param trimLength length of the extension including "." (Example: length of .bam is 4).
+     * @return Index file, if exists.
+     * @throws IndexFileNotFoundException if the index file is not present in the location of the alignment file.
+     */
+    public static File findIndexFile(File file, String extension, int trimLength) throws IndexFileNotFoundException {
         try {
-            String path = bamfile.getPath();
+            String path = file.getPath();
             File f = new File(path + extension);
             if (f.exists()) {
                 return f;
@@ -41,14 +50,22 @@ public class IndexFileUtil {
         }
     }
 
-    public static String findIndexFile(String bamfile, String extension, int trimLength) throws IndexFileNotFoundException {
+    /**
+     * Check if the alignment file has the index file in the remote server.
+     * @param file an alignment file, for example, BAM or CRAM.
+     * @param extension extension of the alignment file (Example: .bam for BAM file).
+     * @param trimLength length of the extension including "." (Example: length of .bam is 4).
+     * @return Index file, if exists
+     * @throws IndexFileNotFoundException if the index file is not present in the location of the alignment file.
+     */
+    public static String findIndexFile(String file, String extension, int trimLength) throws IndexFileNotFoundException {
         try {
-            String baiUriStr = bamfile + extension;
+            String baiUriStr = file + extension;
             if (LocalUrlCacher.isValidURL(baiUriStr)) {
                 return baiUriStr;
             }
 
-            baiUriStr = bamfile.substring(0, bamfile.length() - trimLength) + extension;
+            baiUriStr = file.substring(0, file.length() - trimLength) + extension;
             if (LocalUrlCacher.isValidURL(baiUriStr)) {
                 return baiUriStr;
             }

@@ -14,6 +14,7 @@ import htsjdk.samtools.SamInputResource;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
+import htsjdk.samtools.cram.CRAMException;
 import htsjdk.samtools.seekablestream.SeekableBufferedStream;
 import htsjdk.samtools.seekablestream.SeekableHTTPStream;
 import htsjdk.samtools.util.CloseableIterator;
@@ -43,7 +44,7 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL
 
 public class CRAM extends XAM implements Das2SliceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CRAM.class);
-    private static final Integer CRAM_EXTENSION_LENGTH = 4;
+    private static final Integer CRAM_EXTENSION_LENGTH = 5;
     public final static List<String> pref_list = new ArrayList<>();
 
     static {
@@ -145,7 +146,11 @@ public class CRAM extends XAM implements Das2SliceSupport {
                }
             }
         }catch (Throwable ex){
-            throw new Exception(ex);
+            if(ex instanceof CRAMException){
+                ErrorHandler.errorPanel("CRAM Exception: possible sequence mismatch.", ex.getMessage(), Level.WARNING);
+            }else{
+                throw new Exception(ex);
+            }
         }finally {
             if (iterator!=null){
                 iterator.close();

@@ -59,7 +59,7 @@ public final class BAM extends XAM implements Das2SliceSupport {
     /*SAMFileReader was changed to SamReader to accommodate the changes in the new library.*/
     private SamReader mateReader;
 
-    private static final Integer BAM_EXTENSION_LENGTH = 3;
+    private static final Integer BAM_EXTENSION_LENGTH = 4;
     
     //FYI: the variable reader is inherited from the parent class XAM.java
 

@@ -163,25 +163,6 @@ public class Activator implements BundleActivator {
 
         com.jidesoft.utils.Lm.verifyLicense("Dept. of Bioinformatics and Genomics, UNCC",
                 "Integrated Genome Browser", ".HAkVzUi29bDFq2wQ6vt2Rb4bqcMi8i1");
-;         if (IS_WINDOWS) {
-            try {
-                // If this is Windows and Nimbus is not installed, then use the Windows look and feel.
-                Class<?> cl = Class.forName(LookAndFeelFactory.WINDOWS_LNF);
-                LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
-
-                if (look_and_feel.isSupportedLookAndFeel()) {
-                    LookAndFeelFactory.installJideExtension();
-                    // Is there a better way to do it? HV 03/02/12
-                    look_and_feel.getDefaults().entrySet().stream().forEach(entry -> {
-                        UIManager.getDefaults().put(entry.getKey(), entry.getValue());
-                    });
-                    UIManager.setLookAndFeel(look_and_feel);
-                }
-            } catch (Exception ulfe) {
-                // Windows look and feel is only supported on Windows, and only in
-                // some version of the jre.  That is perfectly ok.
-            }
-        }
     }
 
     /**

@@ -98,7 +98,7 @@
         <dependency>
             <groupId>be.pwnt</groupId>
             <artifactId>jflow</artifactId>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.swinglabs.swingx</groupId>
@@ -207,10 +207,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>  
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>       
-                        <Import-Package>
-                            com.jidesoft.*,
+                        <Import-Package> 
                             com.apple.eawt;resolution:=optional,
                             com.sun.java.swing.plaf.windows;resolution:=optional,
                             javax.swing.plaf.windows;resolution:=optional,

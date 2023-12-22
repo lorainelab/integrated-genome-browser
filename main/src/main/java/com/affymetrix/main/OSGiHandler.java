@@ -1,7 +1,6 @@
 package com.affymetrix.main;
 
 import com.affymetrix.common.CommonUtils;
-import static com.affymetrix.common.CommonUtils.IS_LINUX;
 import static com.affymetrix.common.CommonUtils.IS_WINDOWS;
 import static com.affymetrix.common.CommonUtils.isDevelopmentMode;
 import java.io.File;
@@ -43,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.swing.LookAndFeel;
 import com.jidesoft.plaf.LookAndFeelFactory;
+import java.util.Properties;
 import javax.swing.UIManager;
 
 /**
@@ -50,7 +50,6 @@ import javax.swing.UIManager;
  */
 public class OSGiHandler {
 
-    private static final ResourceBundle CONFIG_BUNDLE = ResourceBundle.getBundle("config");
     private static final Logger logger = LoggerFactory.getLogger(OSGiHandler.class);
     private Framework framework;
     private static DefaultURLStreamHandlerFactory streamHandlerFactory = new DefaultURLStreamHandlerFactory();
@@ -69,6 +68,7 @@ public class OSGiHandler {
 
     public void startOSGi() {
         logger.info("Loading OSGi framework");
+        setLaf();
         setUserAgent();
         disableSSLCertValidation();
         String commandLineArguments = Arrays.toString(args);
@@ -184,7 +184,8 @@ public class OSGiHandler {
      * delete the specified directory, and all its contents
      *
      * @param path the path of the directory to delete
-     * @return true if and only if the file or directory is successfully deleted; false otherwise
+     * @return true if and only if the file or directory is successfully
+     * deleted; false otherwise
      */
     private boolean deleteDirectory(File path) {
         if (path.exists()) {
@@ -215,10 +216,16 @@ public class OSGiHandler {
         try {
             Map<String, String> configProps = new HashMap<>();
             configProps.put(FRAMEWORK_STORAGE, getCacheDir());
-            CONFIG_BUNDLE.keySet().stream().forEach((key) -> configProps.put(key, CONFIG_BUNDLE.getString(key)));
+            // Load properties from the classpath resource "config.properties" using try-with-resources
+            Properties properties = loadPropertiesFromClasspath("felix.properties");
+            if (properties != null) {
+                // Merge the loaded properties into configProps
+                properties.forEach((key, value) -> configProps.put(key.toString(), value.toString()));
+            }
             if (isDevelopmentMode()) {
-                //File Install Properties
+                // File Install Properties
                 configProps.put("felix.fileinstall.dir", "../bundles/dynamic");
+                configProps.put("felix.log.level", "4");
             }
             configProps.put("args", argArray);
             FrameworkFactory factory = getFrameworkFactory();
@@ -232,6 +239,19 @@ public class OSGiHandler {
             ex.printStackTrace(System.err);
             System.exit(0);
         }
+    }
+
+    private Properties loadPropertiesFromClasspath(String resourceName) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceName)) {
+            if (inputStream != null) {
+                Properties properties = new Properties();
+                properties.load(inputStream);
+                return properties;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void addShutdownHook() {

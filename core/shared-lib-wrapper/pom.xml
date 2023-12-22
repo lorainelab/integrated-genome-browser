@@ -26,6 +26,10 @@
     <!--    Dependencies which need to be "wrapped" into OSGI bundles-->
     <dependencies>
         <dependency>
+            <groupId>be.pwnt</groupId>
+            <artifactId>jflow</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>txw2</artifactId>
         </dependency>
@@ -323,6 +327,8 @@
                         <Import-Package>*;resolution:=optional</Import-Package>
                         <Private-Package>*</Private-Package>
                         <Export-Package>
+                            be.pwnt.jflow;version="1.0",
+                            be.pwnt.jflow.*;version="1.0",
                             com.sun.xml.txw2.*;version="4.0.1",
                             affymetrix.calvin.*,
                             affymetrix.fusion,

@@ -44,7 +44,6 @@ import static com.affymetrix.genometry.symloader.ProtocolConstants.HTTP_PROTOCOL
 
 public class CRAM extends XAM implements Das2SliceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(CRAM.class);
-    private static final Integer CRAM_EXTENSION_LENGTH = 5;
     public final static List<String> pref_list = new ArrayList<>();
 
     static {
@@ -62,7 +61,7 @@ public class CRAM extends XAM implements Das2SliceSupport {
         String scheme = uri.getScheme().toLowerCase();
         if(StringUtils.equals(scheme, FILE_PROTOCOL_SCHEME)){
             File f = new File(uri);
-            indexFile = IndexFileUtil.findIndexFile(f, FileExtensions.CRAM_INDEX, CRAM_EXTENSION_LENGTH);
+            indexFile = IndexFileUtil.findIndexFile(f, FileExtensions.CRAM_INDEX);
             samInputResource = SamInputResource.of(f).index(indexFile);
             samReader = samReaderFactory.open(samInputResource);
         }else if(StringUtils.equals(scheme, HTTP_PROTOCOL_SCHEME) || StringUtils.equals(scheme, HTTPS_PROTOCOL_SCHEME)){
@@ -110,7 +109,7 @@ public class CRAM extends XAM implements Das2SliceSupport {
     }
 
     private String getCRAMIndexUri(URI uri) throws IndexFileNotFoundException {
-        String CRAIUri = IndexFileUtil.findIndexFile(uri.toString(), FileExtensions.CRAM_INDEX, CRAM_EXTENSION_LENGTH);
+        String CRAIUri = IndexFileUtil.findIndexFile(uri.toString(), FileExtensions.CRAM_INDEX);
         if(StringUtils.isBlank(CRAIUri)){
             ErrorHandler.errorPanel("CRAM index file not found", "Could not find URL of CRAM index file at "+ uri +". Please be sure this is in the same directory as the BAM file", Level.SEVERE);
             this.isInitialized=false;

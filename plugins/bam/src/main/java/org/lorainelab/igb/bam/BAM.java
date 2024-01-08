@@ -58,8 +58,6 @@ public final class BAM extends XAM implements Das2SliceSupport {
     public final static List<String> pref_list = new ArrayList<>();
     /*SAMFileReader was changed to SamReader to accommodate the changes in the new library.*/
     private SamReader mateReader;
-
-    private static final Integer BAM_EXTENSION_LENGTH = 4;
     
     //FYI: the variable reader is inherited from the parent class XAM.java
 
@@ -87,7 +85,7 @@ public final class BAM extends XAM implements Das2SliceSupport {
             // BAM is file.
             //indexFile = new File(uri.)
             File f = new File(uri);
-            indexFile = IndexFileUtil.findIndexFile(f, FileExtensions.BAI_INDEX, BAM_EXTENSION_LENGTH);
+            indexFile = IndexFileUtil.findIndexFile(f, FileExtensions.BAI_INDEX);
             resource = SamInputResource.of(f).index(indexFile);
             samFileReader = factory.open(resource);
         } else if (StringUtils.equals(scheme, HTTP_PROTOCOL_SCHEME) || StringUtils.equals(scheme, HTTPS_PROTOCOL_SCHEME)) {
@@ -141,7 +139,7 @@ public final class BAM extends XAM implements Das2SliceSupport {
 
     private String getBamIndexUriStr(URI uri) throws IndexFileNotFoundException {
         // BAM is URL.  Get the indexed .bai file, and query only the needed portion of the BAM file.
-        String baiUriStr = IndexFileUtil.findIndexFile(uri.toString(), FileExtensions.BAI_INDEX, BAM_EXTENSION_LENGTH);
+        String baiUriStr = IndexFileUtil.findIndexFile(uri.toString(), FileExtensions.BAI_INDEX);
         // Guess at the location of the .bai URL as BAM URL + ".bai"
         if (StringUtils.isBlank(baiUriStr)) {
             ErrorHandler.errorPanel("No BAM index file",

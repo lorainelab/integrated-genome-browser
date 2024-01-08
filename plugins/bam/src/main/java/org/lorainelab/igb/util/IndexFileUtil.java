@@ -16,18 +16,17 @@ public class IndexFileUtil {
      * If not found, it looks for the file ending with .bai or .crai.
      * @param file an alignment file, for example, BAM or CRAM.
      * @param extension extension of the alignment file (Example: .bam for BAM file).
-     * @param trimLength length of the extension including "." (Example: length of .bam is 4).
      * @return Index file, if exists.
      * @throws IndexFileNotFoundException if the index file is not present in the location of the alignment file.
      */
-    public static File findIndexFile(File file, String extension, int trimLength) throws IndexFileNotFoundException {
+    public static File findIndexFile(File file, String extension) throws IndexFileNotFoundException {
         try {
             String path = file.getPath();
             File f = new File(path + extension);
             if (f.exists()) {
                 return f;
             }
-            path = path.substring(0, path.length() - trimLength) + extension;
+            path = path.substring(0, path.lastIndexOf(".")) + extension;
             f = new File(path);
             if (f.exists()) {
                 return f;
@@ -54,18 +53,17 @@ public class IndexFileUtil {
      * Check if the alignment file has the index file in the remote server.
      * @param file an alignment file, for example, BAM or CRAM.
      * @param extension extension of the alignment file (Example: .bam for BAM file).
-     * @param trimLength length of the extension including "." (Example: length of .bam is 4).
      * @return Index file, if exists
      * @throws IndexFileNotFoundException if the index file is not present in the location of the alignment file.
      */
-    public static String findIndexFile(String file, String extension, int trimLength) throws IndexFileNotFoundException {
+    public static String findIndexFile(String file, String extension) throws IndexFileNotFoundException {
         try {
             String baiUriStr = file + extension;
             if (LocalUrlCacher.isValidURL(baiUriStr)) {
                 return baiUriStr;
             }
 
-            baiUriStr = file.substring(0, file.length() - trimLength) + extension;
+            baiUriStr = file.substring(0, file.lastIndexOf(".")) + extension;
             if (LocalUrlCacher.isValidURL(baiUriStr)) {
                 return baiUriStr;
             }

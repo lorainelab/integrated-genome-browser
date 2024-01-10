@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class UCSCRestServerUtils {
 
     public static Optional<UCSCRestTracks> retrieveTracksResponse(String contextRoot, String genomeVersionName) {
         String uri = toExternalForm(toExternalForm(contextRoot.trim()) + LIST) + TRACKS;
-        UCSCRestTracks tracks = null;
+        UCSCRestTracks ucscRestTracks = null;
         try {
             URIBuilder uriBuilder = new URIBuilder(uri);
             uriBuilder.addParameter(GENOME, genomeVersionName);
@@ -46,13 +47,15 @@ public class UCSCRestServerUtils {
             String validUrl = checkValidAndSetUrl(uriBuilder.toString());
             URL genomeUrl = new URL(validUrl);
             String data = Resources.toString(genomeUrl, Charsets.UTF_8);
-            tracks = new Gson().fromJson(
+            ucscRestTracks = new Gson().fromJson(
                     data, UCSCRestTracks.class
             );
+            if(Objects.nonNull(ucscRestTracks))
+                ucscRestTracks.setTracks(data, genomeVersionName);
         } catch (URISyntaxException | IOException e) {
             logger.error(e.getMessage(), e);
         }
-        return Optional.ofNullable(tracks);
+        return Optional.ofNullable(ucscRestTracks);
     }
 
     public static Optional<String> getContextRootKey(final String genomeVersionName, Set<String> availableGenomesSet, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {

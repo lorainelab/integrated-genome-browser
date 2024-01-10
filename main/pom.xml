@@ -236,16 +236,6 @@
             <artifactId>htsjdk-igb</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         <!-- End of external bundle dependencies-->
         <!-- Start of Apache Felix Web Console bundles-->
         <dependency>

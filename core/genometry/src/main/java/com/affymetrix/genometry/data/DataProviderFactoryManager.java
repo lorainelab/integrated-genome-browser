@@ -48,7 +48,7 @@ public class DataProviderFactoryManager {
         logger.debug("Das Factory now available.");
     }
 
-    @Reference(target = "(&(component.name=UCSCRestDataProviderFactory))")
+    @Reference(target = "(&(component.name=RestApiDataProviderFactory))")
     public void trackUCSCRestDataProviderFactory(DataProviderFactory ucscRestFactory) {
         logger.debug("UCSC Rest Factory now available.");
     }

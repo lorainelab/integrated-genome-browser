@@ -12,7 +12,6 @@ import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import org.lorainelab.igb.ucsc.rest.api.service.model.GenomesData;
-import org.lorainelab.igb.ucsc.rest.api.service.model.TrackDetails;
 import org.lorainelab.igb.ucsc.rest.api.service.model.UCSCRestTracks;
 import org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils;
 
@@ -21,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -128,9 +128,8 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
             String contextRoot = url;
             Optional<UCSCRestTracks> tracksResponse = UCSCRestServerUtils.retrieveTracksResponse(contextRoot, contextRootkey.get());
             if (tracksResponse.isPresent()) {
-                UCSCRestTracks tracks = tracksResponse.get();
-                Map<String, TrackDetails> trackDetailsMap = tracks.getTracks().get(contextRootkey.get());
-                trackDetailsMap.forEach((track, trackDetail) -> {
+                UCSCRestTracks ucscRestTracks = tracksResponse.get();
+                ucscRestTracks.getTracks().forEach((track, trackDetail) -> {
                     try {
                         URIBuilder uriBuilder = new URIBuilder(contextRoot + "/getData/track");
                         uriBuilder.addParameter("genome", genomeVersionName);
@@ -150,7 +149,7 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
 
     @Override
     public Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion) {
-        return null;
+        return Collections.emptyMap();
     }
 
     @Override

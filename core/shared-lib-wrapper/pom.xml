@@ -78,12 +78,20 @@
             <artifactId>http-request</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
             <groupId>fi.iki.elonen</groupId>
-            <artifactId>NanoHTTPD</artifactId>		
+            <artifactId>NanoHTTPD</artifactId>
         </dependency>
     </dependencies>
 
-    
+
     <build>
         <plugins>
             <plugin>
@@ -166,7 +174,7 @@
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.scr</artifactId>
                                     <version>${felix-scr-version}</version>
-                                </artifactItem>                               
+                                </artifactItem>
                                 <artifactItem>
                                     <groupId>org.osgi</groupId>
                                     <artifactId>org.osgi.service.log</artifactId>
@@ -279,9 +287,19 @@
                                     <version>${felixHttpServletApiVerison}</version>
                                 </artifactItem>
                                 <artifactItem>
+                                    <groupId>org.projectlombok</groupId>
+                                    <artifactId>lombok</artifactId>
+                                    <version>${lombokVersion}</version>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.http.jetty</artifactId>
                                     <version>${felixJettyVersion}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.httpcomponents</groupId>
+                                    <artifactId>httpclient</artifactId>
+                                    <version>${httpclient.version}</version>
                                 </artifactItem>
                                 <!-- End of development only bundles -->
                                 <!-- Start of Apache Felix Web Console bundles-->
@@ -308,17 +326,17 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin> 
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
-                <configuration>                    
+                <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <!-- Too bad embed ignore by artifactId doesn't work... big pain to not use dependency inheritance from parent pom for logging libs ect..-->
                         <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>       
+                        <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>*;resolution:=optional</Import-Package>
                         <Private-Package>*</Private-Package>
                         <Export-Package>
@@ -340,7 +358,9 @@
                             net.miginfocom.layout,
                             net.miginfocom.swing,
                             com.github.kevinsawicki.http,
-                            fi.iki.elonen
+                            fi.iki.elonen,
+                            org.apache.http.client.utils.*,
+                            lombok.*
                         </Export-Package>
                     </instructions>
                     <archive>

@@ -1,10 +1,13 @@
 package org.lorainelab.igb.ucsc.rest.api.service.utils;
 
+import com.affymetrix.genometry.GenomeVersion;
 import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import org.apache.http.client.utils.URIBuilder;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
+import org.lorainelab.igb.ucsc.rest.api.service.model.ChromosomeData;
 import org.lorainelab.igb.ucsc.rest.api.service.model.GenomesData;
 import org.lorainelab.igb.ucsc.rest.api.service.model.UCSCRestTracks;
 import org.slf4j.Logger;
@@ -12,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -25,6 +29,7 @@ public class UCSCRestServerUtils {
     private static final String GENOME = "genome";
     private static final String TRACK_PARAM = "trackLeavesOnly";
     public static final String TRACK_PARAM_VALUE = "1";
+    private static final String CHROMOSOMES = "chromosomes";
 
     public static Optional<GenomesData> retrieveDsnResponse(String rootUrl) throws IOException {
         String url = toExternalForm(toExternalForm(rootUrl.trim()) + LIST) + UCSC_GENOMES;
@@ -56,6 +61,43 @@ public class UCSCRestServerUtils {
             logger.error(e.getMessage(), e);
         }
         return Optional.ofNullable(ucscRestTracks);
+    }
+
+    public static Map<String, Integer> getAssemblyInfo(String url, GenomeVersion genomeVersion, Set<String> genomeContextRootMap) {
+        final String genomeVersionName = genomeVersion.getName();
+        Optional<String> contextRootkey = getContextRootKey(genomeVersionName, genomeContextRootMap, genomeVersion.getGenomeVersionSynonymLookup());
+        if (contextRootkey.isPresent()) {
+            String contextRoot = contextRootkey.get();
+            return retrieveAssemblyInfoByContextRoot(url, contextRoot);
+        }
+        return Maps.newLinkedHashMap();
+    }
+
+    public static Map<String, Integer> retrieveAssemblyInfoByContextRoot(String contextRoot, String genomeVersionName) {
+        Optional<ChromosomeData> chromosomeResponse = retrieveChromosomeResponse(contextRoot, genomeVersionName);
+        if (chromosomeResponse.isPresent()) {
+            ChromosomeData chromosomeData = chromosomeResponse.get();
+            return chromosomeData.getChromosomes();
+        }
+        return Maps.newLinkedHashMap();
+    }
+
+    private static Optional<ChromosomeData> retrieveChromosomeResponse(String contextRoot, String genomeVersionName) {
+        String uri = toExternalForm(toExternalForm(contextRoot.trim()) + LIST) + CHROMOSOMES;
+        ChromosomeData chromosomeDate = null;
+        try {
+            URIBuilder uriBuilder = new URIBuilder(uri);
+            uriBuilder.addParameter(GENOME, genomeVersionName);
+            String validUrl = checkValidAndSetUrl(uriBuilder.toString());
+            URL chromosomeUrl = new URL(validUrl);
+            String data = Resources.toString(chromosomeUrl, Charsets.UTF_8);
+            chromosomeDate = new Gson().fromJson(
+                    data, ChromosomeData.class
+            );
+        } catch (URISyntaxException | IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return Optional.ofNullable(chromosomeDate);
     }
 
     public static Optional<String> getContextRootKey(final String genomeVersionName, Set<String> availableGenomesSet, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {

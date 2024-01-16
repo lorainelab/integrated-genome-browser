@@ -149,7 +149,7 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
 
     @Override
     public Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion) {
-        return Collections.emptyMap();
+        return UCSCRestServerUtils.getAssemblyInfo(url, genomeVersion, availableGenomesSet);
     }
 
     @Override

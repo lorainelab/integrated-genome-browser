@@ -3,7 +3,7 @@
   <application name="Integrated Genome Browser" applicationId="1717-8724-7098-6386" mediaDir="${compiler:projectHomeDirectory}/distribution/build" mediaFilePattern="${compiler:sys.shortName}-${compiler:sys.jreBundleArch}-${compiler:sys.version}" lzmaCompression="true" shrinkRuntime="false" shortName="IGB" publisher="Loraine Lab" publisherWeb="https://bioviz.org" version="${compiler:igbVersion}" allPathsRelative="true" convertDotsToUnderscores="false" macVolumeId="a1638eb14df51528" javaMinVersion="21" jdkMode="runtimeJre">
     <variables>
       <variable name="projectHomeDirectory" value=".." description="Path to the source control root of the IGB project, relative to main" />
-      <variable name="igbVersion" value="9.1.12" />
+      <variable name="igbVersion" value="10.0.0" />
       <variable name="codeBaseUrl" value="https://bioviz.org/igb/releases/current" description="Directory containing updates.xml file." />
     </variables>
     <codeSigning macEnabled="true" macPkcs12File="2020-11-18-developerID_application_igb.p12" windowsEnabled="true" windowsPkcs12File="windows_keystore.pfx" />
@@ -1144,7 +1144,7 @@ context.goForward(1, true, true);
       <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-21.0.1" />
     </unixInstaller>
     <macosFolder name="Mac_OS X_universal" id="552" architecture="universal" signLaunchers="true">
-      <jreBundle jreBundleSource="preCreated" includedJre="macos-universal-21.0.1" />
+      <jreBundle jreBundleSource="preCreated" includedJre="macos-universal-21.0.0" />
     </macosFolder>
   </mediaSets>
   <buildIds>

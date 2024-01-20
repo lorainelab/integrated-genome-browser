@@ -908,6 +908,12 @@ public final class GeneralLoadUtils {
 
         return getResidues(versionsWithChrom, span);
     }
+    public static boolean loadResidues(BioSeq seq, int start, int end){
+        Set<DataContainer> versionsWithChrom = new HashSet<>();
+        versionsWithChrom.addAll(seq.getGenomeVersion().getAvailableDataContainers());
+        final SimpleSeqSpan simpleSeqSpan = new SimpleSeqSpan(start, end, seq);
+        return getResidues(versionsWithChrom, simpleSeqSpan);
+    }
 
     /**
      * Get synonyms of version.

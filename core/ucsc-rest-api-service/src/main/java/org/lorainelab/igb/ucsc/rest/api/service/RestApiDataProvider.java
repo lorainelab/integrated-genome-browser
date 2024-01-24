@@ -135,7 +135,7 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
                         uriBuilder.addParameter("genome", genomeVersionName);
                         uriBuilder.addParameter("track", track);
                         URI uri = uriBuilder.build();
-                        UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(uri, Optional.empty(), trackDetail.getType(), track, genomeVersion);
+                        UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(url, uri, Optional.empty(), track, trackDetail.getType(), genomeVersion);
                         DataSet dataSet = new DataSet(uri, track, null, dataContainer, ucscRestSymLoader, false);
                         dataSets.add(dataSet);
                     } catch (URISyntaxException ex) {

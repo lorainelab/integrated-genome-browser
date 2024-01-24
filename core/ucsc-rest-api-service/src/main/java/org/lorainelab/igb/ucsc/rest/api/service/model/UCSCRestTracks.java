@@ -29,7 +29,7 @@ public class UCSCRestTracks {
             JsonObject genomeData = jsonObject.getAsJsonObject(genome);
             Type type = new TypeToken<Map<String, TrackDetails>>() {}.getType();
             tracks = new Gson().fromJson(genomeData, type);
-            tracks.values().removeIf(trackDetails -> !AVAILABLE_TYPES.contains(trackDetails.getType()));
+            tracks.values().removeIf(trackDetails -> !AVAILABLE_TYPES.contains(trackDetails.getType().split(" ")[0]));
         }
     }
 }

@@ -13,11 +13,6 @@
     <packaging>bundle</packaging>
 
     <name>Plugin - Sequence Viewer GUI</name>
-    
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
 
     <dependencies>
         <dependency>

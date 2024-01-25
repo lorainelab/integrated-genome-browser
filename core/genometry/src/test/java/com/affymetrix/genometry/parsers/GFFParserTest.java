@@ -54,7 +54,7 @@ public class GFFParserTest {
             // the single symmetry will be used without a parent.
             sym = (SingletonSymWithProps) sym.getChild(0);
             assertEquals("exon", sym.getProperty("type"));
-            assertEquals(new Float(200.0), sym.getProperty("score"));
+            assertEquals(Float.valueOf("200.0"), sym.getProperty("score"));
         }
 
         sym = (SingletonSymWithProps) result.get(3);

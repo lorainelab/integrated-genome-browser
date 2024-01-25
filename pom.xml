@@ -1066,9 +1066,6 @@
                             </configuration>
                         </execution>
                     </executions>
-                    <configuration>
-                        <ignoreChecksumFailure>true</ignoreChecksumFailure>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>

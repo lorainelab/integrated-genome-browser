@@ -77,6 +77,11 @@
             <scope>provided</scope>           
         </dependency>
         <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>igb-genoviz-extensions</artifactId>
             <scope>provided</scope>     

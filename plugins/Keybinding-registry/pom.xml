@@ -105,7 +105,6 @@
                         </Import-Package>
                         <Export-Package/>                        
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>            

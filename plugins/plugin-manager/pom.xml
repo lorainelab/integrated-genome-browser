@@ -176,7 +176,6 @@
                         </Import-Package>
                         <Export-Package>org.lorainelab.igb.plugin.manager.service</Export-Package>
                         <Bundle-Description>An IgbTabPanel for managing OSGi OBR repositories for installing IGB plugins</Bundle-Description>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>            

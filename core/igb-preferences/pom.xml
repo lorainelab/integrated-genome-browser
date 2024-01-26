@@ -121,7 +121,6 @@
                             org.lorainelab.igb.preferences
                         </Export-Package>
                         <Import-Package>org.glassfish.jaxb.runtime.v2,*</Import-Package>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

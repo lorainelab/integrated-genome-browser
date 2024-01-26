@@ -191,7 +191,6 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Import-Package>org.glassfish.jaxb.runtime.v2,*</Import-Package>
                         <Export-Package/>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>         

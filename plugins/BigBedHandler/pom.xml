@@ -64,7 +64,6 @@
                         <Export-Package/>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Description>plugin to allow the user to load BigBed files</Bundle-Description>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

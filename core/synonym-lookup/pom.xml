@@ -76,7 +76,6 @@
                         <Export-Package>
                             org.lorainelab.igb.synonymlookup.services
                         </Export-Package>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>         

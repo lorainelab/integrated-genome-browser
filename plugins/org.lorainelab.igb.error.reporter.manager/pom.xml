@@ -27,7 +27,6 @@
                 <configuration>
                     <instructions>
                         <Import-Package>*</Import-Package>
-                        <Service-Component>*</Service-Component>
                         <Export-Package>${project.artifactId}</Export-Package>
                     </instructions>
                 </configuration>

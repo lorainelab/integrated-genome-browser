@@ -28,7 +28,6 @@
                 <configuration>
                     <instructions>
                         <Import-Package>*</Import-Package>
-                        <Service-Component>*</Service-Component>
                         <Export-Package>${project.groupId}.cache.api</Export-Package>
                     </instructions>
                 </configuration>

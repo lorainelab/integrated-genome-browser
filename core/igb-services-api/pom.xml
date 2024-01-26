@@ -84,7 +84,6 @@
                             *
                         </Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>               

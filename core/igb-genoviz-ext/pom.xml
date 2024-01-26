@@ -45,7 +45,6 @@
                             org.lorainelab.igb.genoviz.extensions,
                             org.lorainelab.igb.genoviz.extensions.glyph
                         </Export-Package>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

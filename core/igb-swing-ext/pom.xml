@@ -82,7 +82,6 @@
                             com.affymetrix.igb.swing.util
                         </Export-Package>
                         <Bundle-Activator>com.affymetrix.igb.swing.bundle.Activator</Bundle-Activator>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

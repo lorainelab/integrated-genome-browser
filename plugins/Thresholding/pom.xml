@@ -84,7 +84,6 @@
                         <Import-Package>*</Import-Package>                       
                         <Export-Package>com.affymetrix.igb.thresholding.action</Export-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

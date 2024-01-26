@@ -156,7 +156,6 @@
                             *
                         </Import-Package>
                         <Export-Package/>
-                        <Service-Component>*</Service-Component>
                         <Bundle-Description>${bundleDescription}</Bundle-Description>
                     </instructions>
                 </configuration>

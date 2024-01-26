@@ -60,7 +60,6 @@
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>*</Import-Package>
                         <Export-Package/>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

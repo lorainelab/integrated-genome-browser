@@ -90,7 +90,6 @@
                         <Export-Package>
                             com.affymetrix.igb.tabs.console.*                           
                         </Export-Package>
-                        <Service-Component>*</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>

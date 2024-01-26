@@ -1,6 +1,7 @@
 package org.lorainelab.igb.ucsc.rest.api.service.utils;
 
 import com.affymetrix.genometry.GenomeVersion;
+import com.affymetrix.genometry.SeqSpan;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
@@ -8,6 +9,7 @@ import com.google.gson.Gson;
 import org.apache.http.client.utils.URIBuilder;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.ucsc.rest.api.service.model.ChromosomeData;
+import org.lorainelab.igb.ucsc.rest.api.service.model.DnaInfo;
 import org.lorainelab.igb.ucsc.rest.api.service.model.GenomesData;
 import org.lorainelab.igb.ucsc.rest.api.service.model.UCSCRestTracks;
 import org.slf4j.Logger;
@@ -30,6 +32,10 @@ public class UCSCRestServerUtils {
     private static final String TRACK_PARAM = "trackLeavesOnly";
     public static final String TRACK_PARAM_VALUE = "1";
     private static final String CHROMOSOMES = "chromosomes";
+    public static final String SEQUENCE = "sequence";
+    public static final String CHROM = "chrom";
+    public static final String START = "start";
+    public static final String END = "end";
 
     public static Optional<GenomesData> retrieveDsnResponse(String rootUrl) throws IOException {
         String url = toExternalForm(toExternalForm(rootUrl.trim()) + LIST) + UCSC_GENOMES;
@@ -98,6 +104,27 @@ public class UCSCRestServerUtils {
             logger.error(e.getMessage(), e);
         }
         return Optional.ofNullable(chromosomeDate);
+    }
+
+    public static String retrieveDna(String contextRoot, SeqSpan span, String genomeVersionName) {
+        String uri = toExternalForm(toExternalForm(contextRoot.trim()) + GET_DATA) + SEQUENCE;
+        try {
+            URIBuilder uriBuilder = new URIBuilder(uri);
+            uriBuilder.addParameter(GENOME, genomeVersionName);
+            uriBuilder.addParameter(CHROM, span.getBioSeq().getId());
+            uriBuilder.addParameter(START, String.valueOf(span.getMin()));
+            uriBuilder.addParameter(END, String.valueOf(span.getMax()));
+            String validUrl = checkValidAndSetUrl(uriBuilder.toString());
+            URL dnaUrl = new URL(validUrl);
+            String data = Resources.toString(dnaUrl, Charsets.UTF_8);
+            DnaInfo dnaInfo = new Gson().fromJson(
+                    data, DnaInfo.class
+            );
+            return dnaInfo.getDna();
+        } catch (URISyntaxException | IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return "";
     }
 
     public static Optional<String> getContextRootKey(final String genomeVersionName, Set<String> availableGenomesSet, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {

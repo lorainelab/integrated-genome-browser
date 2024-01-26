@@ -135,7 +135,8 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
                         uriBuilder.addParameter("genome", genomeVersionName);
                         uriBuilder.addParameter("track", track);
                         URI uri = uriBuilder.build();
-                        UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(url, uri, Optional.empty(), track, trackDetail.getType(), genomeVersion);
+                        String trackType = trackDetail.getType().split(" ")[0];
+                        UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(url, uri, Optional.empty(), track, trackType, genomeVersion);
                         DataSet dataSet = new DataSet(uri, track, null, dataContainer, ucscRestSymLoader, false);
                         dataSets.add(dataSet);
                     } catch (URISyntaxException ex) {
@@ -154,6 +155,11 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
 
     @Override
     public String getSequence(DataContainer dataContainer, SeqSpan span) {
+        GenomeVersion genomeVersion = dataContainer.getGenomeVersion();
+        final String genomeVersionName = genomeVersion.getName();
+        if (!genomeVersionName.isEmpty()) {
+            return UCSCRestServerUtils.retrieveDna(url, span, genomeVersionName);
+        }
         return "";
     }
 

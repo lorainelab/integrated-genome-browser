@@ -327,9 +327,9 @@
                         <Import-Package>*;resolution:=optional</Import-Package>
                         <Private-Package>*</Private-Package>
                         <Export-Package>
-                            be.pwnt.jflow;version="1.0",
-                            be.pwnt.jflow.*;version="1.0",
-                            com.sun.xml.txw2.*;version="4.0.1",
+                            be.pwnt.jflow,
+                            be.pwnt.jflow.*,
+                            com.sun.xml.txw2.*,
                             affymetrix.calvin.*,
                             affymetrix.fusion,
                             affymetrix.fusion.*,

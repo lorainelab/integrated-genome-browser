@@ -25,6 +25,9 @@ import org.lorainelab.igb.services.IgbService;
 import static org.lorainelab.igb.services.ServiceComponentNameReference.RESTRICTIONS_TAB;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanel;
 import org.lorainelab.igb.services.window.tabs.IgbTabPanelI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -42,6 +45,8 @@ public final class RestrictionControlView extends IgbTabPanel
         implements ListSelectionListener, ActionListener {
 
     private static final long serialVersionUID = 0;
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestrictionControlView.class);
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("restrictions");
     private static final int TAB_POSITION = 10;
     private final Map<String, String> site_hash = new HashMap<>();
@@ -65,6 +70,24 @@ public final class RestrictionControlView extends IgbTabPanel
      * keep track of added glyphs
      */
     private final List<GlyphI> glyphs = new ArrayList<>();
+
+    private static final Map<Character,String> SPECIAL_NUCLEOTIDES;
+
+    static{
+        Map<Character,String> tempNucleotides= new HashMap<>();
+        tempNucleotides.put('R',"[AG]");
+        tempNucleotides.put('Y',"[CT]");
+        tempNucleotides.put('S',"[GC]");
+        tempNucleotides.put('W',"[AT]");
+        tempNucleotides.put('K',"[GT]");
+        tempNucleotides.put('M',"[AC]");
+        tempNucleotides.put('B',"[CGT]");
+        tempNucleotides.put('D',"[AGT]");
+        tempNucleotides.put('H',"[ACT]");
+        tempNucleotides.put('V',"[ACG]");
+        tempNucleotides.put('N',"[ACGT]");
+        SPECIAL_NUCLEOTIDES= Collections.unmodifiableMap(tempNucleotides);
+    }
 
     public RestrictionControlView() {
         super(BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTab"), BUNDLE.getString("restrictionSitesTooltip"), false, TAB_POSITION);
@@ -274,7 +297,6 @@ public final class RestrictionControlView extends IgbTabPanel
                 String residues = vseq.getResidues();
                 // Search for reverse complement of query string
                 String rev_searchstring = DNAUtils.reverseComplement(residues);
-
                 int i = 0;
                 for (JLabel label : labelList) {
                     String site_name = label.getText();
@@ -286,6 +308,7 @@ public final class RestrictionControlView extends IgbTabPanel
                     if (site_residues == null) {
                         continue;
                     }
+                    site_residues = replaceSpecialNucleotidesWithItsResidues(site_residues);
                     Pattern regex = null;
                     try {
                         regex = Pattern.compile(site_residues, Pattern.CASE_INSENSITIVE);
@@ -318,6 +341,19 @@ public final class RestrictionControlView extends IgbTabPanel
                 igbService.removeNotLockedUpMsg(BUNDLE.getString("findingSites"));
             }
 
+        }
+
+        public static String replaceSpecialNucleotidesWithItsResidues(String sequence){
+            StringBuilder newEnzyme = new StringBuilder();
+            for(int i=0;i<sequence.length();i++){
+                char curr = Character.toUpperCase(sequence.charAt(i));
+                if(SPECIAL_NUCLEOTIDES.containsKey(curr)){
+                    newEnzyme.append(SPECIAL_NUCLEOTIDES.get(curr));
+                }else{
+                    newEnzyme.append(curr);
+                }
+            }
+            return newEnzyme.toString();
         }
     }
 

@@ -33,15 +33,17 @@ public class UCSCRestSymLoader extends SymLoader {
     private String track;
     private String trackType;
     private final String contextRoot;
+    private final String contextRootKey;
     private Set<String> chromosomes;
 
 
-    public UCSCRestSymLoader(String baseUrl, URI contextRoot, Optional<URI> indexUri, String track, String trackType, GenomeVersion genomeVersion) {
+    public UCSCRestSymLoader(String baseUrl, URI contextRoot, Optional<URI> indexUri, String track, String trackType, GenomeVersion genomeVersion, String contextRootKey) {
         super(contextRoot, indexUri, track, genomeVersion);
         this.baseUrl = baseUrl;
         this.track = track;
         this.trackType = trackType;
         this.contextRoot = contextRoot.toString();
+        this.contextRootKey = contextRootKey;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class UCSCRestSymLoader extends SymLoader {
         final int min = overlapSpan.getMin() == 0 ? 1 : overlapSpan.getMin();
         final int max = overlapSpan.getMax() - 1;
         URIBuilder uriBuilder = new URIBuilder(contextRoot);
-        uriBuilder.addParameter(CHROM, getChromosomeSynonym(baseUrl, overlapSpan, genomeVersion));
+        uriBuilder.addParameter(CHROM, getChromosomeSynonym(baseUrl, overlapSpan, genomeVersion, contextRootKey));
         uriBuilder.addParameter(START, String.valueOf(min));
         uriBuilder.addParameter(END, String.valueOf(max));
         String validUrl = checkValidAndSetUrl(uriBuilder.toString());
@@ -93,10 +95,10 @@ public class UCSCRestSymLoader extends SymLoader {
         super.init();
     }
 
-    private String getChromosomeSynonym(String baseUrl, SeqSpan span, GenomeVersion genomeVersion) {
+    private String getChromosomeSynonym(String baseUrl, SeqSpan span, GenomeVersion genomeVersion, String contextRootKey) {
         BioSeq currentSeq = span.getBioSeq();
         if (chromosomes == null) {
-            chromosomes = UCSCRestServerUtils.retrieveAssemblyInfoByContextRoot(baseUrl, genomeVersion.getName()).keySet();
+            chromosomes = UCSCRestServerUtils.retrieveAssemblyInfoByContextRoot(baseUrl, contextRootKey).keySet();
         }
         return genomeVersion.getGenomeVersionSynonymLookup().findMatchingSynonym(chromosomes, currentSeq.getId());
     }

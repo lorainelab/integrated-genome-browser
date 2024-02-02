@@ -18,12 +18,6 @@
 # repositories in bitbucket. Don't share your app password with anyone. Note that the 
 # bitbucket UI lets you delete app passwords and monitor their usage. 
 # 
-# Branch pipelines run when you push to a branch with a name matching release-* or
-# IGBF-*. These pipelines build IGB intallers using some private assets we are not
-# allowed to distribute publicly. If you would like to build IGB installers using
-# these pipelines, please get in touch with Dr. Ann Loraine at 
-# UNC Charlotte for assistance. 
-#
 # Useful links:
 #
 # Docker image: https://hub.docker.com/r/lorainelab/igb-maven-install4j
@@ -45,8 +39,8 @@ definitions:
             - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
             - mvn install -P release-bitbucket-pipelines
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=$BITBUCKET_BRANCH.jar"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-linux-amd64-$version.sh; filename=IGB-linux-${BITBUCKET_BRANCH}_amd64.sh"
-            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-amd64-$version.exe; filename=IGB-windows-${BITBUCKET_BRANCH}_amd64.exe"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-linux-amd64-$version.sh; filename=IGB-linux-amd64-${BITBUCKET_BRANCH}.sh"
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-windows-amd64-$version.exe; filename=IGB-windows-amd64-${BITBUCKET_BRANCH}.exe"
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/IGB-macos-universal-$version.dmg; filename=IGB-macos-universal-${BITBUCKET_BRANCH}.dmg"
      - step: &build-installers-and-artifacts-for-release
          name: Build and copy Windows, MacOS, and Linux installers, executable jar file, updates.xml, and md5sums file for release to user community.
@@ -86,7 +80,7 @@ pipelines:
           script:
             - mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-SNAPSHOT -DgenerateBackupPoms=false
             - mvn deploy -P release-snapshots -s /root/.m2/settings.xml -Drepo.username=${DEV_NEXUS_USER} -Drepo.password=${DEV_NEXUS_PASSWORD} -Drepo.id=${DEV_NEXUS_REPOSITORY_ID}
-    build-master-branch-installers:
+    build-installers-for-dev:
       - step: *build-installers-for-dev
     release-to-nexus.bioviz.org:
         - step:

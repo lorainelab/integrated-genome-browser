@@ -22,6 +22,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.lorainelab.igb.ucsc.rest.api.service.RestApiDataProvider.READ_TIMEOUT;
+
 public class UCSCRestServerUtils {
     private static final Logger logger = LoggerFactory.getLogger(UCSCRestServerUtils.class);
     private static final String LIST = "list";
@@ -152,7 +154,7 @@ public class UCSCRestServerUtils {
         try {
             URL obj = new URL(uriString);
             HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
-            conn.setReadTimeout(5000);
+            conn.setReadTimeout(READ_TIMEOUT);
             int code = conn.getResponseCode();
             if (code != HttpURLConnection.HTTP_OK) {
                 if (code == HttpURLConnection.HTTP_MOVED_TEMP || code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_SEE_OTHER) {

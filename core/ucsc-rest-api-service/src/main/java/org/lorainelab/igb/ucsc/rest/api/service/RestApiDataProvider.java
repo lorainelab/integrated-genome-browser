@@ -31,6 +31,7 @@ import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.*;
 public final class RestApiDataProvider extends BaseDataProvider implements AssemblyProvider, ReferenceSequenceProvider {
 
     private final Set<String> availableGenomesSet;
+    public static final int READ_TIMEOUT = 60000;
 
     public RestApiDataProvider(String ucscRestUrl, String name, int loadPriority) {
         super(ucscRestUrl, name, loadPriority);

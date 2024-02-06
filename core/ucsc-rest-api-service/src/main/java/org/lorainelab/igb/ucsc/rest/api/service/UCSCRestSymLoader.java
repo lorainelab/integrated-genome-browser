@@ -6,6 +6,7 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscGeneSym;
+import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
@@ -13,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import org.lorainelab.igb.ucsc.rest.api.service.model.GenePred;
+import org.lorainelab.igb.ucsc.rest.api.service.model.Psl;
 import org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails;
 import org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils;
 
@@ -21,6 +23,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails.GENE_PRED;
+import static org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails.PSL;
 import static org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils.checkValidAndSetUrl;
 
 @Slf4j
@@ -28,7 +32,6 @@ public class UCSCRestSymLoader extends SymLoader {
     public static final String CHROM = "chrom";
     public static final String START = "start";
     public static final String END = "end";
-    public static final String GENE_PRED = "genePred";
     private String baseUrl;
     private String track;
     private String trackType;
@@ -72,6 +75,21 @@ public class UCSCRestSymLoader extends SymLoader {
             }).collect(Collectors.toList());
             return ucscGeneSyms;
         }
+        else if(trackType.equalsIgnoreCase(PSL)){
+            TrackDataDetails<Psl> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<Psl>>(){}.getType());
+            if(Objects.nonNull(trackDataDetails))
+                trackDataDetails.setTrackData(data, track, trackType);
+            List<Psl> trackDataList= trackDataDetails.getTrackData();
+            List<UcscPslSym> ucscPslSyms = trackDataList.stream().map(trackData -> {
+                boolean same_orientation = trackData.strand.equals("+") || trackData.strand.equals("++");
+                return new UcscPslSym(track, trackData.matches, trackData.misMatches, trackData.repMatches, trackData.nCount,
+                        trackData.qNumInsert, trackData.qBaseInsert, trackData.tNumInsert, trackData.tBaseInsert, same_orientation,
+                        determineSeq(genomeVersion, trackData.qName, trackData.qSize), trackData.qStart, trackData.qEnd,
+                        determineSeq(genomeVersion, trackData.tName, trackData.tSize), trackData.tStart, trackData.tEnd,
+                        trackData.blockCount, trackData.getBlockSizesArray(), trackData.getQStartsArray(), trackData.getTStartsArray(), false);
+            }).collect(Collectors.toList());
+            return ucscPslSyms;
+        }
         return null;
     }
 
@@ -101,5 +119,16 @@ public class UCSCRestSymLoader extends SymLoader {
             chromosomes = UCSCRestServerUtils.retrieveAssemblyInfoByContextRoot(baseUrl, contextRootKey).keySet();
         }
         return genomeVersion.getGenomeVersionSynonymLookup().findMatchingSynonym(chromosomes, currentSeq.getId());
+    }
+
+    private static BioSeq determineSeq(GenomeVersion query_group, String qname, int qsize) {
+        BioSeq qseq = query_group.getSeq(qname);
+        if (qseq == null) {
+            qseq = query_group.addSeq(qname, qsize);
+        }
+        if (qseq.getLength() < qsize) {
+            qseq.setLength(qsize);
+        }
+        return qseq;
     }
 }

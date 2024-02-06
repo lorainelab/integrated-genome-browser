@@ -31,10 +31,12 @@ public class TrackDataDetails<T> {
     private int end;
     private ArrayList<T> trackData;
     private int itemsReturned;
-    private static final String GENE_PRED = "genePred";
+    public static final String GENE_PRED = "genePred";
+    public static final String PSL = "psl";
 
     public void setTrackData(String jsonString, String track, String trackType) {
-        JsonObject jsonObject = new Gson().fromJson(jsonString, JsonObject.class);
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
         if (jsonObject.has(track) && jsonObject.get(track).isJsonArray()) {
             JsonArray trackDataJson = jsonObject.getAsJsonArray(track);
             Type type = null;
@@ -42,8 +44,12 @@ public class TrackDataDetails<T> {
                 type = new TypeToken<ArrayList<GenePred>>() {
                 }.getType();
             }
+            if(trackType.equalsIgnoreCase(PSL)){
+                type = new TypeToken<ArrayList<Psl>>() {
+                }.getType();
+            }
             if (type != null) {
-                trackData = new Gson().fromJson(trackDataJson.toString(), type);
+                trackData = gson.fromJson(trackDataJson.toString(), type);
             }
         }
     }

@@ -25,7 +25,7 @@
 #
 
 image:
-  name: lorainelab/igb-maven-install4j:I4J10-jre-21.0.1-21.0.0 
+  name: lorainelab/igb-maven-install4j:I4J10-jre-21.0.2 
 
 definitions:
   steps:

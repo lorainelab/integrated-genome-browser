@@ -1138,13 +1138,13 @@ context.goForward(1, true, true);
   </installerGui>
   <mediaSets>
     <windows name="Windows_x86_64" id="23" architecture="64">
-      <jreBundle jreBundleSource="preCreated" includedJre="windows-amd64-21.0.1" />
+      <jreBundle jreBundleSource="preCreated" includedJre="windows-amd64-21.0.2" />
     </windows>
     <unixInstaller name="Unix Installer" id="25">
-      <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-21.0.1" />
+      <jreBundle jreBundleSource="preCreated" includedJre="linux-amd64-21.0.2" />
     </unixInstaller>
     <macosFolder name="Mac_OS X_universal" id="552" architecture="universal" signLaunchers="true">
-      <jreBundle jreBundleSource="preCreated" includedJre="macos-universal-21.0.0" />
+      <jreBundle jreBundleSource="preCreated" includedJre="macos-universal-21.0.2" />
     </macosFolder>
   </mediaSets>
   <buildIds>

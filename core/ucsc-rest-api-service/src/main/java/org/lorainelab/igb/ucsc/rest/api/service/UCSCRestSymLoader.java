@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
+import org.lorainelab.igb.ucsc.rest.api.service.model.BedTrackTypeData;
 import org.lorainelab.igb.ucsc.rest.api.service.model.GenePred;
 import org.lorainelab.igb.ucsc.rest.api.service.model.Psl;
 import org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails;
@@ -23,8 +24,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails.GENE_PRED;
-import static org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails.PSL;
+import static org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails.*;
 import static org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils.checkValidAndSetUrl;
 
 @Slf4j
@@ -89,6 +89,20 @@ public class UCSCRestSymLoader extends SymLoader {
                         trackData.blockCount, trackData.getBlockSizesArray(), trackData.getQStartsArray(), trackData.getTStartsArray(), false);
             }).collect(Collectors.toList());
             return ucscPslSyms;
+        }
+        else if(BED_FORMATS.contains(trackType.toLowerCase())) {
+            TrackDataDetails<BedTrackTypeData> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<BedTrackTypeData>>(){}.getType());
+            if(Objects.nonNull(trackDataDetails))
+                trackDataDetails.setTrackData(data, track, trackType);
+            List<BedTrackTypeData> trackDataList= trackDataDetails.getTrackData();
+            List<UcscBedSymWithProps> ucscBedSymWithProps = trackDataList.stream().map(trackData -> {
+                boolean forward = (trackData.getStrand() == null) || trackData.getStrand().isEmpty() || (trackData.getStrand().equals("+") || trackData.getStrand().equals("++"));
+                return new UcscBedSymWithProps(track, determineSeq(genomeVersion, trackData.getChrom(), 0),
+                        trackData.getChromStart(), trackData.getChromEnd(), trackData.getName(), trackData.getScore(),
+                        forward, trackData.getThickStart(), trackData.getThickEnd(),
+                        trackData.getChromStartsArray(), trackData.getBlockSizesArray(), trackData.getProps());
+            }).collect(Collectors.toList());
+            return ucscBedSymWithProps;
         }
         return null;
     }

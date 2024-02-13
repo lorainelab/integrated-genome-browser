@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -33,24 +34,43 @@ public class TrackDataDetails<T> {
     private int itemsReturned;
     public static final String GENE_PRED = "genePred";
     public static final String PSL = "psl";
+    public static final List<String> BED_FORMATS = new ArrayList<>(Arrays.asList("bed", "bigbed", "beddetail"));
 
     public void setTrackData(String jsonString, String track, String trackType) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
         if (jsonObject.has(track) && jsonObject.get(track).isJsonArray()) {
             JsonArray trackDataJson = jsonObject.getAsJsonArray(track);
-            Type type = null;
-            if(trackType.equalsIgnoreCase(GENE_PRED)) {
-                type = new TypeToken<ArrayList<GenePred>>() {
-                }.getType();
-            }
-            if(trackType.equalsIgnoreCase(PSL)){
-                type = new TypeToken<ArrayList<Psl>>() {
-                }.getType();
-            }
+            Type type = getType(trackType);
             if (type != null) {
-                trackData = gson.fromJson(trackDataJson.toString(), type);
+                if(BED_FORMATS.contains(trackType.toLowerCase())){
+                    trackData = new ArrayList<>();
+                    trackDataJson.forEach(trackDataJsonElement -> {
+                        BedTrackTypeData trackDataElement = gson.fromJson(trackDataJsonElement.toString(), BedTrackTypeData.class);
+                        trackDataElement.setProps(trackDataJsonElement.toString());
+                        trackData.add((T) trackDataElement);
+                    });
+                }
+                else
+                    trackData = gson.fromJson(trackDataJson.toString(), type);
             }
         }
+    }
+
+    private static Type getType(String trackType) {
+        Type type = null;
+        if(trackType.equalsIgnoreCase(GENE_PRED)) {
+            type = new TypeToken<ArrayList<GenePred>>() {
+            }.getType();
+        }
+        else if(trackType.equalsIgnoreCase(PSL)){
+            type = new TypeToken<ArrayList<Psl>>() {
+            }.getType();
+        }
+        else if(BED_FORMATS.contains(trackType.toLowerCase())){
+            type = new TypeToken<ArrayList<BedTrackTypeData>>() {
+            }.getType();
+        }
+        return type;
     }
 }

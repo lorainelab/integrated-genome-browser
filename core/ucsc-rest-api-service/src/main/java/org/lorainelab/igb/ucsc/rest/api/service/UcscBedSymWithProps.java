@@ -51,10 +51,13 @@ public class UcscBedSymWithProps extends UcscBedSym {
     }
 
     public Object getProperty(String key) {
-        if (props != null) {
+        if (super.getProperty(key) != null) {
+            return super.getProperty(key);
+        }
+        else if(props != null){
             return props.get(key);
         }
-        return super.getProperty(key);
+        return null;
     }
 
 }

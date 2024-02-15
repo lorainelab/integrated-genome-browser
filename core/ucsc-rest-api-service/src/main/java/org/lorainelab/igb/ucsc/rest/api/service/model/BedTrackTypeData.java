@@ -1,7 +1,6 @@
 package org.lorainelab.igb.ucsc.rest.api.service.model;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +21,7 @@ public class BedTrackTypeData {
     String strand;
     int thickStart;
     int thickEnd;
-    int reserved;
+    String reserved;
     int blockCount;
     String blockSizes;
     String chromStarts;

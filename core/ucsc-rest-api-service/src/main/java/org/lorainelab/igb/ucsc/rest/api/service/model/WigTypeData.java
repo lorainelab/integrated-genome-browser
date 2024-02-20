@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BigWigTypeData {
+public class WigTypeData {
     int start;
     int end;
     float value;

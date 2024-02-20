@@ -12,7 +12,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -36,15 +35,20 @@ public class TrackDataDetails<T> {
     public static final String PSL = "psl";
     public static final List<String> BED_FORMATS = new ArrayList<>(Arrays.asList("bed", "bigbed", "beddetail"));
     public static final String BIG_WIG = "bigWig";
+    public static final String WIG = "wig";
 
     public void setTrackData(String jsonString, String track, String trackType, String chrom) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
-        if (jsonObject.has(track) && (jsonObject.get(track).isJsonArray() || jsonObject.getAsJsonObject(track).get(chrom).isJsonArray())) {
+        if ((jsonObject.has(chrom) && jsonObject.get(chrom).isJsonArray()) ||
+                (jsonObject.has(track) && (jsonObject.get(track).isJsonArray()
+                        || jsonObject.getAsJsonObject(track).get(chrom).isJsonArray()))) {
             Type type = getType(trackType);
             JsonArray trackDataJson = trackType.equalsIgnoreCase(BIG_WIG)
                     ?jsonObject.getAsJsonObject(track).getAsJsonArray(chrom)
-                    :jsonObject.getAsJsonArray(track);
+                    :(trackType.equalsIgnoreCase(WIG)
+                        ?jsonObject.getAsJsonArray(chrom)
+                        :jsonObject.getAsJsonArray(track));
             if (type != null) {
                 if(BED_FORMATS.contains(trackType.toLowerCase())){
                     trackData = new ArrayList<>();
@@ -73,8 +77,8 @@ public class TrackDataDetails<T> {
         else if(BED_FORMATS.contains(trackType.toLowerCase())){
             type = new TypeToken<ArrayList<BedTrackTypeData>>() {
             }.getType();
-        } else if (trackType.equalsIgnoreCase(BIG_WIG)) {
-            type = new TypeToken<ArrayList<BigWigTypeData>>() {
+        } else if (trackType.equalsIgnoreCase(BIG_WIG) || trackType.equalsIgnoreCase(WIG)) {
+            type = new TypeToken<ArrayList<WigTypeData>>() {
             }.getType();
         }
         return type;

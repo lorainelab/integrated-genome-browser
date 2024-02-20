@@ -101,12 +101,12 @@ public class UCSCRestSymLoader extends SymLoader {
                         trackData.getChromStartsArray(), trackData.getBlockSizesArray(), trackData.getProps());
             }).collect(Collectors.toList());
             return ucscBedSymWithProps;
-        } else if (trackType.equalsIgnoreCase(BIG_WIG)) {
-            TrackDataDetails<BigWigTypeData> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<BigWigTypeData>>(){}.getType());
+        } else if (trackType.equalsIgnoreCase(BIG_WIG) || trackType.equalsIgnoreCase(WIG)) {
+            TrackDataDetails<WigTypeData> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<WigTypeData>>(){}.getType());
             if(Objects.nonNull(trackDataDetails))
                 trackDataDetails.setTrackData(data, track, trackType, trackDataDetails.getChrom());
-            List<BigWigTypeData> trackDataList= trackDataDetails.getTrackData();
-            int[] xData = trackDataList.stream().mapToInt(BigWigTypeData::getStart).toArray();
+            List<WigTypeData> trackDataList= trackDataDetails.getTrackData();
+            int[] xData = trackDataList.stream().mapToInt(WigTypeData::getStart).toArray();
             int[] wData = trackDataList.stream().mapToInt(track -> track.getEnd() - track.getStart()).toArray();
             float[] yData = new float[trackDataList.size()];
             for(int i=0; i<trackDataList.size(); i++){

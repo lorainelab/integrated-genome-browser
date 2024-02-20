@@ -4,6 +4,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.symloader.SymLoader;
+import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscGeneSym;
 import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
@@ -13,10 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
-import org.lorainelab.igb.ucsc.rest.api.service.model.BedTrackTypeData;
-import org.lorainelab.igb.ucsc.rest.api.service.model.GenePred;
-import org.lorainelab.igb.ucsc.rest.api.service.model.Psl;
-import org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails;
+import org.lorainelab.igb.ucsc.rest.api.service.model.*;
 import org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils;
 
 import java.net.URI;
@@ -63,7 +61,7 @@ public class UCSCRestSymLoader extends SymLoader {
         if(trackType.equalsIgnoreCase(GENE_PRED)){
             TrackDataDetails<GenePred> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<GenePred>>(){}.getType());
             if(Objects.nonNull(trackDataDetails))
-                trackDataDetails.setTrackData(data, track, trackType);
+                trackDataDetails.setTrackData(data, track, trackType, trackDataDetails.getChrom());
             List<GenePred> trackDataList= trackDataDetails.getTrackData();
             List<UcscGeneSym> ucscGeneSyms = trackDataList.stream().map(trackData -> {
                 int[] emins = Arrays.stream(trackData.exonStarts.split(",")).mapToInt(Integer::parseInt).toArray();
@@ -78,7 +76,7 @@ public class UCSCRestSymLoader extends SymLoader {
         else if(trackType.equalsIgnoreCase(PSL)){
             TrackDataDetails<Psl> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<Psl>>(){}.getType());
             if(Objects.nonNull(trackDataDetails))
-                trackDataDetails.setTrackData(data, track, trackType);
+                trackDataDetails.setTrackData(data, track, trackType, trackDataDetails.getChrom());
             List<Psl> trackDataList= trackDataDetails.getTrackData();
             List<UcscPslSym> ucscPslSyms = trackDataList.stream().map(trackData -> {
                 boolean same_orientation = trackData.strand.equals("+") || trackData.strand.equals("++");
@@ -93,7 +91,7 @@ public class UCSCRestSymLoader extends SymLoader {
         else if(BED_FORMATS.contains(trackType.toLowerCase())) {
             TrackDataDetails<BedTrackTypeData> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<BedTrackTypeData>>(){}.getType());
             if(Objects.nonNull(trackDataDetails))
-                trackDataDetails.setTrackData(data, track, trackType);
+                trackDataDetails.setTrackData(data, track, trackType, trackDataDetails.getChrom());
             List<BedTrackTypeData> trackDataList= trackDataDetails.getTrackData();
             List<UcscBedSymWithProps> ucscBedSymWithProps = trackDataList.stream().map(trackData -> {
                 boolean forward = (trackData.getStrand() == null) || trackData.getStrand().isEmpty() || (trackData.getStrand().equals("+") || trackData.getStrand().equals("++"));
@@ -103,6 +101,21 @@ public class UCSCRestSymLoader extends SymLoader {
                         trackData.getChromStartsArray(), trackData.getBlockSizesArray(), trackData.getProps());
             }).collect(Collectors.toList());
             return ucscBedSymWithProps;
+        } else if (trackType.equalsIgnoreCase(BIG_WIG)) {
+            TrackDataDetails<BigWigTypeData> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<BigWigTypeData>>(){}.getType());
+            if(Objects.nonNull(trackDataDetails))
+                trackDataDetails.setTrackData(data, track, trackType, trackDataDetails.getChrom());
+            List<BigWigTypeData> trackDataList= trackDataDetails.getTrackData();
+            int[] xData = trackDataList.stream().mapToInt(BigWigTypeData::getStart).toArray();
+            int[] wData = trackDataList.stream().mapToInt(track -> track.getEnd() - track.getStart()).toArray();
+            float[] yData = new float[trackDataList.size()];
+            for(int i=0; i<trackDataList.size(); i++){
+                yData[i] = trackDataList.get(i).getValue();
+            }
+            GraphIntervalSym graphIntervalSym = new GraphIntervalSym(xData, wData, yData, track, overlapSpan.getBioSeq());
+            List<SeqSymmetry> symList = new ArrayList<>();
+            symList.add(graphIntervalSym);
+            return symList;
         }
         return null;
     }

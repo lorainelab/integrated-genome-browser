@@ -35,13 +35,16 @@ public class TrackDataDetails<T> {
     public static final String GENE_PRED = "genePred";
     public static final String PSL = "psl";
     public static final List<String> BED_FORMATS = new ArrayList<>(Arrays.asList("bed", "bigbed", "beddetail"));
+    public static final String BIG_WIG = "bigWig";
 
-    public void setTrackData(String jsonString, String track, String trackType) {
+    public void setTrackData(String jsonString, String track, String trackType, String chrom) {
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
-        if (jsonObject.has(track) && jsonObject.get(track).isJsonArray()) {
-            JsonArray trackDataJson = jsonObject.getAsJsonArray(track);
+        if (jsonObject.has(track) && (jsonObject.get(track).isJsonArray() || jsonObject.getAsJsonObject(track).get(chrom).isJsonArray())) {
             Type type = getType(trackType);
+            JsonArray trackDataJson = trackType.equalsIgnoreCase(BIG_WIG)
+                    ?jsonObject.getAsJsonObject(track).getAsJsonArray(chrom)
+                    :jsonObject.getAsJsonArray(track);
             if (type != null) {
                 if(BED_FORMATS.contains(trackType.toLowerCase())){
                     trackData = new ArrayList<>();
@@ -69,6 +72,9 @@ public class TrackDataDetails<T> {
         }
         else if(BED_FORMATS.contains(trackType.toLowerCase())){
             type = new TypeToken<ArrayList<BedTrackTypeData>>() {
+            }.getType();
+        } else if (trackType.equalsIgnoreCase(BIG_WIG)) {
+            type = new TypeToken<ArrayList<BigWigTypeData>>() {
             }.getType();
         }
         return type;

@@ -104,6 +104,11 @@
             <artifactId>org.apache.felix.main</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>genometry</artifactId>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

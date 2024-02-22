@@ -88,7 +88,7 @@ public final class WiggleData {
      * @param yList
      * @param wList
      */
-    static void sortXYZDataOnX(final int[] xList, final float[] yList, final int[] wList) {
+    public static void sortXYZDataOnX(final int[] xList, final float[] yList, final int[] wList) {
         Swapper swapper = (a, b) -> {
             int swapInt = xList[a];
             xList[a] = xList[b];

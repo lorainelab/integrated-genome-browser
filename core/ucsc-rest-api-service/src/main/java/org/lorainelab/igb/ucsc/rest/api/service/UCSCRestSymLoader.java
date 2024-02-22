@@ -4,6 +4,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.parsers.BedParser;
+import com.affymetrix.genometry.parsers.graph.WiggleData;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -121,6 +122,8 @@ public class UCSCRestSymLoader extends SymLoader {
             for(int i=0; i<trackDataList.size(); i++){
                 yData[i] = trackDataList.get(i).getValue();
             }
+            if(trackType.equalsIgnoreCase(WIG))
+                WiggleData.sortXYZDataOnX(xData, yData, wData);
             GraphIntervalSym graphIntervalSym = new GraphIntervalSym(xData, wData, yData, track, overlapSpan.getBioSeq());
             List<SeqSymmetry> symList = new ArrayList<>();
             symList.add(graphIntervalSym);

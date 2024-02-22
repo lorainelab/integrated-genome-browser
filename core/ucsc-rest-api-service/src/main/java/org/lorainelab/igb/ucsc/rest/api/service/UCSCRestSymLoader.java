@@ -3,6 +3,7 @@ package org.lorainelab.igb.ucsc.rest.api.service;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.parsers.BedParser;
 import com.affymetrix.genometry.symloader.SymLoader;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
@@ -95,10 +96,18 @@ public class UCSCRestSymLoader extends SymLoader {
             List<BedTrackTypeData> trackDataList= trackDataDetails.getTrackData();
             List<UcscBedSymWithProps> ucscBedSymWithProps = trackDataList.stream().map(trackData -> {
                 boolean forward = (trackData.getStrand() == null) || trackData.getStrand().isEmpty() || (trackData.getStrand().equals("+") || trackData.getStrand().equals("++"));
+                int txMin = Math.min(trackData.getChromStart(), trackData.getChromEnd());
+                int txMax = Math.max(trackData.getChromStart(), trackData.getChromEnd());
+                int[] blockMins = trackData.getChromStartsArray() != null
+                        ? BedParser.makeBlockMins(txMin, trackData.getChromStartsArray())
+                        : new int[]{txMin};
+                int[] blockMaxs = trackData.getBlockSizesArray() != null
+                        ? BedParser.makeBlockMaxs(trackData.getBlockSizesArray(), blockMins)
+                        : new int[]{txMax};
                 return new UcscBedSymWithProps(track, determineSeq(genomeVersion, trackData.getChrom(), 0),
-                        trackData.getChromStart(), trackData.getChromEnd(), trackData.getName(), trackData.getScore(),
+                        txMin, txMax, trackData.getName(), trackData.getScore(),
                         forward, trackData.getThickStart(), trackData.getThickEnd(),
-                        trackData.getChromStartsArray(), trackData.getBlockSizesArray(), trackData.getProps());
+                        blockMins, blockMaxs, trackData.getProps());
             }).collect(Collectors.toList());
             return ucscBedSymWithProps;
         } else if (trackType.equalsIgnoreCase(BIG_WIG) || trackType.equalsIgnoreCase(WIG)) {

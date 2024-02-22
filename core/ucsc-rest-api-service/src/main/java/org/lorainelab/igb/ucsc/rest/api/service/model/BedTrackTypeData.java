@@ -28,7 +28,7 @@ public class BedTrackTypeData {
     Map<String, Object> props;
 
     private List<String> properties = new ArrayList<>(Arrays.asList("chrom", "chromStart", "chromEnd", "name", "score", "strand", "thickStart",
-            "thickEnd", "reserved", "blockCount", "blockSizes", "blockStarts"));
+            "thickEnd", "reserved", "blockCount", "blockSizes", "chromStarts"));
 
     public int[] getBlockSizesArray(){
         return Objects.nonNull(blockSizes) && !blockSizes.isEmpty()

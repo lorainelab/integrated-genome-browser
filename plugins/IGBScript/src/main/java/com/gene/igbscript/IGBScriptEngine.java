@@ -257,6 +257,9 @@ public class IGBScriptEngine implements ScriptEngine {
     }
 
     private String getAbsolutePath(String filePath) throws UnsupportedEncodingException {
+        if (filePath.startsWith(HTTP_PROTOCOL_SCHEME)) {
+            return filePath;
+        }
         if (CommonUtils.IS_WINDOWS) {
             /*~Kiran:IGBF-1286: Replaced ':' char with '-' as windows does not support following chars in file name ['\','/',':','*','?','"','<','>','|']*/
             if(filePath.startsWith("~")){
@@ -269,10 +272,6 @@ public class IGBScriptEngine implements ScriptEngine {
             }else{
                 filePath= filePath.replaceAll(":","-");
             }
-            tmpFile.delete();
-            return filePath;
-        }
-        if (filePath.startsWith(HTTP_PROTOCOL_SCHEME)) {
             return filePath;
         }
         //~kiran: IGBF-1245 : Added null check for filename to avoid exception

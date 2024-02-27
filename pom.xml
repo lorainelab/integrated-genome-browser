@@ -85,7 +85,7 @@
         <org.apache.felix.http.servlet-api.version>2.1.0</org.apache.felix.http.servlet-api.version>
         <felixJettyVersion>5.1.4</felixJettyVersion>
         <commonsFileUpload>1.5</commonsFileUpload>
-        <lombokVersion>1.18.20</lombokVersion>
+        <lombokVersion>1.18.30</lombokVersion>
         <httpclient.version>4.5.13</httpclient.version>
     </properties>
     <repositories>

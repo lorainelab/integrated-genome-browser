@@ -3,6 +3,7 @@ package org.lorainelab.igb.ucsc.rest.api.service;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.parsers.AbstractPSLParser;
 import com.affymetrix.genometry.parsers.BedParser;
 import com.affymetrix.genometry.parsers.graph.WiggleData;
 import com.affymetrix.genometry.symloader.SymLoader;
@@ -81,12 +82,28 @@ public class UCSCRestSymLoader extends SymLoader {
                 trackDataDetails.setTrackData(data, track, trackType, trackDataDetails.getChrom());
             List<Psl> trackDataList= trackDataDetails.getTrackData();
             List<UcscPslSym> ucscPslSyms = trackDataList.stream().map(trackData -> {
-                boolean same_orientation = trackData.strand.equals("+") || trackData.strand.equals("++");
+                String strandstring = trackData.strand;
+                boolean same_orientation = true, qforward = true, tforward = true;
+                if (strandstring.length() == 1) {
+                    same_orientation = strandstring.equals("+");
+                    qforward = (strandstring.charAt(0) == '+');
+                    tforward = true;
+                } else if (strandstring.length() == 2) {
+                    same_orientation = (strandstring.equals("++") || strandstring.equals("--"));
+                    qforward = (strandstring.charAt(0) == '+');
+                    tforward = (strandstring.charAt(1) == '+');
+                }
+                BioSeq qseq = determineSeq(genomeVersion, trackData.qName, trackData.qSize);
+                BioSeq tseq = determineSeq(genomeVersion, trackData.tName, trackData.tSize);
+                List<Object> child_arrays = AbstractPSLParser.calcChildren(qseq, tseq, qforward, tforward,
+                        trackData.blockSizes.split(","), trackData.qStarts.split(","), trackData.tStarts.split(","));
+                int[] blocksizes = (int[]) child_arrays.get(0);
+                int[] qmins = (int[]) child_arrays.get(1);
+                int[] tmins = (int[]) child_arrays.get(2);
                 return new UcscPslSym(track, trackData.matches, trackData.misMatches, trackData.repMatches, trackData.nCount,
                         trackData.qNumInsert, trackData.qBaseInsert, trackData.tNumInsert, trackData.tBaseInsert, same_orientation,
-                        determineSeq(genomeVersion, trackData.qName, trackData.qSize), trackData.qStart, trackData.qEnd,
-                        determineSeq(genomeVersion, trackData.tName, trackData.tSize), trackData.tStart, trackData.tEnd,
-                        trackData.blockCount, trackData.getBlockSizesArray(), trackData.getQStartsArray(), trackData.getTStartsArray(), false);
+                        qseq, trackData.qStart, trackData.qEnd, tseq, trackData.tStart, trackData.tEnd,
+                        trackData.blockCount, blocksizes, qmins, tmins, false);
             }).collect(Collectors.toList());
             return ucscPslSyms;
         }

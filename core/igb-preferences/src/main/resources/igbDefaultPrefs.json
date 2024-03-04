@@ -47,7 +47,7 @@
                 "name": "Bio-Analytic Resource",
                 "url": "https://bioviz.org/quickload/bar",
                 "loadPriority": "1",
-                "mirror": "https://bitbucket.org/lorainelab/bioviz/raw/main",
+                "mirror": "https://bitbucket.org/lorainelab/bioviz/raw/main/htdocs/quickload/bar",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
             {

@@ -12,7 +12,7 @@
             {
                 "factoryName": "quickload",
                 "name": "IGB Quickload",
-                "url": "http://lorainelab-quickload.scidas.org/quickload",
+                "url": "http://igbquickload-main.bioviz.org/quickload",
                 "loadPriority": "2",
                 "mirror": "http://igbquickload.org/quickload",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:1"
@@ -45,9 +45,9 @@
             {
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
-                "url": "http://lorainelab-quickload.scidas.org/bar",
+                "url": "https://bioviz.org/quickload/bar",
                 "loadPriority": "1",
-                "mirror": "http://bioviz.org/quickload/bar",
+                "mirror": "https://bitbucket.org/lorainelab/bioviz/raw/main",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
             {

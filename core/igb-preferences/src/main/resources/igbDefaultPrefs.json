@@ -45,9 +45,8 @@
             {
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
-                "url": "https://bioviz.org/quickload/bar",
+                "url": "http://lorainelab-quickload.scidas.org/bar",
                 "loadPriority": "1",
-                "mirror": "https://bitbucket.org/lorainelab/bioviz/raw/main/htdocs/quickload/bar",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
             {

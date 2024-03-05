@@ -1,4 +1,4 @@
-# Integrated Genome Browser
+# Integrated Genome Browser 10.0.0
 
 ## About 
 
@@ -19,11 +19,11 @@ See:
 
 ***
 
-The code from this branch compiles and runs under JDK 8.
+The code from this branch compiles and runs under JDK 21.
 
 # To build and run IGB
 
-1. Install JDK 8 on your computer. 
+1. Install JDK 21 on your computer. 
 2. Install Apache mvn, required to build IGB. 
 3. Clone the [team repository](https://bitbucket.org/lorainelab/integrated-genome-browser) to your desktop.  
 4. Inside the local copy, check out the branch you wish to build. Review branch names to identify currently released version of IGB. 

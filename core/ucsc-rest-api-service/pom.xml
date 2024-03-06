@@ -100,11 +100,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>genometry</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.service.component.annotations</artifactId>
             <scope>provided</scope>
@@ -116,8 +111,18 @@
         </dependency>
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
-            <artifactId>genometry</artifactId>
-            <scope>compile</scope>
+            <artifactId>external-sort</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>colt</groupId>
+            <artifactId>colt</artifactId>
+            <scope>test</scope>
+        </dependency><dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>3.4.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

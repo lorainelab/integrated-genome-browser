@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
+import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.ucsc.rest.api.service.model.*;
 import org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils;
 
@@ -174,7 +175,8 @@ public class UCSCRestSymLoader extends SymLoader {
         if (chromosomes == null) {
             chromosomes = UCSCRestServerUtils.retrieveAssemblyInfoByContextRoot(baseUrl, contextRootKey).keySet();
         }
-        return genomeVersion.getGenomeVersionSynonymLookup().findMatchingSynonym(chromosomes, currentSeq.getId());
+        GenomeVersionSynonymLookup genomeVersionSynonymLookup = genomeVersion.getGenomeVersionSynonymLookup();
+        return genomeVersionSynonymLookup.findMatchingSynonym(chromosomes, currentSeq.getId());
     }
 
     private static BioSeq determineSeq(GenomeVersion query_group, String qname, int qsize) {

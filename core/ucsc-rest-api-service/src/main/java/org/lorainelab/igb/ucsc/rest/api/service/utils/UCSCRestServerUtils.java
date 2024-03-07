@@ -2,11 +2,16 @@ package org.lorainelab.igb.ucsc.rest.api.service.utils;
 
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
-import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
 import com.google.gson.Gson;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.ucsc.rest.api.service.model.ChromosomeData;
 import org.lorainelab.igb.ucsc.rest.api.service.model.DnaInfo;
@@ -16,7 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,14 +46,30 @@ public class UCSCRestServerUtils {
     public static final String CHROM = "chrom";
     public static final String START = "start";
     public static final String END = "end";
+    public static final int HTTP_RESPONSE_OKAY = 200;
+    private static final CloseableHttpClient httpClient;
+    private static final ResponseHandler<String> responseHandler;
+
+    static {
+        httpClient = HttpClients.createDefault();
+        responseHandler = response -> {
+            int status = response.getStatusLine().getStatusCode();
+            if (status == HTTP_RESPONSE_OKAY) {
+                HttpEntity entity = response.getEntity();
+                return entity != null ? EntityUtils.toString(entity) : null;
+            } else {
+                throw new ClientProtocolException("Unexpected response status: " + status);
+            }
+        };
+    }
 
     public static Optional<GenomesData> retrieveDsnResponse(String rootUrl) throws IOException {
         String url = toExternalForm(toExternalForm(rootUrl.trim()) + LIST) + UCSC_GENOMES;
         url = checkValidAndSetUrl(url);
-        URL genomeUrl = new URL(url);
-        String data = Resources.toString(genomeUrl, Charsets.UTF_8);
+        HttpGet httpget = new HttpGet(url);
+        String responseBody = httpClient.execute(httpget, responseHandler);
         GenomesData genomesData = new Gson().fromJson(
-                data, GenomesData.class
+                responseBody, GenomesData.class
         );
         return Optional.ofNullable(genomesData);
     }
@@ -58,13 +82,13 @@ public class UCSCRestServerUtils {
             uriBuilder.addParameter(GENOME, genomeVersionName);
             uriBuilder.addParameter(TRACK_PARAM, TRACK_PARAM_VALUE);
             String validUrl = checkValidAndSetUrl(uriBuilder.toString());
-            URL genomeUrl = new URL(validUrl);
-            String data = Resources.toString(genomeUrl, Charsets.UTF_8);
+            HttpGet httpget = new HttpGet(validUrl);
+            String responseBody = httpClient.execute(httpget, responseHandler);
             ucscRestTracks = new Gson().fromJson(
-                    data, UCSCRestTracks.class
+                    responseBody, UCSCRestTracks.class
             );
             if(Objects.nonNull(ucscRestTracks))
-                ucscRestTracks.setTracks(data, genomeVersionName);
+                ucscRestTracks.setTracks(responseBody, genomeVersionName);
         } catch (URISyntaxException | IOException e) {
             logger.error(e.getMessage(), e);
         }
@@ -97,10 +121,10 @@ public class UCSCRestServerUtils {
             URIBuilder uriBuilder = new URIBuilder(uri);
             uriBuilder.addParameter(GENOME, genomeVersionName);
             String validUrl = checkValidAndSetUrl(uriBuilder.toString());
-            URL chromosomeUrl = new URL(validUrl);
-            String data = Resources.toString(chromosomeUrl, Charsets.UTF_8);
+            HttpGet httpget = new HttpGet(validUrl);
+            String responseBody = httpClient.execute(httpget, responseHandler);
             chromosomeDate = new Gson().fromJson(
-                    data, ChromosomeData.class
+                    responseBody, ChromosomeData.class
             );
         } catch (URISyntaxException | IOException e) {
             logger.error(e.getMessage(), e);
@@ -117,10 +141,10 @@ public class UCSCRestServerUtils {
             uriBuilder.addParameter(START, String.valueOf(span.getMin()));
             uriBuilder.addParameter(END, String.valueOf(span.getMax()));
             String validUrl = checkValidAndSetUrl(uriBuilder.toString());
-            URL dnaUrl = new URL(validUrl);
-            String data = Resources.toString(dnaUrl, Charsets.UTF_8);
+            HttpGet httpget = new HttpGet(validUrl);
+            String responseBody = httpClient.execute(httpget, responseHandler);
             DnaInfo dnaInfo = new Gson().fromJson(
-                    data, DnaInfo.class
+                    responseBody, DnaInfo.class
             );
             return dnaInfo.getDna();
         } catch (URISyntaxException | IOException e) {
@@ -152,21 +176,16 @@ public class UCSCRestServerUtils {
 
     public static String checkValidAndSetUrl(String uriString) {
         try {
-            URL obj = new URL(uriString);
+            URL obj = new URI(uriString).toURL();
             HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
             conn.setReadTimeout(READ_TIMEOUT);
             int code = conn.getResponseCode();
             if (code != HttpURLConnection.HTTP_OK) {
                 if (code == HttpURLConnection.HTTP_MOVED_TEMP || code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_SEE_OTHER) {
-                    String newUrl = conn.getHeaderField("Location");
-                    return newUrl;
+                    return conn.getHeaderField("Location");
                 }
             }
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
         return uriString;

@@ -359,7 +359,7 @@
                             net.miginfocom.swing,
                             com.github.kevinsawicki.http,
                             fi.iki.elonen,
-                            org.apache.http.client.utils.*,
+                            org.apache.http.*,
                             lombok.*
                         </Export-Package>
                     </instructions>

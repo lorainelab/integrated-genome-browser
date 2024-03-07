@@ -11,22 +11,27 @@ import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.impl.UcscGeneSym;
 import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.ucsc.rest.api.service.model.*;
 import org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails.*;
+import static org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils.HTTP_RESPONSE_OKAY;
 import static org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils.checkValidAndSetUrl;
 
 @Slf4j
@@ -40,7 +45,6 @@ public class UCSCRestSymLoader extends SymLoader {
     private final String contextRoot;
     private final String contextRootKey;
     private Set<String> chromosomes;
-
 
     public UCSCRestSymLoader(String baseUrl, URI contextRoot, Optional<URI> indexUri, String track, String trackType, GenomeVersion genomeVersion, String contextRootKey) {
         super(contextRoot, indexUri, track, genomeVersion);
@@ -60,12 +64,22 @@ public class UCSCRestSymLoader extends SymLoader {
         uriBuilder.addParameter(START, String.valueOf(min));
         uriBuilder.addParameter(END, String.valueOf(max));
         String validUrl = checkValidAndSetUrl(uriBuilder.toString());
-        URL trackDataUrl = new URL(validUrl);
-        String data = Resources.toString(trackDataUrl, Charsets.UTF_8);
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        ResponseHandler<String> responseHandler = response -> {
+            int status = response.getStatusLine().getStatusCode();
+            if (status == HTTP_RESPONSE_OKAY) {
+                HttpEntity entity = response.getEntity();
+                return entity != null ? EntityUtils.toString(entity) : null;
+            } else {
+                throw new ClientProtocolException("Unexpected response status: " + status);
+            }
+        };
+        HttpGet httpget = new HttpGet(validUrl);
+        String responseBody = httpClient.execute(httpget, responseHandler);
         if(trackType.equalsIgnoreCase(GENE_PRED)){
-            TrackDataDetails<GenePred> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<GenePred>>(){}.getType());
+            TrackDataDetails<GenePred> trackDataDetails = new Gson().fromJson(responseBody, new TypeToken<TrackDataDetails<GenePred>>(){}.getType());
             if(Objects.nonNull(trackDataDetails))
-                trackDataDetails.setTrackData(data, track, trackType, trackDataDetails.getChrom());
+                trackDataDetails.setTrackData(responseBody, track, trackType, trackDataDetails.getChrom());
             List<GenePred> trackDataList= trackDataDetails.getTrackData();
             List<UcscGeneSym> ucscGeneSyms = trackDataList.stream().map(trackData -> {
                 int[] emins = Arrays.stream(trackData.exonStarts.split(",")).mapToInt(Integer::parseInt).toArray();
@@ -78,9 +92,9 @@ public class UCSCRestSymLoader extends SymLoader {
             return ucscGeneSyms;
         }
         else if(trackType.equalsIgnoreCase(PSL)){
-            TrackDataDetails<Psl> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<Psl>>(){}.getType());
+            TrackDataDetails<Psl> trackDataDetails = new Gson().fromJson(responseBody, new TypeToken<TrackDataDetails<Psl>>(){}.getType());
             if(Objects.nonNull(trackDataDetails))
-                trackDataDetails.setTrackData(data, track, trackType, trackDataDetails.getChrom());
+                trackDataDetails.setTrackData(responseBody, track, trackType, trackDataDetails.getChrom());
             List<Psl> trackDataList= trackDataDetails.getTrackData();
             List<UcscPslSym> ucscPslSyms = trackDataList.stream().map(trackData -> {
                 String strandstring = trackData.strand;
@@ -109,9 +123,9 @@ public class UCSCRestSymLoader extends SymLoader {
             return ucscPslSyms;
         }
         else if(BED_FORMATS.contains(trackType.toLowerCase())) {
-            TrackDataDetails<BedTrackTypeData> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<BedTrackTypeData>>(){}.getType());
+            TrackDataDetails<BedTrackTypeData> trackDataDetails = new Gson().fromJson(responseBody, new TypeToken<TrackDataDetails<BedTrackTypeData>>(){}.getType());
             if(Objects.nonNull(trackDataDetails))
-                trackDataDetails.setTrackData(data, track, trackType, trackDataDetails.getChrom());
+                trackDataDetails.setTrackData(responseBody, track, trackType, trackDataDetails.getChrom());
             List<BedTrackTypeData> trackDataList= trackDataDetails.getTrackData();
             List<UcscBedSymWithProps> ucscBedSymWithProps = trackDataList.stream().map(trackData -> {
                 boolean forward = (trackData.getStrand() == null) || trackData.getStrand().isEmpty() || (trackData.getStrand().equals("+") || trackData.getStrand().equals("++"));
@@ -130,9 +144,9 @@ public class UCSCRestSymLoader extends SymLoader {
             }).collect(Collectors.toList());
             return ucscBedSymWithProps;
         } else if (trackType.equalsIgnoreCase(BIG_WIG) || trackType.equalsIgnoreCase(WIG)) {
-            TrackDataDetails<WigTypeData> trackDataDetails = new Gson().fromJson(data, new TypeToken<TrackDataDetails<WigTypeData>>(){}.getType());
+            TrackDataDetails<WigTypeData> trackDataDetails = new Gson().fromJson(responseBody, new TypeToken<TrackDataDetails<WigTypeData>>(){}.getType());
             if(Objects.nonNull(trackDataDetails))
-                trackDataDetails.setTrackData(data, track, trackType, trackDataDetails.getChrom());
+                trackDataDetails.setTrackData(responseBody, track, trackType, trackDataDetails.getChrom());
             List<WigTypeData> trackDataList= trackDataDetails.getTrackData();
             int[] xData = trackDataList.stream().mapToInt(WigTypeData::getStart).toArray();
             int[] wData = trackDataList.stream().mapToInt(track -> track.getEnd() - track.getStart()).toArray();

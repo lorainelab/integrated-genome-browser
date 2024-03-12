@@ -6,35 +6,62 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.lorainelab.igb.ucsc.rest.api.service.RestApiDataProvider;
-import org.lorainelab.igb.ucsc.rest.api.service.model.UCSCRestTracks;
-import org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-
+@ExtendWith(MockitoExtension.class)
 public class RestApiDataProviderTest {
-
     private static final Logger logger = LoggerFactory.getLogger(RestApiDataProviderTest.class);
-    private final static String UCSC_REST_URL = "https://api.genome.ucsc.edu/";
+    private final static String UCSC_REST_URL = "https://api.genome.ucsc.edu";
     private static final String HUMAN_GENOME_ID = "hg38";
     private static RestApiDataProvider restApiDataProvider;
     private static GenomeVersion genomeVersion;
     private static DataContainer dataContainer;
     private final String validChromosomeName = "chr1";
+    private final String notValidChromosomeName = "chr2";
+    @Mock
+    private CloseableHttpClient mockHttpClient;
+    public static final String ucsc_genomes_test_file = "ucsc-genomes-data.json";
+    public static final String human_chromosome_test_file = "human-chromosome-data.json";
+    public static final String genome_sequence_test_file = "genome-sequence-data.json";
+    public static final String available_tracks_test_file = "available-tracks-data.json";
 
-    @BeforeAll
-    public static void setup() {
-        restApiDataProvider = new RestApiDataProvider(UCSC_REST_URL, "UCSC", 1);
+    @BeforeEach
+    public void setup() throws IOException {
+        try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
+            mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
+            String filename = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(ucsc_genomes_test_file)).getFile();
+            String mockResponse = Files.readString(Paths.get(filename));
+            String apiUrl = "https://api.genome.ucsc.edu/list/ucscGenomes";
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
+                    .thenReturn(mockResponse);
+            restApiDataProvider = new RestApiDataProvider(UCSC_REST_URL, "UCSC", 1);
+        }
         genomeVersion = new GenomeVersion(HUMAN_GENOME_ID);
         dataContainer = new DataContainer(genomeVersion, restApiDataProvider);
     }
@@ -46,27 +73,49 @@ public class RestApiDataProviderTest {
     }
 
     @Test
-    public void retrieveAssemblyInfo() {
-        assertTrue(restApiDataProvider.getAssemblyInfo(genomeVersion).containsKey(validChromosomeName));
+    public void retrieveAssemblyInfo() throws IOException {
+        try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
+            mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
+            String filename = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(human_chromosome_test_file)).getFile();
+            String mockResponse = Files.readString(Paths.get(filename));
+            String apiUrl = "https://api.genome.ucsc.edu/list/chromosomes?genome=hg38";
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
+                    .thenReturn(mockResponse);
+            assertTrue(restApiDataProvider.getAssemblyInfo(genomeVersion).containsKey(validChromosomeName));
+            assertFalse(restApiDataProvider.getAssemblyInfo(genomeVersion).containsKey(notValidChromosomeName));
+        }
     }
 
     @Test
-    public void retrieveTracksResponseTest() {
-        Optional<UCSCRestTracks> tracksResponse = UCSCRestServerUtils.retrieveTracksResponse(UCSC_REST_URL, HUMAN_GENOME_ID);
-        assertTrue(tracksResponse.isPresent());
+    public void retrieveSequence() throws IOException {
+        try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
+            mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
+            String filename = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(genome_sequence_test_file)).getFile();
+            String mockResponse = Files.readString(Paths.get(filename));
+            String apiUrl = "https://api.genome.ucsc.edu/getData/sequence?genome=hg38&chrom=chr1&start=10000&end=12000";
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
+                    .thenReturn(mockResponse);
+            SeqSpan span = new SimpleSeqSpan(10000, 12000, new BioSeq(validChromosomeName, 0));
+            String sequence = restApiDataProvider.getSequence(dataContainer, span);
+            assertFalse(sequence.isEmpty());
+        }
     }
 
     @Test
-    public void retrieveSequence() {
-        SeqSpan span = new SimpleSeqSpan(1000, 2000, new BioSeq(validChromosomeName, 0));
-        String sequence = restApiDataProvider.getSequence(dataContainer, span);
-        assertFalse(sequence.isEmpty());
-    }
-
-    @Test
-    public void retrieveAvailableDataSets() {
-        Set<DataSet> availableDataSets = restApiDataProvider.getAvailableDataSets(dataContainer);
-        availableDataSets.forEach(dataContainer::addDataSet);
+    public void retrieveAvailableDataSets() throws IOException {
+        try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
+            mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
+            String filename = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(available_tracks_test_file)).getFile();
+            String mockResponse = Files.readString(Paths.get(filename));
+            String apiUrl = "https://api.genome.ucsc.edu/list/tracks?genome=hg38&trackLeavesOnly=1";
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
+                    .thenReturn(mockResponse);
+            Set<DataSet> availableDataSets = restApiDataProvider.getAvailableDataSets(dataContainer);
+            availableDataSets.forEach(dataContainer::addDataSet);
+        }
     }
 }
 

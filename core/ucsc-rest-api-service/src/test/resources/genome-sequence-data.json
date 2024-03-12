@@ -1,0 +1,9 @@
+{
+  "downloadTime": "2024:03:10T20:04:24Z",
+  "downloadTimeStamp": 1710101064,
+  "genome": "hg38",
+  "chrom": "chr1",
+  "start": 10000,
+  "end": 12000,
+  "dna": "taaccctaaccctaaccctaaccctaaccctaaccctaaccctaaccc"
+}

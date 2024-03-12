@@ -1,0 +1,36 @@
+{
+  "downloadTime": "2024:03:10T22:12:30Z",
+  "downloadTimeStamp": 1710108750,
+  "genome": "hg38",
+  "trackType": "bigWig",
+  "track": "ReMapDensity",
+  "chrom": "chr1",
+  "chromSize": 248956422,
+  "bigDataUrl": "/gbdb/hg38/reMap/reMapDensity2022.bw",
+  "start": 2000,
+  "end": 200500,
+  "ReMapDensity": {
+    "chr1": [
+      {
+        "start": 9829,
+        "end": 9880,
+        "value": 1
+      },
+      {
+        "start": 9880,
+        "end": 9882,
+        "value": 2
+      },
+      {
+        "start": 9882,
+        "end": 9883,
+        "value": 3
+      },
+      {
+        "start": 9883,
+        "end": 9884,
+        "value": 4
+      }
+    ]
+  }
+}

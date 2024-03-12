@@ -45,7 +45,7 @@
             {
                 "factoryName": "ucsc rest",
                 "name": "UCSC REST",
-                "url": "https://api.genome.ucsc.edu/",
+                "url": "https://api.genome.ucsc.edu",
                 "loadPriority": "6",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:16"
 

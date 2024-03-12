@@ -1,0 +1,31 @@
+{
+  "downloadTime": "2024:03:10T20:29:16Z",
+  "downloadTimeStamp": 1710102556,
+  "dataTime": "2024-03-05T13:36:00",
+  "dataTimeStamp": 1709674560,
+  "hg38": {
+    "dbSnp155": {
+      "shortLabel": "All dbSNP(155)",
+      "type": "bigDbSnp",
+      "longLabel": "All Short Genetic Variants from dbSNP Release 155",
+      "parent": "dbSnp155ViewVariants off",
+      "parentParent": "dbSnp155Composite",
+      "defaultGeneTracks": "knownGene",
+      "maxWindowToDraw": "1000000",
+      "priority": "4",
+      "subGroups": "view=variants",
+      "bigDataUrl": "/gbdb/hg38/snp/dbSnp155.bb"
+    },
+    "dbSnp155Mult": {
+      "shortLabel": "Mult. dbSNP(155)",
+      "type": "bigDbSnp",
+      "longLabel": "Short Genetic Variants from dbSNP Release 155 that Map to Multiple Genomic Loci",
+      "parent": "dbSnp155ViewVariants off",
+      "parentParent": "dbSnp155Composite",
+      "defaultGeneTracks": "knownGene",
+      "priority": "3",
+      "subGroups": "view=variants",
+      "bigDataUrl": "/gbdb/hg38/snp/dbSnp155Mult.bb"
+    }
+  }
+}

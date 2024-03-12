@@ -20,7 +20,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -31,14 +30,13 @@ import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.*;
 public final class RestApiDataProvider extends BaseDataProvider implements AssemblyProvider, ReferenceSequenceProvider {
 
     private final Set<String> availableGenomesSet;
-    public static final int READ_TIMEOUT = 60000;
 
     public RestApiDataProvider(String ucscRestUrl, String name, int loadPriority) {
         super(ucscRestUrl, name, loadPriority);
         availableGenomesSet = Sets.newHashSet();
         try {
-            URL ucscRestDsnUrl = new URL(url);
-        } catch (MalformedURLException ex) {
+            URL ucscRestDsnUrl = new URIBuilder(url).build().toURL();
+        } catch (MalformedURLException | URISyntaxException ex) {
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
         }
@@ -51,8 +49,8 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
         super(ucscRestUrl, name, mirrorUrl, loadPriority);
         availableGenomesSet = Sets.newHashSet();
         try {
-            URL ucscRestDsnUrl = new URL(ucscRestUrl);
-        } catch (MalformedURLException | IllegalArgumentException ex) {
+            URL ucscRestDsnUrl = new URIBuilder(url).build().toURL();
+        } catch (MalformedURLException | URISyntaxException ex) {
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
         }
@@ -65,8 +63,8 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
         super(ucscRestUrl, name, loadPriority, id);
         availableGenomesSet = Sets.newHashSet();
         try {
-            URL ucscRestDsnUrl = new URL(url);
-        } catch (MalformedURLException ex) {
+            URL ucscRestDsnUrl = new URIBuilder(url).build().toURL();
+        } catch (MalformedURLException | URISyntaxException ex) {
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
         }
@@ -79,8 +77,8 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
         super(ucscRestUrl, name, mirrorUrl, loadPriority, id);
         availableGenomesSet = Sets.newHashSet();
         try {
-            URL ucscRestDsnUrl = new URL(ucscRestUrl);
-        } catch (MalformedURLException | IllegalArgumentException ex) {
+            URL ucscRestDsnUrl = new URIBuilder(url).build().toURL();
+        } catch (MalformedURLException | URISyntaxException ex) {
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
         }
@@ -96,11 +94,7 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
         }
         try {
             Optional<GenomesData> genomoeApiResponse = UCSCRestServerUtils.retrieveDsnResponse(url);
-            genomoeApiResponse.ifPresent(ds -> {
-                ds.getUcscGenomes().forEach((genomoeName, genome) -> {
-                   availableGenomesSet.add(genomoeName);
-                });
-            });
+            genomoeApiResponse.ifPresent(ds -> ds.getUcscGenomes().forEach((genomoeName, genome) -> availableGenomesSet.add(genomoeName)));
         } catch (IOException ex) {
             log.error("Could not initialize this UCSC Rest Server, setting status to unavailable for this session.", ex);
             setStatus(NotResponding);

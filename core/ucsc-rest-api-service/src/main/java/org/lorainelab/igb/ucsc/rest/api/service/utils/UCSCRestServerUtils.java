@@ -4,14 +4,10 @@ import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
 import org.lorainelab.igb.ucsc.rest.api.service.model.ChromosomeData;
 import org.lorainelab.igb.ucsc.rest.api.service.model.DnaInfo;
@@ -21,16 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
-import static org.lorainelab.igb.ucsc.rest.api.service.RestApiDataProvider.READ_TIMEOUT;
 
 public class UCSCRestServerUtils {
     private static final Logger logger = LoggerFactory.getLogger(UCSCRestServerUtils.class);
@@ -46,48 +37,32 @@ public class UCSCRestServerUtils {
     public static final String CHROM = "chrom";
     public static final String START = "start";
     public static final String END = "end";
-    public static final int HTTP_RESPONSE_OKAY = 200;
-    private static final CloseableHttpClient httpClient;
-    private static final ResponseHandler<String> responseHandler;
-
-    static {
-        httpClient = HttpClients.createDefault();
-        responseHandler = response -> {
-            int status = response.getStatusLine().getStatusCode();
-            if (status == HTTP_RESPONSE_OKAY) {
-                HttpEntity entity = response.getEntity();
-                return entity != null ? EntityUtils.toString(entity) : null;
-            } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
-            }
-        };
-    }
 
     public static Optional<GenomesData> retrieveDsnResponse(String rootUrl) throws IOException {
         String url = toExternalForm(toExternalForm(rootUrl.trim()) + LIST) + UCSC_GENOMES;
-        url = checkValidAndSetUrl(url);
-        HttpGet httpget = new HttpGet(url);
-        String responseBody = httpClient.execute(httpget, responseHandler);
-        GenomesData genomesData = new Gson().fromJson(
-                responseBody, GenomesData.class
-        );
-        return Optional.ofNullable(genomesData);
+        try(CloseableHttpClient httpClient = HttpClients.createDefault()){
+            HttpGet httpget = new HttpGet(url);
+            String responseBody = httpClient.execute(httpget, new ApiResponseHandler());
+            GenomesData genomesData = new Gson().fromJson(
+                    responseBody, GenomesData.class
+            );
+            return Optional.ofNullable(genomesData);
+        }
     }
 
     public static Optional<UCSCRestTracks> retrieveTracksResponse(String contextRoot, String genomeVersionName) {
         String uri = toExternalForm(toExternalForm(contextRoot.trim()) + LIST) + TRACKS;
         UCSCRestTracks ucscRestTracks = null;
-        try {
+        try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
             URIBuilder uriBuilder = new URIBuilder(uri);
             uriBuilder.addParameter(GENOME, genomeVersionName);
             uriBuilder.addParameter(TRACK_PARAM, TRACK_PARAM_VALUE);
-            String validUrl = checkValidAndSetUrl(uriBuilder.toString());
-            HttpGet httpget = new HttpGet(validUrl);
-            String responseBody = httpClient.execute(httpget, responseHandler);
+            HttpGet httpget = new HttpGet(uriBuilder.toString());
+            String responseBody = httpClient.execute(httpget, new ApiResponseHandler());
             ucscRestTracks = new Gson().fromJson(
                     responseBody, UCSCRestTracks.class
             );
-            if(Objects.nonNull(ucscRestTracks))
+            if (Objects.nonNull(ucscRestTracks))
                 ucscRestTracks.setTracks(responseBody, genomeVersionName);
         } catch (URISyntaxException | IOException e) {
             logger.error(e.getMessage(), e);
@@ -117,12 +92,11 @@ public class UCSCRestServerUtils {
     private static Optional<ChromosomeData> retrieveChromosomeResponse(String contextRoot, String genomeVersionName) {
         String uri = toExternalForm(toExternalForm(contextRoot.trim()) + LIST) + CHROMOSOMES;
         ChromosomeData chromosomeDate = null;
-        try {
+        try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
             URIBuilder uriBuilder = new URIBuilder(uri);
             uriBuilder.addParameter(GENOME, genomeVersionName);
-            String validUrl = checkValidAndSetUrl(uriBuilder.toString());
-            HttpGet httpget = new HttpGet(validUrl);
-            String responseBody = httpClient.execute(httpget, responseHandler);
+            HttpGet httpget = new HttpGet(uriBuilder.toString());
+            String responseBody = httpClient.execute(httpget, new ApiResponseHandler());
             chromosomeDate = new Gson().fromJson(
                     responseBody, ChromosomeData.class
             );
@@ -134,15 +108,14 @@ public class UCSCRestServerUtils {
 
     public static String retrieveDna(String contextRoot, SeqSpan span, String genomeVersionName) {
         String uri = toExternalForm(toExternalForm(contextRoot.trim()) + GET_DATA) + SEQUENCE;
-        try {
+        try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
             URIBuilder uriBuilder = new URIBuilder(uri);
             uriBuilder.addParameter(GENOME, genomeVersionName);
             uriBuilder.addParameter(CHROM, span.getBioSeq().getId());
             uriBuilder.addParameter(START, String.valueOf(span.getMin()));
             uriBuilder.addParameter(END, String.valueOf(span.getMax()));
-            String validUrl = checkValidAndSetUrl(uriBuilder.toString());
-            HttpGet httpget = new HttpGet(validUrl);
-            String responseBody = httpClient.execute(httpget, responseHandler);
+            HttpGet httpget = new HttpGet(uriBuilder.toString());
+            String responseBody = httpClient.execute(httpget, new ApiResponseHandler());
             DnaInfo dnaInfo = new Gson().fromJson(
                     responseBody, DnaInfo.class
             );
@@ -172,22 +145,5 @@ public class UCSCRestServerUtils {
             urlString += "/";
         }
         return urlString;
-    }
-
-    public static String checkValidAndSetUrl(String uriString) {
-        try {
-            URL obj = new URI(uriString).toURL();
-            HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
-            conn.setReadTimeout(READ_TIMEOUT);
-            int code = conn.getResponseCode();
-            if (code != HttpURLConnection.HTTP_OK) {
-                if (code == HttpURLConnection.HTTP_MOVED_TEMP || code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_SEE_OTHER) {
-                    return conn.getHeaderField("Location");
-                }
-            }
-        } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
-        }
-        return uriString;
     }
 }

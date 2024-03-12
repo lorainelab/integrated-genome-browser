@@ -1,0 +1,23 @@
+{
+  "downloadTime": "2024:03:05T22:13:52Z",
+  "downloadTimeStamp": 1709676832,
+  "dataTime": "2024-01-10T15:29:12",
+  "dataTimeStamp": 1704929352,
+  "ucscGenomes": {
+    "hg38": {
+      "description": "Dec. 2013 (GRCh38/hg38)",
+      "nibPath": "/gbdb/hg38",
+      "organism": "Human",
+      "defaultPos": "chr7:155799529-155812871",
+      "active": 1,
+      "orderKey": 50,
+      "genome": "Human",
+      "scientificName": "Homo sapiens",
+      "htmlPath": "/gbdb/hg38/html/description.html",
+      "hgNearOk": 1,
+      "hgPbOk": 0,
+      "sourceName": "GRCh38 Genome Reference Consortium Human Reference 38 (GCA_000001405.15)",
+      "taxId": 9606
+    }
+  }
+}

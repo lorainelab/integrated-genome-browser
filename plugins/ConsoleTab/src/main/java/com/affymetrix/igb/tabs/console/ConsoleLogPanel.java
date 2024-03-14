@@ -37,7 +37,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 public class ConsoleLogPanel extends IgbTabPanel {
     private static final Logger logger = LoggerFactory.getLogger(ConsoleLogPanel.class);
     private static final long serialVersionUID = 1L;
-    private static final String IGB_LOGS_FILE_NAME = "igb_logs.txt";
+    private static final String IGB_LOGS_FILE_NAME = "log.txt";
     public static final java.util.ResourceBundle BUNDLE = java.util.ResourceBundle.getBundle("console");
     private static final int TAB_POSITION = 6;
     private static final int MAX_CONSOLE_LENGTH = 1000;

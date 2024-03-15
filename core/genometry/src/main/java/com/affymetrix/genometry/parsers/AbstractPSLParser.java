@@ -457,7 +457,7 @@ public abstract class AbstractPSLParser implements AnnotationWriter, IndexWriter
         parent_sym.addChild(sym);
     }
 
-    private static List<Object> calcChildren(BioSeq qseq, BioSeq tseq, boolean qforward, boolean tforward,
+    public static List<Object> calcChildren(BioSeq qseq, BioSeq tseq, boolean qforward, boolean tforward,
             String[] blocksize_strings,
             String[] qstart_strings, String[] tstart_strings) {
         int childCount = blocksize_strings.length;

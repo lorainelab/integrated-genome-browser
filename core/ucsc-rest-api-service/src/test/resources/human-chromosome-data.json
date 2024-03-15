@@ -1,0 +1,21 @@
+{
+  "downloadTime": "2024:03:10T01:21:56Z",
+  "downloadTimeStamp": 1710033716,
+  "genome": "hg38",
+  "dataTime": "2022-10-25T16:46:08",
+  "dataTimeStamp": 1666741568,
+  "chromCount": 711,
+  "chromosomes": {
+    "chr1": 248956422,
+    "chrUn_KI270394v1": 970,
+    "chrUn_KI270392v1": 971,
+    "chrUn_KI270423v1": 981,
+    "chrUn_KI270385v1": 990,
+    "chrUn_KI270539v1": 993,
+    "chrUn_KI270312v1": 998,
+    "chrUn_KI270336v1": 1026,
+    "chrUn_KI270419v1": 1029,
+    "chrUn_KI270329v1": 1040,
+    "chrUn_KI270379v1": 1045
+  }
+}

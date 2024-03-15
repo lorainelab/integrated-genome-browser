@@ -1,0 +1,34 @@
+{
+  "downloadTime": "2024:03:10T22:13:41Z",
+  "downloadTimeStamp": 1710108821,
+  "genome": "hg38",
+  "dataTime": "2015-05-08T10:01:00",
+  "dataTimeStamp": 1431104460,
+  "trackType": "wig 0 1",
+  "track": "phastCons100way",
+  "start": 2000,
+  "end": 200500,
+  "chrom": "chr1",
+  "chr1": [
+    {
+      "start": 200234,
+      "end": 200235,
+      "value": 0
+    },
+    {
+      "start": 200235,
+      "end": 200236,
+      "value": 0
+    },
+    {
+      "start": 200236,
+      "end": 200237,
+      "value": 0
+    },
+    {
+      "start": 200237,
+      "end": 200238,
+      "value": 0
+    }
+  ]
+}

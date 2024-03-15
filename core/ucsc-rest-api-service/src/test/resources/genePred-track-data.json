@@ -1,0 +1,50 @@
+{
+  "downloadTime": "2024:03:10T21:30:38Z",
+  "downloadTimeStamp": 1710106238,
+  "genome": "hg38",
+  "dataTime": "2022-10-18T23:39:38",
+  "dataTimeStamp": 1666161578,
+  "trackType": "genePred",
+  "track": "augustusGene",
+  "start": 2000,
+  "end": 200500,
+  "chrom": "chr1",
+  "augustusGene": [
+    {
+      "bin": 585,
+      "name": "g1.t1",
+      "chrom": "chr1",
+      "strand": "-",
+      "txStart": 14395,
+      "txEnd": 29445,
+      "cdsStart": 14695,
+      "cdsEnd": 24886,
+      "exonCount": 8,
+      "exonStarts": "14395,14969,16853,17232,17914,18267,24737,29320,",
+      "exonEnds": "14829,15038,17055,17364,18061,18379,25008,29445,",
+      "score": 0,
+      "name2": "g1",
+      "cdsStartStat": "cmpl",
+      "cdsEndStat": "cmpl",
+      "exonFrames": "1,1,0,0,0,2,0,-1,"
+    },
+    {
+      "bin": 585,
+      "name": "g1.t2",
+      "chrom": "chr1",
+      "strand": "-",
+      "txStart": 14395,
+      "txEnd": 29445,
+      "cdsStart": 14695,
+      "cdsEnd": 24886,
+      "exonCount": 8,
+      "exonStarts": "14395,14969,16853,17232,17914,18267,24737,29320,",
+      "exonEnds": "14829,15038,17055,17364,18061,18379,24891,29445,",
+      "score": 0,
+      "name2": "g1",
+      "cdsStartStat": "cmpl",
+      "cdsEndStat": "cmpl",
+      "exonFrames": "1,1,0,0,0,2,0,-1,"
+    }
+  ]
+}

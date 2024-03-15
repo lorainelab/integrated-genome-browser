@@ -1,0 +1,44 @@
+{
+  "downloadTime": "2024:03:10T22:11:22Z",
+  "downloadTimeStamp": 1710108682,
+  "genome": "hg38",
+  "dataTime": "2015-06-18T09:59:32",
+  "dataTimeStamp": 1434646772,
+  "trackType": "bed 12",
+  "track": "cloneEndRP11",
+  "start": 2000,
+  "end": 200500,
+  "chrom": "chr1",
+  "cloneEndRP11": [
+    {
+      "bin": 73,
+      "chrom": "chr1",
+      "chromStart": 27982,
+      "chromEnd": 177318,
+      "name": "RP11-430E19",
+      "score": 750,
+      "strand": "+",
+      "thickStart": 27982,
+      "thickEnd": 177318,
+      "reserved": 0,
+      "blockCount": 2,
+      "blockSizes": "543,343",
+      "chromStarts": "0,148993"
+    },
+    {
+      "bin": 73,
+      "chrom": "chr1",
+      "chromStart": 66657,
+      "chromEnd": 439276,
+      "name": "RP11-952I8",
+      "score": 500,
+      "strand": "+",
+      "thickStart": 66657,
+      "thickEnd": 439276,
+      "reserved": 0,
+      "blockCount": 2,
+      "blockSizes": "482,492",
+      "chromStarts": "0,372127"
+    }
+  ]
+}

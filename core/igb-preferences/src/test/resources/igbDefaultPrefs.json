@@ -40,6 +40,14 @@
                 "defaultDataProviderId": "IgbDefaultDataProviderId:5"
             },
             {
+                "factoryName": "ucsc rest",
+                "name": "UCSC REST",
+                "url": "https://api.genome.ucsc.edu/",
+                "loadPriority": "6",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:16"
+
+            },
+            {
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
                 "url": "http://lorainelab-quickload.scidas.org/bar",

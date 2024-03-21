@@ -1,0 +1,97 @@
+{
+  "downloadTime": "2024:03:21T19:56:07Z",
+  "downloadTimeStamp": 1711050967,
+  "genome": "hg38",
+  "track": "cloneEndABC18",
+  "dataTime": "2015-06-18T09:58:42",
+  "dataTimeStamp": 1434646722,
+  "columnTypes": [
+    {
+      "name": "bin",
+      "sqlType": "smallint(5) unsigned",
+      "jsonType": "number",
+      "description": "Indexing field to speed chromosome range queries"
+    },
+    {
+      "name": "chrom",
+      "sqlType": "varchar(255)",
+      "jsonType": "string",
+      "description": "Reference sequence chromosome or scaffold"
+    },
+    {
+      "name": "chromStart",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "Start position in chromosome"
+    },
+    {
+      "name": "chromEnd",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "End position in chromosome"
+    },
+    {
+      "name": "name",
+      "sqlType": "varchar(255)",
+      "jsonType": "string",
+      "description": "Name of item"
+    },
+    {
+      "name": "score",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "Optional score, nominal range 0-1000"
+    },
+    {
+      "name": "strand",
+      "sqlType": "char(1)",
+      "jsonType": "string",
+      "description": "+ or -"
+    },
+    {
+      "name": "thickStart",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "Start of where display should be thick (start codon)"
+    },
+    {
+      "name": "thickEnd",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "End of where display should be thick (stop codon)"
+    },
+    {
+      "name": "reserved",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "Used as itemRgb as of 2004-11-22"
+    },
+    {
+      "name": "blockCount",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "Number of blocks"
+    },
+    {
+      "name": "blockSizes",
+      "sqlType": "longblob",
+      "jsonType": "string",
+      "description": "Comma separated list of block sizes"
+    },
+    {
+      "name": "chromStarts",
+      "sqlType": "longblob",
+      "jsonType": "string",
+      "description": "Start positions relative to chromStart"
+    }
+  ],
+  "shortLabel": "ABC18",
+  "type": "bed 12",
+  "longLabel": "Agencourt fosmid library 18",
+  "itemCount": 322904,
+  "parent": "cloneEndSuper off",
+  "colorByStrand": "0,0,128 0,128,0",
+  "visibility": "hide",
+  "priority": "7",
+  "subGroups": "source=agencourt"
+}

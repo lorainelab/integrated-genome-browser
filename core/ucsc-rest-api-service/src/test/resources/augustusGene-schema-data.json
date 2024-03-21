@@ -1,0 +1,119 @@
+{
+  "downloadTime": "2024:03:21T19:59:38Z",
+  "downloadTimeStamp": 1711051178,
+  "genome": "hg38",
+  "track": "augustusGene",
+  "dataTime": "2022-10-18T23:39:38",
+  "dataTimeStamp": 1666161578,
+  "columnTypes": [
+    {
+      "name": "bin",
+      "sqlType": "smallint(5) unsigned",
+      "jsonType": "number",
+      "description": "Indexing field to speed chromosome range queries"
+    },
+    {
+      "name": "name",
+      "sqlType": "varchar(255)",
+      "jsonType": "string",
+      "description": "Name of gene (usually transcript_id from GTF)"
+    },
+    {
+      "name": "chrom",
+      "sqlType": "varchar(255)",
+      "jsonType": "string",
+      "description": "Reference sequence chromosome or scaffold"
+    },
+    {
+      "name": "strand",
+      "sqlType": "char(1)",
+      "jsonType": "string",
+      "description": "+ or - for strand"
+    },
+    {
+      "name": "txStart",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "Transcription start position (or end position for minus strand item)"
+    },
+    {
+      "name": "txEnd",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "Transcription end position (or start position for minus strand item)"
+    },
+    {
+      "name": "cdsStart",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "Coding region start (or end position for minus strand item)"
+    },
+    {
+      "name": "cdsEnd",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "Coding region end (or start position for minus strand item)"
+    },
+    {
+      "name": "exonCount",
+      "sqlType": "int(10) unsigned",
+      "jsonType": "number",
+      "description": "Number of exons"
+    },
+    {
+      "name": "exonStarts",
+      "sqlType": "longblob",
+      "jsonType": "string",
+      "description": "Exon start positions (or end positions for minus strand item)"
+    },
+    {
+      "name": "exonEnds",
+      "sqlType": "longblob",
+      "jsonType": "string",
+      "description": "Exon end positions (or start positions for minus strand item)"
+    },
+    {
+      "name": "score",
+      "sqlType": "int(11)",
+      "jsonType": "number",
+      "description": "score"
+    },
+    {
+      "name": "name2",
+      "sqlType": "varchar(255)",
+      "jsonType": "string",
+      "description": "Alternate name (e.g. gene_id from GTF)"
+    },
+    {
+      "name": "cdsStartStat",
+      "sqlType": "enum('none','unk','incmpl','cmpl')",
+      "jsonType": "string",
+      "description": "Status of CDS start annotation (none, unknown, incomplete, or complete)"
+    },
+    {
+      "name": "cdsEndStat",
+      "sqlType": "enum('none','unk','incmpl','cmpl')",
+      "jsonType": "string",
+      "description": "Status of CDS end annotation (none, unknown, incomplete, or complete)"
+    },
+    {
+      "name": "exonFrames",
+      "sqlType": "longblob",
+      "jsonType": "string",
+      "description": "Reading frame of the start of the CDS region of the exon, in the direction of transcription (0,1,2), or -1 if there is no CDS region."
+    }
+  ],
+  "shortLabel": "AUGUSTUS",
+  "type": "genePred",
+  "longLabel": "AUGUSTUS ab initio gene predictions v3.1",
+  "itemCount": 34942,
+  "parent": "genePredArchive",
+  "baseColorUseCds": "given",
+  "visibility": "pack",
+  "group": "genes",
+  "html": "../../augustusGene",
+  "superTrack": "on",
+  "color": "180,0,0",
+  "cartVersion": "2",
+  "baseColorDefault": "genomicCodons"
+}

@@ -31,7 +31,7 @@ public class BedTrackTypeData {
     private String geneName;
     private Map<String, Object> props;
 
-    private List<String> properties = new ArrayList<>(Arrays.asList("chrom", "chromStart", "chromEnd", "name", "score", "strand", "thickStart", "thickEnd",
+    public static List<String> PROPERTIES = new ArrayList<>(Arrays.asList("chrom", "chromStart", "chromEnd", "name", "score", "strand", "thickStart", "thickEnd",
             "reserved", "blockCount", "blockSizes", "chromStarts", "cdsStartStat", "cdsEndStat", "exonFrames", "geneName"));
 
     public int[] getBlockSizesArray(){
@@ -50,7 +50,7 @@ public class BedTrackTypeData {
         }.getType());
         this.props = new Hashtable<>();
         jsonMap.keySet().forEach(key -> {
-            if(!properties.contains(key))
+            if(!PROPERTIES.contains(key))
                 props.put(key, jsonMap.get(key));
         });
     }

@@ -4,6 +4,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
+import com.google.gson.Gson;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
@@ -16,6 +17,7 @@ import org.lorainelab.igb.synonymlookup.services.impl.ChromosomeSynonymLookupImp
 import org.lorainelab.igb.synonymlookup.services.impl.GenomeVersionSynonymLookupImpl;
 import org.lorainelab.igb.synonymlookup.services.impl.SpeciesSynonymsLookupImpl;
 import org.lorainelab.igb.ucsc.rest.api.service.UCSCRestSymLoader;
+import org.lorainelab.igb.ucsc.rest.api.service.model.ChromosomeData;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -25,6 +27,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,15 +44,19 @@ public class UCSCRestSymloaderTest {
     public static final String BED= "bed";
     public static final String BIG_WIG = "bigWig";
     public static final String WIG = "wig";
+    public static final String NARROW_PEAK = "narrowPeak";
     private URIBuilder uriBuilder;
     private static GenomeVersion genomeVersion;
     private static SeqSpan span;
+    private static ChromosomeData chromosomeData;
+    private static String chromosomeURl;
     private final CloseableHttpClient mockHttpClient = mock(CloseableHttpClient.class);
     public static final String genePred_track_test_file = "genePred-track-data.json";
     public static final String bed_track_test_file = "bed-track-data.json";
     public static final String psl_track_test_file = "psl-track-data.json";
     public static final String bigWig_track_test_file = "bigWig-track-data.json";
     public static final String wig_track_test_file = "wig-track-data.json";
+    public static final String narrowPeak_track_test_file = "narrowPeak-track-data.json";
 
     @BeforeAll
     public static void initialise() {
@@ -57,6 +65,11 @@ public class UCSCRestSymloaderTest {
         genomeVersion.setGenomeVersionSynonymLookup(new GenomeVersionSynonymLookupImpl());
         genomeVersion.setSpeciesSynLookup(new SpeciesSynonymsLookupImpl());
         span = getTestSeqSpan();
+        Map<String, Integer> chromosomeMap = new HashMap<>();
+        chromosomeMap.put("chr1", 248956422);
+        chromosomeData = new ChromosomeData();
+        chromosomeData.setChromosomes(chromosomeMap);
+        chromosomeURl = "https://api.genome.ucsc.edu/list/chromosomes?genome=hg38";
     }
 
     @BeforeEach
@@ -75,6 +88,9 @@ public class UCSCRestSymloaderTest {
             when(mockHttpClient.execute(Mockito.argThat(httpget ->
                     httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
                     .thenReturn(mockResponse);
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(chromosomeURl)), any(ResponseHandler.class)))
+                    .thenReturn(new Gson().toJson(chromosomeData));
             String trackGenePred = "augustusGene";
             uriBuilder.addParameter("track", trackGenePred);
             UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(UCSC_REST_URL, uriBuilder.build(), Optional.empty(),
@@ -94,6 +110,9 @@ public class UCSCRestSymloaderTest {
             when(mockHttpClient.execute(Mockito.argThat(httpget ->
                     httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
                     .thenReturn(mockResponse);
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(chromosomeURl)), any(ResponseHandler.class)))
+                    .thenReturn(new Gson().toJson(chromosomeData));
             String trackPsl = "xenoMrna";
             uriBuilder.addParameter("track", trackPsl);
             UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(UCSC_REST_URL, uriBuilder.build(), Optional.empty(),
@@ -113,6 +132,9 @@ public class UCSCRestSymloaderTest {
             when(mockHttpClient.execute(Mockito.argThat(httpget ->
                     httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
                     .thenReturn(mockResponse);
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(chromosomeURl)), any(ResponseHandler.class)))
+                    .thenReturn(new Gson().toJson(chromosomeData));
             String trackBed = "cloneEndRP11";
             uriBuilder.addParameter("track", trackBed);
             UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(UCSC_REST_URL, uriBuilder.build(), Optional.empty(),
@@ -132,6 +154,9 @@ public class UCSCRestSymloaderTest {
             when(mockHttpClient.execute(Mockito.argThat(httpget ->
                     httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
                     .thenReturn(mockResponse);
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(chromosomeURl)), any(ResponseHandler.class)))
+                    .thenReturn(new Gson().toJson(chromosomeData));
             String trackBigWig = "ReMapDensity";
             uriBuilder.addParameter("track", trackBigWig);
             UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(UCSC_REST_URL, uriBuilder.build(), Optional.empty(),
@@ -151,10 +176,35 @@ public class UCSCRestSymloaderTest {
             when(mockHttpClient.execute(Mockito.argThat(httpget ->
                     httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
                     .thenReturn(mockResponse);
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(chromosomeURl)), any(ResponseHandler.class)))
+                    .thenReturn(new Gson().toJson(chromosomeData));
             String trackWig = "phastCons100way";
             uriBuilder.addParameter("track", trackWig);
             UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(UCSC_REST_URL, uriBuilder.build(), Optional.empty(),
                     trackWig, WIG, genomeVersion, HUMAN_GENOME_ID);
+            List<? extends SeqSymmetry> region = ucscRestSymLoader.getRegion(span);
+            assertFalse(region.isEmpty());
+        }
+    }
+
+    @Test
+    public void getRegionForNarrowPeakTest() throws Exception {
+        try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
+            mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
+            String filename = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(narrowPeak_track_test_file)).getFile();
+            String mockResponse = Files.readString(Paths.get(filename));
+            String apiUrl = "https://api.genome.ucsc.edu/getData/track?genome=hg38&track=encTfChipPkENCFF865QLX&chrom=1&start=2000&end=200499";
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
+                    .thenReturn(mockResponse);
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(chromosomeURl)), any(ResponseHandler.class)))
+                    .thenReturn(new Gson().toJson(chromosomeData));
+            String trackNarrowPeak = "encTfChipPkENCFF865QLX";
+            uriBuilder.addParameter("track", trackNarrowPeak);
+            UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(UCSC_REST_URL, uriBuilder.build(), Optional.empty(),
+                    trackNarrowPeak, NARROW_PEAK, genomeVersion, HUMAN_GENOME_ID);
             List<? extends SeqSymmetry> region = ucscRestSymLoader.getRegion(span);
             assertFalse(region.isEmpty());
         }

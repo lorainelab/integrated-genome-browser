@@ -91,19 +91,19 @@ public class UCSCRestServerUtils {
 
     private static Optional<ChromosomeData> retrieveChromosomeResponse(String contextRoot, String genomeVersionName) {
         String uri = toExternalForm(toExternalForm(contextRoot.trim()) + LIST) + CHROMOSOMES;
-        ChromosomeData chromosomeDate = null;
+        ChromosomeData chromosomeData = null;
         try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
             URIBuilder uriBuilder = new URIBuilder(uri);
             uriBuilder.addParameter(GENOME, genomeVersionName);
             HttpGet httpget = new HttpGet(uriBuilder.toString());
             String responseBody = httpClient.execute(httpget, new ApiResponseHandler());
-            chromosomeDate = new Gson().fromJson(
+            chromosomeData = new Gson().fromJson(
                     responseBody, ChromosomeData.class
             );
         } catch (URISyntaxException | IOException e) {
             logger.error(e.getMessage(), e);
         }
-        return Optional.ofNullable(chromosomeDate);
+        return Optional.ofNullable(chromosomeData);
     }
 
     public static String retrieveDna(String contextRoot, SeqSpan span, String genomeVersionName) {

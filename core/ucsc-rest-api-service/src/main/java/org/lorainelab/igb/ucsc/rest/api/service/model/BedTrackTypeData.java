@@ -27,7 +27,7 @@ public class BedTrackTypeData {
     String chromStarts;
     Map<String, Object> props;
 
-    private List<String> properties = new ArrayList<>(Arrays.asList("chrom", "chromStart", "chromEnd", "name", "score", "strand", "thickStart",
+    List<String> properties = new ArrayList<>(Arrays.asList("chrom", "chromStart", "chromEnd", "name", "score", "strand", "thickStart",
             "thickEnd", "reserved", "blockCount", "blockSizes", "chromStarts"));
 
     public int[] getBlockSizesArray(){
@@ -38,16 +38,5 @@ public class BedTrackTypeData {
     public int[] getChromStartsArray(){
         return Objects.nonNull(chromStarts) && !chromStarts.isEmpty()
                 ? Arrays.stream(chromStarts.split(",")).mapToInt(Integer::parseInt).toArray() : null;
-    }
-
-    public void setProps(String jsonString) {
-        Gson gson = new Gson();
-        Map<String, Object> jsonMap = gson.fromJson(jsonString, new TypeToken<Map<String, Object>>() {
-        }.getType());
-        this.props = new Hashtable<>();
-        jsonMap.keySet().forEach(key -> {
-            if(!properties.contains(key))
-                props.put(key, jsonMap.get(key));
-        });
     }
 }

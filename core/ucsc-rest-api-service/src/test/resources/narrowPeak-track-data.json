@@ -1,0 +1,54 @@
+{
+  "downloadTime": "2024:03:22T14:48:38Z",
+  "downloadTimeStamp": 1711118918,
+  "genome": "hg38",
+  "dataTime": "2019-04-01T16:49:48",
+  "dataTimeStamp": 1554162588,
+  "trackType": "narrowPeak",
+  "track": "encTfChipPkENCFF865QLX",
+  "start": 1,
+  "end": 2480000,
+  "chrom": "chr1",
+  "encTfChipPkENCFF865QLX": [
+    {
+      "bin": 592,
+      "chrom": "chr1",
+      "chromStart": 999935,
+      "chromEnd": 1000245,
+      "name": ".",
+      "score": 644,
+      "strand": ".",
+      "signalValue": 23.4554,
+      "pValue": -1,
+      "qValue": 1.85321,
+      "peak": 155
+    },
+    {
+      "bin": 597,
+      "chrom": "chr1",
+      "chromStart": 1574690,
+      "chromEnd": 1575000,
+      "name": ".",
+      "score": 703,
+      "strand": ".",
+      "signalValue": 25.6135,
+      "pValue": -1,
+      "qValue": 1.91908,
+      "peak": 155
+    },
+    {
+      "bin": 597,
+      "chrom": "chr1",
+      "chromStart": 1658928,
+      "chromEnd": 1659238,
+      "name": ".",
+      "score": 586,
+      "strand": ".",
+      "signalValue": 21.3415,
+      "pValue": -1,
+      "qValue": 1.86217,
+      "peak": 155
+    }
+  ],
+  "itemsReturned": 3
+}

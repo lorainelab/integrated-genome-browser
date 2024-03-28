@@ -36,6 +36,7 @@ public class TrackDataDetails<T> {
     public static final List<String> BED_FORMATS = new ArrayList<>(Arrays.asList("bed", "bigbed", "beddetail"));
     public static final String BIG_WIG = "bigWig";
     public static final String WIG = "wig";
+    public static final String NARROW_PEAK = "narrowPeak";
 
     public void setTrackData(String jsonString, String track, String trackType, String chrom) {
         Gson gson = new Gson();
@@ -79,6 +80,9 @@ public class TrackDataDetails<T> {
             }.getType();
         } else if (trackType.equalsIgnoreCase(BIG_WIG) || trackType.equalsIgnoreCase(WIG)) {
             type = new TypeToken<ArrayList<WigTypeData>>() {
+            }.getType();
+        } else if (trackType.equalsIgnoreCase(NARROW_PEAK)) {
+            type = new TypeToken<ArrayList<NarrowPeakTypeData>>(){
             }.getType();
         }
         return type;

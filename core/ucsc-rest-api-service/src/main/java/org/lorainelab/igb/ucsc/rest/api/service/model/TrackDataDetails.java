@@ -31,7 +31,7 @@ public class TrackDataDetails<T> {
     private int itemsReturned;
     public static final String GENE_PRED = "genePred";
     public static final String PSL = "psl";
-    public static final List<String> BED_FORMATS = new ArrayList<>(Arrays.asList("bed", "bigbed", "beddetail"));
+    public static final List<String> BED_FORMATS = new ArrayList<>(Arrays.asList("bed", "bigbed", "beddetail", "biggenepred"));
     public static final String BIG_WIG = "bigWig";
     public static final String WIG = "wig";
     public static final String NARROW_PEAK = "narrowPeak";
@@ -56,8 +56,7 @@ public class TrackDataDetails<T> {
                         trackDataElement.setProps(trackDataJsonElement.toString());
                         trackData.add((T) trackDataElement);
                     });
-                }
-                else
+                } else
                     trackData = gson.fromJson(trackDataJson.toString(), type);
             }
         }

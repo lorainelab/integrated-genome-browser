@@ -8,20 +8,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GenePred {
-    public int bin;
-    public String name;
-    public String chrom;
-    public String strand;
-    public int txStart;
-    public int txEnd;
-    public int cdsStart;
-    public int cdsEnd;
-    public int exonCount;
-    public String exonStarts;
-    public String exonEnds;
-    public int score;
-    public String name2;
-    public String cdsStartStat;
-    public String cdsEndStat;
-    public String exonFrames;
+    private int bin;
+    private String name;
+    private String chrom;
+    private String strand;
+    private int txStart;
+    private int txEnd;
+    private int cdsStart;
+    private int cdsEnd;
+    private int exonCount;
+    private String exonStarts;
+    private String exonEnds;
+    private int score;
+    private String name2;
+    private String cdsStartStat;
+    private String cdsEndStat;
+    private String exonFrames;
 }

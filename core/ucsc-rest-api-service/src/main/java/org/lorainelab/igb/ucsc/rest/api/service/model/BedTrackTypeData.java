@@ -13,22 +13,26 @@ import java.util.*;
 @AllArgsConstructor
 public class BedTrackTypeData {
 
-    String chrom;
-    int chromStart;
-    int chromEnd;
-    String name;
-    int score;
-    String strand;
-    int thickStart;
-    int thickEnd;
-    String reserved;
-    int blockCount;
-    String blockSizes;
-    String chromStarts;
-    Map<String, Object> props;
+    private String chrom;
+    private int chromStart;
+    private int chromEnd;
+    private String name;
+    private int score;
+    private String strand;
+    private int thickStart;
+    private int thickEnd;
+    private String reserved;
+    private int blockCount;
+    private String blockSizes;
+    private String chromStarts;
+    private String cdsStartStat;
+    private String cdsEndStat;
+    private String exonFrames;
+    private String geneName;
+    private Map<String, Object> props;
 
-    List<String> properties = new ArrayList<>(Arrays.asList("chrom", "chromStart", "chromEnd", "name", "score", "strand", "thickStart",
-            "thickEnd", "reserved", "blockCount", "blockSizes", "chromStarts"));
+    private List<String> properties = new ArrayList<>(Arrays.asList("chrom", "chromStart", "chromEnd", "name", "score", "strand", "thickStart", "thickEnd",
+            "reserved", "blockCount", "blockSizes", "chromStarts", "cdsStartStat", "cdsEndStat", "exonFrames", "geneName"));
 
     public int[] getBlockSizesArray(){
         return Objects.nonNull(blockSizes) && !blockSizes.isEmpty()
@@ -38,5 +42,16 @@ public class BedTrackTypeData {
     public int[] getChromStartsArray(){
         return Objects.nonNull(chromStarts) && !chromStarts.isEmpty()
                 ? Arrays.stream(chromStarts.split(",")).mapToInt(Integer::parseInt).toArray() : null;
+    }
+
+    public void setProps(String jsonString) {
+        Gson gson = new Gson();
+        Map<String, Object> jsonMap = gson.fromJson(jsonString, new TypeToken<Map<String, Object>>() {
+        }.getType());
+        this.props = new Hashtable<>();
+        jsonMap.keySet().forEach(key -> {
+            if(!properties.contains(key))
+                props.put(key, jsonMap.get(key));
+        });
     }
 }

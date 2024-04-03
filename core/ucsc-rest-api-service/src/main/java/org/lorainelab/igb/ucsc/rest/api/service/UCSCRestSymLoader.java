@@ -70,15 +70,17 @@ public class UCSCRestSymLoader extends SymLoader {
                 if (Objects.nonNull(trackDataDetails))
                     trackDataDetails.setTrackData(responseBody, track, trackType, trackDataDetails.getChrom());
                 List<GenePred> trackDataList = trackDataDetails.getTrackData();
-                List<UcscGeneSym> ucscGeneSyms = new ArrayList<>();
+                List<UcscBedSymWithProps> ucscGeneSyms = new ArrayList<>();
                 if(!trackDataList.isEmpty()) {
                     ucscGeneSyms = trackDataList.stream().map(trackData -> {
-                        int[] emins = Arrays.stream(trackData.exonStarts.split(",")).mapToInt(Integer::parseInt).toArray();
-                        int[] emaxs = Arrays.stream(trackData.exonEnds.split(",")).mapToInt(Integer::parseInt).toArray();
-                        boolean forward = trackData.strand.equals("+");
-                        return new UcscGeneSym(track, trackData.name2, trackData.name,
-                                overlapSpan.getBioSeq(), forward, trackData.txStart, trackData.txEnd,
-                                trackData.cdsStart, trackData.cdsEnd, emins, emaxs);
+                        boolean forward = (trackData.getStrand() == null) || trackData.getStrand().isEmpty() || (trackData.getStrand().equals("+") || trackData.getStrand().equals("++"));
+                        int txMin = Math.min(trackData.getTxStart(), trackData.getTxEnd());
+                        int txMax = Math.max(trackData.getTxStart(), trackData.getTxEnd());
+                        int[] emins = Arrays.stream(trackData.getExonStarts().split(",")).mapToInt(Integer::parseInt).toArray();
+                        int[] emaxs = Arrays.stream(trackData.getExonEnds().split(",")).mapToInt(Integer::parseInt).toArray();
+                        return new UcscBedSymWithProps(track, determineSeq(genomeVersion, trackData.getChrom(), 0),
+                                txMin, txMax, trackData.getName(), trackData.getScore(),
+                                forward, trackData.getCdsStart(), trackData.getCdsEnd(), emins, emaxs, null, trackData.getName2());
                     }).collect(Collectors.toList());
                 }
                 return ucscGeneSyms;
@@ -141,7 +143,7 @@ public class UCSCRestSymLoader extends SymLoader {
                         return new UcscBedSymWithProps(track, determineSeq(genomeVersion, trackData.getChrom(), 0),
                                 txMin, txMax, trackData.getName(), trackData.getScore(),
                                 forward, trackData.getThickStart(), trackData.getThickEnd(),
-                                blockMins, blockMaxs, trackData.getProps());
+                                blockMins, blockMaxs, trackData.getProps(), trackData.getGeneName());
                     }).collect(Collectors.toList());
                 }
                 return ucscBedSymWithProps;

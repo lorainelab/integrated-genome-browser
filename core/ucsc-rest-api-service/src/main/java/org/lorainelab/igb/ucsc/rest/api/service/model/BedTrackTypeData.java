@@ -13,22 +13,26 @@ import java.util.*;
 @AllArgsConstructor
 public class BedTrackTypeData {
 
-    String chrom;
-    int chromStart;
-    int chromEnd;
-    String name;
-    int score;
-    String strand;
-    int thickStart;
-    int thickEnd;
-    String reserved;
-    int blockCount;
-    String blockSizes;
-    String chromStarts;
-    Map<String, Object> props;
+    private String chrom;
+    private int chromStart;
+    private int chromEnd;
+    private String name;
+    private int score;
+    private String strand;
+    private int thickStart;
+    private int thickEnd;
+    private String reserved;
+    private int blockCount;
+    private String blockSizes;
+    private String chromStarts;
+    private String cdsStartStat;
+    private String cdsEndStat;
+    private String exonFrames;
+    private String geneName;
+    private Map<String, Object> props;
 
-    private List<String> properties = new ArrayList<>(Arrays.asList("chrom", "chromStart", "chromEnd", "name", "score", "strand", "thickStart",
-            "thickEnd", "reserved", "blockCount", "blockSizes", "chromStarts"));
+    private List<String> properties = new ArrayList<>(Arrays.asList("chrom", "chromStart", "chromEnd", "name", "score", "strand", "thickStart", "thickEnd",
+            "reserved", "blockCount", "blockSizes", "chromStarts", "cdsStartStat", "cdsEndStat", "exonFrames", "geneName"));
 
     public int[] getBlockSizesArray(){
         return Objects.nonNull(blockSizes) && !blockSizes.isEmpty()

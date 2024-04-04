@@ -131,6 +131,7 @@ G_gorilla_Oct_2008	gorGor1
 G_max_Dec_2008	Glyma1	Soybean_Dec_2008	JGI_Soybean_v101
 G_morhua_May_2010	gadMor1
 G_variegatus_Jun_2014	galVar1
+H_exemplaris_Z151_Apr_2017	nHd_3.1
 H_glaber_Jul_2011	hetGla1	BGI HetGla_1.0
 H_glaber_Jan_2012	hetGla2
 H_sapiens_Apr_2001	Human_Apr_2001	Human 1apr2002	Human_1apr2001	Chr_21_22 ABC Human	hg7	hs:Apr_2001	Hs:Apr_2001

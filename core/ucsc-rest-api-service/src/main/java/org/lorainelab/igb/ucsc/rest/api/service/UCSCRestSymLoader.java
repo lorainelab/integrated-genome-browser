@@ -8,11 +8,7 @@ import com.affymetrix.genometry.parsers.BedParser;
 import com.affymetrix.genometry.parsers.graph.WiggleData;
 import com.affymetrix.genometry.symloader.BedUtils;
 import com.affymetrix.genometry.symloader.SymLoader;
-import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
-import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.impl.UcscGeneSym;
-import com.affymetrix.genometry.symmetry.impl.UcscPslSym;
-import com.affymetrix.genometry.symmetry.impl.NarrowPeakSym;
+import com.affymetrix.genometry.symmetry.impl.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
@@ -43,14 +39,16 @@ public class UCSCRestSymLoader extends SymLoader {
     private final String contextRoot;
     private final String contextRootKey;
     private Set<String> chromosomes;
+    private TrackDetails trackDetails;
 
-    public UCSCRestSymLoader(String baseUrl, URI contextRoot, Optional<URI> indexUri, String track, String trackType, GenomeVersion genomeVersion, String contextRootKey) {
+    public UCSCRestSymLoader(String baseUrl, URI contextRoot, Optional<URI> indexUri, String track, String trackType, TrackDetails trackDetails, GenomeVersion genomeVersion, String contextRootKey) {
         super(contextRoot, indexUri, track, genomeVersion);
         this.baseUrl = baseUrl;
         this.track = track;
         this.trackType = trackType;
         this.contextRoot = contextRoot.toString();
         this.contextRootKey = contextRootKey;
+        this.trackDetails = trackDetails;
     }
 
     @Override
@@ -214,6 +212,36 @@ public class UCSCRestSymLoader extends SymLoader {
                     }).collect(Collectors.toList());
                 }
                 return narrowPeakSyms;
+            } else if (BAR_CHART_FORMATS.contains(trackType.toLowerCase())) {
+                TrackDataDetails<BarChartTypeData> trackDataDetails = new Gson().fromJson(responseBody, new TypeToken<TrackDataDetails<BarChartTypeData>>() {
+                }.getType());
+                if (Objects.nonNull(trackDataDetails))
+                    trackDataDetails.setTrackData(responseBody, track, trackType, trackDataDetails.getChrom());
+                List<BarChartTypeData> trackDataList = trackDataDetails.getTrackData();
+                List<UcscBedSym> ucscBedSyms = new ArrayList<>();
+                if(!trackDataList.isEmpty()) {
+                     trackDataList.forEach(trackData -> {
+                        boolean forward = (trackData.getStrand() == null) || trackData.getStrand().isEmpty() || (trackData.getStrand().equals("+") || trackData.getStrand().equals("++"));
+                        int txMin = Math.min(trackData.getChromStart(), trackData.getChromEnd());
+                        int txMax = Math.max(trackData.getChromStart(), trackData.getChromEnd());
+                        String[] barChartBarCategories = Objects.nonNull(trackDetails) ? trackDetails.getBarChartBarCategories() : null;
+                        float[] expScoresArray = trackData.getExpScoresArray();
+                        if(Objects.nonNull(barChartBarCategories) && Objects.nonNull(expScoresArray)){
+                            for(int i=0; i<trackData.getExpCount(); i++){
+                                ucscBedSyms.add(new UcscBedSym(track, determineSeq(genomeVersion, trackData.getChrom(), 0),
+                                                txMin, txMax, barChartBarCategories[i], expScoresArray[i],
+                                                forward, Integer.MIN_VALUE, Integer.MIN_VALUE,
+                                                new int[]{txMin}, new int[]{txMax}));
+                            }
+                        }else {
+                             ucscBedSyms.add(new UcscBedSym(track, determineSeq(genomeVersion, trackData.getChrom(), 0),
+                                     txMin, txMax, trackData.getName(), trackData.getScore(),
+                                     forward, Integer.MIN_VALUE, Integer.MIN_VALUE,
+                                     new int[]{txMin}, new int[]{txMax}));
+                        }
+                    });
+                }
+                return ucscBedSyms;
             }
         }
         return null;

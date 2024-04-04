@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,4 +15,12 @@ public class TrackDetails {
         private String longLabel;
         private String visibility;
         private String group;
+        private String barChartColors;
+        private String barChartBars;
+
+        public String[] getBarChartBarCategories(){
+                return Objects.nonNull(barChartBars) && !barChartBars.isEmpty()
+                        ? barChartBars.split(" ")
+                        : null;
+        }
     }

@@ -1,0 +1,48 @@
+{
+  "downloadTime": "2024:04:04T13:18:01Z",
+  "downloadTimeStamp": 1712236681,
+  "genome": "hg38",
+  "trackType": "bigBarChart",
+  "track": "bloodHaoCellType",
+  "chrom": "chr1",
+  "chromSize": 248956422,
+  "bigDataUrl": "/gbdb/hg38/bbi/bloodHao/cell_type.bb",
+  "start": 2000,
+  "end": 200499,
+  "bloodHaoCellType": [
+    {
+      "chrom": "chr1",
+      "chromStart": 89550,
+      "chromEnd": 91105,
+      "name": "AL627309.3",
+      "score": 0,
+      "strand": "-",
+      "name2": "ENSG00000239945.1",
+      "expCount": 8,
+      "expScores": "0.000100456,1.69056e-05,0,0.000386262,8.48578e-05,0,0,0"
+    },
+    {
+      "chrom": "chr1",
+      "chromStart": 129080,
+      "chromEnd": 133566,
+      "name": "AL627309.1",
+      "score": 0,
+      "strand": "-",
+      "name2": "ENSG00000238009.6",
+      "expCount": 8,
+      "expScores": "0.00180821,0.000939698,0.00134947,0.00154505,0.00353815,0.00104618,0.00132607,0.00114043"
+    },
+    {
+      "chrom": "chr1",
+      "chromStart": 160445,
+      "chromEnd": 161525,
+      "name": "AL627309.4",
+      "score": 0,
+      "strand": "+",
+      "name2": "ENSG00000241599.1",
+      "expCount": 8,
+      "expScores": "0,1.69056e-05,2.72153e-05,0.000193131,0.000919293,3.71382e-05,0,0"
+    }
+  ],
+  "itemsReturned": 3
+}

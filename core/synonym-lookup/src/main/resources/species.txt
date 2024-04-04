@@ -82,6 +82,7 @@ Gossypium hirsutum	Upland cotton	G_hirsutum
 Gossypium raimondii	Cotton D	G_raimondii
 Heterocephalus glaber	Naked mole rat	Heterocephalus_glaber	H_glaber	hetGla
 Homo sapiens	Human	H_sapiens	hg	Homo_sapiens
+Hypsibius exemplaris Z151	tardigrade water bear	H_exemplaris_Z151
 Hordeum vulgare	Barley	H_vulgare
 Latimeria chalumnae	Coelacanth	L_chalumnae	latCha
 Lemna gibba	Gibbous duckweed	L_gibba

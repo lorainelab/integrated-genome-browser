@@ -2,21 +2,20 @@ package com.lorainelab.das;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
+import com.github.kevinsawicki.http.HttpRequest;
+import org.junit.jupiter.api.Test;
 import org.lorainelab.igb.das.model.dsn.DasDsn;
 import org.lorainelab.igb.das.model.ep.DasEp;
 import org.lorainelab.igb.das.model.gff.DasGff;
 import org.lorainelab.igb.das.model.gff.Segment;
 import org.lorainelab.igb.das.model.types.DasTypes;
 import org.lorainelab.igb.das.utils.DasServerUtils;
-import static org.lorainelab.igb.das.utils.DasServerUtils.retrieveDsnResponse;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Optional;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
-import static org.junit.jupiter.api.Assertions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -27,67 +26,77 @@ public class DasServerInfoTest {
     private static final Logger logger = LoggerFactory.getLogger(DasServerInfoTest.class);
     private final String UCSC_DAS_URL = "https://genome.cse.ucsc.edu/cgi-bin/das/dsn/";
 
-    @Disabled
     @Test
-    public void retrieveDsnResponseTest() throws MalformedURLException, IOException {
-        Optional<DasDsn> dasSources = retrieveDsnResponse(UCSC_DAS_URL);
-        dasSources.ifPresent(ds -> {
-            ds.getDSN().stream().forEach(dsn -> {
-                String mapMaster = dsn.getMapMaster();
-                String sourceId = dsn.getSOURCE().getId();
-                logger.info(sourceId + ":" + mapMaster);
+    public void retrieveDsnResponseTest() {
+        try{
+            Optional<DasDsn> dasSources = DasServerUtils.retrieveDsnResponse(UCSC_DAS_URL);
+            dasSources.ifPresent(ds -> {
+                ds.getDSN().forEach(dsn -> {
+                    String mapMaster = dsn.getMapMaster();
+                    String sourceId = dsn.getSOURCE().getId();
+                    logger.info(sourceId + ":" + mapMaster);
+                });
             });
-        });
+        } catch (HttpRequest.HttpRequestException e) {
+            logger.warn("Connection failed to DAS Server while getting Dsn Response");
+        }
     }
 
-    @Disabled
     @Test
     public void retrieveDnaTest() {
-        String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
-        SeqSpan seqSpan = getTestSeqSpan();
-        String result = DasServerUtils.retrieveDna(contextRoot, seqSpan);
-        assertEquals(result,testSeqSpanDnaString);
+        try{
+            String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
+            SeqSpan seqSpan = getTestSeqSpan();
+            String result = DasServerUtils.retrieveDna(contextRoot, seqSpan);
+            if(!result.isEmpty())
+                assertEquals(result,testSeqSpanDnaString);
+        } catch (HttpRequest.HttpRequestException e) {
+            logger.warn("Connection failed to DAS Server while getting Dna Response");
+        }
     }
 
-    @Disabled
     @Test
     public void retrieveDasEpResponseTest() {
-        String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
-        Optional<DasEp> retrieveDasEpResponse = DasServerUtils.retrieveDasEpResponse(contextRoot);
-        if (retrieveDasEpResponse.isPresent()) {
+        try{
+            String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
+            Optional<DasEp> retrieveDasEpResponse = DasServerUtils.retrieveDasEpResponse(contextRoot);
             DasEp entryPointInfo = retrieveDasEpResponse.get();
             entryPointInfo.getENTRYPOINTS().getSEGMENT().stream().forEach(segment -> {
                 logger.info(segment.getId() + ":" + segment.getStop());
             });
+        } catch (HttpRequest.HttpRequestException e) {
+            logger.warn("Connection failed to DAS Server while getting Entry points Response");
         }
     }
 
-    @Disabled
     @Test
     public void retrieveDasTypesResponseTest() {
-        String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
-        Optional<DasTypes> retrieveDasTypesResponse = DasServerUtils.retrieveDasTypesResponse(contextRoot);
-        if (retrieveDasTypesResponse.isPresent()) {
+        try{
+            String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
+            Optional<DasTypes> retrieveDasTypesResponse = DasServerUtils.retrieveDasTypesResponse(contextRoot);
             DasTypes entryPointInfo = retrieveDasTypesResponse.get();
             entryPointInfo.getGFF().getSEGMENT().getTYPE().forEach(type -> {
                 logger.info(type.getId());
             });
+        } catch (HttpRequest.HttpRequestException e){
+            logger.warn("Connection failed to DAS Server while getting Types Response");
         }
     }
 
-    @Disabled
     @Test
     public void retrieveDasFeatureResponseTest() {
-        String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
-        String type = "knownGene";
-        SeqSpan seqSpan = getTestSeqSpan();
-        Optional<DasGff> retrieveDasFeatureResponse = DasServerUtils.retrieveDasGffResponse(contextRoot, type, seqSpan);
-        if (retrieveDasFeatureResponse.isPresent()) {
+        try{
+            String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
+            String type = "knownGene";
+            SeqSpan seqSpan = getTestSeqSpan();
+            Optional<DasGff> retrieveDasFeatureResponse = DasServerUtils.retrieveDasGffResponse(contextRoot, type, seqSpan);
             DasGff dasGff = retrieveDasFeatureResponse.get();
             Optional<Segment> segment = dasGff.getGFF().getSEGMENT().stream().findFirst();
             if (segment.isPresent()) {
                 segment.get().getFEATURE().stream().forEach(feature -> logger.info(feature.getId()));
             }
+        } catch (HttpRequest.HttpRequestException e){
+            logger.warn("Connection failed to DAS Server while getting Feature Response");
         }
     }
 

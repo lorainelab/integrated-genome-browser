@@ -50,7 +50,6 @@ public class RestApiDataProviderTest {
     public static final String genome_sequence_test_file = "genome-sequence-data.json";
     public static final String available_tracks_test_file = "available-tracks-data.json";
     public static final String cloneEnd_schema_test_file = "cloneEnd-schema-data.json";
-    public static final String augustusGene_schema_test_file = "augustusGene-schema-data.json";
 
     @BeforeEach
     public void setup() throws IOException {
@@ -62,7 +61,7 @@ public class RestApiDataProviderTest {
             when(mockHttpClient.execute(Mockito.argThat(httpget ->
                     httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
                     .thenReturn(mockResponse);
-            restApiDataProvider = new RestApiDataProvider(UCSC_REST_URL, "UCSC", 1);
+            restApiDataProvider = new RestApiDataProvider(UCSC_REST_URL, "UCSC REST", 1);
         }
         genomeVersion = new GenomeVersion(HUMAN_GENOME_ID);
         dataContainer = new DataContainer(genomeVersion, restApiDataProvider);
@@ -122,7 +121,7 @@ public class RestApiDataProviderTest {
                     httpget instanceof HttpGet && httpget.getURI().toString().equals(cloneEndSchemaApiUrl)), any(ResponseHandler.class)))
                     .thenReturn(cloneEndSchemaMockResponse);
             Set<DataSet> availableDataSets = restApiDataProvider.getAvailableDataSets(dataContainer);
-            availableDataSets.forEach(dataContainer::addDataSet);
+            assertTrue(availableDataSets.stream().anyMatch(dataSet -> dataSet.getDataSetName().equals("genePred/augustusGene")));
         }
     }
 }

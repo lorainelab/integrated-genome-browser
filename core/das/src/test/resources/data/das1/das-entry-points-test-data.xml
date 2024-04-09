@@ -1,0 +1,18 @@
+<DASEP>
+    <ENTRY_POINTS href="http://genome.ucsc.edu/cgi-bin/das/hg38/entry_points" version="7.00">
+        <SEGMENT id="1" start="1" stop="248956422" orientation="+" subparts="no">1</SEGMENT>
+        <SEGMENT id="2" start="1" stop="242193529" orientation="+" subparts="no">2</SEGMENT>
+        <SEGMENT id="3" start="1" stop="198295559" orientation="+" subparts="no">3</SEGMENT>
+        <SEGMENT id="4" start="1" stop="190214555" orientation="+" subparts="no">4</SEGMENT>
+        <SEGMENT id="5" start="1" stop="181538259" orientation="+" subparts="no">5</SEGMENT>
+        <SEGMENT id="6" start="1" stop="170805979" orientation="+" subparts="no">6</SEGMENT>
+        <SEGMENT id="7" start="1" stop="159345973" orientation="+" subparts="no">7</SEGMENT>
+        <SEGMENT id="X" start="1" stop="156040895" orientation="+" subparts="no">X</SEGMENT>
+        <SEGMENT id="8" start="1" stop="145138636" orientation="+" subparts="no">8</SEGMENT>
+        <SEGMENT id="9" start="1" stop="138394717" orientation="+" subparts="no">9</SEGMENT>
+        <SEGMENT id="11" start="1" stop="135086622" orientation="+" subparts="no">11</SEGMENT>
+        <SEGMENT id="10" start="1" stop="133797422" orientation="+" subparts="no">10</SEGMENT>
+        <SEGMENT id="12" start="1" stop="133275309" orientation="+" subparts="no">12</SEGMENT>
+        <SEGMENT id="13" start="1" stop="114364328" orientation="+" subparts="no">13</SEGMENT>
+    </ENTRY_POINTS>
+</DASEP>

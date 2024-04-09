@@ -132,7 +132,8 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
                         URI uri = uriBuilder.build();
                         String trackType = trackDetail.getType().split(" ")[0];
                         UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(url, uri, Optional.empty(), track, trackType, genomeVersion, contextRootkey.get());
-                        DataSet dataSet = new DataSet(uri, track, null, dataContainer, ucscRestSymLoader, false);
+                        Optional<Map<String, String>> featureProps = UCSCRestServerUtils.retrieveFeatureProps(contextRoot, contextRootkey.get(), track);
+                        DataSet dataSet = new DataSet(uri, track, featureProps.orElse(null), dataContainer, ucscRestSymLoader, false);
                         dataSets.add(dataSet);
                     } catch (URISyntaxException ex) {
                         log.error("Invalid URI format for DAS context root: {}, skipping this resource", contextRoot, ex);

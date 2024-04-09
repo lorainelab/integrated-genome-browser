@@ -9,10 +9,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
-import org.lorainelab.igb.ucsc.rest.api.service.model.ChromosomeData;
-import org.lorainelab.igb.ucsc.rest.api.service.model.DnaInfo;
-import org.lorainelab.igb.ucsc.rest.api.service.model.GenomesData;
-import org.lorainelab.igb.ucsc.rest.api.service.model.UCSCRestTracks;
+import org.lorainelab.igb.ucsc.rest.api.service.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +23,7 @@ import java.util.Set;
 public class UCSCRestServerUtils {
     private static final Logger logger = LoggerFactory.getLogger(UCSCRestServerUtils.class);
     private static final String LIST = "list";
+    public static final String SCHEMA = "schema";
     private static final String GET_DATA = "getData";
     private static final String UCSC_GENOMES = "ucscGenomes";
     private static final String TRACKS = "tracks";
@@ -37,6 +35,7 @@ public class UCSCRestServerUtils {
     public static final String CHROM = "chrom";
     public static final String START = "start";
     public static final String END = "end";
+    public static final String TRACK = "track";
 
     public static Optional<GenomesData> retrieveDsnResponse(String rootUrl) throws IOException {
         String url = toExternalForm(toExternalForm(rootUrl.trim()) + LIST) + UCSC_GENOMES;
@@ -68,6 +67,26 @@ public class UCSCRestServerUtils {
             logger.error(e.getMessage(), e);
         }
         return Optional.ofNullable(ucscRestTracks);
+    }
+
+    public static Optional<Map<String, String>> retrieveFeatureProps(String contextRoot, String genomeVersionName, String track) {
+        String uri = toExternalForm(toExternalForm(contextRoot.trim()) + LIST) + SCHEMA;
+        Map<String, String> featureProps = null;
+        try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            URIBuilder uriBuilder = new URIBuilder(uri);
+            uriBuilder.addParameter(GENOME, genomeVersionName);
+            uriBuilder.addParameter(TRACK, track);
+            HttpGet httpget = new HttpGet(uriBuilder.toString());
+            String responseBody = httpClient.execute(httpget, new ApiResponseHandler());
+            SchemaData schemaData = new Gson().fromJson(
+                    responseBody, SchemaData.class
+            );
+            if(Objects.nonNull(schemaData))
+                featureProps = schemaData.getFeaturePropsMap();
+        } catch (URISyntaxException | IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return Optional.ofNullable(featureProps);
     }
 
     public static Map<String, Integer> getAssemblyInfo(String url, GenomeVersion genomeVersion, Set<String> genomeContextRootMap) {

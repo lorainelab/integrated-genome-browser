@@ -49,6 +49,8 @@ public class RestApiDataProviderTest {
     public static final String human_chromosome_test_file = "human-chromosome-data.json";
     public static final String genome_sequence_test_file = "genome-sequence-data.json";
     public static final String available_tracks_test_file = "available-tracks-data.json";
+    public static final String cloneEnd_schema_test_file = "cloneEnd-schema-data.json";
+    public static final String augustusGene_schema_test_file = "augustusGene-schema-data.json";
 
     @BeforeEach
     public void setup() throws IOException {
@@ -107,12 +109,24 @@ public class RestApiDataProviderTest {
     public void retrieveAvailableDataSets() throws IOException {
         try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
             mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
-            String filename = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(available_tracks_test_file)).getFile();
-            String mockResponse = Files.readString(Paths.get(filename));
-            String apiUrl = "https://api.genome.ucsc.edu/list/tracks?genome=hg38&trackLeavesOnly=1";
+            String availableTracksFilename = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(available_tracks_test_file)).getFile();
+            String availableTracksMockResponse = Files.readString(Paths.get(availableTracksFilename));
+            String availableTracksApiUrl = "https://api.genome.ucsc.edu/list/tracks?genome=hg38&trackLeavesOnly=1";
             when(mockHttpClient.execute(Mockito.argThat(httpget ->
-                    httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
-                    .thenReturn(mockResponse);
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(availableTracksApiUrl)), any(ResponseHandler.class)))
+                    .thenReturn(availableTracksMockResponse);
+            String cloneEndSchemaFilename = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(cloneEnd_schema_test_file)).getFile();
+            String cloneEndSchemaMockResponse = Files.readString(Paths.get(cloneEndSchemaFilename));
+            String cloneEndSchemaApiUrl = "https://api.genome.ucsc.edu/list/schema?genome=hg38&track=cloneEndABC18";
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(cloneEndSchemaApiUrl)), any(ResponseHandler.class)))
+                    .thenReturn(cloneEndSchemaMockResponse);
+            String augustusGeneSchemaFilename = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(augustusGene_schema_test_file)).getFile();
+            String augustusGeneSchemaMockResponse = Files.readString(Paths.get(augustusGeneSchemaFilename));
+            String augustusGeneSchemaApiUrl = "https://api.genome.ucsc.edu/list/schema?genome=hg38&track=augustusGene";
+            when(mockHttpClient.execute(Mockito.argThat(httpget ->
+                    httpget instanceof HttpGet && httpget.getURI().toString().equals(augustusGeneSchemaApiUrl)), any(ResponseHandler.class)))
+                    .thenReturn(augustusGeneSchemaMockResponse);
             Set<DataSet> availableDataSets = restApiDataProvider.getAvailableDataSets(dataContainer);
             availableDataSets.forEach(dataContainer::addDataSet);
         }

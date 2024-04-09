@@ -4,28 +4,29 @@
   "dataTime": "2024-03-05T13:36:00",
   "dataTimeStamp": 1709674560,
   "hg38": {
-    "dbSnp155": {
-      "shortLabel": "All dbSNP(155)",
-      "type": "bigDbSnp",
-      "longLabel": "All Short Genetic Variants from dbSNP Release 155",
-      "parent": "dbSnp155ViewVariants off",
-      "parentParent": "dbSnp155Composite",
-      "defaultGeneTracks": "knownGene",
-      "maxWindowToDraw": "1000000",
-      "priority": "4",
-      "subGroups": "view=variants",
-      "bigDataUrl": "/gbdb/hg38/snp/dbSnp155.bb"
+    "augustusGene": {
+      "shortLabel": "AUGUSTUS",
+      "type": "genePred",
+      "longLabel": "AUGUSTUS ab initio gene predictions v3.1",
+      "parent": "genePredArchive",
+      "baseColorUseCds": "given",
+      "visibility": "pack",
+      "group": "genes",
+      "html": "../../augustusGene",
+      "superTrack": "on",
+      "color": "180,0,0",
+      "cartVersion": "2",
+      "baseColorDefault": "genomicCodons"
     },
-    "dbSnp155Mult": {
-      "shortLabel": "Mult. dbSNP(155)",
-      "type": "bigDbSnp",
-      "longLabel": "Short Genetic Variants from dbSNP Release 155 that Map to Multiple Genomic Loci",
-      "parent": "dbSnp155ViewVariants off",
-      "parentParent": "dbSnp155Composite",
-      "defaultGeneTracks": "knownGene",
-      "priority": "3",
-      "subGroups": "view=variants",
-      "bigDataUrl": "/gbdb/hg38/snp/dbSnp155Mult.bb"
+    "cloneEndABC18": {
+      "shortLabel": "ABC18",
+      "type": "bed 12",
+      "longLabel": "Agencourt fosmid library 18",
+      "parent": "cloneEndSuper off",
+      "colorByStrand": "0,0,128 0,128,0",
+      "visibility": "hide",
+      "priority": "7",
+      "subGroups": "source=agencourt"
     }
   }
 }

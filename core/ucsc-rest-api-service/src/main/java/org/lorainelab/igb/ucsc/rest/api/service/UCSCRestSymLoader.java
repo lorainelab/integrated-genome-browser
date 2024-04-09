@@ -218,7 +218,7 @@ public class UCSCRestSymLoader extends SymLoader {
                 if (Objects.nonNull(trackDataDetails))
                     trackDataDetails.setTrackData(responseBody, track, trackType, trackDataDetails.getChrom());
                 List<BarChartTypeData> trackDataList = trackDataDetails.getTrackData();
-                List<UcscBedSym> ucscBedSyms = new ArrayList<>();
+                List<UcscBedSymWithProps> ucscBedSymsWithProps = new ArrayList<>();
                 if(!trackDataList.isEmpty()) {
                      trackDataList.forEach(trackData -> {
                         boolean forward = (trackData.getStrand() == null) || trackData.getStrand().isEmpty() || (trackData.getStrand().equals("+") || trackData.getStrand().equals("++"));
@@ -228,20 +228,22 @@ public class UCSCRestSymLoader extends SymLoader {
                         float[] expScoresArray = trackData.getExpScoresArray();
                         if(Objects.nonNull(barChartBarCategories) && Objects.nonNull(expScoresArray)){
                             for(int i=0; i<trackData.getExpCount(); i++){
-                                ucscBedSyms.add(new UcscBedSym(track, determineSeq(genomeVersion, trackData.getChrom(), 0),
+                                Map<String, Object> props = new HashMap<>();
+                                props.put("name2", trackData.getName2());
+                                ucscBedSymsWithProps.add(new UcscBedSymWithProps(track, determineSeq(genomeVersion, trackData.getChrom(), 0),
                                                 txMin, txMax, barChartBarCategories[i], expScoresArray[i],
                                                 forward, Integer.MIN_VALUE, Integer.MIN_VALUE,
-                                                new int[]{txMin}, new int[]{txMax}));
+                                                new int[]{txMin}, new int[]{txMax}, props, trackData.getName()));
                             }
                         }else {
-                             ucscBedSyms.add(new UcscBedSym(track, determineSeq(genomeVersion, trackData.getChrom(), 0),
+                            ucscBedSymsWithProps.add(new UcscBedSymWithProps(track, determineSeq(genomeVersion, trackData.getChrom(), 0),
                                      txMin, txMax, trackData.getName(), trackData.getScore(),
                                      forward, Integer.MIN_VALUE, Integer.MIN_VALUE,
-                                     new int[]{txMin}, new int[]{txMax}));
+                                     new int[]{txMin}, new int[]{txMax}, null, trackData.getName2()));
                         }
                     });
                 }
-                return ucscBedSyms;
+                return ucscBedSymsWithProps;
             }
         }
         return null;

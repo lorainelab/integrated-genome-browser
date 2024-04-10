@@ -23,4 +23,10 @@ public class TrackDetails {
                         ? barChartBars.split(" ")
                         : null;
         }
+
+        public String[] getBarChartColors(){
+                return Objects.nonNull(barChartColors) && !barChartColors.isEmpty()
+                        ? barChartColors.split(" ")
+                        : null;
+        }
     }

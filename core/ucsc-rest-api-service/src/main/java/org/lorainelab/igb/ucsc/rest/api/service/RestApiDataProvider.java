@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.*;
+import static org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails.BED_FORMATS;
 
 @Slf4j
 public final class RestApiDataProvider extends BaseDataProvider implements AssemblyProvider, ReferenceSequenceProvider {
@@ -132,7 +133,9 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
                         URI uri = uriBuilder.build();
                         String trackType = trackDetail.getType().split(" ")[0];
                         UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(url, uri, Optional.empty(), track, trackType, genomeVersion, contextRootkey.get());
-                        Optional<Map<String, String>> featureProps = UCSCRestServerUtils.retrieveFeatureProps(contextRoot, contextRootkey.get(), track);
+                        Optional<Map<String, String>> featureProps = Optional.empty();
+                        if(BED_FORMATS.contains(trackType.toLowerCase()))
+                            featureProps = UCSCRestServerUtils.retrieveFeatureProps(contextRoot, contextRootkey.get(), track);
                         DataSet dataSet = new DataSet(uri, track, featureProps.orElse(null), dataContainer, ucscRestSymLoader, false);
                         dataSets.add(dataSet);
                     } catch (URISyntaxException ex) {

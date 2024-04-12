@@ -35,6 +35,7 @@ public class TrackDataDetails<T> {
     public static final String BIG_WIG = "bigWig";
     public static final String WIG = "wig";
     public static final String NARROW_PEAK = "narrowPeak";
+    public static final List<String> BAR_CHART_FORMATS = new ArrayList<>(Arrays.asList("barchart", "bigbarchart"));
 
     public void setTrackData(String jsonString, String track, String trackType, String chrom) {
         Gson gson = new Gson();
@@ -80,6 +81,9 @@ public class TrackDataDetails<T> {
             }.getType();
         } else if (trackType.equalsIgnoreCase(NARROW_PEAK)) {
             type = new TypeToken<ArrayList<NarrowPeakTypeData>>(){
+            }.getType();
+        } else if (BAR_CHART_FORMATS.contains(trackType.toLowerCase())) {
+            type = new TypeToken<ArrayList<BarChartTypeData>>(){
             }.getType();
         }
         return type;

@@ -25,7 +25,7 @@ public class SchemaData {
     private String shortLabel;
     private String type;
     private String longLabel;
-    private int itemCount;
+    private long itemCount;
     private String parent;
     private String colorByStrand;
     private String visibility;

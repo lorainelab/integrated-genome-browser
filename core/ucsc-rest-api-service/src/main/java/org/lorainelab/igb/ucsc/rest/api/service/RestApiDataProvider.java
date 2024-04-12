@@ -132,7 +132,7 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
                         uriBuilder.addParameter("track", track);
                         URI uri = uriBuilder.build();
                         String trackType = trackDetail.getType().split(" ")[0];
-                        UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(url, uri, Optional.empty(), track, trackType, genomeVersion, contextRootkey.get());
+                        UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(url, uri, Optional.empty(), track, trackType, trackDetail, genomeVersion, contextRootkey.get());
                         Optional<Map<String, String>> featureProps = Optional.empty();
                         if(BED_FORMATS.contains(trackType.toLowerCase()))
                             featureProps = UCSCRestServerUtils.retrieveFeatureProps(contextRoot, contextRootkey.get(), track);

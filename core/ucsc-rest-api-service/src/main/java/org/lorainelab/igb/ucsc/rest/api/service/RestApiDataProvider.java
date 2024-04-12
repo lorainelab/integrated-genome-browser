@@ -136,7 +136,8 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
                         Optional<Map<String, String>> featureProps = Optional.empty();
                         if(BED_FORMATS.contains(trackType.toLowerCase()))
                             featureProps = UCSCRestServerUtils.retrieveFeatureProps(contextRoot, contextRootkey.get(), track);
-                        DataSet dataSet = new DataSet(uri, track, featureProps.orElse(null), dataContainer, ucscRestSymLoader, false);
+                        String datasetName = trackType + "/" + track;
+                        DataSet dataSet = new DataSet(uri, datasetName, featureProps.orElse(null), dataContainer, ucscRestSymLoader, false);
                         dataSets.add(dataSet);
                     } catch (URISyntaxException ex) {
                         log.error("Invalid URI format for DAS context root: {}, skipping this resource", contextRoot, ex);

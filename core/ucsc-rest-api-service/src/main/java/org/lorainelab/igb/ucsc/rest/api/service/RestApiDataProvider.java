@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -133,11 +134,15 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
                         URI uri = uriBuilder.build();
                         String trackType = trackDetail.getType().split(" ")[0];
                         UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(url, uri, Optional.empty(), track, trackType, trackDetail, genomeVersion, contextRootkey.get());
-                        Optional<Map<String, String>> featureProps = Optional.empty();
-                        if(BED_FORMATS.contains(trackType.toLowerCase()))
-                            featureProps = UCSCRestServerUtils.retrieveFeatureProps(contextRoot, contextRootkey.get(), track);
-                        String datasetName = trackType + "/" + track;
-                        DataSet dataSet = new DataSet(uri, datasetName, featureProps.orElse(null), dataContainer, ucscRestSymLoader, false);
+                        Map<String, String> featureProps = new HashMap<>();
+                        featureProps.put("description", trackDetail.getLongLabel());
+                        if(BED_FORMATS.contains(trackType.toLowerCase())){
+                            Optional<Map<String, String>> retrieveFeatureProps = UCSCRestServerUtils.retrieveFeatureProps(contextRoot, contextRootkey.get(), track);
+                            retrieveFeatureProps.ifPresent(featureProps::putAll);
+                        }
+                        String trackName = trackDetail.getShortLabel() + " (" + track + ")";
+                        String datasetName = trackType + "/" + trackName;
+                        DataSet dataSet = new DataSet(uri, datasetName, featureProps, dataContainer, ucscRestSymLoader, false);
                         dataSets.add(dataSet);
                     } catch (URISyntaxException ex) {
                         log.error("Invalid URI format for DAS context root: {}, skipping this resource", contextRoot, ex);

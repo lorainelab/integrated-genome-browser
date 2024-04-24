@@ -71,7 +71,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
     private final JTree tree;
     private final JRPButton serverPrefsB;
     public static final String path_separator = "/";
-    private static ImageIcon infoIcon = CommonUtils.getInstance().getIcon("16x16/actions/info.png");
+    private static final ImageIcon externalLinkIcon = CommonUtils.getInstance().getIcon("16x16/actions/external_link.png");
     private final static Map<DataProvider, ImageIcon> faviconReference = Maps.newHashMap();
     private static final int TOOL_TIP_WIDTH = 75;
 
@@ -607,7 +607,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
             String featureText = dataSet.getDataSetName().substring(featureName.lastIndexOf(FeatureTreeView.path_separator) + 1);
             featureText = "<html>" + featureText;
             if (dataSet.getDataContainer().getDataProvider().getDataSetLinkoutUrl(dataSet).isPresent()) {
-                featureText += " <img src='" + infoIcon + "' width=13' height='13'/>";
+                featureText += " <img src='" + externalLinkIcon + "' width=13' height='13'/>";
             }
 
             if (!dataSet.isVisible()) {

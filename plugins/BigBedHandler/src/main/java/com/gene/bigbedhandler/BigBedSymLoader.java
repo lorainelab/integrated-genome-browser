@@ -51,7 +51,7 @@ public class BigBedSymLoader extends SymLoader {
     }
 
     private void initbbReader() {
-        String uriString = GeneralUtils.URLDecode(uri.toString());
+        String uriString = uri.toString();
         try {
             bbReader = new BBFileReader(uriString, SeekableStreamFactory.getInstance().getStreamFor(uriString));
         } catch (IOException x) {

@@ -1,4 +1,4 @@
-# Integrated Genome Browser 10.0.0
+# Integrated Genome Browser 10.0.1
 
 ## About 
 

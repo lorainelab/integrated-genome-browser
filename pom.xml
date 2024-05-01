@@ -43,11 +43,11 @@
         <org.osgi.service.log-version>1.5.0</org.osgi.service.log-version>
         <org.osgi.service.component.annotations-version>1.5.1</org.osgi.service.component.annotations-version>
         <bindlib-version>6.4.0</bindlib-version>
-        <bigWigVersion>2.0.1</bigWigVersion>
+        <bigWigVersion>3.0.0</bigWigVersion>
         <commonsCompressVersion>1.23.0</commonsCompressVersion>
         <commonsCodecVersion>1.15</commonsCodecVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
-        <htsjdk-igb-Version>3.0.5</htsjdk-igb-Version>
+        <htsjdkVersion>4.1.0</htsjdkVersion>
         <commonsVfsVersion>2.9.0</commonsVfsVersion>
         <jide.version>3.5.15</jide.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
@@ -934,9 +934,9 @@
                 <version>${felixJettyVersion}</version>
             </dependency>
             <dependency>
-                <groupId>htsjdk-igb</groupId>
-                <artifactId>htsjdk-igb</artifactId>
-                <version>${htsjdk-igb-Version}</version>
+                <groupId>com.github.samtools</groupId>
+                <artifactId>htsjdk</artifactId>
+                <version>${htsjdkVersion}</version>
             </dependency>
             <!-- Start of Apache Felix Web Console bundles-->
             <dependency>

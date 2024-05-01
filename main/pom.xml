@@ -232,8 +232,8 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>htsjdk-igb</groupId>
-            <artifactId>htsjdk-igb</artifactId>
+            <groupId>com.github.samtools</groupId>
+            <artifactId>htsjdk</artifactId>
             <scope>runtime</scope>
         </dependency>
         <!-- End of external bundle dependencies-->

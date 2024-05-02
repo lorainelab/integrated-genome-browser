@@ -136,10 +136,7 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
                         UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(url, uri, Optional.empty(), track, trackType, trackDetail, genomeVersion, contextRootkey.get());
                         Map<String, String> featureProps = new HashMap<>();
                         featureProps.put("description", trackDetail.getLongLabel());
-                        if(BED_FORMATS.contains(trackType.toLowerCase())){
-                            Optional<Map<String, String>> retrieveFeatureProps = UCSCRestServerUtils.retrieveFeatureProps(contextRoot, contextRootkey.get(), track);
-                            retrieveFeatureProps.ifPresent(featureProps::putAll);
-                        }
+                        featureProps.put("track", track);
                         String trackName = trackDetail.getShortLabel() + " (" + track + ")";
                         String datasetName = trackType + "/" + trackName;
                         DataSet dataSet = new DataSet(uri, datasetName, featureProps, dataContainer, ucscRestSymLoader, false);

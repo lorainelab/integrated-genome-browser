@@ -37,7 +37,7 @@ public final class DataSet {
     private static final String WHOLE_GENOME = "Whole Sequence";
 
     private final String name;      // friendly name of the feature.
-    private final Map<String, String> properties;
+    private Map<String, String> properties;
     private final DataContainer dataContainer;        // Points to the version that uses this feature.
     private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
     private LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
@@ -408,6 +408,14 @@ public final class DataSet {
      */
     public DataContainer getDataContainer() {
         return dataContainer;
+    }
+
+    public void addFeatureProps(Map<String, String> props){
+        if(properties == null){
+            properties = props;
+            return;
+        }
+        properties.putAll(props);
     }
 
     /**

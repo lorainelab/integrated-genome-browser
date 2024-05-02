@@ -38,8 +38,6 @@ public class SchemaData {
             StringBuilder stringBuilder = new StringBuilder();
             columnTypes.stream().filter(columnType -> !PROPERTIES.contains(columnType.name)).forEach(columnType -> {
                 stringBuilder.append(columnType.name);
-                stringBuilder.append(":");
-                stringBuilder.append(columnType.jsonType);
                 stringBuilder.append(",");
             });
             if(!stringBuilder.isEmpty()){

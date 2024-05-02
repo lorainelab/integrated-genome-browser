@@ -4,6 +4,7 @@ import com.affymetrix.genometry.filter.ChainFilter;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel.Filter;
+import com.affymetrix.igb.tiers.TierLabelManager;
 
 /**
  *
@@ -13,6 +14,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
 
     private static final long serialVersionUID = 1L;
     private Filter<SymmetryFilterI> optionFilter;
+    private TierLabelManager tierLabelManager;
 
     /**
      * Creates new form Filter
@@ -55,6 +57,10 @@ public class ConfigureFilters extends javax.swing.JPanel {
 
     public void setOptionsFilter(Filter<SymmetryFilterI> optionFilter) {
         this.optionFilter = optionFilter;
+    }
+
+    public void setTierLabelManager(TierLabelManager tierLabelManager) {
+        this.tierLabelManager = tierLabelManager;
     }
 
     /**
@@ -160,7 +166,7 @@ public class ConfigureFilters extends javax.swing.JPanel {
     }
 
     private void addNew() {
-        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<>(SymmetryFilterI.class, "Show Only", optionFilter, false);
+        ConfigureOptionsDialog<SymmetryFilterI> optionDialog = new ConfigureOptionsDialog<>(SymmetryFilterI.class, "Show Only", optionFilter, false, tierLabelManager);
         optionDialog.setTitle("Add filter");
         optionDialog.setLocationRelativeTo(this);
         SymmetryFilterI selectedFilter = optionDialog.showDialog();

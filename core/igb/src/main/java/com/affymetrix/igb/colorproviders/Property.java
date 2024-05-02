@@ -80,7 +80,7 @@ public class Property extends ColorProvider {
         if (sym instanceof SymWithProps) {
             Object value = ((SymWithProps) sym).getProperty(property.get());
             if ((value instanceof Float || value instanceof Double)
-                    && float_property_value != null && Float.compare(float_property_value, (Float) value) == 0) {
+                    && float_property_value != null && compare(float_property_value, value)) {
                 return matchColor.get();
             } else if (value != null && property_value.get() != null
                     && value.toString().toLowerCase().contains(property_value.get())) {
@@ -90,4 +90,12 @@ public class Property extends ColorProvider {
         }
         return notMatchColor.get();
     }
+    public static boolean compare(Float float_property_value, Object value){
+        if(value instanceof Double || value instanceof Float){
+            return Float.compare(float_property_value, ((Number) value).floatValue())==0;
+        }else{
+            return false;
+        }
+    }
+
 }

@@ -25,6 +25,10 @@ public class EqualMathComparisonOperator implements MathComparisonOperator {
     public boolean operate(double d1, double d2) {
         return Double.compare(d1, d2) == 0;
     }
+    @Override
+    public boolean operate(String s1, String s2) {
+        return s1.equals(s2);
+    }
 
     @Override
     public String getName() {

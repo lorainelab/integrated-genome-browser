@@ -15,4 +15,8 @@ public interface MathComparisonOperator extends ID {
     public boolean operate(float f1, float f2);
 
     public boolean operate(double d1, double d2);
+
+    public default boolean operate(String s1, String s2) {
+        throw new UnsupportedOperationException();
+    }
 }

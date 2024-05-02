@@ -7,6 +7,7 @@ import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
+import com.affymetrix.igb.tiers.TierLabelManager;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
 import java.util.ArrayList;
@@ -40,13 +41,14 @@ public class ColorByAction extends SeqMapViewActionA {
     public void actionPerformed(java.awt.event.ActionEvent e) {
         super.actionPerformed(e);
 
-        final TierGlyph tg = getTierManager().getSelectedTiers().get(0);
+        TierLabelManager tierLabelManager = getTierManager();
+        final TierGlyph tg = tierLabelManager.getSelectedTiers().get(0);
         ITrackStyleExtended style = tg.getAnnotStyle();
 
         //this is to get all the preferences nodes and pass them to ConfigureOptionsPanel so that preferences related to colorproviders of all tracks can be updated
         //to store history in heatmap. Not good design and need to find better solution.
         List<Preferences> trackroots = new ArrayList<>();
-        getTierManager().getSelectedTiers().stream().
+        tierLabelManager.getSelectedTiers().stream().
                 forEach(glyph -> glyph.getAnnotStyle().getPreferenceChildForProperty(colorsRootNodeName).ifPresent(root -> trackroots.add(root)));
         ColorProviderI cp = style.getColorProvider();
 
@@ -62,7 +64,7 @@ public class ColorByAction extends SeqMapViewActionA {
             return true;
         };
 
-        ConfigureOptionsDialog<ColorProviderI> colorByDialog = new ConfigureOptionsDialog<>(ColorProviderI.class, "Color By", configureFilter, trackroots);
+        ConfigureOptionsDialog<ColorProviderI> colorByDialog = new ConfigureOptionsDialog<>(ColorProviderI.class, "Color By", configureFilter, trackroots, tierLabelManager);
         colorByDialog.setTitle("Color By");
         colorByDialog.setLocationRelativeTo(getSeqMapView());
         colorByDialog.setInitialValue(cp);
@@ -71,7 +73,7 @@ public class ColorByAction extends SeqMapViewActionA {
         //set color provider to all selected tiers only if it is changed..
         //We do not know if user pressed cancel or okay on selection dialog. Hence need to see if CP changed or not.
         if (newCp == null || !newCp.equals(cp)) {
-            getTierManager().getSelectedTiers().forEach(tm -> tm.getAnnotStyle().setColorProvider(newCp));
+            tierLabelManager.getSelectedTiers().forEach(tm -> tm.getAnnotStyle().setColorProvider(newCp));
         }
 //        style.setColorProvider(cp);
         refreshMap(false, false);

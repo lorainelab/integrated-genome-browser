@@ -24,6 +24,7 @@ set JAVA_OPTS=^
 --add-exports java.desktop/com.sun.java.swing.plaf.windows=ALL-UNNAMED ^
 --add-exports java.desktop/com.apple.laf=ALL-UNNAMED ^
 --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED ^
+--add-opens java.desktop/java.awt.color=ALL-UNNAMED ^
 --add-opens java.base/java.net=ALL-UNNAMED
 
 REM Check for the debug flag

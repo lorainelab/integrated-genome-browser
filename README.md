@@ -19,7 +19,7 @@ See:
 
 ***
 
-The code from this branch compiles and runs under JDK 8.
+The code from this branch compiles and runs under JDK 21.
 
 # To build and run IGB
 

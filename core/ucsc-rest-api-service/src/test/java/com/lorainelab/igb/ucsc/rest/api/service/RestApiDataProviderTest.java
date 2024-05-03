@@ -121,7 +121,7 @@ public class RestApiDataProviderTest {
                     httpget instanceof HttpGet && httpget.getURI().toString().equals(cloneEndSchemaApiUrl)), any(ResponseHandler.class)))
                     .thenReturn(cloneEndSchemaMockResponse);
             Set<DataSet> availableDataSets = restApiDataProvider.getAvailableDataSets(dataContainer);
-            assertTrue(availableDataSets.stream().anyMatch(dataSet -> dataSet.getDataSetName().equals("genePred/augustusGene")));
+            assertTrue(availableDataSets.stream().anyMatch(dataSet -> dataSet.getDataSetName().equals("genePred/AUGUSTUS (augustusGene)")));
         }
     }
 }

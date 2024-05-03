@@ -1,0 +1,36 @@
+<DASTYPES>
+    <GFF version="1.2" href="http://genome.ucsc.edu/cgi-bin/das/hg38/types">
+        <SEGMENT version="1.00">
+            <TYPE id="affyGnf1h" category="other"/>
+            <TYPE id="affyU133" category="other"/>
+            <TYPE id="affyU95" category="other"/>
+            <TYPE id="altSeqLiftOverPsl" category="other"/>
+            <TYPE id="augustusGene" category="transcription"/>
+            <TYPE id="ccdsGene" category="transcription"/>
+            <TYPE id="centromeres" category="other"/>
+            <TYPE id="cloneEndABC10" category="other"/>
+            <TYPE id="cloneEndABC11" category="other"/>
+            <TYPE id="cloneEndABC12" category="other"/>
+            <TYPE id="cloneEndABC13" category="other"/>
+            <TYPE id="cloneEndABC14" category="other"/>
+            <TYPE id="cloneEndABC16" category="other"/>
+            <TYPE id="cloneEndABC18" category="other"/>
+            <TYPE id="cloneEndABC20" category="other"/>
+            <TYPE id="cloneEndABC21" category="other"/>
+            <TYPE id="cloneEndABC22" category="other"/>
+            <TYPE id="cloneEndABC23" category="other"/>
+            <TYPE id="cloneEndABC24" category="other"/>
+            <TYPE id="cloneEndABC27" category="other"/>
+            <TYPE id="cloneEndABC7" category="other"/>
+            <TYPE id="cloneEndABC8" category="other"/>
+            <TYPE id="cloneEndABC9" category="other"/>
+            <TYPE id="cloneEndCH17" category="other"/>
+            <TYPE id="cloneEndCOR02" category="other"/>
+            <TYPE id="cloneEndCOR2A" category="other"/>
+            <TYPE id="cloneEndCTD" category="other"/>
+            <TYPE id="cloneEndRP11" category="other"/>
+            <TYPE id="cloneEndWI2" category="other"/>
+            <TYPE id="cloneEndbadEnds" category="other"/>
+        </SEGMENT>
+    </GFF>
+</DASTYPES>

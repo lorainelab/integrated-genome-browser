@@ -1,0 +1,12 @@
+<DASDSN>
+    <DSN>
+        <SOURCE id="hs1" version="1.00">Jan. 2022 (T2T CHM13v2.0/hs1) at UCSC</SOURCE>
+        <DESCRIPTION>Human Jan. 2022 (T2T CHM13v2.0/hs1) Genome at UCSC</DESCRIPTION>
+        <MAPMASTER>http://genome.ucsc.edu:80/cgi-bin/das/hs1</MAPMASTER>
+    </DSN>
+    <DSN>
+        <SOURCE id="hg38" version="1.00">Dec. 2013 (GRCh38/hg38) at UCSC</SOURCE>
+        <DESCRIPTION>Human Dec. 2013 (GRCh38/hg38) Genome at UCSC</DESCRIPTION>
+        <MAPMASTER>http://genome.ucsc.edu:80/cgi-bin/das/hg38</MAPMASTER>
+    </DSN>
+</DASDSN>

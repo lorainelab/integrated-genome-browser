@@ -13,8 +13,8 @@
     <name>Core - UCSC Rest API module</name>
     <dependencies>
         <dependency>
-            <groupId>htsjdk-igb</groupId>
-            <artifactId>htsjdk-igb</artifactId>
+            <groupId>com.github.samtools</groupId>
+            <artifactId>htsjdk</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

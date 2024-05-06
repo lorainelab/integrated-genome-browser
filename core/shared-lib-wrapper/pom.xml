@@ -86,6 +86,14 @@
             <artifactId>httpclient</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.github.samtools</groupId>
+            <artifactId>htsjdk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.broad.igv</groupId>
+            <artifactId>bigwig</artifactId>
+        </dependency>
+        <dependency>
             <groupId>fi.iki.elonen</groupId>
             <artifactId>NanoHTTPD</artifactId>
         </dependency>
@@ -110,6 +118,7 @@
                                 <include>org.apache.felix*.jar</include>
                                 <include>bigwig*.jar</include>
                                 <include>jide-ultimate-jakarta*.jar</include>
+                                <include>htsjdk*.jar</include>
                             </includes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
@@ -256,9 +265,9 @@
                                     <version>${logback-classic.version}</version>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>htsjdk-igb</groupId>
-                                    <artifactId>htsjdk-igb</artifactId>
-                                    <version>${htsjdk-igb-Version}</version>
+                                    <groupId>com.github.samtools</groupId>
+                                    <artifactId>htsjdk</artifactId>
+                                    <version>${htsjdkVersion}</version>
                                 </artifactItem>
                                 <!-- Start of development only bundles (i.e. they will not be included in main pom for igb_exe.jar)-->
                                 <artifactItem>
@@ -358,9 +367,11 @@
                             net.miginfocom.layout,
                             net.miginfocom.swing,
                             com.github.kevinsawicki.http,
+                            htsjdk.*,
                             fi.iki.elonen,
                             org.apache.http.*,
-                            lombok.*
+                            lombok.*,
+                            org.broad.igv.bbfile.*
                         </Export-Package>
                     </instructions>
                     <archive>

@@ -168,7 +168,7 @@
         <module>plugins/GenotypingResults</module>
         <module>plugins/bed</module>
         <module>plugins/bam</module>
-        <module>plugins/bai</module>
+        <!--<module>plugins/bai</module>-->
         <module>plugins/AppStore</module>
     </modules>
     <profiles>
@@ -597,11 +597,12 @@
                 <artifactId>bam</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
+            <!--
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>bai</artifactId>
                 <version>${project.parent.version}</version>
-            </dependency>
+            </dependency> -->
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>genotyping</artifactId>

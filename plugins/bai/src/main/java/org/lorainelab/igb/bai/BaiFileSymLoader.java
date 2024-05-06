@@ -188,9 +188,9 @@ public class BaiFileSymLoader extends SymLoader {
         /**
          * Gets BrowsableIndex for browsing the input BAI file
          */
-        samReader = null;
-        final SamReader.Indexing indexing = null;
-        browseableIndex = null;
+        samReader = samReaderFactory.open(bamFile, inputBAIFile); // official HSTJDK does not provide support for BAI
+        final SamReader.Indexing indexing = samReader.indexing();
+        browseableIndex = indexing.getBrowseableIndexAlt(); // official HTSJDK does not provide support for BAI
 
         /**
          * Iterate through the chromosomes list

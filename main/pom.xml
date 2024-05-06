@@ -416,11 +416,12 @@
             <artifactId>bam</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>bai</artifactId>
             <scope>runtime</scope>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>appstore</artifactId>

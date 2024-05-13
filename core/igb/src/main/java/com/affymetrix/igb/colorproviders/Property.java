@@ -79,10 +79,13 @@ public class Property extends ColorProvider {
     public Color getColor(SeqSymmetry sym) {
         if (sym instanceof SymWithProps) {
             Object value = ((SymWithProps) sym).getProperty(property.get());
-            if ((value instanceof Float || value instanceof Double)
-                    && float_property_value != null && compare(float_property_value, value)) {
-                return matchColor.get();
-            } else if (value != null && property_value.get() != null
+            if (value instanceof Float || value instanceof Double){
+                if(float_property_value != null && compare(float_property_value, value))
+                    return matchColor.get();
+                else
+                    return notMatchColor.get();
+            }
+            else if (value != null && property_value.get() != null
                     && value.toString().toLowerCase().contains(property_value.get())) {
                 return matchColor.get();
 //				return cp.getColor(value.toString());

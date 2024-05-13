@@ -2,6 +2,7 @@ package com.affymetrix.igb.shared;
 
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.color.ColorProviderI;
+import com.affymetrix.genometry.filter.PropertyFilter;
 import com.affymetrix.genometry.general.ID;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.general.NewInstance;
@@ -9,9 +10,12 @@ import com.affymetrix.genometry.operator.Operator;
 import com.affymetrix.genometry.operator.service.OperatorServiceRegistry;
 import com.affymetrix.genometry.style.HeatMap;
 import com.affymetrix.genometry.style.HeatMapExtended;
+import com.affymetrix.genometry.tooltip.ToolTipConstants;
 import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genoviz.swing.NumericFilter;
+import com.affymetrix.igb.colorproviders.Property;
+import com.affymetrix.igb.tiers.TierLabelManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
@@ -23,16 +27,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -47,6 +45,9 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.AbstractDocument;
 import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -55,6 +56,7 @@ import net.miginfocom.swing.MigLayout;
 @SuppressWarnings("unchecked")
 public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConfigureOptionsPanel.class);
     private static final long serialVersionUID = 1L;
 
     private T returnValue, selectedValue;
@@ -63,6 +65,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     private JPanel paramsPanel;
     private List<SelectionChangeListener> tChangeListeners;
     private List<Preferences> preferenceNodes;
+    private TierLabelManager tierLabelManager;
     // This is used to keep track of preferences update once result is accepted bu user,
     // ie. getReturnValue called with parameter true.
     private Runnable commitPreferences = null;
@@ -85,6 +88,13 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
     public ConfigureOptionsPanel(Class clazz, Object label, Filter<T> filter, boolean includeNone, List<Preferences> preferences) {
         preferenceNodes = preferences;
+        tierLabelManager = null;
+        init(clazz, label, filter, includeNone);
+    }
+
+    public ConfigureOptionsPanel(Class clazz, String label, Filter<T> filter, boolean includeNone, List<Preferences> preferences, TierLabelManager tierLabelManager) {
+        preferenceNodes = preferences;
+        this.tierLabelManager = tierLabelManager;
         init(clazz, label, filter, includeNone);
     }
 
@@ -110,7 +120,37 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     continue;
                 }
             }
+            if(cp instanceof Property || cp instanceof PropertyFilter)
+                refreshProps(((IParameters) cp).getParametersPossibleValues("property"));
             comboBox.addItem(cp);
+        }
+        if(tierLabelManager != null){
+            try {
+                List<TierGlyph> selectedTiers = tierLabelManager.getSelectedTiers();
+                List<TierGlyph> ucscRestTiers = selectedTiers.stream().filter(tierGlyph -> tierGlyph.getAnnotStyle().getFeature().getDataContainer().getDataProvider().getName().equalsIgnoreCase("UCSC REST"))
+                        .filter(ucscRestTierGlyph -> ucscRestTierGlyph.getAnnotStyle().getFeature().getProperties().containsKey("props"))
+                        .toList();
+                if (!ucscRestTiers.isEmpty() && ucscRestTiers.size() == selectedTiers.size()) {
+                    List<Set<String>> propsList = ucscRestTiers.stream().map(ucscRestTier -> ucscRestTier.getAnnotStyle().getFeature().getProperties().get("props"))
+                            .map(props -> props.split(","))
+                            .map(propsArray -> Arrays.stream(propsArray).collect(Collectors.toUnmodifiableSet()))
+                            .toList();
+                    Set<String> commonProps = new HashSet<>(propsList.get(0));
+                    for (Set<String> set : propsList) {
+                        commonProps.retainAll(set);
+                    }
+                    tProviders.stream().filter(tProvider -> tProvider instanceof Property).forEach(tProvider -> {
+                        List<Object> properties = ((Property) tProvider).getParametersPossibleValues("property");
+                        properties.addAll(commonProps);
+                    });
+                    tProviders.stream().filter(tProvider -> tProvider instanceof PropertyFilter).forEach(tProvider -> {
+                        List<Object> properties = ((PropertyFilter) tProvider).getParametersPossibleValues("property");
+                        properties.addAll(commonProps);
+                    });
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
         }
         if (includeNone) {
             comboBox.setSelectedItem(null);
@@ -138,6 +178,14 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             returnValue = cp;
             setSelected(cp);
         }
+    }
+
+    private void refreshProps(List<Object> properties){
+        properties.clear();
+        properties.add(ToolTipConstants.ID);
+        properties.add(ToolTipConstants.NAME);
+        properties.add(ToolTipConstants.SCORE);
+        properties.add(ToolTipConstants.TITLE);
     }
 
     private void addOptions(final IParameters iParameters, final JPanel paramsPanel) {

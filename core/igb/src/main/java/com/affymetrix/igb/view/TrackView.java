@@ -1,6 +1,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.GenomeVersion;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.parsers.CytobandParser;
 import com.affymetrix.genometry.style.DefaultStateProvider;
@@ -27,8 +28,15 @@ import com.google.common.base.Strings;
 import org.lorainelab.igb.genoviz.extensions.glyph.GraphGlyph;
 import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.lorainelab.igb.ucsc.rest.api.service.UCSCRestSymLoader;
+import org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import static org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails.BED_FORMATS;
 
 /**
  *
@@ -37,6 +45,7 @@ import java.util.Map;
 public class TrackView {
 
     private static final TrackView instance = new TrackView();
+    public static final String UCSC_REST_PROVIDER_NAME = "UCSC REST";
 
     private TrackView() {
         super();
@@ -198,12 +207,27 @@ public class TrackView {
     }
 
     public void addEmptyTierFor(DataSet dataSet, SeqMapView gviewer) {
-
         // No sequence selected or if it is cytoband or it is residue file. Then return
         if (gviewer.getAnnotatedSeq() == null || dataSet.getDataSetName().equals(CytobandParser.CYTOBAND)
                 || dataSet.getDataSetName().toLowerCase().contains(CytobandParser.CYTOBAND)
                 || (dataSet.getSymL() != null && (dataSet.getSymL().isResidueLoader() || dataSet.getSymL().getExtension().equalsIgnoreCase("cyt")))) {
             return;
+        }
+
+         if(dataSet.getDataContainer().getDataProvider().getName().equals(UCSC_REST_PROVIDER_NAME)){
+            UCSCRestSymLoader ucscRestSymLoader = (UCSCRestSymLoader) dataSet.getSymL();
+            if(BED_FORMATS.contains(ucscRestSymLoader.getTrackType().toLowerCase()) &&
+                    dataSet.getProperties() != null && !dataSet.getProperties().containsKey("props")){
+                GenomeVersion genomeVersion = dataSet.getDataContainer().getGenomeVersion();
+                final String genomeVersionName = genomeVersion.getName();
+                Optional<String> contextRootkey = UCSCRestServerUtils.getContextRootKey(genomeVersionName, dataSet.getDataContainer().getDataProvider().getSupportedGenomeVersionNames(), genomeVersion.getGenomeVersionSynonymLookup());
+                if(contextRootkey.isPresent()){
+                    String ucscRestUrl = BUNDLE.getString("ucscRestUrl");
+                    String track = dataSet.getProperties().get("track");
+                    Optional<Map<String, String>> retrieveFeatureProps = UCSCRestServerUtils.retrieveFeatureProps(ucscRestUrl, contextRootkey.get(), track);
+                    retrieveFeatureProps.ifPresent(dataSet::addFeatureProps);
+                }
+            }
         }
 
         ITrackStyleExtended style;

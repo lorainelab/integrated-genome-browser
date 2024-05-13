@@ -19,7 +19,7 @@ public class BoundedParameter<E> extends Parameter<E> {
     @Override
     public boolean set(Object e) {
         if (values.contains(e)) {
-            super.set(e);
+            return super.set(e); //IGBF-3640: Bug Fix, Added return statement when the value is set.Otherwise, this function returns false irrespective of the outcome.
         }
         return false;
     }

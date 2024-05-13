@@ -280,6 +280,10 @@ public class UCSCRestSymLoader extends SymLoader {
         super.init();
     }
 
+    public String getTrackType() {
+        return trackType;
+    }
+
     private String getChromosomeSynonym(String baseUrl, SeqSpan span, GenomeVersion genomeVersion, String contextRootKey) {
         BioSeq currentSeq = span.getBioSeq();
         if (chromosomes == null) {

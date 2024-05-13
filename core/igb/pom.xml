@@ -176,6 +176,11 @@
             <artifactId>org.osgi.service.component.annotations</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.lorainelab.igb</groupId>
+            <artifactId>ucsc-rest-api-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -226,7 +231,8 @@
                             com.affymetrix.igb.shared,
                             com.affymetrix.igb.view.load,
                             com.affymetrix.igb.view.factories,
-                            com.affymetrix.igb.glyph
+                            com.affymetrix.igb.glyph,
+                            org.lorainelab.igb.ucsc.rest.api.service.*
                         </Export-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-Category>IGBTabPanel-com.affymetrix.igb.view.load.GeneralLoadViewGUI,com.affymetrix.igb.view.SeqGroupViewGUI,com.affymetrix.igb.view.AltSpliceView</Bundle-Category>

@@ -10,6 +10,7 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.shared.Selections;
+import com.affymetrix.igb.tiers.TierLabelManager;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.util.ConfigureFilters;
 import java.awt.event.ActionEvent;
@@ -47,7 +48,8 @@ public class FilterAction extends SeqMapViewActionA {
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
 
-        final TierGlyph tg = getTierManager().getSelectedTiers().get(0);
+        TierLabelManager tierLabelManager = getTierManager();
+        final TierGlyph tg = tierLabelManager.getSelectedTiers().get(0);
         ITrackStyleExtended style = tg.getAnnotStyle();
         SymmetryFilterI filter = style.getFilter();
 
@@ -65,6 +67,7 @@ public class FilterAction extends SeqMapViewActionA {
 
         final ConfigureFilters configurefilters = new ConfigureFilters();
         configurefilters.setOptionsFilter(optionFilter);
+        configurefilters.setTierLabelManager(tierLabelManager);
         if (filter != null) {
             configurefilters.setFilter(filter.newInstance());
         }

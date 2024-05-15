@@ -326,8 +326,14 @@ public final class GeneralLoadView {
         });
         GeneralLoadView.getLoadView().refreshTreeView();
 
+        Optional<DataSet> igbQuickload = GeneralLoadUtils.getGenomeVersionDataSets().stream().filter(dataSet ->
+                        dataSet.getDataContainer().getDataProvider().getName().equals("IGB Quickload"))
+                .findAny();
+        boolean isIGBQuickloadPresent = igbQuickload.isPresent();
+
         GeneralLoadUtils.getGenomeVersionDataSets().stream()
-                .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
+                .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME ||
+                        (!isIGBQuickloadPresent && isUCSCRestRefGene(dataSet)))
                 .filter(dataSet -> !GeneralLoadUtils.isLoaded(dataSet, visibleFeatures))
                 .forEach(dataSet -> {
                     Optional<InputStream> fileIs = Optional.empty();
@@ -366,9 +372,21 @@ public final class GeneralLoadView {
                     if (dataSet.getSymL() instanceof SymLoaderInst) {
                         GeneralLoadUtils.loadAllSymmetriesThread(dataSet);
                     } else if (isNotAlreadyLoaded(dataSet)) {
-                        GeneralLoadUtils.iterateSeqList(dataSet);
+                        if(isUCSCRestRefGene(dataSet)) {
+                            dataSet.setVisible();
+                            refreshTreeView();
+                            GeneralLoadUtils.iterateSeqList(dataSet, true);
+                        }
+                        else
+                            GeneralLoadUtils.iterateSeqList(dataSet, false);
                     }
                 });
+    }
+
+    private static boolean isUCSCRestRefGene(DataSet dataSet) {
+        return dataSet.getDataContainer().getDataProvider().getName().equals("UCSC REST")
+                && (dataSet.getProperties() != null && dataSet.getProperties().containsKey("track")
+                && dataSet.getProperties().get("track").equals("refGene"));
     }
 
     private static boolean isNotAlreadyLoaded(final DataSet dataSet) {

@@ -45,7 +45,7 @@ public final class ServiceUtils {
             genomeVersion = gmodel.getSeqGroup(version);
         }
         if (genomeVersion != null && !genomeVersion.equals(gmodel.getSelectedGenomeVersion())) {
-            GeneralLoadView.getLoadView().initVersion(version);
+            GeneralLoadView.getLoadView().initVersion(genomeVersion.getName());
             gmodel.setSelectedGenomeVersion(genomeVersion);
         }
         return Optional.ofNullable(genomeVersion);

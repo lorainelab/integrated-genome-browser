@@ -250,7 +250,7 @@ public final class DataSet {
 
     public void setMethod(String method) {
         this.method = method;
-        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, method, getExtension(), getProperties());
+        ITrackStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(method, getDataSetName(), getExtension(), getProperties());
         style.setFeature(this);
     }
 

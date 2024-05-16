@@ -536,7 +536,7 @@ public final class BookmarkUnibrowControlServlet {
         final BioSeq book_seq = determineSeq(seqid, book_group);
         if (book_seq == null) {
             ErrorHandler.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '" + seqid + "'");
-            return null;
+            return Optional.absent();
         } else // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
             //     gviewer is registered as a SeqSelectionListener on gmodel
             if (!gmodel.getSelectedSeq().isPresent() || book_seq != gmodel.getSelectedSeq().orElse(null)) {

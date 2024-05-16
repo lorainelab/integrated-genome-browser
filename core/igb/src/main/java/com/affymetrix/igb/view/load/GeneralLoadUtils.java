@@ -527,10 +527,10 @@ public final class GeneralLoadUtils {
             }
             return;
         }
-        iterateSeqList(dataSource);
+        iterateSeqList(dataSource, false);
     }
 
-    static void iterateSeqList(final DataSet feature) {
+    static void iterateSeqList(final DataSet feature, boolean isUCSCRestRefGeneAutoload) {
 
         CThreadWorker<Void, BioSeq> worker = new CThreadWorker<Void, BioSeq>(
                 MessageFormat.format(LOADING_FEATURE_MESSAGE, feature.getDataSetName())) {
@@ -547,10 +547,10 @@ public final class GeneralLoadUtils {
 //                                            return s1.getName().compareToIgnoreCase(s2.getName());
 //                                        }
 //                                    });
-                    if (feature.getSymL().isMultiThreadOK()) {
+                    if (!isUCSCRestRefGeneAutoload && feature.getSymL().isMultiThreadOK()) {
                         return multiThreadedLoad(chrList);
                     }
-                    return singleThreadedLoad(chrList);
+                    return singleThreadedLoad(chrList, isUCSCRestRefGeneAutoload);
                 } catch (Throwable ex) {
                     LOG.error(
                             "Error while loading feature", ex);
@@ -561,22 +561,27 @@ public final class GeneralLoadUtils {
                 }
             }
 
-            protected Void singleThreadedLoad(List<BioSeq> chrList) throws Exception {
-                final BioSeq current_seq = gmodel.getSelectedSeq().orElse(null);
+            protected Void singleThreadedLoad(List<BioSeq> chrList, boolean isUCSCRestRefGeneAutoload) throws Exception {
+                BioSeq current_seq = gmodel.getSelectedSeq().orElse(null);
+
+                if(current_seq == null && isUCSCRestRefGeneAutoload && !chrList.isEmpty())
+                    current_seq = chrList.get(0);
 
                 if (current_seq != null) {
                     loadOnSequence(current_seq);
                     publish(current_seq);
                 }
 
-                for (final BioSeq seq : chrList) {
-                    if (seq == current_seq) {
-                        continue;
+                if (!isUCSCRestRefGeneAutoload){
+                    for (final BioSeq seq : chrList) {
+                        if (seq == current_seq) {
+                            continue;
+                        }
+                        if (Thread.currentThread().isInterrupted()) {
+                            break;
+                        }
+                        loadOnSequence(seq);
                     }
-                    if (Thread.currentThread().isInterrupted()) {
-                        break;
-                    }
-                    loadOnSequence(seq);
                 }
                 return null;
             }

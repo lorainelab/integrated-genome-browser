@@ -1,10 +1,19 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometry.filter.ChainFilter;
+import com.affymetrix.genometry.filter.SymmetryFilter;
 import com.affymetrix.genometry.filter.SymmetryFilterI;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel.Filter;
 import com.affymetrix.igb.tiers.TierLabelManager;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 
 /**
  *
@@ -172,6 +181,19 @@ public class ConfigureFilters extends javax.swing.JPanel {
         SymmetryFilterI selectedFilter = optionDialog.showDialog();
         Object value = optionDialog.getValue();
         if (value instanceof Integer && (Integer) value == javax.swing.JOptionPane.OK_OPTION && selectedFilter != null) {
+            Map<String, List<String>> filterMap = ((SymmetryFilter) selectedFilter).getFilterMap();
+            tierLabelManager.getSelectedTiers()
+                    .stream().filter(tierGlyph -> !tierGlyph.getAnnotStyle().getUniqueName().isEmpty())
+                    .forEach(tierGlyph -> {
+                        String annotStyleUniqueName = tierGlyph.getAnnotStyle().getUniqueName();
+                        if (filterMap.containsKey(annotStyleUniqueName)) {
+                            List<String> directionList = filterMap.get(annotStyleUniqueName);
+                            directionList.add(tierGlyph.getDirection().getDisplay());
+                            filterMap.put(annotStyleUniqueName, directionList);
+                        } else
+                            filterMap.put(annotStyleUniqueName, new ArrayList<>(Collections.singletonList(tierGlyph.getDirection().getDisplay())));
+                    });
+            ((SymmetryFilter) selectedFilter).setFilterMap(filterMap);
             ((javax.swing.DefaultListModel) filterList.getModel()).addElement(selectedFilter);
             filterList.setSelectedIndex(filterList.getModel().getSize() - 1);
             removeButton.setEnabled(true);
@@ -180,6 +202,43 @@ public class ConfigureFilters extends javax.swing.JPanel {
 
     private void removeSelected() {
         int selected = filterList.getSelectedIndex();
+        SymmetryFilter selectedRemoveFilter = (SymmetryFilter) filterList.getModel().getElementAt(selected);
+        SymmetryFilter modifiedFilter = (SymmetryFilter) selectedRemoveFilter.newInstance();
+        Iterator<Map.Entry<String, List<String>>> iterator = modifiedFilter.getFilterMap().entrySet().iterator();
+        String bothDisplay = SymmetryFilter.Direction.BOTH.getDisplay();
+        while (iterator.hasNext()) {
+            Map.Entry<String, List<String>> entry = iterator.next();
+            String annotStyleUniqueName = entry.getKey();
+            List<String> directionList = entry.getValue();
+            if (directionList.contains(bothDisplay)) {
+                List<TierGlyph> tierGlyphs = tierLabelManager.getSelectedTiers().stream().filter(tierGlyph ->
+                                tierGlyph.getAnnotStyle().getUniqueName() != null
+                                        && tierGlyph.getAnnotStyle().getUniqueName().equals(annotStyleUniqueName))
+                        .toList();
+                if(tierGlyphs.size() == 1 && !tierGlyphs.get(0).getDirection().getDisplay().equals(bothDisplay)){
+                    directionList.remove(bothDisplay);
+                    directionList.add(tierGlyphs.get(0).getDirection().getDisplay().equals(SymmetryFilter.Direction.FORWARD.getDisplay())
+                            ? SymmetryFilter.Direction.REVERSE.getDisplay()
+                            : SymmetryFilter.Direction.FORWARD.getDisplay());
+                }
+                else if (tierGlyphs.size() > 1) {
+                    iterator.remove();
+                }
+            } else {
+                iterator.remove();
+            }
+        }
+        if(!modifiedFilter.getFilterMap().isEmpty()){
+            tierLabelManager.getSelectedTiers().forEach(tierGlyph -> {
+                SymmetryFilterI filterI = tierGlyph.getAnnotStyle().getFilter();
+                if (filterI instanceof ChainFilter chainFilter){
+                    chainFilter.getFilters().removeIf(symmetryFilterI -> symmetryFilterI.equals(selectedRemoveFilter));
+                    chainFilter.getFilters().add(modifiedFilter);
+                }
+                else
+                    tierGlyph.getAnnotStyle().setFilter(modifiedFilter);
+            });
+        }
         ((javax.swing.DefaultListModel) filterList.getModel()).removeElementAt(selected);
         if (selected - 1 >= 0) {
             filterList.setSelectedIndex(selected - 1);

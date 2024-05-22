@@ -38,7 +38,7 @@ public class DocumentationAction extends GenericAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        GeneralUtils.browse("http://wiki.transvar.org/confluence/display/igbman");
+        GeneralUtils.browse("https://wiki.bioviz.org/confluence/display/igbman");
     }
     
     @Override

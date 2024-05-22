@@ -11,7 +11,7 @@ To get IGB, clone this repository or download an [IGB installer for your platfor
 See:
 
 * [BioViz Web site](https://www.bioviz.org) for platform-specific installers
-* Searchable on-line [User's Guide](https://wiki.transvar.org/display/igbman/Home)
+* Searchable on-line [User's Guide](https://wiki.bioviz.org/confluence/display/igbman/Home)
 * IGB programming [on-line class](https://canvas.instructure.com/courses/1164217)
 * [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg) with video tutorials and demos
 * [IGB Jira Issue Tracker site](http://jira.bioviz.org) describes development plans
@@ -48,7 +48,7 @@ mvn clean install -DskipTests=true
 IGB runs in an OSGi container, which supports adding and removing pluggable Apps while IGB is running.
 For details and advice on how to write IGB Apps, see:
 
-* [Developing IGB Apps](https://wiki.transvar.org/display/igbdevelopers/Developing+IGB+Apps) in the IGB Developer's Guide
+* [Developing IGB Apps](https://wiki.bioviz.org/confluence/display/igbdevelopers/Developing+IGB+Apps) in the IGB Developer's Guide
 * [OSGi tutorials](https://blog.stackleader.com/tags/osgi/) by IGB core developer alumni at [Stackleader.com](https://stackleader.com)
 
 The IGB core developers are working on a new IGB App Store, where you can upload and distribute Apps to IGB users. We are aiming to release it in December 2019.

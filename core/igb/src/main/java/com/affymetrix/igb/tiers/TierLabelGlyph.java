@@ -1,11 +1,15 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometry.filter.ChainFilter;
+import com.affymetrix.genometry.filter.SymmetryFilter;
+import com.affymetrix.genometry.filter.SymmetryFilterI;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
 import com.affymetrix.genometry.symloader.Delegate;
 import com.affymetrix.genometry.util.IgbStringUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.igb.action.FilterAction;
 import com.affymetrix.igb.glyph.DefaultTierGlyph;
 import org.lorainelab.igb.genoviz.extensions.glyph.StyledGlyph;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
@@ -23,6 +27,7 @@ import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.net.URL;
+import java.util.List;
 
 /**
  * A glyph used to display a label for a TierGlyph.
@@ -279,8 +284,16 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
                 && IGBStateProvider.getShowLockIcon() && reftier.getDirection() != StyledGlyph.Direction.AXIS) {
             drawLock(g, pixelbox.x, pixelbox.y, fgcolor, bgcolor);
         }
-        if (trackStyle.getFilter() != null && IGBStateProvider.getShowFilterMarkState()) {
-            drawFilter(g, pixelbox.x + 20, pixelbox.y + 4, fgcolor, bgcolor);
+        SymmetryFilterI filter = trackStyle.getFilter();
+        if (filter != null && IGBStateProvider.getShowFilterMarkState()) {
+            if(filter instanceof ChainFilter chainFilter){
+                List<SymmetryFilterI> newFilters = chainFilter.getFilters().stream().filter(symmetryFilterI ->
+                        FilterAction.isFilterSelected((SymmetryFilter) symmetryFilterI, reftier)).toList();
+                if(!newFilters.isEmpty())
+                    drawFilter(g, pixelbox.x + 20, pixelbox.y + 4, fgcolor, bgcolor);
+            }
+            else if(FilterAction.isFilterSelected((SymmetryFilter) filter, reftier))
+                drawFilter(g, pixelbox.x + 20, pixelbox.y + 4, fgcolor, bgcolor);
         }
         super.draw(view);
     }

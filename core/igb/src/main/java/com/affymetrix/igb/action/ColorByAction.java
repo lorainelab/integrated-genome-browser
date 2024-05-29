@@ -69,14 +69,14 @@ public class ColorByAction extends SeqMapViewActionA {
         colorByDialog.setLocationRelativeTo(getSeqMapView());
         colorByDialog.setInitialValue(cp);
         ColorProviderI newCp = colorByDialog.showDialog();
+        Object value = colorByDialog.getValue();
 
         //set color provider to all selected tiers only if it is changed..
-        //We do not know if user pressed cancel or okay on selection dialog. Hence need to see if CP changed or not.
-        if (newCp == null || !newCp.equals(cp)) {
+        if ((Integer) value == javax.swing.JOptionPane.OK_OPTION && (newCp == null || !newCp.equals(cp))) {
             tierLabelManager.getSelectedTiers().forEach(tm -> tm.getAnnotStyle().setColorProvider(newCp));
+            refreshMap(false, false);
         }
 //        style.setColorProvider(cp);
-        refreshMap(false, false);
         //TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
     }
 }

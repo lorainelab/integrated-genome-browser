@@ -9,6 +9,10 @@
  */
 package com.affymetrix.igb.view.factories;
 
+import com.affymetrix.genometry.filter.ChainFilter;
+import com.affymetrix.genometry.filter.SymmetryFilter;
+import com.affymetrix.genometry.filter.SymmetryFilterI;
+import com.affymetrix.igb.action.FilterAction;
 import org.osgi.service.component.annotations.Component;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
@@ -60,6 +64,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
@@ -151,8 +157,17 @@ public class AnnotationGlyphFactory extends MapTierGlyphFactoryA {
         drawChildren = (depth >= 2);
         Optional<GlyphI> glyph = determinePGlyph(sym);
         if (glyph.isPresent()) {
-            if (trackStyle.getFilter() != null) {
-                glyph.get().setVisibility(trackStyle.getFilter().filterSymmetry(annotSeq, sym));
+            SymmetryFilterI filter = trackStyle.getFilter();
+            if (filter != null) {
+                if(filter instanceof ChainFilter chainFilter){
+                    List<SymmetryFilterI> newFilters = chainFilter.getFilters().stream().filter(symmetryFilterI ->
+                            FilterAction.isFilterSelected((SymmetryFilter) symmetryFilterI, tierGlyph)).collect(Collectors.toList());
+                    ChainFilter modifiedChainFilter = new ChainFilter();
+                    modifiedChainFilter.setFilter(newFilters);
+                    glyph.get().setVisibility(modifiedChainFilter.filterSymmetry(annotSeq, sym));
+                }
+                else if (FilterAction.isFilterSelected((SymmetryFilter) filter, tierGlyph))
+                    glyph.get().setVisibility(filter.filterSymmetry(annotSeq, sym));
             }
             tierGlyph.addChild(glyph.get());
         }

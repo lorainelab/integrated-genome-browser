@@ -50,8 +50,7 @@ For details and advice on how to write IGB Apps, see:
 
 * [Developing IGB Apps](https://wiki.bioviz.org/confluence/display/igbdevelopers/Developing+IGB+Apps) in the IGB Developer's Guide
 * [OSGi tutorials](https://blog.stackleader.com/tags/osgi/) by IGB core developer alumni at [Stackleader.com](https://stackleader.com)
-
-The IGB core developers are working on a new IGB App Store, where you can upload and distribute Apps to IGB users. We are aiming to release it in December 2019.
+* [IGB App Store](https://apps.bioviz.org/) where you can upload and distribute Apps to IGB users
 
 ***
 

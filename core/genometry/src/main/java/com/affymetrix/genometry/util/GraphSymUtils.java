@@ -419,8 +419,10 @@ public final class GraphSymUtils {
                     strand = "-";
                 }
                 if (strand != null) {
-                    id += strand;
-                    name += strand;
+                    if(!id.endsWith(strand))
+                        id += strand;
+                    if(!name.endsWith(strand))
+                        name += strand;
                 }
             }
         }

@@ -10,6 +10,7 @@ import com.affymetrix.genometry.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometry.parsers.graph.ScoredMapParser;
 import com.affymetrix.genometry.parsers.graph.SgrParser;
 import com.affymetrix.genometry.parsers.graph.WiggleParser;
+import com.affymetrix.genometry.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometry.symloader.BNIB;
 import com.affymetrix.genometry.symloader.Bar;
 import com.affymetrix.genometry.symloader.Fasta;
@@ -25,6 +26,7 @@ import com.affymetrix.genometry.symloader.SymLoaderInst;
 import com.affymetrix.genometry.symloader.SymLoaderInstNC;
 import com.affymetrix.genometry.symloader.SymLoaderTabix;
 import com.affymetrix.genometry.symloader.TwoBit;
+import com.affymetrix.genometry.symloader.USeq;
 import com.affymetrix.genometry.symloader.VCF;
 import com.affymetrix.genometry.symloader.Wiggle;
 import com.affymetrix.genometry.util.GeneralUtils;
@@ -286,6 +288,7 @@ public class FileTypeHolder {
         addFileTypeHandler("Regions", new String[]{SegmenterRptParser.CN_REGION_FILE_EXT, SegmenterRptParser.LOH_REGION_FILE_EXT}, FileTypeCategory.Annotation, SegmenterRptParser.class, SymLoaderInstNC.class);
         addFileTypeHandler("Graph", new String[]{"sgr"}, FileTypeCategory.Graph, SgrParser.class, Sgr.class);
         addFileTypeHandler(".2bit", new String[]{"2bit"}, FileTypeCategory.Sequence, TwoBitParser.class, TwoBit.class);
+        addFileTypeHandler("Binary", new String[]{"useq"}, FileTypeCategory.Annotation, USeqRegionParser.class, USeq.class);
         addFileTypeHandler("Genomic Variation", new String[]{"var"}, FileTypeCategory.Annotation, VarParser.class, SymLoaderInstNC.class);
         addFileTypeHandler("Graph", new String[]{"wig"}, FileTypeCategory.Graph, WiggleParser.class, Wiggle.class);
         addFileTypeHandler(new FileTypeHandler() {

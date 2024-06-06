@@ -11,6 +11,7 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.event.GenericAction;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
+import com.affymetrix.genometry.parsers.useq.USeqUtilities;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.style.DefaultStateProvider;
@@ -59,6 +60,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -729,6 +731,19 @@ public final class GeneralLoadView {
                 if (!Strings.isNullOrEmpty(feature.getMethod())) {
                     for (BioSeq bioseq : feature.getDataContainer().getGenomeVersion().getSeqList()) {
                         TrackView.getInstance().deleteSymsOnSeq(gviewer, feature.getMethod(), bioseq, feature);
+                    }
+                    if(Objects.nonNull(feature.getURI()) && feature.getURI().toString().endsWith(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD)){
+                        String strand = feature.getMethod().substring(feature.getMethod().length() - 1);
+                        String method = null;
+                        if(strand.equals("+"))
+                            method = feature.getMethod().substring(0, feature.getMethod().length()-1) + "-";
+                        else if(strand.equals("-"))
+                            method = feature.getMethod().substring(0, feature.getMethod().length()-1) + "+";
+                        if(method != null){
+                            for (BioSeq bioseq : feature.getDataContainer().getGenomeVersion().getSeqList()) {
+                                TrackView.getInstance().deleteSymsOnSeq(gviewer, method, bioseq, feature);
+                            }
+                        }
                     }
                 }
                 return null;

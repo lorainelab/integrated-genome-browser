@@ -17,6 +17,8 @@ import com.affymetrix.genometry.general.DataSet;
 import static com.affymetrix.genometry.general.DataSet.detemineFriendlyName;
 import com.affymetrix.genometry.parsers.Bprobe1Parser;
 import com.affymetrix.genometry.parsers.graph.BarParser;
+import com.affymetrix.genometry.parsers.useq.ArchiveInfo;
+import com.affymetrix.genometry.parsers.useq.USeqGraphParser;
 import com.affymetrix.genometry.quickload.QuickLoadSymLoader;
 import com.affymetrix.genometry.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -47,6 +49,7 @@ import static com.affymetrix.igb.view.load.FileExtensionContants.BAM_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BAR_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BP1_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BP2_EXT;
+import static com.affymetrix.igb.view.load.FileExtensionContants.USEQ_EXT;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
@@ -1171,6 +1174,10 @@ public final class GeneralLoadUtils {
                     version = null;
                 }
                 break;
+            case USEQ_EXT:
+                loadGroup = handleUseq(uri, loadGroup);
+                getNewVersion = true;
+                break;
             case BAR_EXT:
                 loadGroup = handleBar(uri, loadGroup);
                 getNewVersion = true;
@@ -1248,6 +1255,31 @@ public final class GeneralLoadUtils {
             LOG.error(ex.getMessage(), ex);
         } finally {
             GeneralUtils.safeClose(istr);
+        }
+
+        return genomeVersion;
+    }
+
+    /**
+     * Get GenomeVersion for USEQ file format.
+     */
+    private static GenomeVersion handleUseq(URI uri, GenomeVersion genomeVersion) {
+        InputStream istr = null;
+        ZipInputStream zis = null;
+        try {
+            istr = LocalUrlCacher.getInputStream(uri.toURL());
+            zis = new ZipInputStream(istr);
+            zis.getNextEntry();
+            ArchiveInfo archiveInfo = new ArchiveInfo(zis, false);
+            GenomeVersion gr = USeqGraphParser.getSeqGroup(archiveInfo.getVersionedGenome(), gmodel);
+            if (gr != null) {
+                return gr;
+            }
+        } catch (Exception ex) {
+            LOG.error("Exception in handleUseq method", ex);
+        } finally {
+            GeneralUtils.safeClose(istr);
+            GeneralUtils.safeClose(zis);
         }
 
         return genomeVersion;

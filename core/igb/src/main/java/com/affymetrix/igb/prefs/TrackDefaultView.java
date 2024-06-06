@@ -51,7 +51,7 @@ public class TrackDefaultView extends TrackPreferences implements ListSelectionL
     }
     private Object[] temp;
     private String[] trackDefaults;
-    private String[] graphFormats = {"bar", "bgr", "egr", "egr.txt", "sin", "gr", "sgr", "wig"};
+    private String[] graphFormats = {"bar", "bgr", "egr", "egr.txt", "sin", "gr", "sgr", "useq", "wig"};
     private String[] sequenceFormats = {"2bit", "fa", "fasta", "bnib"};
     private ArrayList<String> list = new ArrayList<>();
     private String allowedTrackDefaults;

@@ -11,6 +11,7 @@ import com.affymetrix.genometry.parsers.FileTypeHandler;
 import com.affymetrix.genometry.parsers.FileTypehandlerRegistry;
 import com.affymetrix.genometry.parsers.Parser;
 import com.affymetrix.genometry.parsers.graph.GraphParser;
+import com.affymetrix.genometry.parsers.useq.USeqUtilities;
 import com.affymetrix.genometry.symmetry.impl.CompositeGraphSym;
 import com.affymetrix.genometry.symmetry.impl.CompositeMismatchGraphSym;
 import com.affymetrix.genometry.symmetry.impl.GraphIntervalSym;
@@ -406,6 +407,26 @@ public final class GraphSymUtils {
     }
 
     private static GraphSym getParentGraph(String id, String name, String stream_name, BioSeq aseq, GraphSym cgraf) {
+        //is it a useq graph? modify name and id for strandedness? must uniquify with strand info since no concept of stranded data from same graph file
+        if (id.endsWith(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD) || name.endsWith(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD)) {
+            Object obj = cgraf.getProperty(GraphSym.PROP_GRAPH_STRAND);
+            if (obj != null) {
+                String strand = null;
+                Integer strInt = (Integer) obj;
+                if (strInt.equals(GraphSym.GRAPH_STRAND_PLUS)) {
+                    strand = "+";
+                } else if (strInt.equals(GraphSym.GRAPH_STRAND_MINUS)) {
+                    strand = "-";
+                }
+                if (strand != null) {
+                    if(!id.endsWith(strand))
+                        id += strand;
+                    if(!name.endsWith(strand))
+                        name += strand;
+                }
+            }
+        }
+
         GraphSym pgraf = (GraphSym) aseq.getAnnotation(id);
         if (pgraf == null) {
             // don't need to uniquify ID, since already know it's null (since no sym retrieved from aseq)

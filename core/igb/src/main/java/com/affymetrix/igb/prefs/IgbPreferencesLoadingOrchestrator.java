@@ -1,29 +1,25 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.common.PreferenceUtils;
-import com.affymetrix.genometry.data.DataProvider;
 import com.affymetrix.genometry.data.DataProviderUtils;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
-import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.igb.EventService;
 import com.affymetrix.igb.general.DataProviderManager;
 import com.affymetrix.igb.general.DataProviderManager.DataProviderServiceChangeEvent;
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import org.lorainelab.igb.preferences.IgbPreferencesService;
 import org.lorainelab.igb.preferences.model.DataProviderConfig;
 import org.lorainelab.igb.preferences.model.IgbPreferences;
 import java.awt.event.ActionEvent;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Comparator;
 import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
 import org.osgi.framework.BundleContext;
@@ -88,7 +84,7 @@ public class IgbPreferencesLoadingOrchestrator {
 
     private void processDataProviders(List<DataProviderConfig> dataProviders) {
         //TODO ServerList implementation is suspect and should be replaced
-        dataProviders.stream().distinct().forEach(dataProvider -> {
+        dataProviders.stream().distinct().sorted(Comparator.comparing(DataProviderConfig::getLoadPriority)).forEach(dataProvider -> {
             dataProviderManager.initializeDataProvider(dataProvider);
             String externalFormUrl = DataProviderUtils.toExternalForm(dataProvider.getUrl());
             PreferenceUtils.getDataProviderNode(externalFormUrl).putBoolean(DataProviderPrefKeys.IS_EDITABLE, dataProvider.isEditable());

@@ -96,6 +96,7 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
             return;
         }
         try {
+            log.info("Initializing UCSC Rest Server {}", getUrl());
             Optional<GenomesData> genomeApiResponse = UCSCRestServerUtils.retrieveGenomeResponse(url);
             genomeApiResponse.ifPresent(ds -> ds.getUcscGenomes().forEach((genomeName, genome) -> availableGenomesSet.add(genomeName)));
         } catch (IOException ex) {

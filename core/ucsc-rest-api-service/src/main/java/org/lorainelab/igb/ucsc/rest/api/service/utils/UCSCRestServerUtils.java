@@ -37,7 +37,7 @@ public class UCSCRestServerUtils {
     public static final String END = "end";
     public static final String TRACK = "track";
 
-    public static Optional<GenomesData> retrieveDsnResponse(String rootUrl) throws IOException {
+    public static Optional<GenomesData> retrieveGenomeResponse(String rootUrl) throws IOException {
         String url = toExternalForm(toExternalForm(rootUrl.trim()) + LIST) + UCSC_GENOMES;
         try(CloseableHttpClient httpClient = HttpClients.createDefault()){
             HttpGet httpget = new HttpGet(url);

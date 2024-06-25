@@ -55,6 +55,7 @@ public class DasDataProviderTest {
             InputStream inputStream = DasDataProviderTest.class.getClassLoader().getResourceAsStream("data/das1/das-dsn-test-data.xml");
             when(mockHttpRequest.buffer()).thenReturn((BufferedInputStream) inputStream);
             dasDataProvider = new DasDataProvider(UCSC_DAS_URL, "UCSC", 1);
+            dasDataProvider.initialize();
         }
         genomeVersion = new GenomeVersion(HUMAN_GENOME_ID);
         dataContainer = new DataContainer(genomeVersion, dasDataProvider);

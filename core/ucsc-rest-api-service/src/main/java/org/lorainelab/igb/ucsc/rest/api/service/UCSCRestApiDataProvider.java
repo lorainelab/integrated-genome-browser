@@ -43,9 +43,6 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
         }
-        if (status != Disabled) {
-            initialize();
-        }
     }
 
     public UCSCRestApiDataProvider(String ucscRestUrl, String name, String mirrorUrl, int loadPriority) {
@@ -56,9 +53,6 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
         } catch (MalformedURLException | URISyntaxException ex) {
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
-        }
-        if (status != Disabled) {
-            initialize();
         }
     }
 
@@ -71,9 +65,6 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
         }
-        if (status != Disabled) {
-            initialize();
-        }
     }
 
     public UCSCRestApiDataProvider(String ucscRestUrl, String name, String mirrorUrl, int loadPriority, String id) {
@@ -84,9 +75,6 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
         } catch (MalformedURLException | URISyntaxException ex) {
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
-        }
-        if (status != Disabled) {
-            initialize();
         }
     }
 

@@ -24,16 +24,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.Comparator;
 
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.*;
-import static org.lorainelab.igb.ucsc.rest.api.service.model.TrackDataDetails.BED_FORMATS;
 
 @Slf4j
-public final class RestApiDataProvider extends BaseDataProvider implements AssemblyProvider, ReferenceSequenceProvider {
+public final class UCSCRestApiDataProvider extends BaseDataProvider implements AssemblyProvider, ReferenceSequenceProvider {
 
     private final Set<String> availableGenomesSet;
 
-    public RestApiDataProvider(String ucscRestUrl, String name, int loadPriority) {
+    public UCSCRestApiDataProvider(String ucscRestUrl, String name, int loadPriority) {
         super(ucscRestUrl, name, loadPriority);
         availableGenomesSet = Sets.newHashSet();
         try {
@@ -47,7 +48,7 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
         }
     }
 
-    public RestApiDataProvider(String ucscRestUrl, String name, String mirrorUrl, int loadPriority) {
+    public UCSCRestApiDataProvider(String ucscRestUrl, String name, String mirrorUrl, int loadPriority) {
         super(ucscRestUrl, name, mirrorUrl, loadPriority);
         availableGenomesSet = Sets.newHashSet();
         try {
@@ -61,7 +62,7 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
         }
     }
 
-    public RestApiDataProvider(String ucscRestUrl, String name, int loadPriority, String id) {
+    public UCSCRestApiDataProvider(String ucscRestUrl, String name, int loadPriority, String id) {
         super(ucscRestUrl, name, loadPriority, id);
         availableGenomesSet = Sets.newHashSet();
         try {
@@ -75,7 +76,7 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
         }
     }
 
-    public RestApiDataProvider(String ucscRestUrl, String name, String mirrorUrl, int loadPriority, String id) {
+    public UCSCRestApiDataProvider(String ucscRestUrl, String name, String mirrorUrl, int loadPriority, String id) {
         super(ucscRestUrl, name, mirrorUrl, loadPriority, id);
         availableGenomesSet = Sets.newHashSet();
         try {
@@ -95,8 +96,8 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
             return;
         }
         try {
-            Optional<GenomesData> genomoeApiResponse = UCSCRestServerUtils.retrieveDsnResponse(url);
-            genomoeApiResponse.ifPresent(ds -> ds.getUcscGenomes().forEach((genomoeName, genome) -> availableGenomesSet.add(genomoeName)));
+            Optional<GenomesData> genomeApiResponse = UCSCRestServerUtils.retrieveGenomeResponse(url);
+            genomeApiResponse.ifPresent(ds -> ds.getUcscGenomes().forEach((genomeName, genome) -> availableGenomesSet.add(genomeName)));
         } catch (IOException ex) {
             log.error("Could not initialize this UCSC Rest Server, setting status to unavailable for this session.", ex);
             setStatus(NotResponding);
@@ -147,7 +148,11 @@ public final class RestApiDataProvider extends BaseDataProvider implements Assem
                 });
             }
         }
-        return dataSets;
+        TreeSet<DataSet> sortedDataSets = new TreeSet<>(Comparator.comparing(
+                dataSet -> dataSet.getDataSetName().toLowerCase()
+        ));
+        sortedDataSets.addAll(dataSets);
+        return sortedDataSets;
     }
 
     @Override

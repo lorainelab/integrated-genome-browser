@@ -86,7 +86,7 @@ public class UCSCRestSymloaderTest {
     public void getRegionForGenePredTest() throws Exception {
         try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
             mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
-            URL resourceURL = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(genePred_track_test_file));
+            URL resourceURL = Objects.requireNonNull(UCSCRestApiDataProviderTest.class.getClassLoader().getResource(genePred_track_test_file));
             String filename = Paths.get(resourceURL.toURI()).toString();
             String mockResponse = Files.readString(Paths.get(filename));
             String apiUrl = "https://api.genome.ucsc.edu/getData/track?genome=hg38&track=augustusGene&chrom=1&start=2000&end=200499";
@@ -109,7 +109,7 @@ public class UCSCRestSymloaderTest {
     public void getRegionForPslTest() throws Exception {
         try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
             mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
-            URL resourceURL = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(psl_track_test_file));
+            URL resourceURL = Objects.requireNonNull(UCSCRestApiDataProviderTest.class.getClassLoader().getResource(psl_track_test_file));
             String filename = Paths.get(resourceURL.toURI()).toString();
             String mockResponse = Files.readString(Paths.get(filename));
             String apiUrl = "https://api.genome.ucsc.edu/getData/track?genome=hg38&track=xenoMrna&chrom=1&start=2000&end=200499";
@@ -132,7 +132,7 @@ public class UCSCRestSymloaderTest {
     public void getRegionForBedTest() throws Exception {
         try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
             mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
-            URL resourceURL = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(bed_track_test_file));
+            URL resourceURL = Objects.requireNonNull(UCSCRestApiDataProviderTest.class.getClassLoader().getResource(bed_track_test_file));
             String filename = Paths.get(resourceURL.toURI()).toString();
             String mockResponse = Files.readString(Paths.get(filename));
             String apiUrl = "https://api.genome.ucsc.edu/getData/track?genome=hg38&track=cloneEndRP11&chrom=1&start=2000&end=200499";
@@ -155,7 +155,7 @@ public class UCSCRestSymloaderTest {
     public void getRegionFoBigWigTest() throws Exception {
         try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
             mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
-            URL resourceURL = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(bigWig_track_test_file));
+            URL resourceURL = Objects.requireNonNull(UCSCRestApiDataProviderTest.class.getClassLoader().getResource(bigWig_track_test_file));
             String filename = Paths.get(resourceURL.toURI()).toString();
             String mockResponse = Files.readString(Paths.get(filename));
             String apiUrl = "https://api.genome.ucsc.edu/getData/track?genome=hg38&track=ReMapDensity&chrom=1&start=2000&end=200499";
@@ -178,7 +178,7 @@ public class UCSCRestSymloaderTest {
     public void getRegionForWigTest() throws Exception {
         try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
             mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
-            URL resourceURL = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(wig_track_test_file));
+            URL resourceURL = Objects.requireNonNull(UCSCRestApiDataProviderTest.class.getClassLoader().getResource(wig_track_test_file));
             String filename = Paths.get(resourceURL.toURI()).toString();
             String mockResponse = Files.readString(Paths.get(filename));
             String apiUrl = "https://api.genome.ucsc.edu/getData/track?genome=hg38&track=phastCons100way&chrom=1&start=2000&end=200499";
@@ -201,7 +201,7 @@ public class UCSCRestSymloaderTest {
     public void getRegionForNarrowPeakTest() throws Exception {
         try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
             mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
-            URL resourceURL = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(narrowPeak_track_test_file));
+            URL resourceURL = Objects.requireNonNull(UCSCRestApiDataProviderTest.class.getClassLoader().getResource(narrowPeak_track_test_file));
             String filename = Paths.get(resourceURL.toURI()).toString();
             String mockResponse = Files.readString(Paths.get(filename));
             String apiUrl = "https://api.genome.ucsc.edu/getData/track?genome=hg38&track=encTfChipPkENCFF865QLX&chrom=1&start=2000&end=200499";
@@ -224,7 +224,7 @@ public class UCSCRestSymloaderTest {
     public void getRegionForBarChartTest() throws Exception {
         try (MockedStatic<HttpClients> mockedStatic = Mockito.mockStatic(HttpClients.class)) {
             mockedStatic.when(HttpClients::createDefault).thenReturn(mockHttpClient);
-            URL resourceURL = Objects.requireNonNull(RestApiDataProviderTest.class.getClassLoader().getResource(barChart_track_test_file));
+            URL resourceURL = Objects.requireNonNull(UCSCRestApiDataProviderTest.class.getClassLoader().getResource(barChart_track_test_file));
             String filename = Paths.get(resourceURL.toURI()).toString();
             String mockResponse = Files.readString(Paths.get(filename));
             String apiUrl = "https://api.genome.ucsc.edu/getData/track?genome=hg38&track=bloodHaoCellType&chrom=1&start=2000&end=200499";

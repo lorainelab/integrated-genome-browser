@@ -58,15 +58,6 @@ definitions:
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/md5sums; filename=md5sums-$version"
             - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"main/target/media/updates.xml; filename=updates-$version.xml"
 pipelines:
-  default:
-    - step:
-        name: Build and copy jar file with IGB code and required libraries.
-        caches:
-          - maven
-        script:
-          - mvn -B install
-          - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$version-${BITBUCKET_REPO_OWNER}.jar"
   branches:
     main-JDK21-*: 
       - step: *build-installers-for-dev
@@ -88,6 +79,15 @@ pipelines:
                - maven
            script:
                - mvn deploy -P release-to-nexus.bioviz.org -s /root/.m2/settings.xml -Drepo.username=${NEXUS_USER} -Drepo.password=${NEXUS_PASSWORD} -Drepo.id=${NEXUS_REPOSITORY_ID}
+    manual-build:
+      - step:
+          name: Manual Build and Test.
+          caches:
+            - maven
+          script:
+            - mvn -B install
+            - version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+            - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"igb_exe.jar; filename=IGB-$version-${BITBUCKET_REPO_OWNER}.jar"
 
             
 

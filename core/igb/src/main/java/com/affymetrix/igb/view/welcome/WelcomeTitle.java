@@ -27,7 +27,7 @@ public class WelcomeTitle extends JPanel {
     public WelcomeTitle() {
         this.setBackground(Color.black);
     }
-    final String first = "Welcome to";
+    final String first = "Welcome to the";
     final String second = "Integrated Genome Browser";
     final String third = "To get started, choose a genome version using the Current Genome tab.";
     final String fourth = "Or click an image below.";

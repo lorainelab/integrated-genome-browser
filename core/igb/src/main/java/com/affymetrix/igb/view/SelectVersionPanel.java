@@ -24,7 +24,7 @@ public class SelectVersionPanel extends JPanel {
     public SelectVersionPanel() {
         this.setBackground(Color.black);
     }
-    private final String firstLine = "Welcome to Integrated Genome Browser";
+    private final String firstLine = "Welcome to the Integrated Genome Browser";
     private final String secondLine = "You selected a species. Next, select a genome version.";
     private final String inlineArrowText = "Select genome version.";
 

@@ -65,6 +65,7 @@ public class UCSCRestApiDataProviderTest {
                     httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
                     .thenReturn(mockResponse);
             ucscRestApiDataProvider = new UCSCRestApiDataProvider(UCSC_REST_URL, "UCSC REST", 1);
+            ucscRestApiDataProvider.initialize();
         }
         genomeVersion = new GenomeVersion(HUMAN_GENOME_ID);
         dataContainer = new DataContainer(genomeVersion, ucscRestApiDataProvider);

@@ -43,9 +43,6 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
         }
-        if (status != Disabled) {
-            initialize();
-        }
     }
 
     public UCSCRestApiDataProvider(String ucscRestUrl, String name, String mirrorUrl, int loadPriority) {
@@ -56,9 +53,6 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
         } catch (MalformedURLException | URISyntaxException ex) {
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
-        }
-        if (status != Disabled) {
-            initialize();
         }
     }
 
@@ -71,9 +65,6 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
         }
-        if (status != Disabled) {
-            initialize();
-        }
     }
 
     public UCSCRestApiDataProvider(String ucscRestUrl, String name, String mirrorUrl, int loadPriority, String id) {
@@ -85,9 +76,6 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
             log.error(ex.getMessage(), ex);
             setStatus(Disabled);
         }
-        if (status != Disabled) {
-            initialize();
-        }
     }
 
     @Override
@@ -96,6 +84,7 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
             return;
         }
         try {
+            log.info("Initializing UCSC Rest Server {}", getUrl());
             Optional<GenomesData> genomeApiResponse = UCSCRestServerUtils.retrieveGenomeResponse(url);
             genomeApiResponse.ifPresent(ds -> ds.getUcscGenomes().forEach((genomeName, genome) -> availableGenomesSet.add(genomeName)));
         } catch (IOException ex) {

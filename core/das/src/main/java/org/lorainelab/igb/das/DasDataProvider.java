@@ -47,9 +47,6 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
             logger.error(ex.getMessage(), ex);
             setStatus(Disabled);
         }
-        if (status != Disabled) {
-            initialize();
-        }
     }
 
     public DasDataProvider(String dasUrl, String name, String mirrorUrl, int loadPriority) {
@@ -60,9 +57,6 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
         } catch (MalformedURLException | IllegalArgumentException ex) {
             logger.error(ex.getMessage(), ex);
             setStatus(Disabled);
-        }
-        if (status != Disabled) {
-            initialize();
         }
     }
 
@@ -76,9 +70,6 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
             logger.error(ex.getMessage(), ex);
             setStatus(Disabled);
         }
-        if (status != Disabled) {
-            initialize();
-        }
     }
 
     public DasDataProvider(String dasUrl, String name, String mirrorUrl, int loadPriority, String id) {
@@ -89,9 +80,6 @@ public final class DasDataProvider extends BaseDataProvider implements AssemblyP
         } catch (MalformedURLException | IllegalArgumentException ex) {
             logger.error(ex.getMessage(), ex);
             setStatus(Disabled);
-        }
-        if (status != Disabled) {
-            initialize();
         }
     }
 

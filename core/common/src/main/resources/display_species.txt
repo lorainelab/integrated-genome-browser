@@ -15,6 +15,7 @@ G_gallus.png
 A_gambiae.png
 E_coli_K12-MG1655.png
 C_elegans.png
+H_exemplaris_Z151.png
 D_rerio.png
 S_cerevisiae.png
 R_norvegicus.png

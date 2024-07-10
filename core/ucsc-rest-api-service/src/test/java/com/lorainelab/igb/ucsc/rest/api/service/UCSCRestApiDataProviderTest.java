@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lorainelab.igb.ucsc.rest.api.service.UCSCRestApiDataProvider;
+import org.lorainelab.igb.ucsc.rest.api.service.utils.ApiResponseHandler;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -123,6 +124,19 @@ public class UCSCRestApiDataProviderTest {
                     .thenReturn(availableTracksMockResponse);
             Set<DataSet> availableDataSets = ucscRestApiDataProvider.getAvailableDataSets(dataContainer);
             assertTrue(availableDataSets.stream().anyMatch(dataSet -> dataSet.getDataSetName().equals("genePred/AUGUSTUS (augustusGene)")));
+        }
+    }
+
+    @Test
+    public void testLinkoutUrl() {
+        String linkoutUrl = "https://genome.ucsc.edu/cgi-bin/hgTrackUi?db=hg18&g=refGene";
+        try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpGet httpget = new HttpGet(linkoutUrl);
+            String responseBody = httpClient.execute(httpget, new ApiResponseHandler());
+            if(responseBody.isEmpty())
+                logger.error("UCSC Linkout URL isn't responding");
+        } catch (IOException e) {
+            logger.error("UCSC Linkout URL isn't responding");
         }
     }
 }

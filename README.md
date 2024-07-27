@@ -6,15 +6,15 @@ The Integrated Genome Browser (IGB, pronounced ig-bee) is a fast, free, and high
 
 IGB is also an extensible visual analytics platform. Developers can use IGB to create new visual analysis functions called IGB Apps.
 
-To get IGB, clone this repository or download an [IGB installer for your platform](https://bioviz.org/download.html).
+To get IGB, clone this repository or download an [IGB installer for your platform].
 
-See:
+Visit:
 
-* [BioViz Web site](https://www.bioviz.org) for platform-specific installers
+* [BioViz Web site](https://bioviz.org) for platform-specific installers
 * Searchable on-line [User's Guide](https://wiki.bioviz.org/confluence/display/igbman/Home)
 * IGB programming [on-line class](https://canvas.instructure.com/courses/1164217)
 * [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg) with video tutorials and demos
-* [IGB Jira Issue Tracker site](http://jira.bioviz.org) describes development plans
+* [IGB Jira Issue Tracker site](http://jira.bioviz.org) describes development plans (requires login to see most content)
 * Article describing [Integrated Genome Browser: Visual analytics platform for genomics](http://bioinformatics.oxfordjournals.org/content/early/2016/04/04/bioinformatics.btw069.long) 
 
 ***
@@ -24,11 +24,10 @@ The code from this branch compiles and runs under JDK 21.
 # To build and run IGB
 
 1. Install JDK 21 equipped with Java FX.  
-2. Install Apache mvn, required to build IGB. 
-3. Clone the [team repository](https://bitbucket.org/lorainelab/integrated-genome-browser) to your desktop.  
-4. Inside the local copy, check out the branch you wish to build. Review branch names to identify currently released version of IGB. The default branch is the main development branch. 
-5. Build IGB using maven. Skip tests to save time.
-6. Run IGB using the run_igb script for your platform.
+2. Install Apache mvn, required to build IGB the way the IGB development team does it. 
+3. Clone the [team repository](https://bitbucket.org/lorainelab/integrated-genome-browser) to your desktop. The default branch is the main development branch.
+4. Build IGB using maven. Skip tests to save time.
+5. Run IGB using the run_igb script for your platform.
 
 ### Example:
   
@@ -40,6 +39,22 @@ cd integrated-genome-browser
 mvn clean install -DskipTests=true
 ./run_igb.sh
 ```
+
+# To build IGB using Bitbucket.org pipelines
+
+You can build IGB using Bitbucket pipelines and a Docker image with the same JDK we use to distribute IGB. 
+
+To do this: 
+
+1. Create an account at Bitbucket.org
+2. Fork the repository 
+3. Enable bitbucket pipelines in your forked repository 
+4. Configure an App password so that the build process can copy newly build IGB jar file to your repository's Downloads section. For details, review the comments at the top of the bitbucket-pipelines.yml file in the repository.
+5. Visit the branches link and right-click to select the pipeline named "manual-build" to build the executable jar file. 
+6. If the pipeline fails, bitbucket will let you know. If the copying step worked, you should see a new file named igb_exe.jar in your repository's Downloads section.
+
+
+
 
 ***
 

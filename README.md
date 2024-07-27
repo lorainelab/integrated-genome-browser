@@ -19,21 +19,17 @@ Visit:
 
 ***
 
-The code from this branch compiles and runs under JDK 21.
+# To build and run IGB 
 
-# To build and run IGB
-
-1. Install JDK 21 equipped with Java FX.  
+1. Install JDK 21 equipped with Java FX. (Older IGB branches require JDK 8 or earlier.)
 2. Install Apache mvn, required to build IGB the way the IGB development team does it. 
 3. Clone the [team repository](https://bitbucket.org/lorainelab/integrated-genome-browser) to your desktop. The default branch is the main development branch.
 4. Build IGB using maven. Skip tests to save time.
 5. Run IGB using the run_igb script for your platform.
 
-### Example:
-  
-  
-```
+### Example
 
+```
 git clone https://bitbucket.org/lorainelab/integrated-genome-browser
 cd integrated-genome-browser
 mvn clean install -DskipTests=true
@@ -42,16 +38,19 @@ mvn clean install -DskipTests=true
 
 # To build IGB using Bitbucket.org pipelines
 
-You can build IGB using Bitbucket pipelines and a Docker image with the same JDK we use to distribute IGB. 
+You can also build IGB using Bitbucket pipelines and a Docker image with the same JDK we use to distribute IGB. 
 
-To do this: 
+To do build a jar (java archive) file for IGB using Bitbucket pipelines: 
 
-1. Create an account at Bitbucket.org
-2. Fork the repository 
-3. Enable bitbucket pipelines in your forked repository 
-4. Configure an App password so that the build process can copy newly build IGB jar file to your repository's Downloads section. For details, review the comments at the top of the bitbucket-pipelines.yml file in the repository.
-5. Visit the branches link and right-click to select the pipeline named "manual-build" to build the executable jar file. 
-6. If the pipeline fails, bitbucket will let you know. If the copying step worked, you should see a new file named igb_exe.jar in your repository's Downloads section.
+1. Create an account at Bitbucket.org.
+2. Fork this repository in your account.
+3. Enable bitbucket pipelines in your forked repository. 
+4. Configure an App password following instructions in bitbucket-pipelines.yml.
+5. Visit the Branches section of your repsitory and right-click the branch you want to build. 
+6. Choose "Run pipeline for branch" and select "manual-build." 
+
+
+If the pipeline fails, bitbucket will let you know. If the copying step worked, you should see `igb_exe.jar` listed in your repository's Downloads section.
 
 
 

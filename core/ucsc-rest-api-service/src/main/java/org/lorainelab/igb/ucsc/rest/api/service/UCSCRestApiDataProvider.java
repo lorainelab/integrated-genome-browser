@@ -37,7 +37,7 @@ import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.*;
 public final class UCSCRestApiDataProvider extends BaseDataProvider implements AssemblyProvider, ReferenceSequenceProvider {
 
     private final Set<String> availableGenomesSet;
-    private static final String linkoutUrl = ResourceBundle.getBundle("igb").getString("linkoutBaseUrl");
+    private String linkoutUrl = null;
 
     public UCSCRestApiDataProvider(String ucscRestUrl, String name, int loadPriority) {
         super(ucscRestUrl, name, loadPriority);
@@ -64,6 +64,18 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
     public UCSCRestApiDataProvider(String ucscRestUrl, String name, int loadPriority, String id) {
         super(ucscRestUrl, name, loadPriority, id);
         availableGenomesSet = Sets.newHashSet();
+        try {
+            URL ucscRestDsnUrl = new URIBuilder(url).build().toURL();
+        } catch (MalformedURLException | URISyntaxException ex) {
+            log.error(ex.getMessage(), ex);
+            setStatus(Disabled);
+        }
+    }
+
+    public UCSCRestApiDataProvider(int loadPriority, String ucscRestUrl, String name, String linkoutUrl) {
+        super(ucscRestUrl, name, loadPriority);
+        availableGenomesSet = Sets.newHashSet();
+        this.linkoutUrl = linkoutUrl;
         try {
             URL ucscRestDsnUrl = new URIBuilder(url).build().toURL();
         } catch (MalformedURLException | URISyntaxException ex) {

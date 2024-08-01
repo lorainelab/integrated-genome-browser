@@ -31,7 +31,8 @@ public class UriUtils {
                         .trustAllCerts()
                         .trustAllHosts()
                         .followRedirects(true)
-                        .connectTimeout(5000);
+                        .connectTimeout(5000)
+                        .readTimeout(5000);
                 code = httpRequest.code();
             } catch (HttpRequest.HttpRequestException ex) {
             }

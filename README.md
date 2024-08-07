@@ -13,7 +13,7 @@ Visit:
 * [BioViz Web site](https://bioviz.org) for platform-specific installers
 * Searchable on-line [User's Guide](https://wiki.bioviz.org/confluence/display/igbman/Home)
 * IGB programming [on-line class](https://canvas.instructure.com/courses/1164217)
-* [IGB Channel on YouTube](https://www.youtube.com/channel/UC0DA2d3YdbQ55ljkRKHRBkg) with video tutorials and demos
+* [IGB Channel on YouTube](https://www.youtube.com/c/IntegratedGenomeBrowser) with video tutorials and demos
 * [IGB Jira Issue Tracker site](http://jira.bioviz.org) describes development plans (requires login to see most content)
 * Article describing [Integrated Genome Browser: Visual analytics platform for genomics](http://bioinformatics.oxfordjournals.org/content/early/2016/04/04/bioinformatics.btw069.long) 
 
@@ -46,7 +46,7 @@ To do build a jar (java archive) file for IGB using Bitbucket pipelines:
 2. Fork this repository in your account.
 3. Enable bitbucket pipelines in your forked repository. 
 4. Configure an App password following instructions in bitbucket-pipelines.yml.
-5. Visit the Branches section of your repsitory and right-click the branch you want to build. 
+5. Visit the Branches section of your repository and right-click the branch you want to build. 
 6. Choose "Run pipeline for branch" and select "manual-build." 
 
 

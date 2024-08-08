@@ -174,10 +174,8 @@ public final class GeneralLoadUtils {
         versionName2species.put(preferredVersionName, speciesName);
         dataContainer.getGenomeVersion().setSpeciesName(speciesName);
         boolean isEnsemblDataProvider = dataProvider.getName().equalsIgnoreCase(ENSEMBL_REST);
-        if (!dataContainers.contains(dataContainer) && (dataContainers.isEmpty() || !isEnsemblDataProvider)) {
-            dataContainers.add(dataContainer);
-            genomeVersion.addDataContainer(dataContainer);
-        }
+        dataContainers.add(dataContainer);
+        genomeVersion.addDataContainer(dataContainer);
         if(!species2CommonNames.containsKey(speciesName)){
             species2CommonNames.put(speciesName, isEnsemblDataProvider ? dataProvider.getCommonSpeciesNameForVersionName(preferredVersionName).orElse(preferredVersionName) : speciesSynLookup.getCommonSpeciesName(speciesName));
         }

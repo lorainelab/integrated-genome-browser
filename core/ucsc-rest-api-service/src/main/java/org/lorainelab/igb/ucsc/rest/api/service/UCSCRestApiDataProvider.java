@@ -8,10 +8,12 @@ import com.affymetrix.genometry.data.sequence.ReferenceSequenceProvider;
 import com.affymetrix.genometry.general.DataContainer;
 import com.affymetrix.genometry.general.DataSet;
 import com.affymetrix.genometry.util.LoadUtils;
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import org.lorainelab.igb.ucsc.rest.api.service.model.GenomesData;
+import org.lorainelab.igb.ucsc.rest.api.service.model.TrackDetails;
 import org.lorainelab.igb.ucsc.rest.api.service.model.UCSCRestTracks;
 import org.lorainelab.igb.ucsc.rest.api.service.utils.UCSCRestServerUtils;
 
@@ -26,6 +28,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Comparator;
+import java.util.Objects;
+import java.util.ResourceBundle;
 
 import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.*;
 
@@ -33,6 +37,7 @@ import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.*;
 public final class UCSCRestApiDataProvider extends BaseDataProvider implements AssemblyProvider, ReferenceSequenceProvider {
 
     private final Set<String> availableGenomesSet;
+    private String linkoutUrl = null;
 
     public UCSCRestApiDataProvider(String ucscRestUrl, String name, int loadPriority) {
         super(ucscRestUrl, name, loadPriority);
@@ -59,6 +64,18 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
     public UCSCRestApiDataProvider(String ucscRestUrl, String name, int loadPriority, String id) {
         super(ucscRestUrl, name, loadPriority, id);
         availableGenomesSet = Sets.newHashSet();
+        try {
+            URL ucscRestDsnUrl = new URIBuilder(url).build().toURL();
+        } catch (MalformedURLException | URISyntaxException ex) {
+            log.error(ex.getMessage(), ex);
+            setStatus(Disabled);
+        }
+    }
+
+    public UCSCRestApiDataProvider(int loadPriority, String ucscRestUrl, String name, String linkoutUrl) {
+        super(ucscRestUrl, name, loadPriority);
+        availableGenomesSet = Sets.newHashSet();
+        this.linkoutUrl = linkoutUrl;
         try {
             URL ucscRestDsnUrl = new URIBuilder(url).build().toURL();
         } catch (MalformedURLException | URISyntaxException ex) {
@@ -124,9 +141,7 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
                         URI uri = uriBuilder.build();
                         String trackType = trackDetail.getType().split(" ")[0];
                         UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(url, uri, Optional.empty(), track, trackType, trackDetail, genomeVersion, contextRootkey.get());
-                        Map<String, String> featureProps = new HashMap<>();
-                        featureProps.put("description", trackDetail.getLongLabel());
-                        featureProps.put("track", track);
+                        Map<String, String> featureProps = getFeatureProps(track, trackDetail, contextRootkey);
                         String trackName = trackDetail.getShortLabel() + " (" + track + ")";
                         String datasetName = trackType + "/" + trackName;
                         DataSet dataSet = new DataSet(uri, datasetName, featureProps, dataContainer, ucscRestSymLoader, false);
@@ -144,9 +159,30 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
         return sortedDataSets;
     }
 
+    private Map<String, String> getFeatureProps(String track, TrackDetails trackDetail, Optional<String> contextRootkey) throws URISyntaxException {
+        Map<String, String> featureProps = new HashMap<>();
+        featureProps.put("description", trackDetail.getLongLabel());
+        featureProps.put("track", track);
+        if(!Strings.isNullOrEmpty(linkoutUrl)){
+            URIBuilder linkoutUrlBuilder = new URIBuilder(linkoutUrl);
+            linkoutUrlBuilder.addParameter("db", contextRootkey.get());
+            linkoutUrlBuilder.addParameter("g", track);
+            featureProps.put("linkoutUrl", linkoutUrlBuilder.toString());
+        }
+        return featureProps;
+    }
+
     @Override
     public Map<String, Integer> getAssemblyInfo(GenomeVersion genomeVersion) {
         return UCSCRestServerUtils.getAssemblyInfo(url, genomeVersion, availableGenomesSet);
+    }
+
+    @Override
+    public Optional<String> getDataSetLinkoutUrl(DataSet dataSet) {
+        String linkoutUrl = null;
+        if(Objects.nonNull(dataSet.getProperties()))
+            linkoutUrl = dataSet.getProperties().getOrDefault("linkoutUrl", null);
+        return !Strings.isNullOrEmpty(linkoutUrl) ? Optional.of(linkoutUrl) : Optional.empty();
     }
 
     @Override

@@ -38,6 +38,9 @@ public class DataProviderConfig {
     @Expose
     @XmlAttribute(name = "mirror")
     protected String mirror;
+    @Expose
+    @XmlAttribute(name = "linkoutUrl")
+    protected String linkoutUrl;
     /**
      * Default Data Providers should not be edited in the Data Sources table.
      * Only default data providers are read through this class, 
@@ -121,6 +124,14 @@ public class DataProviderConfig {
 
     public String getMirror() {
         return mirror;
+    }
+
+    public String getLinkoutUrl() {
+        return linkoutUrl;
+    }
+
+    public void setLinkoutUrl(String linkoutUrl) {
+        this.linkoutUrl = linkoutUrl;
     }
 
     public void setMirror(String value) {

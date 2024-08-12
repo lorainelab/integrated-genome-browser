@@ -231,6 +231,7 @@ public class DataProviderManager {
         String login = node.get(LOGIN, null);
         String password = node.get(PASSWORD, null);
         String mirrorUrl = node.get(MIRROR_URL, null);
+        String linkoutUrl = node.get(LINKOUT_URL, null);
         String status = node.get(STATUS, null);
         int loadPriority = node.getInt(LOAD_PRIORITY, -1);
 
@@ -241,7 +242,10 @@ public class DataProviderManager {
         Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);
         dataProviderFactory.ifPresent(factory -> {
             DataProvider dataProvider;
-            if (Strings.isNullOrEmpty(mirrorUrl)) {
+            if(!Strings.isNullOrEmpty(linkoutUrl)) {
+                dataProvider = factory.createDataProvider(loadPriority, url, name, linkoutUrl);
+            }
+            else if (Strings.isNullOrEmpty(mirrorUrl)) {
                 dataProvider = factory.createDataProvider(url, name, loadPriority);
             } else {
                 dataProvider = factory.createDataProvider(url, name, mirrorUrl, loadPriority);
@@ -311,7 +315,10 @@ public class DataProviderManager {
         }
         dataProviderFactory.ifPresent(factory -> {
             BaseDataProvider dataProvider;
-            if (Strings.isNullOrEmpty(config.getMirror())) {
+            if(!Strings.isNullOrEmpty(config.getLinkoutUrl())){
+                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getLoadPriority(), config.getUrl(), config.getName(), config.getLinkoutUrl());
+            }
+            else if (Strings.isNullOrEmpty(config.getMirror())) {
                 dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getLoadPriority(), config.getId());
             } else {
                 dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getMirror(), config.getLoadPriority(), config.getId());

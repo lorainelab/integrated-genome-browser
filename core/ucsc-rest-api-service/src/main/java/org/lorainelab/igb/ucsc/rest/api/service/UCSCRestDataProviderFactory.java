@@ -38,9 +38,9 @@ public class UCSCRestDataProviderFactory implements DataProviderFactory {
     }
 
     @Override
-    public DataProvider createDataProvider(int loadPriority, String url, String name, String linkoutUrl) {
+    public DataProvider createDataProvider(int loadPriority, String url, String name, String datasetLinkoutDomainUrl) {
         url = toExternalForm(url.trim());
-        UCSCRestApiDataProvider ucscRestApiDataProvider = new UCSCRestApiDataProvider(loadPriority, url, name, linkoutUrl);
+        UCSCRestApiDataProvider ucscRestApiDataProvider = new UCSCRestApiDataProvider(loadPriority, url, name, datasetLinkoutDomainUrl);
         PreferenceUtils.getDataProviderNode(url).put(DataProviderPrefKeys.FACTORY_NAME, FACTORY_NAME);
         return ucscRestApiDataProvider;
     }

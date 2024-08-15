@@ -39,8 +39,8 @@ public class DataProviderConfig {
     @XmlAttribute(name = "mirror")
     protected String mirror;
     @Expose
-    @XmlAttribute(name = "linkoutUrl")
-    protected String linkoutUrl;
+    @XmlAttribute(name = "datasetLinkoutDomainUrl")
+    protected String datasetLinkoutDomainUrl;
     /**
      * Default Data Providers should not be edited in the Data Sources table.
      * Only default data providers are read through this class, 
@@ -126,12 +126,12 @@ public class DataProviderConfig {
         return mirror;
     }
 
-    public String getLinkoutUrl() {
-        return linkoutUrl;
+    public String getDatasetLinkoutDomainUrl() {
+        return datasetLinkoutDomainUrl;
     }
 
-    public void setLinkoutUrl(String linkoutUrl) {
-        this.linkoutUrl = linkoutUrl;
+    public void setDatasetLinkoutDomainUrl(String datasetLinkoutDomainUrl) {
+        this.datasetLinkoutDomainUrl = datasetLinkoutDomainUrl;
     }
 
     public void setMirror(String value) {

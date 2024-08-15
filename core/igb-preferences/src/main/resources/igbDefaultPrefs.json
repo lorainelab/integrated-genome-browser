@@ -46,7 +46,7 @@
                 "factoryName": "ucsc rest",
                 "name": "UCSC REST",
                 "url": "https://api.genome.ucsc.edu",
-                "linkoutUrl": "https://genome.ucsc.edu/cgi-bin/hgTrackUi",
+                "datasetLinkoutDomainUrl": "https://genome.ucsc.edu/cgi-bin/hgTrackUi",
                 "loadPriority": "5",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:16"
             },

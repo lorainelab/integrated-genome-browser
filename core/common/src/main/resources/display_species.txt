@@ -1,4 +1,3 @@
-S_bicolor.png
 V_carteri.png
 A_melanoleuca.png
 A_mellifera.png
@@ -43,3 +42,4 @@ C_reinhardtii.png
 D_discoideum_Ax4.png
 P_persica.png
 R_communis.png
+S_bicolor.png

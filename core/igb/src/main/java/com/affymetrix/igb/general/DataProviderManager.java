@@ -47,8 +47,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
@@ -231,7 +229,7 @@ public class DataProviderManager {
         String login = node.get(LOGIN, null);
         String password = node.get(PASSWORD, null);
         String mirrorUrl = node.get(MIRROR_URL, null);
-        String linkoutUrl = node.get(LINKOUT_URL, null);
+        String datasetLinkoutDomainUrl = node.get(DATASET_LINKOUT_DOMAIN_URL, null);
         String status = node.get(STATUS, null);
         int loadPriority = node.getInt(LOAD_PRIORITY, -1);
 
@@ -242,8 +240,8 @@ public class DataProviderManager {
         Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);
         dataProviderFactory.ifPresent(factory -> {
             DataProvider dataProvider;
-            if(!Strings.isNullOrEmpty(linkoutUrl)) {
-                dataProvider = factory.createDataProvider(loadPriority, url, name, linkoutUrl);
+            if(!Strings.isNullOrEmpty(datasetLinkoutDomainUrl)) {
+                dataProvider = factory.createDataProvider(loadPriority, url, name, datasetLinkoutDomainUrl);
             }
             else if (Strings.isNullOrEmpty(mirrorUrl)) {
                 dataProvider = factory.createDataProvider(url, name, loadPriority);
@@ -315,8 +313,8 @@ public class DataProviderManager {
         }
         dataProviderFactory.ifPresent(factory -> {
             BaseDataProvider dataProvider;
-            if(!Strings.isNullOrEmpty(config.getLinkoutUrl())){
-                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getLoadPriority(), config.getUrl(), config.getName(), config.getLinkoutUrl());
+            if(!Strings.isNullOrEmpty(config.getDatasetLinkoutDomainUrl())){
+                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getLoadPriority(), config.getUrl(), config.getName(), config.getDatasetLinkoutDomainUrl());
             }
             else if (Strings.isNullOrEmpty(config.getMirror())) {
                 dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getLoadPriority(), config.getId());

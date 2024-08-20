@@ -16,7 +16,7 @@ public class DataProviderPrefKeys {
     public static final String PASSWORD = "password";
     public static final String PRIMARY_URL = "url";
     public static final String MIRROR_URL = "mirrorUrl";
-    public static final String LINKOUT_URL = "linkoutUrl";
+    public static final String DATASET_LINKOUT_DOMAIN_URL = "datasetLinkoutDomainUrl";
     public static final String STATUS = "status";
     public static final String LOAD_PRIORITY = "loadPriority";
     public static final String REMEMBER_CREDENTIALS = "rememberCredentials";

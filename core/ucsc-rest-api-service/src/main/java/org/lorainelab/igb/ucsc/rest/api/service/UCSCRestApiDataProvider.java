@@ -37,7 +37,7 @@ import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.*;
 public final class UCSCRestApiDataProvider extends BaseDataProvider implements AssemblyProvider, ReferenceSequenceProvider {
 
     private final Set<String> availableGenomesSet;
-    private String linkoutUrl = null;
+    private String datasetLinkoutDomainUrl = null;
 
     public UCSCRestApiDataProvider(String ucscRestUrl, String name, int loadPriority) {
         super(ucscRestUrl, name, loadPriority);
@@ -72,10 +72,10 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
         }
     }
 
-    public UCSCRestApiDataProvider(int loadPriority, String ucscRestUrl, String name, String linkoutUrl) {
+    public UCSCRestApiDataProvider(int loadPriority, String ucscRestUrl, String name, String datasetLinkoutDomainUrl) {
         super(ucscRestUrl, name, loadPriority);
         availableGenomesSet = Sets.newHashSet();
-        this.linkoutUrl = linkoutUrl;
+        this.datasetLinkoutDomainUrl = datasetLinkoutDomainUrl;
         try {
             URL ucscRestDsnUrl = new URIBuilder(url).build().toURL();
         } catch (MalformedURLException | URISyntaxException ex) {
@@ -163,8 +163,8 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
         Map<String, String> featureProps = new HashMap<>();
         featureProps.put("description", trackDetail.getLongLabel());
         featureProps.put("track", track);
-        if(!Strings.isNullOrEmpty(linkoutUrl)){
-            URIBuilder linkoutUrlBuilder = new URIBuilder(linkoutUrl);
+        if(!Strings.isNullOrEmpty(datasetLinkoutDomainUrl)){
+            URIBuilder linkoutUrlBuilder = new URIBuilder(datasetLinkoutDomainUrl);
             linkoutUrlBuilder.addParameter("db", contextRootkey.get());
             linkoutUrlBuilder.addParameter("g", track);
             featureProps.put("linkoutUrl", linkoutUrlBuilder.toString());

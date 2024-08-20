@@ -21,7 +21,7 @@ public class UCSCRestTracks {
     private String dataTime;
     private long dataTimeStamp;
     private Map<String, TrackDetails> tracks;
-    private static List<String> AVAILABLE_TYPES = Arrays.asList("genePred", "psl", "bed", "bigBed", "bedDetail", "bigWig", "wig", "bigGenePred", "narrowPeak", "barChart", "bigBarChart");
+    private static List<String> AVAILABLE_TYPES = Arrays.asList("genePred", "psl", "bed", "bigBed", "bedDetail", "wig", "bigGenePred", "barChart", "bigBarChart");
 
     public void setTracks(String jsonString, String genome) {
         JsonObject jsonObject = new Gson().fromJson(jsonString, JsonObject.class);

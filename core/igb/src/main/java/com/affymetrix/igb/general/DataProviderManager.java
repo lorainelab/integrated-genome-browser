@@ -457,13 +457,15 @@ public class DataProviderManager {
                 versionName = genomeVersionSynonymLookup.getPreferredName(availableContainers.iterator().next().getName());
                 speciesName = GeneralLoadUtils.getVersionName2Species().get(versionName);
             } else {
-                versionName = genomeName;
                 if(genomeVersionProvider.getName().equalsIgnoreCase(ENSEMBL_REST)){
+                    versionName = genomeName;
                     speciesName = genomeVersionProvider.getSpeciesNameForVersionName(versionName).orElse(genomeName);
                     speciesName = speciesSynLookup.getPreferredName(speciesName);
                 }
-                else
+                else{
+                    versionName = genomeVersionSynonymLookup.getPreferredName(genomeName);
                     speciesName = speciesSynLookup.getSpeciesName(genomeName);
+                }
             }
             if (!isEnsemblDataProvider || !GeneralLoadUtils.getLoadedSpeciesNames().contains(speciesName))
                 GeneralLoadUtils.retrieveDataContainer(genomeVersionProvider, speciesName, versionName, false, genomeVersion.getGenomeVersionSynonymLookup(),  genomeVersion.getSpeciesSynLookup());

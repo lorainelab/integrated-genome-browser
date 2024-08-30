@@ -181,6 +181,11 @@
             <artifactId>ucsc-rest-api-service</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

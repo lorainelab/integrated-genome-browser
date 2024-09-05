@@ -306,6 +306,7 @@ public class Activator implements BundleActivator {
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.MappingQualityFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.ScoreFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.PropertyFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.SamTagsFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.PairedFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.PairedByRunNoFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.DuplicateFilter(), null);

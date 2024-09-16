@@ -65,7 +65,7 @@ public class UCSCRestApiDataProviderTest {
             when(mockHttpClient.execute(Mockito.argThat(httpget ->
                     httpget instanceof HttpGet && httpget.getURI().toString().equals(apiUrl)), any(ResponseHandler.class)))
                     .thenReturn(mockResponse);
-            ucscRestApiDataProvider = new UCSCRestApiDataProvider(1, UCSC_REST_URL, "UCSC REST", "https://genome.ucsc.edu/cgi-bin/hgTrackUi");
+            ucscRestApiDataProvider = new UCSCRestApiDataProvider(1, UCSC_REST_URL, "UCSC REST", "15", "https://genome.ucsc.edu/cgi-bin/hgTrackUi");
             ucscRestApiDataProvider.initialize();
         }
         genomeVersion = new GenomeVersion(HUMAN_GENOME_ID);

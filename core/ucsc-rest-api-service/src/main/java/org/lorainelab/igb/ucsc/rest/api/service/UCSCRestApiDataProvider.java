@@ -72,8 +72,8 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
         }
     }
 
-    public UCSCRestApiDataProvider(int loadPriority, String ucscRestUrl, String name, String datasetLinkoutDomainUrl) {
-        super(ucscRestUrl, name, loadPriority);
+    public UCSCRestApiDataProvider(int loadPriority, String ucscRestUrl, String name, String id, String datasetLinkoutDomainUrl) {
+        super(ucscRestUrl, name, loadPriority, id);
         availableGenomesSet = Sets.newHashSet();
         this.datasetLinkoutDomainUrl = datasetLinkoutDomainUrl;
         try {

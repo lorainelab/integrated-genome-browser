@@ -240,10 +240,7 @@ public class DataProviderManager {
         Optional<DataProviderFactory> dataProviderFactory = dataProviderFactoryManager.findFactoryByName(factoryName);
         dataProviderFactory.ifPresent(factory -> {
             DataProvider dataProvider;
-            if(!Strings.isNullOrEmpty(datasetLinkoutDomainUrl)) {
-                dataProvider = factory.createDataProvider(loadPriority, url, name, datasetLinkoutDomainUrl);
-            }
-            else if (Strings.isNullOrEmpty(mirrorUrl)) {
+            if (Strings.isNullOrEmpty(mirrorUrl)) {
                 dataProvider = factory.createDataProvider(url, name, loadPriority);
             } else {
                 dataProvider = factory.createDataProvider(url, name, mirrorUrl, loadPriority);
@@ -314,7 +311,7 @@ public class DataProviderManager {
         dataProviderFactory.ifPresent(factory -> {
             BaseDataProvider dataProvider;
             if(!Strings.isNullOrEmpty(config.getDatasetLinkoutDomainUrl())){
-                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getLoadPriority(), config.getUrl(), config.getName(), config.getDatasetLinkoutDomainUrl());
+                dataProvider = (BaseDataProvider) factory.createDataProvider(config.getLoadPriority(), config.getUrl(), config.getName(), config.getId(), config.getDatasetLinkoutDomainUrl());
             }
             else if (Strings.isNullOrEmpty(config.getMirror())) {
                 dataProvider = (BaseDataProvider) factory.createDataProvider(config.getUrl(), config.getName(), config.getLoadPriority(), config.getId());

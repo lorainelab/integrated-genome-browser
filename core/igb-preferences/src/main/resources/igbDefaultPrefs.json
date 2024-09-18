@@ -35,14 +35,6 @@
                 "status": "disabled"
             },
             {
-                "factoryName": "das",
-                "name": "UCSC",
-                "url": "https://genome.cse.ucsc.edu/cgi-bin/das",
-                "loadPriority": "7",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:15",
-                "status": "disabled"
-            },
-            {
                 "factoryName": "ucsc rest",
                 "name": "UCSC REST",
                 "url": "https://api.genome.ucsc.edu",

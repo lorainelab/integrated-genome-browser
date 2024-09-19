@@ -20,8 +20,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.UUID;
 
-public class GoogleAnalyticsTracker {
-    private static final Logger logger = LoggerFactory.getLogger(GoogleAnalyticsTracker.class);
+public class GoogleAnalytics {
+    private static final Logger logger = LoggerFactory.getLogger(GoogleAnalytics.class);
     public static final String ENGAGEMENT_TIME_DEFAULT_VALUE = "10000"; //Defaulting the value to some constant milliseconds as this variable is needed to get the active users in the report
     private final String igbName;
     private final String igbVersion;
@@ -31,7 +31,7 @@ public class GoogleAnalyticsTracker {
     public static final int HTTP_NO_CONTENT = 204;
     private static final String IGB_INSTANCE_FILE_NAME = "igb_instance.txt";
 
-    public GoogleAnalyticsTracker(String igbName, String igbVersion, String googleAnalyticsId, String googleAnalyticsApiSecret) {
+    public GoogleAnalytics(String igbName, String igbVersion, String googleAnalyticsId, String googleAnalyticsApiSecret) {
         this.igbName = igbName;
         this.igbVersion = igbVersion;
         this.googleAnalyticsId = googleAnalyticsId;

@@ -353,9 +353,9 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
 
     private void notifyCounter() {
         if (!isDevelopmentMode()) {
-            GoogleAnalytics tracker = new GoogleAnalytics(
+            GoogleAnalytics googleAnalyticsSession = new GoogleAnalytics(
                     IGB_NAME, IGB_VERSION, GOOGLE_ANALYTICS_ID, GOOGLE_ANALYTICS_API_SECRET);
-            tracker.trackEvent();
+            googleAnalyticsSession.sendEvent();
         }
     }
 

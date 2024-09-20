@@ -43,7 +43,7 @@ import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
-import com.affymetrix.igb.util.GoogleAnalyticsTracker;
+import com.affymetrix.igb.util.GoogleAnalytics;
 import com.affymetrix.igb.util.IGBTrustManager;
 import com.affymetrix.igb.view.IGBToolBar;
 import com.affymetrix.igb.view.SeqMapView;
@@ -353,9 +353,9 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
 
     private void notifyCounter() {
         if (!isDevelopmentMode()) {
-            GoogleAnalyticsTracker tracker = new GoogleAnalyticsTracker(
+            GoogleAnalytics googleAnalyticsSession = new GoogleAnalytics(
                     IGB_NAME, IGB_VERSION, GOOGLE_ANALYTICS_ID, GOOGLE_ANALYTICS_API_SECRET);
-            tracker.trackEvent();
+            googleAnalyticsSession.sendEvent();
         }
     }
 

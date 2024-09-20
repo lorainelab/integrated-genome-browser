@@ -20,8 +20,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.UUID;
 
-public class GoogleAnalyticsTracker {
-    private static final Logger logger = LoggerFactory.getLogger(GoogleAnalyticsTracker.class);
+public class GoogleAnalytics {
+    private static final Logger logger = LoggerFactory.getLogger(GoogleAnalytics.class);
     public static final String ENGAGEMENT_TIME_DEFAULT_VALUE = "10000"; //Defaulting the value to some constant milliseconds as this variable is needed to get the active users in the report
     private final String igbName;
     private final String igbVersion;
@@ -31,7 +31,7 @@ public class GoogleAnalyticsTracker {
     public static final int HTTP_NO_CONTENT = 204;
     private static final String IGB_INSTANCE_FILE_NAME = "igb_instance.txt";
 
-    public GoogleAnalyticsTracker(String igbName, String igbVersion, String googleAnalyticsId, String googleAnalyticsApiSecret) {
+    public GoogleAnalytics(String igbName, String igbVersion, String googleAnalyticsId, String googleAnalyticsApiSecret) {
         this.igbName = igbName;
         this.igbVersion = igbVersion;
         this.googleAnalyticsId = googleAnalyticsId;
@@ -40,15 +40,15 @@ public class GoogleAnalyticsTracker {
 
     /**
      * This method uses Google Analytics' Measurement Protocol for GA4, which allows you to manually send
-     * event data from any environment. The Measurement Protocol is useful for tracking events from
-     * non-browser-based (desktop) applications like IGB. It uses client_id, which initially is a randomly
-     * generated UUID but after the initial generation it is stored in a file inside .igb folder and then
-     * from the next time the stored value is used. By using this approach, we ensure that we are tracking
-     * the users properly as the client_id should be unique for each Client.
+     * event data from any environment. The Measurement Protocol is useful for sending events from
+     * non-browser-based (desktop) applications like IGB. It uses client_id, which is a randomly
+     * generated UUID which is stored in a file inside the .igb folder.
+     * The next time the user starts IGB, the stored value is used. 
+     * By using this approach, we ensure that we have the proper user count as the client_id should be unique for each Client.
      * For more details, refer to the official Google Analytics Measurement Protocol documentation:
      * https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events
      */
-    public void trackEvent() {
+    public void sendEvent() {
         String clientId = getIgbInstance();
         String sessionId = UUID.randomUUID().toString();
         String url = "https://www.google-analytics.com/mp/collect?measurement_id=" + googleAnalyticsId + "&api_secret=" + googleAnalyticsApiSecret;

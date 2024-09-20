@@ -21,11 +21,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.boxysystems</groupId>
-            <artifactId>jgoogleanalytics</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>window-service</artifactId>
             <scope>provided</scope>

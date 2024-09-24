@@ -1,5 +1,7 @@
 package org.lorainelab.igb.ucsc.rest.api.service.utils;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -18,6 +20,7 @@ public class ApiResponseHandler implements ResponseHandler<String> {
     public static final int HTTP_MOVED_PERM = 301;
     public static final int HTTP_MOVED_TEMP = 302;
     public static final int HTTP_SEE_OTHER = 303;
+    public static final int HTTP_BAD_REQUEST = 400;
     @Override
     public String handleResponse(HttpResponse response) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -29,6 +32,11 @@ public class ApiResponseHandler implements ResponseHandler<String> {
                 logger.info("API has moved to: " + newApiUrl);
                 HttpGet redirectedRequest = new HttpGet(newApiUrl);
                 return httpClient.execute(redirectedRequest, this);
+            } else if (statusCode == HTTP_BAD_REQUEST && response.getEntity()!=null) {
+                JsonObject responseBody = JsonParser.parseString(EntityUtils.toString(response.getEntity())).getAsJsonObject();
+                if(responseBody.has("error"))
+                    logger.warn("Received 400 Bad Request: " + responseBody.get("error"));
+                return null;
             } else {
                 throw new ClientProtocolException("Unexpected response status: " + statusCode);
             }

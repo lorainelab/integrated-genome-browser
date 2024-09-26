@@ -544,7 +544,7 @@ public final class GeneralLoadUtils {
         iterateSeqList(dataSource, false);
     }
 
-    static void iterateSeqList(final DataSet feature, boolean isUCSCRestRefGeneAutoload) {
+    static void iterateSeqList(final DataSet feature, boolean isUCSCRestRefAutoload) {
 
         CThreadWorker<Void, BioSeq> worker = new CThreadWorker<Void, BioSeq>(
                 MessageFormat.format(LOADING_FEATURE_MESSAGE, feature.getDataSetName())) {
@@ -561,10 +561,10 @@ public final class GeneralLoadUtils {
 //                                            return s1.getName().compareToIgnoreCase(s2.getName());
 //                                        }
 //                                    });
-                    if (!isUCSCRestRefGeneAutoload && feature.getSymL().isMultiThreadOK()) {
+                    if (!isUCSCRestRefAutoload && feature.getSymL().isMultiThreadOK()) {
                         return multiThreadedLoad(chrList);
                     }
-                    return singleThreadedLoad(chrList, isUCSCRestRefGeneAutoload);
+                    return singleThreadedLoad(chrList, isUCSCRestRefAutoload);
                 } catch (Throwable ex) {
                     LOG.error(
                             "Error while loading feature", ex);
@@ -575,10 +575,10 @@ public final class GeneralLoadUtils {
                 }
             }
 
-            protected Void singleThreadedLoad(List<BioSeq> chrList, boolean isUCSCRestRefGeneAutoload) throws Exception {
+            protected Void singleThreadedLoad(List<BioSeq> chrList, boolean isUCSCRestRefAutoload) throws Exception {
                 BioSeq current_seq = gmodel.getSelectedSeq().orElse(null);
 
-                if(current_seq == null && isUCSCRestRefGeneAutoload && !chrList.isEmpty())
+                if(current_seq == null && isUCSCRestRefAutoload && !chrList.isEmpty())
                     current_seq = chrList.get(0);
 
                 if (current_seq != null) {
@@ -586,7 +586,7 @@ public final class GeneralLoadUtils {
                     publish(current_seq);
                 }
 
-                if (!isUCSCRestRefGeneAutoload){
+                if (!isUCSCRestRefAutoload){
                     for (final BioSeq seq : chrList) {
                         if (seq == current_seq) {
                             continue;

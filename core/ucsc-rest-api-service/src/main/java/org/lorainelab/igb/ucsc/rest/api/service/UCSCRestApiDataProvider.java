@@ -135,7 +135,7 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
                 UCSCRestTracks ucscRestTracks = tracksResponse.get();
                 ucscRestTracks.getTracks().forEach((track, trackDetail) -> {
                     try {
-                        URIBuilder uriBuilder = new URIBuilder(contextRoot + "/getData/track");
+                        URIBuilder uriBuilder = new URIBuilder(UCSCRestServerUtils.toExternalForm(contextRoot) + "getData/track");
                         uriBuilder.addParameter("genome", contextRootkey.get());
                         uriBuilder.addParameter("track", track);
                         URI uri = uriBuilder.build();

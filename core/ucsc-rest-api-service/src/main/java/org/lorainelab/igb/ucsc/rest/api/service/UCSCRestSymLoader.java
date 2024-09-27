@@ -62,8 +62,7 @@ public class UCSCRestSymLoader extends SymLoader {
         uriBuilder.addParameter(START, String.valueOf(min));
         uriBuilder.addParameter(END, String.valueOf(max));
         try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            String trackUri = uriBuilder.toString();
-            HttpGet httpget = new HttpGet(trackUri);
+            HttpGet httpget = new HttpGet(uriBuilder.toString());
             String responseBody = httpClient.execute(httpget, new ApiResponseHandler());
             if (trackType.equalsIgnoreCase(GENE_PRED)) {
                 TrackDataDetails<GenePred> trackDataDetails = new Gson().fromJson(responseBody, new TypeToken<TrackDataDetails<GenePred>>() {
@@ -79,7 +78,7 @@ public class UCSCRestSymLoader extends SymLoader {
                             int txMax = Math.max(trackData.getTxStart(), trackData.getTxEnd());
                             int[] emins = Arrays.stream(trackData.getExonStarts().split(",")).mapToInt(Integer::parseInt).toArray();
                             int[] emaxs = Arrays.stream(trackData.getExonEnds().split(",")).mapToInt(Integer::parseInt).toArray();
-                            return new UcscBedSymWithProps(trackUri, determineSeq(genomeVersion, trackData.getChrom(), 0),
+                            return new UcscBedSymWithProps(contextRoot, determineSeq(genomeVersion, trackData.getChrom(), 0),
                                     txMin, txMax, trackData.getName(), trackData.getScore(),
                                     forward, trackData.getCdsStart(), trackData.getCdsEnd(), emins, emaxs, null, trackData.getName2());
                         }).collect(Collectors.toList());
@@ -94,7 +93,7 @@ public class UCSCRestSymLoader extends SymLoader {
                     List<Psl> trackDataList = trackDataDetails.getTrackData();
                     List<UcscPslSym> ucscPslSyms = new ArrayList<>();
                     if(!trackDataList.isEmpty()) {
-                        ucscPslSyms = trackDataList.stream().map(trackData -> getUcscPslSym(trackData, trackUri)).collect(Collectors.toList());
+                        ucscPslSyms = trackDataList.stream().map(this::getUcscPslSym).collect(Collectors.toList());
                     }
                     return ucscPslSyms;
                 }
@@ -116,7 +115,7 @@ public class UCSCRestSymLoader extends SymLoader {
                             int[] blockMaxs = trackData.getBlockSizesArray() != null
                                     ? BedParser.makeBlockMaxs(trackData.getBlockSizesArray(), blockMins)
                                     : new int[]{txMax};
-                            return new UcscBedSymWithProps(trackUri, determineSeq(genomeVersion, trackData.getChrom(), 0),
+                            return new UcscBedSymWithProps(contextRoot, determineSeq(genomeVersion, trackData.getChrom(), 0),
                                     txMin, txMax, trackData.getName(), trackData.getScore(),
                                     forward, trackData.getThickStart(), trackData.getThickEnd(),
                                     blockMins, blockMaxs, trackData.getProps(), trackData.getGeneName());
@@ -151,7 +150,7 @@ public class UCSCRestSymLoader extends SymLoader {
                     List<NarrowPeakTypeData> trackDataList = trackDataDetails.getTrackData();
                     List<NarrowPeakSym> narrowPeakSyms = new ArrayList<>();
                     if(!trackDataList.isEmpty())  {
-                        narrowPeakSyms = trackDataList.stream().map(trackData -> getNarrowPeakSym(trackData, trackUri)).collect(Collectors.toList());
+                        narrowPeakSyms = trackDataList.stream().map(this::getNarrowPeakSym).collect(Collectors.toList());
                     }
                     return narrowPeakSyms;
                 }
@@ -163,7 +162,7 @@ public class UCSCRestSymLoader extends SymLoader {
                     List<BarChartTypeData> trackDataList = trackDataDetails.getTrackData();
                     List<UcscBedSymWithProps> ucscBedSymsWithProps = new ArrayList<>();
                     if(!trackDataList.isEmpty()) {
-                        trackDataList.forEach(trackData -> getBarChartBedSym(trackData, ucscBedSymsWithProps, trackUri));
+                        trackDataList.forEach(trackData -> getBarChartBedSym(trackData, ucscBedSymsWithProps));
                     }
                     return ucscBedSymsWithProps;
                 }
@@ -172,7 +171,7 @@ public class UCSCRestSymLoader extends SymLoader {
         return null;
     }
 
-    private void getBarChartBedSym(BarChartTypeData trackData, List<UcscBedSymWithProps> ucscBedSymsWithProps, String trackUri) {
+    private void getBarChartBedSym(BarChartTypeData trackData, List<UcscBedSymWithProps> ucscBedSymsWithProps) {
         boolean forward = (trackData.getStrand() == null) || trackData.getStrand().isEmpty() || (trackData.getStrand().equals("+") || trackData.getStrand().equals("++"));
         int txMin = Math.min(trackData.getChromStart(), trackData.getChromEnd());
         int txMax = Math.max(trackData.getChromStart(), trackData.getChromEnd());
@@ -185,20 +184,20 @@ public class UCSCRestSymLoader extends SymLoader {
                 props.put("name2", trackData.getName2());
                 Color decodedRGBColor = Color.decode(barChartColors[i]);
                 props.put(TrackLineParser.ITEM_RGB, decodedRGBColor);
-                ucscBedSymsWithProps.add(new UcscBedSymWithProps(trackUri, determineSeq(genomeVersion, trackData.getChrom(), 0),
+                ucscBedSymsWithProps.add(new UcscBedSymWithProps(contextRoot, determineSeq(genomeVersion, trackData.getChrom(), 0),
                                 txMin, txMax, barChartBarCategories[i], expScoresArray[i],
                                 forward, Integer.MIN_VALUE, Integer.MIN_VALUE,
                                 new int[]{txMin}, new int[]{txMax}, props, trackData.getName()));
             }
         }else {
-            ucscBedSymsWithProps.add(new UcscBedSymWithProps(trackUri, determineSeq(genomeVersion, trackData.getChrom(), 0),
+            ucscBedSymsWithProps.add(new UcscBedSymWithProps(contextRoot, determineSeq(genomeVersion, trackData.getChrom(), 0),
                      txMin, txMax, trackData.getName(), trackData.getScore(),
                      forward, Integer.MIN_VALUE, Integer.MIN_VALUE,
                      new int[]{txMin}, new int[]{txMax}, null, trackData.getName2()));
         }
     }
 
-    private UcscPslSym getUcscPslSym(Psl trackData, String trackUri) {
+    private UcscPslSym getUcscPslSym(Psl trackData) {
         String strandstring = trackData.strand;
         boolean same_orientation = true, qforward = true, tforward = true;
         if (strandstring.length() == 1) {
@@ -221,13 +220,13 @@ public class UCSCRestSymLoader extends SymLoader {
             qmins = (int[]) child_arrays.get(1);
             tmins = (int[]) child_arrays.get(2);
         }
-        return new UcscPslSym(trackUri, trackData.matches, trackData.misMatches, trackData.repMatches, trackData.nCount,
+        return new UcscPslSym(contextRoot, trackData.matches, trackData.misMatches, trackData.repMatches, trackData.nCount,
                 trackData.qNumInsert, trackData.qBaseInsert, trackData.tNumInsert, trackData.tBaseInsert, same_orientation,
                 qseq, trackData.qStart, trackData.qEnd, tseq, trackData.tStart, trackData.tEnd,
                 trackData.blockCount, blocksizes, qmins, tmins, false);
     }
 
-    private NarrowPeakSym getNarrowPeakSym(NarrowPeakTypeData trackData, String trackUri) {
+    private NarrowPeakSym getNarrowPeakSym(NarrowPeakTypeData trackData) {
         int chromMin = Math.min(trackData.chromStart, trackData.chromEnd);
         int chromMax = Math.max(trackData.chromStart, trackData.chromEnd);
         if (trackData.name == null || trackData.name.equals("."))
@@ -245,7 +244,7 @@ public class UCSCRestSymLoader extends SymLoader {
         blockMins[0] = chromMin;
         int[] blockMaxs = new int[1];
         blockMaxs[0] = chromMax;
-        NarrowPeakSym narrowPeakSym = new NarrowPeakSym(trackUri, determineSeq(genomeVersion, trackData.getChrom(), 0),
+        NarrowPeakSym narrowPeakSym = new NarrowPeakSym(contextRoot, determineSeq(genomeVersion, trackData.getChrom(), 0),
                 chromMin, chromMax, trackData.name, score,
                 isForwardStrand, peakStart, peakStop, blockMins, blockMaxs);
         if (!trackData.name.isEmpty()) {

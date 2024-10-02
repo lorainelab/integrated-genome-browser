@@ -118,12 +118,12 @@ public class UCSCRestApiDataProviderTest {
             URL resourceURL = Objects.requireNonNull(UCSCRestApiDataProviderTest.class.getClassLoader().getResource(available_tracks_test_file));
             String availableTracksFilename = Paths.get(resourceURL.toURI()).toString();
             String availableTracksMockResponse = Files.readString(Paths.get(availableTracksFilename));
-            String availableTracksApiUrl = "https://api.genome.ucsc.edu/list/tracks?genome=hg38&trackLeavesOnly=1";
+            String availableTracksApiUrl = "https://api.genome.ucsc.edu/list/tracks?genome=hg38";
             when(mockHttpClient.execute(Mockito.argThat(httpget ->
                     httpget instanceof HttpGet && httpget.getURI().toString().equals(availableTracksApiUrl)), any(ResponseHandler.class)))
                     .thenReturn(availableTracksMockResponse);
             Set<DataSet> availableDataSets = ucscRestApiDataProvider.getAvailableDataSets(dataContainer);
-            assertTrue(availableDataSets.stream().anyMatch(dataSet -> dataSet.getDataSetName().equals("genePred/AUGUSTUS (augustusGene)")));
+            assertTrue(availableDataSets.stream().anyMatch(dataSet -> dataSet.getDataSetName().equals("Genes and Gene Predictions/genePredArchive/AUGUSTUS (augustusGene)")));
         }
     }
 

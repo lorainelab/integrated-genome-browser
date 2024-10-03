@@ -312,9 +312,9 @@ public final class GeneralLoadView {
 
     public synchronized void loadGenomeLoadModeDataSets() {
         List<DataSet> visibleFeatures = GeneralLoadUtils.getVisibleFeatures();
-        List<DataSet> unreachableGenomeLoadDataSets = GeneralLoadUtils.getGenomeVersionDataSets().stream()
-                .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME)
-                .filter(dataSet -> !GeneralLoadUtils.isLoaded(dataSet, visibleFeatures))
+        List<DataSet> loadGenomeStrategyDatasets = new ArrayList<>(GeneralLoadUtils.getGenomeVersionDataSets().stream()
+                .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME).toList());
+        List<DataSet> unreachableGenomeLoadDataSets = loadGenomeStrategyDatasets.stream().filter(dataSet -> !GeneralLoadUtils.isLoaded(dataSet, visibleFeatures))
                 .filter(dataSet -> !LocalUrlCacher.isURIReachable(dataSet.getURI())).collect(Collectors.toList());
         if (!unreachableGenomeLoadDataSets.isEmpty()) {
             ModalUtils.errorPanel("The following data sets are required, but unreachable {}" + System.lineSeparator() + Joiner.on(System.lineSeparator()).join(unreachableGenomeLoadDataSets));
@@ -333,9 +333,19 @@ public final class GeneralLoadView {
                 .findAny();
         boolean isIGBQuickloadPresent = igbQuickload.isPresent();
 
-        GeneralLoadUtils.getGenomeVersionDataSets().stream()
-                .filter(dataSet -> dataSet.getLoadStrategy() == LoadStrategy.GENOME ||
-                        (!isIGBQuickloadPresent && isUCSCRestRefGene(dataSet)))
+        if(!isIGBQuickloadPresent){
+            Optional<DataSet> ucscRestRefGene = GeneralLoadUtils.getGenomeVersionDataSets().stream()
+                    .filter(GeneralLoadView::isUCSCRestRefGene).findAny();
+            if(ucscRestRefGene.isPresent())
+                loadGenomeStrategyDatasets.add(ucscRestRefGene.get());
+            else {
+                Optional<DataSet> ucscRestRefSeqAll = GeneralLoadUtils.getGenomeVersionDataSets().stream()
+                        .filter(GeneralLoadView::isUCSCRestRefSeqAll).findAny();
+                ucscRestRefSeqAll.ifPresent(loadGenomeStrategyDatasets::add);
+            }
+        }
+
+        loadGenomeStrategyDatasets.stream()
                 .filter(dataSet -> !GeneralLoadUtils.isLoaded(dataSet, visibleFeatures))
                 .forEach(dataSet -> {
                     Optional<InputStream> fileIs = Optional.empty();
@@ -374,7 +384,7 @@ public final class GeneralLoadView {
                     if (dataSet.getSymL() instanceof SymLoaderInst) {
                         GeneralLoadUtils.loadAllSymmetriesThread(dataSet);
                     } else if (isNotAlreadyLoaded(dataSet)) {
-                        if(isUCSCRestRefGene(dataSet)) {
+                        if(isUCSCRestRefGene(dataSet) || isUCSCRestRefSeqAll(dataSet)) {
                             dataSet.setVisible();
                             refreshTreeView();
                             GeneralLoadUtils.iterateSeqList(dataSet, true);
@@ -389,6 +399,12 @@ public final class GeneralLoadView {
         return dataSet.getDataContainer().getDataProvider().getName().equals("UCSC REST")
                 && (dataSet.getProperties() != null && dataSet.getProperties().containsKey("track")
                 && dataSet.getProperties().get("track").equals("refGene"));
+    }
+
+    private static boolean isUCSCRestRefSeqAll(DataSet dataSet) {
+        return dataSet.getDataContainer().getDataProvider().getName().equals("UCSC REST")
+                && (dataSet.getProperties() != null && dataSet.getProperties().containsKey("track")
+                && dataSet.getProperties().get("track").equals("ncbiRefSeq"));
     }
 
     private static boolean isNotAlreadyLoaded(final DataSet dataSet) {

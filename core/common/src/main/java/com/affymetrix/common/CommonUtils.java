@@ -33,6 +33,7 @@ public class CommonUtils {
     public static final String IGB_ABBREVIATION = BUNDLE.getString("igbAbbreviation");
     public static final String IGB_VERSION = BUNDLE.getString("igbVersion");
     private static final String GOOGLE_ANALYTICS_ID = BUNDLE.getString("googleAnalyticsId");
+    private static final String GOOGLE_ANALYTICS_API_SECRET = BUNDLE.getString("googleAnalyticsApiSecret");
     final public static boolean IS_WINDOWS
             = System.getProperty("os.name").toLowerCase().contains("windows");
     final public static boolean IS_MAC
@@ -89,6 +90,10 @@ public class CommonUtils {
 
     public String getGoogleAnalyticsId() {
         return GOOGLE_ANALYTICS_ID;
+    }
+
+    public String getGoogleAnalyticsApiSecret() {
+        return GOOGLE_ANALYTICS_API_SECRET;
     }
 
     /**

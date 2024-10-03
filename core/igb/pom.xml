@@ -21,11 +21,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.boxysystems</groupId>
-            <artifactId>jgoogleanalytics</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>window-service</artifactId>
             <scope>provided</scope>
@@ -179,6 +174,11 @@
         <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>ucsc-rest-api-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

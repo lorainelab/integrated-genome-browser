@@ -144,11 +144,6 @@
             <artifactId>ucsc-rest-api-service</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>ensembl-rest-api-service</artifactId>
-            <scope>runtime</scope>
-        </dependency>
 <!--        <dependency>
             <groupId>org.lorainelab.igb</groupId>
             <artifactId>das2</artifactId>

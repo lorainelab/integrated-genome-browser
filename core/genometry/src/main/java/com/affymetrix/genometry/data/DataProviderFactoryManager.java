@@ -53,11 +53,6 @@ public class DataProviderFactoryManager {
         logger.debug("UCSC Rest Factory now available.");
     }
 
-    @Reference(target = "(&(component.name=EnsemblRestApiDataProviderFactory))")
-    public void trackEnsemblRestDataProviderFactory(DataProviderFactory ensemblRestFactory) {
-        logger.debug("Ensembl Rest Factory now available.");
-    }
-
 //    @Reference(target = "(&(component.name=Das2DataProviderFactory))")
 //    public void trackDas2DataProviderFactory(DataProviderFactory quickloadFactory) {
 //        logger.debug("Das2 Factory now available.");

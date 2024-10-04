@@ -75,7 +75,6 @@ public class DataProviderManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataProviderManager.class);
     public static final String COMPONENT_NAME = "DataProviderManager";
-    public static final String ENSEMBL_REST = "Ensembl REST";
     public static boolean ALL_SOURCES_INITIALIZED = false;
     private static final Logger logger = LoggerFactory.getLogger(DataProviderManager.class);
     private static final Set<DataProvider> dataProviders = Sets.newConcurrentHashSet();
@@ -439,33 +438,22 @@ public class DataProviderManager {
     }
 
     private void loadSupportedGenomeVersions(DataProvider genomeVersionProvider) {
-        boolean isEnsemblDataProvider = genomeVersionProvider.getName().equalsIgnoreCase(ENSEMBL_REST);
         for (String genomeVersionName : genomeVersionProvider.getSupportedGenomeVersionNames()) {
-            String genomeName = (isEnsemblDataProvider) ? genomeVersionName : genomeVersionSynonymLookup.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeVersionName);
+            String genomeName = genomeVersionSynonymLookup.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeVersionName);
             String versionName, speciesName;
             GenomeVersion genomeVersion;
             genomeVersion = gmodel.addGenomeVersion(genomeName);
-            Optional<String> genomeVersionDescription = genomeVersionProvider.getGenomeVersionDescription(genomeVersionName);
-            genomeVersionDescription.ifPresent(genomeVersion::setDescription);
+            Optional<String> genomeVersionDescription = ((DataProvider) genomeVersionProvider).getGenomeVersionDescription(genomeVersionName);
+            genomeVersionDescription.ifPresent(description -> genomeVersion.setDescription(description));
             Set<DataContainer> availableContainers = genomeVersion.getAvailableDataContainers();
-            if (isEnsemblDataProvider && !availableContainers.isEmpty())
-                continue;
             if (!availableContainers.isEmpty()) {
                 versionName = genomeVersionSynonymLookup.getPreferredName(availableContainers.iterator().next().getName());
                 speciesName = GeneralLoadUtils.getVersionName2Species().get(versionName);
             } else {
-                if(genomeVersionProvider.getName().equalsIgnoreCase(ENSEMBL_REST)){
-                    versionName = genomeName;
-                    speciesName = genomeVersionProvider.getSpeciesNameForVersionName(versionName).orElse(genomeName);
-                    speciesName = speciesSynLookup.getPreferredName(speciesName);
-                }
-                else{
-                    versionName = genomeVersionSynonymLookup.getPreferredName(genomeName);
-                    speciesName = speciesSynLookup.getSpeciesName(genomeName);
-                }
+                versionName = genomeVersionSynonymLookup.getPreferredName(genomeName);
+                speciesName = speciesSynLookup.getSpeciesName(genomeName);
             }
-            if (!isEnsemblDataProvider || !GeneralLoadUtils.getLoadedSpeciesNames().contains(speciesName))
-                GeneralLoadUtils.retrieveDataContainer(genomeVersionProvider, speciesName, versionName, false, genomeVersion.getGenomeVersionSynonymLookup(),  genomeVersion.getSpeciesSynLookup());
+            GeneralLoadUtils.retrieveDataContainer((DataProvider) genomeVersionProvider, speciesName, versionName, false, genomeVersion.getGenomeVersionSynonymLookup());
         }
         if (SeqGroupView.getInstance() != null) { //ugly but required since bad patterns have been used historically
             SeqGroupView.getInstance().refreshSpeciesCB();

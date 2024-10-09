@@ -41,7 +41,13 @@
                 "datasetLinkoutDomainUrl": "https://genome.ucsc.edu/cgi-bin/hgTrackUi",
                 "loadPriority": "5",
                 "defaultDataProviderId": "IgbDefaultDataProviderId:16"
-
+            },
+            {
+                "factoryName": "ensembl rest",
+                "name": "Ensembl REST",
+                "url": "https://rest.ensembl.org",
+                "loadPriority": "6",
+                "defaultDataProviderId": "IgbDefaultDataProviderId:17"
             },
             {
                 "factoryName": "quickload",

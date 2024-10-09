@@ -11,7 +11,11 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
+import org.lorainelab.igb.ensembl.rest.api.service.model.EnsemblGenomeData;
+import org.lorainelab.igb.ensembl.rest.api.service.utils.EnsemblRestServerUtils;
+import org.lorainelab.igb.synonymlookup.services.SpeciesInfo;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -24,11 +28,11 @@ import static com.affymetrix.genometry.util.LoadUtils.ResourceStatus.*;
 @Slf4j
 public final class EnsemblRestApiDataProvider extends BaseDataProvider implements AssemblyProvider, ReferenceSequenceProvider {
 
-    private final Set<String> availableGenomesSet;
+    private final Map<String, EnsemblGenomeData> availableEnsemblGenomeDataMap;
 
     public EnsemblRestApiDataProvider(String ensemblRestUrl, String name, int loadPriority) {
         super(ensemblRestUrl, name, loadPriority);
-        availableGenomesSet = Sets.newHashSet();
+        availableEnsemblGenomeDataMap = Maps.newHashMap();
         try {
             URL ensemblUrl = new URIBuilder(url).build().toURL();
         } catch (MalformedURLException | URISyntaxException ex) {
@@ -39,7 +43,7 @@ public final class EnsemblRestApiDataProvider extends BaseDataProvider implement
 
     public EnsemblRestApiDataProvider(String ensemblRestUrl, String name, String mirrorUrl, int loadPriority) {
         super(ensemblRestUrl, name, mirrorUrl, loadPriority);
-        availableGenomesSet = Sets.newHashSet();
+        availableEnsemblGenomeDataMap = Maps.newHashMap();
         try {
             URL ensemblUrl = new URIBuilder(url).build().toURL();
         } catch (MalformedURLException | URISyntaxException ex) {
@@ -50,7 +54,7 @@ public final class EnsemblRestApiDataProvider extends BaseDataProvider implement
 
     public EnsemblRestApiDataProvider(String ensemblRestUrl, String name, int loadPriority, String id) {
         super(ensemblRestUrl, name, loadPriority, id);
-        availableGenomesSet = Sets.newHashSet();
+        availableEnsemblGenomeDataMap = Maps.newHashMap();
         try {
             URL ensemblUrl = new URIBuilder(url).build().toURL();
         } catch (MalformedURLException | URISyntaxException ex) {
@@ -61,7 +65,7 @@ public final class EnsemblRestApiDataProvider extends BaseDataProvider implement
 
     public EnsemblRestApiDataProvider(String ensemblRestUrl, String name, String mirrorUrl, int loadPriority, String id) {
         super(ensemblRestUrl, name, mirrorUrl, loadPriority, id);
-        availableGenomesSet = Sets.newHashSet();
+        availableEnsemblGenomeDataMap = Maps.newHashMap();
         try {
             URL ensemblUrl = new URIBuilder(url).build().toURL();
         } catch (MalformedURLException | URISyntaxException ex) {
@@ -75,17 +79,35 @@ public final class EnsemblRestApiDataProvider extends BaseDataProvider implement
         if (status == Disabled) {
             return;
         }
+        try {
+            log.info("Initializing Ensembl REST API: {}", url);
+            availableEnsemblGenomeDataMap.putAll(EnsemblRestServerUtils.retrieveEnsemblGenomeResponse(url));
+        } catch (IOException ex) {
+            log.error("Could not initialize this Ensembl Rest Server, setting status to unavailable for this session.", ex);
+            setStatus(NotResponding);
+            return;
+        }
         setStatus(Initialized);
     }
 
     @Override
     protected void disable() {
-        availableGenomesSet.clear();
+        availableEnsemblGenomeDataMap.clear();
     }
 
     @Override
     public Set<String> getSupportedGenomeVersionNames() {
-        return availableGenomesSet;
+        return availableEnsemblGenomeDataMap.keySet();
+    }
+
+    @Override
+    public Optional<String> getSpeciesNameForVersionName(String versionName) {
+        return Optional.ofNullable(availableEnsemblGenomeDataMap.get(versionName).getName());
+    }
+
+    @Override
+    public Optional<String> getCommonSpeciesNameForVersionName(String versionName) {
+        return Optional.ofNullable(availableEnsemblGenomeDataMap.get(versionName).getDisplay_name());
     }
 
     @Override

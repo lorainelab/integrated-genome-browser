@@ -6,6 +6,8 @@ import com.affymetrix.genometry.data.DataProviderFactory;
 import com.affymetrix.genometry.general.DataProviderPrefKeys;
 import org.osgi.service.component.annotations.Component;
 
+import static org.lorainelab.igb.ensembl.rest.api.service.utils.EnsemblRestServerUtils.toExternalForm;
+
 
 @Component(name = EnsemblRestDataProviderFactory.COMPONENT_NAME, immediate = true)
 public class EnsemblRestDataProviderFactory implements DataProviderFactory {
@@ -54,14 +56,6 @@ public class EnsemblRestDataProviderFactory implements DataProviderFactory {
     @Override
     public int getWeight() {
         return WEIGHT;
-    }
-
-    public static String toExternalForm(String urlString) {
-        urlString = urlString.trim();
-        if (!urlString.endsWith("/")) {
-            urlString += "/";
-        }
-        return urlString;
     }
 }
 

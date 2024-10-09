@@ -127,6 +127,7 @@
         <module>core/quickload</module>
         <module>core/das</module>
         <module>core/ucsc-rest-api-service</module>
+        <module>core/ensembl-rest-api-service</module>
        <!--<module>core/das2</module>-->
         <module>core/frameManager</module>
         <module>core/synonym-lookup</module>
@@ -360,6 +361,12 @@
             <dependency>
                 <groupId>org.lorainelab.igb</groupId>
                 <artifactId>ucsc-rest-api-service</artifactId>
+                <version>${project.parent.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.lorainelab.igb</groupId>
+                <artifactId>ensembl-rest-api-service</artifactId>
                 <version>${project.parent.version}</version>
                 <scope>provided</scope>
             </dependency>

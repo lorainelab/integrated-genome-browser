@@ -38,6 +38,7 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
 
     private final Set<String> availableGenomesSet;
     private String datasetLinkoutDomainUrl = null;
+    ResourceBundle BUNDLE = ResourceBundle.getBundle("ucsc");
 
     public UCSCRestApiDataProvider(String ucscRestUrl, String name, int loadPriority) {
         super(ucscRestUrl, name, loadPriority);
@@ -142,9 +143,8 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
                         String trackType = trackDetail.getType().split(" ")[0];
                         UCSCRestSymLoader ucscRestSymLoader = new UCSCRestSymLoader(url, uri, Optional.empty(), track, trackType, trackDetail, genomeVersion, contextRootkey.get());
                         Map<String, String> featureProps = getFeatureProps(track, trackDetail, contextRootkey);
-                        String trackName = trackDetail.getShortLabel() + " (" + track + ")";
-                        String datasetName = trackType + "/" + trackName;
-                        DataSet dataSet = new DataSet(uri, datasetName, featureProps, dataContainer, ucscRestSymLoader, false);
+                        StringBuilder datasetName = getDatasetName(track, trackDetail);
+                        DataSet dataSet = new DataSet(uri, datasetName.toString(), featureProps, dataContainer, ucscRestSymLoader, false);
                         dataSets.add(dataSet);
                     } catch (URISyntaxException ex) {
                         log.error("Invalid URI format for DAS context root: {}, skipping this resource", contextRoot, ex);
@@ -157,6 +157,24 @@ public final class UCSCRestApiDataProvider extends BaseDataProvider implements A
         ));
         sortedDataSets.addAll(dataSets);
         return sortedDataSets;
+    }
+
+    private StringBuilder getDatasetName(String track, TrackDetails trackDetail) {
+        String trackName = trackDetail.getShortLabel() + " (" + track + ")";
+        String parent = trackDetail.getParent();
+        String parentParent = trackDetail.getParentParent();
+        String group = trackDetail.getGroup();
+        StringBuilder datasetName = new StringBuilder();
+        if(!Strings.isNullOrEmpty(group) && BUNDLE.containsKey(group))
+            datasetName.append(BUNDLE.getString(group.split(" ")[0])).append("/");
+        else
+            datasetName.append("Other").append("/");
+        if(!Strings.isNullOrEmpty(parentParent))
+            datasetName.append(parentParent.split(" ")[0]).append("/");
+        if(!Strings.isNullOrEmpty(parent))
+            datasetName.append(parent.split(" ")[0]).append("/");
+        datasetName.append(trackName);
+        return datasetName;
     }
 
     private Map<String, String> getFeatureProps(String track, TrackDetails trackDetail, Optional<String> contextRootkey) throws URISyntaxException {

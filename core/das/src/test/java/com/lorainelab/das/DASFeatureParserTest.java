@@ -57,7 +57,7 @@ public class DASFeatureParserTest {
             istr = DASFeatureParserTest.class.getClassLoader().getResourceAsStream(test_file_name_1);
             assertNotNull(istr);
 
-            results = parser.parse(istr, genomeVersion);
+            results = parser.parse(istr, genomeVersion, "https://genome.ucsc.edu/cgi-bin/das/hg18/");
         } finally {
             GeneralUtils.safeClose(istr);
         }
@@ -79,7 +79,7 @@ public class DASFeatureParserTest {
         String linkName = (String) sym.getProperty("link_name");
         //assertEquals("http://genome.ucsc.edu/cgi-bin/hgTracks?position=chr3:73089142-73107313&db=hg18", link);
         assertEquals("Link to UCSC Browser", linkName);
-        assertEquals("affyU133Plus2", sym.getType());
+        assertEquals("https://genome.ucsc.edu/cgi-bin/das/hg18/affyU133Plus2", sym.getType());
         assertEquals("235371_at.chr3.73089142", sym.getProperty("id"));
         assertEquals(4, sym.getChildCount());
     }
@@ -107,7 +107,7 @@ public class DASFeatureParserTest {
             istr = DASFeatureParserTest.class.getClassLoader().getResourceAsStream(test_file_name_2);
             assertNotNull(istr);
 
-            results = parser.parse(istr, genomeVersion);
+            results = parser.parse(istr, genomeVersion, "https://genome.ucsc.edu/cgi-bin/das/hg18/");
         } finally {
             GeneralUtils.safeClose(istr);
         }
@@ -119,7 +119,7 @@ public class DASFeatureParserTest {
         assertEquals(1, sym.getSpanCount());
         assertEquals(46, sym.getSpan(0).getLength());
         assertEquals("Em:D87024.C22.12.chr22.20012405", sym.getID());
-        assertEquals("sanger22_type", sym.getType());
+        assertEquals("https://genome.ucsc.edu/cgi-bin/das/hg18/sanger22_type", sym.getType());
 
         assertEquals("Em:D87024.C22.12.chr22.20012405", sym.getProperty("label"));
 

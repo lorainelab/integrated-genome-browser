@@ -15,6 +15,8 @@ public class TrackDetails {
         private String longLabel;
         private String visibility;
         private String group;
+        private String parent;
+        private String parentParent;
         private String barChartColors;
         private String barChartBars;
 

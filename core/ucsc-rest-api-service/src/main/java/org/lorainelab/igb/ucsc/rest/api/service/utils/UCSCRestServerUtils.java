@@ -55,7 +55,6 @@ public class UCSCRestServerUtils {
         try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
             URIBuilder uriBuilder = new URIBuilder(uri);
             uriBuilder.addParameter(GENOME, genomeVersionName);
-            uriBuilder.addParameter(TRACK_PARAM, TRACK_PARAM_VALUE);
             HttpGet httpget = new HttpGet(uriBuilder.toString());
             String responseBody = httpClient.execute(httpget, new ApiResponseHandler());
             ucscRestTracks = new Gson().fromJson(

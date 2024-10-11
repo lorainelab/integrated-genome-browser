@@ -17,7 +17,7 @@ Bos taurus	Cow	B_taurus	bosTau	Bos_taurus	bos_taurus
 Brachypodium distachyon	Purple false brome	B_distachyon	brachypodium_distachyon
 Branchiostoma floridae	Lancet	B_floridae	braFlo
 Brassica rapa	Field mustard	B_rapa	brassica_rapa
-Caenorhabditis brenneri	C. brenneri (nematode)	C_brenneri  caePb	caenorhabditis_brenneri
+Caenorhabditis brenneri	C. brenneri (nematode)	C_brenneri	caePb	caenorhabditis_brenneri
 Caenorhabditis briggsae	C. briggsae (nematode)	C_briggsae	cb	caenorhabditis_briggsae
 Caenorhabditis elegans	C. elegans (nematode)	C_elegans	ce	Caenorhabditis_elegans	caenorhabditis_elegans
 Caenorhabditis japonica	C. japonica (nematode)	C_japonica	caeJap	caenorhabditis_japonica
@@ -82,6 +82,7 @@ Gossypium hirsutum	Upland cotton	G_hirsutum
 Gossypium raimondii	Cotton D	G_raimondii	gossypium_raimondii
 Heterocephalus glaber	Naked mole rat	Heterocephalus_glaber	H_glaber	hetGla	heterocephalus_glaber_male	heterocephalus_glaber_female
 Homo sapiens	Human	H_sapiens	hg	Homo_sapiens	homo_sapiens
+Homo sapiens T2T	Human Telomere to Telomere	H_sapiens_T2T	hs
 Hypsibius exemplaris Z151	tardigrade water bear	H_exemplaris_Z151	hypsibius_exemplaris
 Hordeum vulgare	Barley	H_vulgare	hordeum_vulgare	hordeum_vulgare_tritex	hordeum_vulgare_goldenpromise
 Latimeria chalumnae	Coelacanth	L_chalumnae	latCha	latimeria_chalumnae
@@ -102,6 +103,7 @@ Meleagris gallopavo	Turkey		M_gallopavo	Meleagris_gallopavo	melGal	meleagris_gal
 Melopsittacus undulatus	Budgie	M_undulatus	melUnd	melopsittacus_undulatus
 Microcebus murinus	Gray mouse lemur	M_murinus	micMur	Microcebus_murinus	microcebus_murinus
 Mimulus guttatus	Monkey flower	M_guttatus
+Monkeypox virus	monkeypox	M_virus	mpxvRivers
 Monodelphis domestica	Opossum	M_domestica_metatherian	monDom	monodelphis_domestica
 Monosiga brevicollis	Choanoflagellates	Monosiga_brevicollis	monosiga_brevicollis
 Mus musculus	House mouse	M_musculus	mm	Mus_musculus	mus_musculus	mus_musculus_wsbeij	mus_musculus_pwkphj	mus_musculus_casteij	mus_musculus_nzohlltj	mus_musculus_akrj	mus_musculus_balbcj	mus_musculus_lpj	mus_musculus_fvbnj	mus_musculus_aj	mus_musculus_cbaj	mus_musculus_nodshiltj

@@ -73,7 +73,6 @@
         <freehepGraphicSvgVersion>2.4</freehepGraphicSvgVersion>
         <jdomVersion>2.0.2</jdomVersion>
         <image4jVersion>0.7</image4jVersion>
-        <googleAnalyticsVersion>0.4</googleAnalyticsVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
         <commonsConfigVersion>1.10</commonsConfigVersion>
         <coltVersion>1.2.0</coltVersion>
@@ -843,11 +842,6 @@
                 <groupId>net.sf</groupId>
                 <artifactId>image4j</artifactId>
                 <version>${image4jVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.boxysystems</groupId>
-                <artifactId>jgoogleanalytics</artifactId>
-                <version>${googleAnalyticsVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.directory.studio</groupId>

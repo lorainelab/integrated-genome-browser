@@ -35,6 +35,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.LocalUrlCacher;
 import com.affymetrix.genometry.util.ModalUtils;
 import com.affymetrix.genometry.util.StatusAlert;
+import static com.affymetrix.igb.IGBConstants.GOOGLE_ANALYTICS_API_SECRET;
 import static com.affymetrix.igb.IGBConstants.GOOGLE_ANALYTICS_ID;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.swing.JRPMenuBar;
@@ -42,6 +43,7 @@ import com.affymetrix.igb.swing.MenuUtil;
 import com.affymetrix.igb.swing.script.ScriptManager;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.TrackStyle;
+import com.affymetrix.igb.util.GoogleAnalytics;
 import com.affymetrix.igb.util.IGBTrustManager;
 import com.affymetrix.igb.view.IGBToolBar;
 import com.affymetrix.igb.view.SeqMapView;
@@ -49,9 +51,6 @@ import com.affymetrix.igb.view.StatusBar;
 import com.affymetrix.igb.view.load.GeneralLoadViewGUI;
 import com.affymetrix.igb.view.welcome.MainWorkspaceManager;
 import com.affymetrix.igb.window.service.IWindowService;
-import com.boxysystems.jgoogleanalytics.FocusPoint;
-import com.boxysystems.jgoogleanalytics.JGoogleAnalyticsTracker;
-import com.boxysystems.jgoogleanalytics.LoggingAdapter;
 import com.jidesoft.plaf.LookAndFeelFactory;
 import java.awt.Image;
 import java.awt.event.ActionListener;
@@ -354,23 +353,9 @@ public class IGB implements GroupSelectionListener, SeqSelectionListener {
 
     private void notifyCounter() {
         if (!isDevelopmentMode()) {
-            JGoogleAnalyticsTracker tracker = new JGoogleAnalyticsTracker(
-                    IGB_NAME, IGB_VERSION, GOOGLE_ANALYTICS_ID);
-            LoggingAdapter loggingAdapter = new LoggingAdapter() {
-
-                @Override
-                public void logError(String error) {
-                    logger.debug("Google Analytics Error Message: {}", error);
-                }
-
-                @Override
-                public void logMessage(String message) {
-                    logger.debug("Google Analytics Response Message: {}", message);
-                }
-            };
-            tracker.setLoggingAdapter(loggingAdapter);
-            tracker.trackAsynchronously(new FocusPoint("IGB_Loaded"));
-            //LocalUrlCacher.isValidURL(COUNTER_URL);
+            GoogleAnalytics googleAnalyticsSession = new GoogleAnalytics(
+                    IGB_NAME, IGB_VERSION, GOOGLE_ANALYTICS_ID, GOOGLE_ANALYTICS_API_SECRET);
+            googleAnalyticsSession.sendEvent();
         }
     }
 

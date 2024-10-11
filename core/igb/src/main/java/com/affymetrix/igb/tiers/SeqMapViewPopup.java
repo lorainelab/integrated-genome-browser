@@ -381,7 +381,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
             boolean canShowSoftClipped = false;
             for (TierGlyph tierGlyph : handler.getSelectedTiers()) {
                 String methodName = tierGlyph.getAnnotStyle().getMethodName();
-                if (StringUtils.endsWithIgnoreCase(methodName, "bam") || StringUtils.endsWithIgnoreCase(methodName, "sam")) {
+                if (StringUtils.endsWithIgnoreCase(methodName, "bam") || StringUtils.endsWithIgnoreCase(methodName, "sam") || StringUtils.endsWithIgnoreCase(methodName, "cram")) {
                     canShowAsPaired = true;
                     canShowSoftClipped=true;
                 }

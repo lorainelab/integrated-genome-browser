@@ -70,10 +70,6 @@
             <artifactId>miglayout-swing</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.boxysystems</groupId>
-            <artifactId>jgoogleanalytics</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.github.kevinsawicki</groupId>
             <artifactId>http-request</artifactId>
         </dependency>
@@ -363,7 +359,6 @@
                             org.freehep,
                             org.freehep.*,
                             org.jdesktop.*,
-                            com.boxysystems.jgoogleanalytics,
                             net.miginfocom.layout,
                             net.miginfocom.swing,
                             com.github.kevinsawicki.http,

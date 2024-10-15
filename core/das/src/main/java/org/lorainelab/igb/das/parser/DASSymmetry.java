@@ -25,14 +25,14 @@ public class DASSymmetry extends SimpleSymWithProps implements Scored, SupportsC
     private final float score;
     private final String type;
 
-    DASSymmetry(GroupBean group, FeatureBean feature, BioSeq sequence) {
+    DASSymmetry(GroupBean group, FeatureBean feature, BioSeq sequence, String contextRoot) {
         score = Scored.UNKNOWN_SCORE;
         if (!group.getType().isEmpty()) {
-            type = group.getType();
+            type = contextRoot + group.getType();
         } else if (!feature.getTypeLabel().isEmpty()) {
-            type = feature.getTypeLabel();
+            type = contextRoot + feature.getTypeLabel();
         } else {
-            type = feature.getTypeID();
+            type = contextRoot + feature.getTypeID();
         }
 
         this.addSpan(new SimpleMutableSeqSpan(new SimpleMutableSeqSpan(
@@ -44,9 +44,9 @@ public class DASSymmetry extends SimpleSymWithProps implements Scored, SupportsC
         this.setProperty("label", group.getLabel().isEmpty() ? group.getID() : group.getLabel());
     }
 
-    DASSymmetry(FeatureBean feature, BioSeq sequence) {
+    DASSymmetry(FeatureBean feature, BioSeq sequence, String contextRoot) {
         score = feature.getScore();
-        type = feature.getTypeLabel().isEmpty() ? feature.getTypeID() : feature.getTypeLabel();
+        type = contextRoot + (feature.getTypeLabel().isEmpty() ? feature.getTypeID() : feature.getTypeLabel());
         this.addSpan(new SimpleMutableSeqSpan(
                 feature.getOrientation() == Orientation.REVERSE ? feature.getEnd() : feature.getStart(),
                 feature.getOrientation() == Orientation.REVERSE ? feature.getStart() : feature.getEnd(),

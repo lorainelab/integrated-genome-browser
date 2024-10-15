@@ -58,7 +58,7 @@ public class DasSymloader extends SymLoader {
                 .followRedirects(true);
         logger.info(remoteHttpRequest.toString());
         try (InputStream inputStream = remoteHttpRequest.buffer()) {
-            return parser.parse(inputStream, genomeVersion);
+            return parser.parse(inputStream, genomeVersion, toExternalForm(contextRoot));
         }
     }
 

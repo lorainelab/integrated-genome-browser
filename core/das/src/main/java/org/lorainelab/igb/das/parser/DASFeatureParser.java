@@ -58,7 +58,7 @@ public final class DASFeatureParser implements Parser {
         this.annotateSeq = annotateSeq;
     }
 
-    public List<DASSymmetry> parse(InputStream s, GenomeVersion genomeVersion) throws XMLStreamException {
+    public List<DASSymmetry> parse(InputStream s, GenomeVersion genomeVersion, String contextRoot) throws XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         /*The XML returned by UCSC DAS contains a link to a dtd file
         that is unavailable (http://www.biodas.org/dtd/dasgff.dtd)
@@ -85,7 +85,7 @@ public final class DASFeatureParser implements Parser {
                         break;
                     case XMLEvent.END_ELEMENT:
                         stack.pop();
-                        endElement(current.asEndElement(), stack.peek(), groupMap, feature, link, group, target, genomeVersion);
+                        endElement(current.asEndElement(), stack.peek(), groupMap, feature, link, group, target, genomeVersion, contextRoot);
                         break;
                 }
             }
@@ -193,8 +193,9 @@ public final class DASFeatureParser implements Parser {
      *
      * @param current
      * @param parent
+     * @param contextRoot
      */
-    private void endElement(EndElement current, StartElement parent, Map<String, DASSymmetry> groupMap, FeatureBean feature, LinkBean link, GroupBean group, TargetBean target, GenomeVersion genomeVersion) {
+    private void endElement(EndElement current, StartElement parent, Map<String, DASSymmetry> groupMap, FeatureBean feature, LinkBean link, GroupBean group, TargetBean target, GenomeVersion genomeVersion, String contextRoot) {
         Elements p = null;
         if (parent != null) {
             p = Elements.valueOf(parent.getName().getLocalPart());
@@ -202,7 +203,7 @@ public final class DASFeatureParser implements Parser {
         switch (Elements.valueOf(current.getName().getLocalPart())) {
             case FEATURE:
                 DASSymmetry groupSymmetry;
-                DASSymmetry featureSymmetry = new DASSymmetry(feature, sequence);
+                DASSymmetry featureSymmetry = new DASSymmetry(feature, sequence, contextRoot);
 
                 if (feature.getGroups().isEmpty()) {
                     if (annotateSeq) {
@@ -211,7 +212,7 @@ public final class DASFeatureParser implements Parser {
                     groupMap.put(featureSymmetry.getID(), featureSymmetry);
                 } else {
                     for (GroupBean groupBean : feature.getGroups()) {
-                        groupSymmetry = getGroupSymmetry(groupMap, feature, groupBean, genomeVersion);
+                        groupSymmetry = getGroupSymmetry(groupMap, feature, groupBean, genomeVersion, contextRoot);
                         groupSymmetry.addChild(featureSymmetry);
                     }
                 }
@@ -249,7 +250,7 @@ public final class DASFeatureParser implements Parser {
         return attribute == null ? "" : attribute.getValue();
     }
 
-    private DASSymmetry getGroupSymmetry(Map<String, DASSymmetry> groupMap, FeatureBean feature, GroupBean group, GenomeVersion genomeVersion) {
+    private DASSymmetry getGroupSymmetry(Map<String, DASSymmetry> groupMap, FeatureBean feature, GroupBean group, GenomeVersion genomeVersion, String contextRoot) {
         /* Do we have a groupSymmetry for ID stored in parser */
         if (groupMap.containsKey(group.getID())) {
             return groupMap.get(group.getID());
@@ -264,7 +265,7 @@ public final class DASFeatureParser implements Parser {
         }
 
         /* Create a new groupSymmetry for ID */
-        DASSymmetry groupSymmetry = new DASSymmetry(group, feature, sequence);
+        DASSymmetry groupSymmetry = new DASSymmetry(group, feature, sequence, contextRoot);
         if (annotateSeq) {
             sequence.addAnnotation(groupSymmetry);
         }
@@ -280,7 +281,7 @@ public final class DASFeatureParser implements Parser {
             boolean annotate_seq) throws Exception {
         setAnnotateSeq(annotate_seq);
         try {
-            return parse(is, genomeVersion);
+            return parse(is, genomeVersion, uri);
         } catch (XMLStreamException ex) {
             Logger.getLogger(DASFeatureParser.class.getName()).log(Level.SEVERE, null, ex);
             return null;

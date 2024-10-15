@@ -114,6 +114,7 @@ public class FilterAction extends SeqMapViewActionA {
 
         JDialog dialog = optionPane.createDialog("Add/Remove/Edit Filters");
         dialog.setModal(false);
+        dialog.setResizable(true);
         dialog.setVisible(true);
     }
 

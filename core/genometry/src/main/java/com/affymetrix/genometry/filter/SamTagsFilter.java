@@ -4,6 +4,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.general.BoundedParameter;
 import com.affymetrix.genometry.general.Parameter;
 import com.affymetrix.genometry.operator.comparator.MathComparisonOperator;
+import com.affymetrix.genometry.operator.comparator.NotEqualMathComparisonOperator;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 
@@ -23,6 +24,7 @@ public class SamTagsFilter extends SymmetryFilter{
     protected Parameter<String> tags = new BoundedParameter<>(TAG_VALUES);
     static {
         COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.EqualMathComparisonOperator());
+        COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.NotEqualMathComparisonOperator());
     }
     static {
         TAG_VALUES.add("CR");
@@ -47,6 +49,7 @@ public class SamTagsFilter extends SymmetryFilter{
     public SamTagsFilter() {
         parameters.addParameter(TAG, String.class, tags);
         parameters.addParameter(TAG_VALUE, String.class, tag_value);
+        parameters.addParameter(COMPARATOR,MathComparisonOperator.class,comparator);
     }
 
     @Override
@@ -58,6 +61,9 @@ public class SamTagsFilter extends SymmetryFilter{
             } else if (value instanceof String str) {
                 List<String> value_List = Arrays.asList(((String) given_property_value).split(";"));
                 boolean bool = value_List.contains((String)value);
+                if(comparator.get() instanceof NotEqualMathComparisonOperator){
+                    return !bool;
+                }
                 return bool;
             }
         }

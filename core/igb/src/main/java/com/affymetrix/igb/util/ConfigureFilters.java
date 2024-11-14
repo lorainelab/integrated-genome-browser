@@ -8,7 +8,7 @@ import com.affymetrix.igb.shared.ConfigureOptionsPanel.Filter;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

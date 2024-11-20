@@ -4,9 +4,12 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.general.BoundedParameter;
 import com.affymetrix.genometry.general.Parameter;
 import com.affymetrix.genometry.operator.comparator.MathComparisonOperator;
+import com.affymetrix.genometry.operator.comparator.NotEqualMathComparisonOperator;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,11 +23,7 @@ public class SamTagsFilter extends SymmetryFilter{
     private Parameter<MathComparisonOperator> comparator = new BoundedParameter<>(COMPARATOR_VALUES);
     protected Parameter<String> tags = new BoundedParameter<>(TAG_VALUES);
     static {
-        COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.GreaterThanEqualMathComparisonOperator());
-        COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.GreaterThanMathComparisonOperator());
         COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.EqualMathComparisonOperator());
-        COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.LessThanMathComparisonOperator());
-        COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.LessThanEqualMathComparisonOperator());
         COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.NotEqualMathComparisonOperator());
     }
     static {
@@ -50,7 +49,7 @@ public class SamTagsFilter extends SymmetryFilter{
     public SamTagsFilter() {
         parameters.addParameter(TAG, String.class, tags);
         parameters.addParameter(TAG_VALUE, String.class, tag_value);
-        parameters.addParameter(COMPARATOR, MathComparisonOperator.class, comparator);
+        parameters.addParameter(COMPARATOR,MathComparisonOperator.class,comparator);
     }
 
     @Override
@@ -60,9 +59,12 @@ public class SamTagsFilter extends SymmetryFilter{
             if(value==null){
                 return false;
             } else if (value instanceof String str) {
-                return comparator.get().operate(str, (String)given_property_value);
-            } else if (value instanceof Double val) {
-                return comparator.get().operate(val, Double.parseDouble((String) given_property_value));
+                List<String> value_List = Arrays.asList(((String) given_property_value).split(";"));
+                boolean bool = value_List.contains((String)value);
+                if(comparator.get() instanceof NotEqualMathComparisonOperator){
+                    return !bool;
+                }
+                return bool;
             }
         }
         return false;

@@ -8,6 +8,7 @@ import com.affymetrix.igb.shared.ConfigureOptionsPanel.Filter;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 
+import java.awt.Dimension;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -100,14 +101,17 @@ public class ConfigureFilters extends javax.swing.JPanel {
 
         addButton.setText("Add");
         addButton.addActionListener(this::addButtonActionPerformed);
+        addButton.setMaximumSize(new Dimension(120,20));
 
         removeButton.setText("Remove");
         removeButton.setEnabled(false);
         removeButton.addActionListener(this::removeButtonActionPerformed);
+        removeButton.setMaximumSize(new Dimension(120,20));
 
         editButton.setText("Edit");
         editButton.setEnabled(false);
         editButton.addActionListener(this::editButtonActionPerformed);
+        editButton.setMaximumSize(new Dimension(120,20));
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -115,12 +119,12 @@ public class ConfigureFilters extends javax.swing.JPanel {
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(filterListScrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 207, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(filterListScrollPane)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(removeButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(editButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(addButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .add(removeButton)
+                    .add(editButton)
+                    .add(addButton)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)

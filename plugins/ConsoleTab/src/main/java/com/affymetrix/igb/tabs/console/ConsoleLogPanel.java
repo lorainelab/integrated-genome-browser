@@ -61,6 +61,7 @@ public class ConsoleLogPanel extends IgbTabPanel {
         this.setLayout(new BorderLayout());
         
         consoleTextArea = new javax.swing.JTextArea();
+        consoleTextArea.setEditable(false);
         jScrollPane1 = new javax.swing.JScrollPane(consoleTextArea);
         this.add(jScrollPane1, BorderLayout.CENTER);
         copyToClipboardBtn = new javax.swing.JButton();

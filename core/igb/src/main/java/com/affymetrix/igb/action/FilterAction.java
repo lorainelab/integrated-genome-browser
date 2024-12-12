@@ -162,10 +162,12 @@ public class FilterAction extends SeqMapViewActionA {
         else
             combinedTierFilter = selectedTierFilter;
         tg.getAnnotStyle().setFilter(combinedTierFilter);
+        ArrayList<Boolean> bool = new ArrayList();
         if (selectedTierFilter != null) {
             BioSeq annotseq = getSeqMapView().getAnnotatedSeq();
             for (GlyphI glyph : tg.getChildren()) {
                 if (glyph.getInfo() != null) {
+                    bool.add(selectedTierFilter.filterSymmetry(annotseq, (SeqSymmetry) glyph.getInfo()));
                     glyph.setVisibility(selectedTierFilter.filterSymmetry(annotseq, (SeqSymmetry) glyph.getInfo()));
                 } else {
                     // Should not ever happen

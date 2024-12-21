@@ -40,7 +40,7 @@ public class SamTagsFilter extends SymmetryFilter{
                     given_property_value = e;
                 } catch (Exception ex) {
                 }
-                return super.set(e.toString().toLowerCase());
+                return super.set(e.toString());
             }
             return super.set(e);
         }
@@ -59,8 +59,8 @@ public class SamTagsFilter extends SymmetryFilter{
             if(value==null){
                 return false;
             } else if (value instanceof String str) {
-                List<String> value_List = Arrays.asList(((String) given_property_value).split(";"));
-                boolean bool = value_List.contains((String)value);
+                List<String> value_List = Arrays.asList(((String) given_property_value).toUpperCase().split(";"));
+                boolean bool = value_List.contains(str.toUpperCase());
                 if(comparator.get() instanceof NotEqualMathComparisonOperator){
                     return !bool;
                 }

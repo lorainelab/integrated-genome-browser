@@ -43,13 +43,6 @@
                 "defaultDataProviderId": "IgbDefaultDataProviderId:16"
             },
             {
-                "factoryName": "ensembl rest",
-                "name": "Ensembl REST",
-                "url": "https://rest.ensembl.org",
-                "loadPriority": "6",
-                "defaultDataProviderId": "IgbDefaultDataProviderId:17"
-            },
-            {
                 "factoryName": "quickload",
                 "name": "Bio-Analytic Resource",
                 "url": "http://lorainelab-quickload.scidas.org/bar",

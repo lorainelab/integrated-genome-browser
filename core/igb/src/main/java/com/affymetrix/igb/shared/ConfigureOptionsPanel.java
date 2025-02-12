@@ -15,6 +15,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.igb.colorproviders.Property;
+import com.affymetrix.igb.colorproviders.SamToolsTagsTable;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,31 +24,27 @@ import com.jidesoft.combobox.ColorComboBox;
 import cytoscape.visual.ui.editors.continuous.ColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientEditorPanel;
+import net.miginfocom.layout.CC;
+import net.miginfocom.swing.MigLayout;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.AbstractDocument;
-import net.miginfocom.layout.CC;
-import net.miginfocom.swing.MigLayout;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -205,13 +202,41 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     cb.setRenderer(new IDListCellRenderer());
                     possibleValues.forEach(cb::addItem);
                     cb.setSelectedItem(iParameters.getParameterValue(label));
-
                     cb.addItemListener(e -> ConfigureOptionsPanel.this.setParameter(iParameters, label, cb.getSelectedItem()));
-
-                    //cb.setMaximumSize(new java.awt.Dimension(70, 60));
-//                    cb.setPreferredSize(new java.awt.Dimension(70, 60));
-//                    cb.setMinimumSize(new java.awt.Dimension(70, 60));
                     component = cb;
+                }else if(HashMap.class.isAssignableFrom(clazz)){
+                    JButton editTagsColor = new JButton("Edit Tags and Color");
+                    JDialog editor = new JDialog();
+                    JButton save_btn = new JButton("Save and Continue");
+                    JButton cancelBtn = new JButton("Cancel");
+                    cancelBtn.addActionListener((ActionListener)e ->editor.setVisible(false));
+                    editor.setLayout(new MigLayout("insets 4 4 4 4",
+                            "[fill,30%][fill,40%][fill,30%]", "[fill,grow]"));
+                    SamToolsTagsTable table = createSamToolsTagsTable(iParameters);
+                    save_btn.addActionListener((ActionListener) e ->{
+                        ConfigureOptionsPanel.this.setParameter(iParameters, label,table.saveAndContinue());
+                        editor.setVisible(false);
+
+                    });
+                    editor.add(table.getTableHeader(),"span 4,wrap");
+                    editor.add(table,"span 4,wrap");
+                    editor.add(save_btn,"cell 0 2");
+                    editor.add(cancelBtn,"cell 2 2");
+                    editor.setMinimumSize(new Dimension(350,350));
+                    editTagsColor.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            editor.setTitle("Edit Tags and Color");
+                            editor.setModal(true);
+                            editor.setAlwaysOnTop(false);
+                            editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
+                            editor.pack();
+                            editor.setVisible(true);
+                        }
+                    });
+
+                    component =  editTagsColor;
+
                 } else if (Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz)) {
                     final JTextField tf;
                     if (Number.class.isAssignableFrom(clazz)) {
@@ -369,7 +394,13 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             paramsPanel.add(panel, "growx");
         }
     }
-
+    private SamToolsTagsTable createSamToolsTagsTable(IParameters iParameters){
+        String[] columns = {"Tag Value","Color",""};
+        SamToolsTagsTable samtags_table = new SamToolsTagsTable(iParameters);
+        samtags_table.setMinimumSize(new Dimension(350,450));
+        samtags_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return samtags_table;
+    }
     private void setParameter(IParameters cp, String key, Object value) {
 //		boolean isValid = cp.setParameterValue(key, value);
 //		okOption.setEnabled(isValid);

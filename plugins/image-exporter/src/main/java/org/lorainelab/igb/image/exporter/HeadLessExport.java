@@ -6,7 +6,9 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.prefs.Preferences;
@@ -19,8 +21,7 @@ import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
-import org.freehep.graphicsio.svg.SVGExportFileType;
-import org.freehep.graphicsio.svg.SVGGraphics2D;
+import org.jfree.svg.SVGGraphics2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,13 +45,11 @@ public class HeadLessExport {
         "Joint Photographic Experts Group (*.jpeg)",};
 
     protected final Properties svgProperties;
-    protected final SVGExportFileType svgExport;
     protected BufferedImage exportImage;
     protected ExportImageInfo imageInfo;
 
     public HeadLessExport() {
         svgProperties = new Properties();
-        svgExport = new SVGExportFileType();
          exportNode = PreferenceUtils.getExportPrefsNode();
     }
 
@@ -67,9 +66,15 @@ public class HeadLessExport {
 
             if (ext.equals(EXTENSION[0])) {
 
-                svgProperties.setProperty(SVGGraphics2D.class.getName() + ".ImageSize",
-                        (int) imageInfo.getWidth() + ", " + (int) imageInfo.getHeight());
-                svgExport.exportToFile(f, component, null, svgProperties, "");
+                SVGGraphics2D svgGenerator = new SVGGraphics2D( (int) imageInfo.getWidth(), (int) imageInfo.getHeight());
+                component.paint(svgGenerator);
+
+                try (Writer writer = new FileWriter(f.getAbsolutePath())){
+
+                    writer.write(svgGenerator.getSVGElement());
+                }
+
+
 
             } else {
                 exportImage = GraphicsUtil.resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());

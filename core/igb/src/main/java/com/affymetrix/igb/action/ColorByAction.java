@@ -5,15 +5,17 @@ import com.affymetrix.genometry.event.GenericActionHolder;
 import com.affymetrix.genometry.general.SupportsFileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
-import static com.affymetrix.igb.IGBConstants.BUNDLE;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.tiers.TierLabelManager;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.util.ConfigureOptionsDialog;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.prefs.Preferences;
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
 
 /**
  *
@@ -76,7 +78,5 @@ public class ColorByAction extends SeqMapViewActionA {
             tierLabelManager.getSelectedTiers().forEach(tm -> tm.getAnnotStyle().setColorProvider(newCp));
             refreshMap(false, false);
         }
-//        style.setColorProvider(cp);
-        //TrackstylePropertyMonitor.getPropertyTracker().actionPerformed(e);
     }
 }

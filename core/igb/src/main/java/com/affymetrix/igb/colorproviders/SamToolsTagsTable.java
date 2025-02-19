@@ -17,21 +17,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class SamToolsTagsTable extends JRPStyledTable {
-    public ColorComboBox colorComboBox;
     public Map<String,Object> samtoolsData;
     private IParameters iParameters;
+
     public SamToolsTagsTable(IParameters iParameters) {
         super("SamToolsTagsTable");
-
         this.setRowHeight(this.getRowHeight()+10);
         samtoolsData = new HashMap<>();
-        colorComboBox = new ColorComboBox();
         this.iParameters = iParameters;
-//        SamToolsTagsTableModel tableModel = new SamToolsTagsTableModel(samtoolsData);
         DefaultTableModel dm = new DefaultTableModel();
         this.setModel(dm);
         dm.setDataVector(new Object[20][3],new Object[]{"Tag Value","Color",""});
-
 
         //Color
         this.getColumnModel().getColumn(SamToolsTagsTableModel.COL_COLOR).setCellRenderer(new ColorComboBoxCellRenderer());
@@ -39,20 +35,9 @@ public final class SamToolsTagsTable extends JRPStyledTable {
         this.getColumnModel().getColumn(SamToolsTagsTableModel.COL_COLOR).setMaxWidth(60);
 
         // Delete
-
         this.getColumnModel().getColumn(SamToolsTagsTableModel.COL_DELETE).setCellRenderer(new DeleteButtonCellRenderer());
-        this.getColumnModel().getColumn(SamToolsTagsTableModel.COL_DELETE).setCellEditor(new DeleteButtonCellEditor());
+        this.getColumnModel().getColumn(SamToolsTagsTableModel.COL_DELETE).setCellEditor(new DeleteButtonCellEditor(dm));
         this.getColumnModel().getColumn(SamToolsTagsTableModel.COL_DELETE).setMaxWidth(20);
-
-
-        //Value
-//        this.getColumnModel().getColumn(SamToolsTagsTableModel.COL_VALUE).setCellRenderer(new DefaultTableCellRenderer(){
-//            @Override
-//            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-//                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-//            }
-//        });
-//        this.getColumnModel().getColumn(SamToolsTagsTableModel.COL_VALUE).setCellEditor(TagValueCellEditor.make());
     }
     public Map<String, Object> saveAndContinue(){
         for(int i = 0;i<this.getRowCount();i++){
@@ -62,7 +47,6 @@ public final class SamToolsTagsTable extends JRPStyledTable {
             }
         }
         return samtoolsData;
-//        JOptionPane.showMessageDialog(this,samtoolsData);
     }
 }
 //TCGGTAATCTGCGGCA;TTTACTGGTACTCTCC;GCCAAATGTCTGATTG;TACACGAAGACTAAGT;GTACTTTAGGTAGCTC;TAAGCGTAGGAGTACC
@@ -123,9 +107,11 @@ class DeleteButtonCellRenderer extends DefaultTableCellRenderer {
 class DeleteButtonCellEditor extends DefaultCellEditor {
     DeleteButton deleteBtn;
     private String label;
-    private boolean isPushed;
-    public DeleteButtonCellEditor() {
+    private DefaultTableModel model;
+    private int row,column;
+    public DeleteButtonCellEditor(DefaultTableModel model) {
         super(new JCheckBox());
+        this.model = model;
         this.deleteBtn = new DeleteButton();
         deleteBtn.setOpaque(true);
         deleteBtn.addActionListener(new ActionListener() {
@@ -138,6 +124,7 @@ class DeleteButtonCellEditor extends DefaultCellEditor {
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object o, boolean bln, int row, int column) {
+        this.row = row;
         if (bln) {
             deleteBtn.setForeground(table.getSelectionForeground());
             deleteBtn.setBackground(table.getSelectionBackground());
@@ -147,18 +134,20 @@ class DeleteButtonCellEditor extends DefaultCellEditor {
         }
         label = (o == null) ? "" : o.toString();
         deleteBtn.setText(label);
-        isPushed = true;
         return deleteBtn;
     }
+
+    @Override
     public Object getCellEditorValue() {
-        if (isPushed) {
-            JOptionPane.showMessageDialog(deleteBtn, label + ": Ouch!");
-        }
-        isPushed = false;
+        SwingUtilities.invokeLater(() ->{
+            if(row < model.getRowCount()){
+                model.setValueAt("",row,SamToolsTagsTableModel.COL_VALUE);
+                model.setValueAt(null,row, SamToolsTagsTableModel.COL_COLOR);
+            }
+        });
         return new String(label);
     }
     public boolean stopCellEditing() {
-        isPushed = false;
         return super.stopCellEditing();
     }
     protected void fireEditingStopped() {
@@ -166,21 +155,6 @@ class DeleteButtonCellEditor extends DefaultCellEditor {
     }
 }
 
-//class TagValueCellEditor extends DefaultCellEditor {
-//    public static TagValueCellEditor make() {
-//        JTextField field = new JTextField();
-//        return new TagValueCellEditor(field);
-//    }
-//
-//    public TagValueCellEditor(JTextField textField) {
-//        super(textField);
-//    }
-//
-//    @Override
-//    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-//        return super.getTableCellEditorComponent(table, value, isSelected, row, column);
-//    }
-//}
 
 class SamToolsTagsTableModel extends DefaultTableModel{
     public static final int COL_VALUE = 0;

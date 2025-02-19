@@ -70,7 +70,6 @@
         <jflowVersion>1.0</jflowVersion>
         <swingAllVersion>1.6.5</swingAllVersion>
         <swingLayoutVersion>1.0.3</swingLayoutVersion>
-        <freehepGraphicSvgVersion>2.4</freehepGraphicSvgVersion>
         <jdomVersion>2.0.2</jdomVersion>
         <image4jVersion>0.7</image4jVersion>
         <commonsPoolVersion>1.6</commonsPoolVersion>
@@ -86,6 +85,7 @@
         <commonsFileUpload>1.5</commonsFileUpload>
         <lombokVersion>1.18.30</lombokVersion>
         <httpclient.version>4.5.13</httpclient.version>
+        <jFreeVersion>5.0.6</jFreeVersion>
     </properties>
     <repositories>
         <repository>
@@ -829,9 +829,9 @@
                 <type>jar</type>
             </dependency>
             <dependency>
-                <groupId>org.freehep</groupId>
-                <artifactId>freehep-graphicsio-svg</artifactId>
-                <version>${freehepGraphicSvgVersion}</version>
+                <groupId>org.jfree</groupId>
+                <artifactId>org.jfree.svg</artifactId>
+                <version>${jFreeVersion}</version>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>

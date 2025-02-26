@@ -41,9 +41,11 @@ public final class SamToolsTagsTable extends JRPStyledTable {
     }
     public Map<String, Object> saveAndContinue(){
         for(int i = 0;i<this.getRowCount();i++){
-
             if(this.getValueAt(i,0) != null && this.getValueAt(i,1) != null){
-                samtoolsData.put(this.getValueAt(i,0).toString().toUpperCase(),this.getValueAt(i,1));
+                String[] tag_array=this.getValueAt(i,0).toString().toUpperCase().split(";");
+                for (String tag:tag_array) {
+                    samtoolsData.put(tag,this.getValueAt(i,1));
+                }
             }
         }
         return samtoolsData;

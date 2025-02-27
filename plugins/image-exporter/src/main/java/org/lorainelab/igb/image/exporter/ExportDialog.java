@@ -59,6 +59,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     private static final ExportFileType SVG = new ExportFileType(EXTENSION[0], DESCRIPTION[0]);
     private static final ExportFileType PNG = new ExportFileType(EXTENSION[1], DESCRIPTION[1]);
     private static final ExportFileType JPEG = new ExportFileType(EXTENSION[2], DESCRIPTION[2]);
+    private static final ExportFileType PDF = new ExportFileType(EXTENSION[4], DESCRIPTION[3]);
 
     private String currentUnit;
     private final File defaultDir;
@@ -77,7 +78,8 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
         this.FILTER_LIST = ImmutableMap.<ExportFileType, ExportFileFilter>of(
                 PNG, new ExportFileFilter(PNG),
                 SVG, new ExportFileFilter(SVG),
-                JPEG, new ExportFileFilter(JPEG)
+                JPEG, new ExportFileFilter(JPEG),
+                PDF, new ExportFileFilter(PDF)
         );
         defaultDir = new File(exportNode.get(PREF_DIR, FileTracker.EXPORT_DIR_TRACKER.getFile().getAbsolutePath()));
         currentUnit = exportNode.get(PREF_UNIT, (String) UNIT[0]);
@@ -322,7 +324,7 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
                 }
             }
         }
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image File", "*.png", "*.jpeg", "*.svg");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Image File", "*.png", "*.jpeg", "*.svg", "*.pdf");
         Optional<File> fileFromChooser = FileChooserUtil.build().setTitle("Save Image").setContext(new File(directory.getAbsolutePath()))
                 .setDefaultFileName(fileName).setFileExtensionFilters(Lists.newArrayList(extFilter)).saveFilesFromFxChooser();
         if (fileFromChooser.isPresent()) {
@@ -366,7 +368,11 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
                 return;
             }
         }
-        headlessComponentExport(exportComponent, exportFile, selectedExt, false);
+        if(selectedExt.equals(EXTENSION[4])) {
+            headlessComponentExport(exportComponent, exportFile, EXTENSION[2], false);
+        }else{
+            headlessComponentExport(exportComponent, exportFile, selectedExt, false);
+        }
         exportDialogGui.getExtComboBox().setSelectedItem(getType(getDescription(ext)));
         exportNode.put(PREF_FILE, exportFile.getAbsolutePath());
         exportNode.put(PREF_EXT, selectedExt);
@@ -473,6 +479,8 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
             return DESCRIPTION[0];
         } else if (ext.equalsIgnoreCase(EXTENSION[1])) {
             return DESCRIPTION[1];
+        } else if (ext.equalsIgnoreCase(EXTENSION[4])) {
+            return DESCRIPTION[3];
         } else {
             return DESCRIPTION[2];
         }

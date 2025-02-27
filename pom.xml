@@ -86,6 +86,7 @@
         <lombokVersion>1.18.30</lombokVersion>
         <httpclient.version>4.5.13</httpclient.version>
         <jFreeVersion>5.0.6</jFreeVersion>
+        <pdfboxVersion>3.0.4</pdfboxVersion>
     </properties>
     <repositories>
         <repository>
@@ -998,6 +999,11 @@
                 <groupId>com.sun.xml.fastinfoset</groupId>
                 <artifactId>FastInfoset</artifactId>
                 <version>2.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>${pdfboxVersion}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

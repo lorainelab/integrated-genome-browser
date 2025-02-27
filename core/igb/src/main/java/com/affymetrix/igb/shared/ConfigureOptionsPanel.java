@@ -15,7 +15,7 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.igb.colorproviders.Property;
-import com.affymetrix.igb.colorproviders.SamToolsTagsTable;
+import com.affymetrix.igb.colorproviders.SamTagsTable;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -212,7 +212,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     cancelBtn.addActionListener((ActionListener)e ->editor.setVisible(false));
                     editor.setLayout(new MigLayout("insets 4 4 4 4",
                             "[fill,30%][fill,40%][fill,30%]", "[fill,grow]"));
-                    SamToolsTagsTable table = createSamToolsTagsTable(iParameters);
+                    SamTagsTable table = createSamTagsTable(iParameters);
                     save_btn.addActionListener((ActionListener) e ->{
                         ConfigureOptionsPanel.this.setParameter(iParameters, label,table.saveAndContinue());
                         editor.setVisible(false);
@@ -394,9 +394,9 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             paramsPanel.add(panel, "growx");
         }
     }
-    private SamToolsTagsTable createSamToolsTagsTable(IParameters iParameters){
+    private SamTagsTable createSamTagsTable(IParameters iParameters){
         String[] columns = {"Tag Value","Color",""};
-        SamToolsTagsTable samtags_table = new SamToolsTagsTable(iParameters);
+        SamTagsTable samtags_table = new SamTagsTable(iParameters);
         samtags_table.setMinimumSize(new Dimension(350,450));
         samtags_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return samtags_table;

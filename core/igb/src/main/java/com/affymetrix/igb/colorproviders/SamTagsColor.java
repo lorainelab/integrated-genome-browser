@@ -28,7 +28,7 @@ public class SamTagsColor extends ColorProvider {
         SAMTAG_VALUES.add(CB);
     }
 
-    protected Parameter<String> samtoolsTags = new BoundedParameter<>(SAMTAG_VALUES);
+    protected Parameter<String> samTags = new BoundedParameter<>(SAMTAG_VALUES);
     protected Parameter<HashMap<String,Object>> color_values = new Parameter<>(TABLE_VALUES) {
         @Override
         public boolean set(Object e) {
@@ -46,7 +46,7 @@ public class SamTagsColor extends ColorProvider {
 
     public SamTagsColor() {
         super();
-        parameters.addParameter(SAMTAGS, String.class, samtoolsTags);
+        parameters.addParameter(SAMTAGS, String.class, samTags);
         parameters.addParameter(TABLE, HashMap.class, color_values);
     }
 
@@ -63,7 +63,7 @@ public class SamTagsColor extends ColorProvider {
     @Override
     public Color getColor(SeqSymmetry sym) {
         if (sym instanceof SymWithProps) {
-            Object value = ((SymWithProps) sym).getProperty(samtoolsTags.get());
+            Object value = ((SymWithProps) sym).getProperty(samTags.get());
 //            "TCGGTAATCTGCGGCA", "TTTACTGGTACTCTCC", "GCCAAATGTCTGATTG",
 //            "TACACGAAGACTAAGT", "GTACTTTAGGTAGCTC", "TAAGCGTAGGAGTACC";
             String key = value.toString().toUpperCase();

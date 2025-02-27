@@ -173,6 +173,8 @@ public class ToolTipConstants {
     //SamTools Tags
     public static final String CR = "CR";
     public static final String CB = "CB";
+    public static final String MI = "MI";
+    public static final String UB = "UB";
 
     static {
         BAM_PROP_LIST.addAll(BAM_INFO_GRP);

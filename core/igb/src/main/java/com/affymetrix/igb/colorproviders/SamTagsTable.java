@@ -39,7 +39,7 @@ public final class SamTagsTable extends JRPStyledTable {
         this.getColumnModel().getColumn(SamTagsTableModel.COL_DELETE).setCellEditor(new DeleteButtonCellEditor(dm));
         this.getColumnModel().getColumn(SamTagsTableModel.COL_DELETE).setMaxWidth(20);
     }
-    public Map<String, Object> saveAndContinue(){
+    public Map<String, Object> saveAndApply(){
         for(int i = 0;i<this.getRowCount();i++){
             if(this.getValueAt(i,0) != null && this.getValueAt(i,1) != null){
                 String[] tag_array=this.getValueAt(i,0).toString().toUpperCase().split(";");

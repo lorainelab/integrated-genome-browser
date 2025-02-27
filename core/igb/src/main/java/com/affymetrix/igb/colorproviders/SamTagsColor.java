@@ -12,23 +12,19 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.CB;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.CR;
-
 
 public class SamTagsColor extends ColorProvider {
-    private final static String SAMTAGS = "tag";
-    private final static List<String> SAMTAG_VALUES = new LinkedList<>();
+    private final static String TAG = "tag";
+    private final static List<String> TAG_VALUE = new LinkedList<>();
     public final static String TABLE = "values";
 
     private HashMap<String,Object> TABLE_VALUES = null;
 
     static {
-        SAMTAG_VALUES.add(CR);
-        SAMTAG_VALUES.add(CB);
+        TAG_VALUE.add("");
     }
 
-    protected Parameter<String> samTags = new BoundedParameter<>(SAMTAG_VALUES);
+    protected Parameter<String> samTags = new BoundedParameter<>(TAG_VALUE);
     protected Parameter<HashMap<String,Object>> color_values = new Parameter<>(TABLE_VALUES) {
         @Override
         public boolean set(Object e) {
@@ -46,7 +42,7 @@ public class SamTagsColor extends ColorProvider {
 
     public SamTagsColor() {
         super();
-        parameters.addParameter(SAMTAGS, String.class, samTags);
+        parameters.addParameter(TAG, String.class, samTags);
         parameters.addParameter(TABLE, HashMap.class, color_values);
     }
 
@@ -64,17 +60,16 @@ public class SamTagsColor extends ColorProvider {
     public Color getColor(SeqSymmetry sym) {
         if (sym instanceof SymWithProps) {
             Object value = ((SymWithProps) sym).getProperty(samTags.get());
-//            "TCGGTAATCTGCGGCA", "TTTACTGGTACTCTCC", "GCCAAATGTCTGATTG",
-//            "TACACGAAGACTAAGT", "GTACTTTAGGTAGCTC", "TAAGCGTAGGAGTACC";
-            String key = value.toString().toUpperCase();
-//            System.out.println(color_values.get());
-            if(color_values instanceof Parameter<HashMap<String, Object>>) {
-                HashMap<String,Object> key_val = color_values.get();
-                if(key_val != null){
-                    if (key_val.containsKey(key)) {
-                        return (Color)key_val.get(key);
-                     } else {
-                        return Color.lightGray;
+            if(value!=null) {
+                String key = value.toString().toUpperCase();
+                if (color_values instanceof Parameter<HashMap<String, Object>>) {
+                    HashMap<String, Object> key_val = color_values.get();
+                    if (key_val != null) {
+                        if (key_val.containsKey(key)) {
+                            return (Color) key_val.get(key);
+                        } else {
+                            return Color.lightGray;
+                        }
                     }
                 }
             }

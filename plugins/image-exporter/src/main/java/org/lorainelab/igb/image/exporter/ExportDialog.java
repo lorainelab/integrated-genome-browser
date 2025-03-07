@@ -71,7 +71,6 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     private final Map<ExportFileType, ExportFileFilter> FILTER_LIST;
 
     private ExportDialogGui exportDialogGui;
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundle");
 
     public ExportDialog() {
         this.FILTER_LIST = ImmutableMap.<ExportFileType, ExportFileFilter>of(
@@ -297,11 +296,6 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
     public void saveAsButtonActionPerformed() {
         String fileName = "igb";
         File directory = defaultDir;
-        //IGBF-2315 - De-activate save as svg on whole frame for Windows platform
-        if (System.getProperty("os.name").toLowerCase().contains("windows") && exportDialogGui.getSelectedRadioButton().getId().equals(BUNDLE.getString("wholeFrame")) && selectedExt.equals(EXTENSION[0])) {
-            JOptionPane.showMessageDialog(null, BUNDLE.getString("windowsAlert"));
-            return;
-        }
 
         if (StringUtils.isNotBlank(exportFile.getAbsolutePath())) {
             fileName = exportFile.getAbsolutePath();
@@ -355,11 +349,6 @@ public class ExportDialog extends HeadLessExport implements ImageExportService {
                 path += selectedExt;
                 exportFile = new File(path);
             }
-        }
-        //IGBF-2315 - De-activate save as svg on whole frame for Windows platform
-        if (System.getProperty("os.name").toLowerCase().contains("windows") && exportDialogGui.getSelectedRadioButton().getId().equals(BUNDLE.getString("wholeFrame")) && selectedExt.equals(EXTENSION[0])) {
-            JOptionPane.showMessageDialog(null, BUNDLE.getString("windowsAlert"));
-            return;
         }
         if (exportFile.exists()) {
             if (!isOverwrite()) {

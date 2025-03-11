@@ -1,3 +1,4 @@
+Aedes albopictus	Asian tiger mosquito	A_albopictus
 Ailuropoda melanoleuca	Giant panda	A_melanoleuca	ailMel	Ailuropoda_melanoleuca	ailuropoda_melanoleuca
 Alligator mississippiensis	American alligator	A_mississippiensis	allMis
 Anguilla rostrata	American eel	A_rostrata
@@ -29,6 +30,7 @@ Candida albicans SC	Yeast (Human Flora) SC	C_albicans_SC5314	candida_albicans
 Candida albicans WO	Yeast (Human Flora) WO	C_albicans_WO-1
 Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris	canis_lupus_familiaris
 Cannabis sativa CBDRx	Cannabis sativa CBDRx	C_sativa_CBDRx	cannabis_sativa_female
+Capitella teleta	Capitella teleta	C_teleta
 Capsella rubella	Red shepherd's purse	C_rubella
 Carica papaya	Papaya	C_papaya
 Cavia porcellus	Guinea pig	C_porcellus	cavPor	Cavia_porcellus cavia_porcellus
@@ -43,6 +45,7 @@ Ciona savignyi	Pacific sea squirt C. savignyi	C_savignyi		Ciona_savignyi	ciona_s
 Chlorocebus sabaeus	African green monkey	C_sabaeus	chlSab	chlorocebus_sabaeus
 Cricetulus griseus	Chinese hamster	C_griseus	criGri	criGriChoV	cricetulus_griseus
 Cucumis sativus	Cucumber	C_sativus	cucumis_sativus
+Dama dama	Fallow deer	D_dama
 Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio	danio_rerio
 Daphnia magna	water flea	D_magna	daphnia_magna
 Daphnia pulex	water flea	D_pulex	daphnia_pulex
@@ -83,6 +86,7 @@ Gossypium raimondii	Cotton D	G_raimondii	gossypium_raimondii
 Heterocephalus glaber	Naked mole rat	Heterocephalus_glaber	H_glaber	hetGla	heterocephalus_glaber_male	heterocephalus_glaber_female
 Homo sapiens	Human	H_sapiens	hg	Homo_sapiens	homo_sapiens
 Homo sapiens T2T	Human Telomere to Telomere	H_sapiens_T2T	hs
+Hydra vulgaris	Swiftwater hydra	H_vulgaris
 Hypsibius exemplaris Z151	tardigrade water bear	H_exemplaris_Z151	hypsibius_exemplaris
 Hordeum vulgare	Barley	H_vulgare	hordeum_vulgare	hordeum_vulgare_tritex	hordeum_vulgare_goldenpromise
 Latimeria chalumnae	Coelacanth	L_chalumnae	latCha	latimeria_chalumnae
@@ -125,7 +129,7 @@ Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna	Ornithorhynchus_anatinus
 Oryctolagus cuniculus	European rabbit	O_cuniculus		Oryctolagus_cuniculus	oryCun	oryctolagus_cuniculus
 Oryza sativa indica	Rice (indica)	O_sativa_indica	oryza_sativa	oryza_sativa_lima	oryza_sativa_larhamugad	oryza_indica	oryza_sativa_liuxu	oryza_sativa_khaoyaiguang	oryza_sativa_gobolsailbalam
 Oryza sativa japonica	Rice (japonica)	O_sativa	O_sativa_japonica	oryza_sativa_chaomeo	oryza_sativa_ketannangka	oryza_sativa_azucena
-Oryzias latipes	Medaka	Japanese rice fish	oryLat	Oryzias_latipes	oryzias_latipes
+Oryzias latipes	Japanese medaka	O_latipes	oryLat	Oryzias_latipes	oryzias_latipes
 Otolemur garnettii	Northern greater galago	O_garnettii	otoGar	Otolemur_garnettii	otolemur_garnettii
 Ostreococcus lucimarinus	Plankton	O_lucimarinus	ostreococcus_lucimarinus
 Ovis aries	Sheep	O_aries	OAR	oviAri	ovis_aries
@@ -180,6 +184,7 @@ Trypanosoma brucei	Protozoan parasites	T_brucei    trypanosoma_brucei	trypanosom
 Tupaia belangeri	Northern tree shrew	T_belangeri	tupBel	Tupaia_belangeri	tupaia_belangeri
 Tursiops truncatus	Bottlenose dolphin	T_truncatus	turTru	Tursiops_truncatus	tursiops_truncatus
 Vaccinium corymbosum	Blueberry	V_corymbosum
+Vanessa cardui	Painted lady	V_cardui
 Vicugna pacos	Alpaca	V_pacos	vicPac	Vicugna_pacos	vicugna_pacos
 Vitis vinifera	Grape vine	V_vinifera	vitis_vinifera
 Volvox carteri	Volvox	V. carteri	V_carteri

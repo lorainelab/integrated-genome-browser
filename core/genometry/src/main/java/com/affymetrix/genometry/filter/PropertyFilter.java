@@ -8,6 +8,11 @@ import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.SCORE;
+import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
+
 /**
  * IGBF-3640: This class is similar to {@link com.affymetrix.genometry.filter.ScoreFilter} with additional properties.
  * This class is designed to expand additional properties for filter-by.
@@ -20,15 +25,18 @@ public class PropertyFilter extends SymmetryFilter{
     private final static String COMPARATOR = "comparator";
     private final static List<MathComparisonOperator> COMPARATOR_VALUES = new LinkedList<>();
     static {
+        COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.EqualMathComparisonOperator());
+        COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.NotEqualMathComparisonOperator());
         COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.GreaterThanEqualMathComparisonOperator());
         COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.GreaterThanMathComparisonOperator());
-        COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.EqualMathComparisonOperator());
         COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.LessThanMathComparisonOperator());
         COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.LessThanEqualMathComparisonOperator());
-        COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.NotEqualMathComparisonOperator());
     }
     static {
-        PROPERTY_VALUES.add("");
+        PROPERTY_VALUES.add(ID);
+        PROPERTY_VALUES.add(NAME);
+        PROPERTY_VALUES.add(SCORE);
+        PROPERTY_VALUES.add(TITLE);
     }
     private Object given_property_value;
     private Parameter<MathComparisonOperator> comparator = new BoundedParameter<>(COMPARATOR_VALUES);
@@ -69,5 +77,10 @@ public class PropertyFilter extends SymmetryFilter{
     @Override
     public String getName() {
         return "property";
+    }
+
+    @Override
+    public String getPrintableString() {
+        return property.get() + " " + comparator.get().getDisplay() + " " + property_value;
     }
 }

@@ -77,7 +77,8 @@ public class FilterAction extends SeqMapViewActionA {
         configurefilters.setOptionsFilter(optionFilter);
         configurefilters.setTierLabelManager(tierLabelManager);
         if (filter != null) {
-            if(filter instanceof ChainFilter chainFilter){
+            if(filter instanceof ChainFilter){
+                ChainFilter chainFilter = (ChainFilter) filter.newInstance();
                 List<SymmetryFilterI> newFilters = chainFilter.getFilters().stream().filter(symmetryFilterI ->
                         tierLabelManager.getSelectedTiers().stream()
                                 .filter(tier -> !tier.getAnnotStyle().getUniqueName().isEmpty())
@@ -92,7 +93,7 @@ public class FilterAction extends SeqMapViewActionA {
                         .filter(tier -> !tier.getAnnotStyle().getUniqueName().isEmpty())
                         .anyMatch(tier -> isFilterSelected((SymmetryFilter) filter, tier));
                 if(filterSelected)
-                    configurefilters.setFilter(filter);
+                    configurefilters.setFilter(filter.newInstance());
             }
         }
 

@@ -27,7 +27,7 @@ public class NotEqualMathComparisonOperator implements MathComparisonOperator {
     }
     @Override
     public boolean operate(String s1, String s2) {
-        return !s1.equals(s2);
+        return !s1.equalsIgnoreCase(s2);
     }
 
     @Override

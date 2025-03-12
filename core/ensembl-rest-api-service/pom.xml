@@ -50,16 +50,6 @@
             <artifactId>slf4j-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.lorainelab.igb</groupId>
-            <artifactId>synonym-lookup</artifactId>
-            <scope>compile</scope>
-        </dependency>
         <!--End of logging dependencies-->
     </dependencies>
 

@@ -71,8 +71,9 @@ public class ColorByAction extends SeqMapViewActionA {
         colorByDialog.setLocationRelativeTo(getSeqMapView());
         colorByDialog.setInitialValue(cp);
         ColorProviderI newCp = colorByDialog.showDialog();
-        Object value = colorByDialog.getValue();
-
+        Object value = -1;
+        if(!colorByDialog.getValue().toString().equalsIgnoreCase("uninitializedvalue"))
+            value = colorByDialog.getValue();
         //set color provider to all selected tiers only if it is changed..
         if ((Integer) value == javax.swing.JOptionPane.OK_OPTION && (newCp == null || !newCp.equals(cp))) {
             tierLabelManager.getSelectedTiers().forEach(tm -> tm.getAnnotStyle().setColorProvider(newCp));

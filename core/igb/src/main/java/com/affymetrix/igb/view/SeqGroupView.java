@@ -46,7 +46,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.Map;
 import java.util.logging.Level;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
@@ -565,7 +564,6 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
 
         ThreadUtils.runOnEventQueue(() -> {
             final List<String> speciesList = GeneralLoadUtils.getSpeciesList();
-            Map<String, String> species2CommonNames = GeneralLoadUtils.getLoadedSpecies2CommonNames();
 
             speciesCB.removeItemListener(SeqGroupView.this);
             String oldSpecies = (String) speciesCB.getSelectedItem();
@@ -574,9 +572,15 @@ public class SeqGroupView implements ItemListener, ListSelectionListener,
             speciesCB.addItem(SELECT_SPECIES);
 
             Bundle bundle = FrameworkUtil.getBundle(SeqGroupView.class);
+            SpeciesSynonymsLookup speciesSynLookup = null;
+            if (bundle != null) {
+                BundleContext bundleContext = bundle.getBundleContext();
+                ServiceReference<SpeciesSynonymsLookup> serviceReference = bundleContext.getServiceReference(SpeciesSynonymsLookup.class);
+                speciesSynLookup = bundleContext.getService(serviceReference);
+            }
 
             for (String speciesName : speciesList) {
-                speciesCBRenderer.setToolTipEntry(speciesName, species2CommonNames.get(speciesName));
+                speciesCBRenderer.setToolTipEntry(speciesName, speciesSynLookup.getCommonSpeciesName(speciesName));
                 speciesCB.addItem(speciesName);
             }
             if (oldSpecies == null) {

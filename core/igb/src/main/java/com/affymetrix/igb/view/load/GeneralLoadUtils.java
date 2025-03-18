@@ -45,8 +45,6 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.view.SeqGroupView;
 import com.affymetrix.igb.view.SeqMapView;
-
-import static com.affymetrix.igb.general.DataProviderManager.ENSEMBL_REST;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BAM_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BAR_EXT;
 import static com.affymetrix.igb.view.load.FileExtensionContants.BP1_EXT;
@@ -56,7 +54,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
@@ -89,7 +86,6 @@ import java.util.zip.ZipInputStream;
 import javax.swing.JLabel;
 import org.lorainelab.igb.synonymlookup.services.ChromosomeSynonymLookup;
 import org.lorainelab.igb.synonymlookup.services.GenomeVersionSynonymLookup;
-import org.lorainelab.igb.synonymlookup.services.SpeciesSynonymsLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +116,6 @@ public final class GeneralLoadUtils {
     // versions associated with a given genome.
     private static final SetMultimap<String, DataContainer> speciesDataContainerReference
             = Multimaps.synchronizedSetMultimap(LinkedHashMultimap.create());// the list of versions associated with the species
-    private static final Map<String, String> species2CommonNames = new HashMap<>();
 
     static final Map<String, String> versionName2species
             = new HashMap<>();	// the species associated with the given version.
@@ -151,7 +146,6 @@ public final class GeneralLoadUtils {
 
     public static DataContainer getLocalFileDataContainer(GenomeVersion genomeVersion, String speciesName) {
         String versionName = genomeVersion.getName();
-        GenomeVersionSynonymLookup genomeVersionSynonymLookup = genomeVersion.getGenomeVersionSynonymLookup();
         if (speciesName == null) {
             speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list
         }
@@ -162,28 +156,27 @@ public final class GeneralLoadUtils {
             }
         }
 
-        return retrieveDataContainer(genomeVersion.getLocalDataSetProvider(), speciesName, genomeVersionSynonymLookup.getPreferredName(versionName), true, genomeVersionSynonymLookup, genomeVersion.getSpeciesSynLookup());
+        return retrieveDataContainer(genomeVersion.getLocalDataSetProvider(), speciesName, versionName, true, genomeVersion.getGenomeVersionSynonymLookup());
     }
 
-    public static synchronized DataContainer retrieveDataContainer(DataProvider dataProvider, String speciesName, String preferredVersionName, boolean immediatelyRefresh, GenomeVersionSynonymLookup genomeVersionSynonymLookup, SpeciesSynonymsLookup speciesSynLookup) {
+    public static synchronized DataContainer retrieveDataContainer(DataProvider dataProvider, String speciesName, String versionName, boolean immediatelyRefresh, GenomeVersionSynonymLookup genomeVersionSynonymLookup) {
         // Make sure we use the preferred synonym for the genome version.
+        String preferredVersionName = genomeVersionSynonymLookup.getPreferredName(versionName);
         GenomeVersion genomeVersion = gmodel.addGenomeVersion(preferredVersionName); // returns existing genomeVersion if found, otherwise creates a new genomeVersion
         DataContainer dataContainer = new DataContainer(genomeVersion, dataProvider);
         boolean isNewSpecies = !getLoadedSpeciesNames().contains(speciesName);
         Set<DataContainer> dataContainers = speciesDataContainerReference.get(speciesName);
         versionName2species.put(preferredVersionName, speciesName);
         dataContainer.getGenomeVersion().setSpeciesName(speciesName);
-        boolean isEnsemblDataProvider = dataProvider.getName().equalsIgnoreCase(ENSEMBL_REST);
-        dataContainers.add(dataContainer);
-        genomeVersion.addDataContainer(dataContainer);
-        if(!species2CommonNames.containsKey(speciesName)){
-            species2CommonNames.put(speciesName, isEnsemblDataProvider ? dataProvider.getCommonSpeciesNameForVersionName(preferredVersionName).orElse(preferredVersionName) : speciesSynLookup.getCommonSpeciesName(speciesName));
+        if (!dataContainers.contains(dataContainer)) {
+            dataContainers.add(dataContainer);
         }
         if (isNewSpecies && immediatelyRefresh) {
             if (SeqGroupView.getInstance() != null) { //ugly
                 SeqGroupView.getInstance().refreshSpeciesCB();
             }
         }
+        genomeVersion.addDataContainer(dataContainer);
         return dataContainer;
     }
 
@@ -193,10 +186,6 @@ public final class GeneralLoadUtils {
 
     public static Set<String> getLoadedSpeciesNames() {
         return ImmutableSet.copyOf(speciesDataContainerReference.keySet());
-    }
-
-    public static Map<String, String> getLoadedSpecies2CommonNames() {
-        return ImmutableMap.copyOf(species2CommonNames);
     }
 
     public static Optional<DataSet> findFeatureFromUri(URI featurePath) {

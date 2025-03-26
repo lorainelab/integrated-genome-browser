@@ -1,6 +1,7 @@
 package com.affymetrix.igb.colorproviders;
 
 import com.affymetrix.common.CommonUtils;
+import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.jidesoft.combobox.ColorComboBox;
 
@@ -17,11 +18,13 @@ import java.util.Map;
 
 public final class SamTagsTable extends JRPStyledTable {
     public Map<String,Object> samtoolsData;
+    private IParameters iParameters;
 
-    public SamTagsTable() {
+    public SamTagsTable(IParameters iParameters) {
         super("SamTagsTable");
         this.setRowHeight(this.getRowHeight()+10);
         samtoolsData = new HashMap<>();
+        this.iParameters = iParameters;
         DefaultTableModel dm = new DefaultTableModel();
         this.setModel(dm);
         dm.setDataVector(new Object[20][3],new Object[]{"Tag Value","Color",""});

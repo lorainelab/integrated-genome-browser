@@ -311,7 +311,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         cancelBtn.addActionListener((ActionListener)e ->editor.setVisible(false));
         editor.setLayout(new MigLayout("insets 4 4 4 4",
                 "[fill,30%][fill,40%][fill,30%]", "[fill,grow]"));
-        SamTagsTable table = createSamTagsTable(iParameters);
+        SamTagsTable table = createSamTagsTable();
         save_btn.addActionListener((ActionListener) e ->{
             ConfigureOptionsPanel.this.setParameter(iParameters, label,table.saveAndApply());
             editor.setVisible(false);
@@ -413,9 +413,9 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         });
         return editButton;
     }
-    private SamTagsTable createSamTagsTable(IParameters iParameters){
+    private SamTagsTable createSamTagsTable(){
         String[] columns = {"Tag Value","Color",""};
-        SamTagsTable samtags_table = new SamTagsTable(iParameters);
+        SamTagsTable samtags_table = new SamTagsTable();
         samtags_table.setMinimumSize(new Dimension(350,450));
         samtags_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return samtags_table;

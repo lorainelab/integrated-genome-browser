@@ -170,6 +170,12 @@ public class ToolTipConstants {
     public static final Map<String, List<String>> GFF_LOCATION_CATEGORY = ImmutableMap.of("GFF Info", GFF_LOC_GRP);
     public static final Map<String, List<String>> GFF_CIGAR_CATEGORY = ImmutableMap.of("Cigar", GFF_CIGAR_GRP);
 
+    //SamTools Tags
+    public static final String CR = "CR";
+    public static final String CB = "CB";
+    public static final String MI = "MI";
+    public static final String UB = "UB";
+
     static {
         BAM_PROP_LIST.addAll(BAM_INFO_GRP);
         BAM_PROP_LIST.addAll(BAM_LOC_GRP);

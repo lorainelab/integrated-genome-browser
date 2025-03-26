@@ -3,6 +3,7 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.filter.PropertyFilter;
+import com.affymetrix.genometry.filter.SamTagsFilter;
 import com.affymetrix.genometry.general.ID;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.general.NewInstance;
@@ -15,6 +16,8 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.igb.colorproviders.Property;
+import com.affymetrix.igb.colorproviders.SamTagsColor;
+import com.affymetrix.igb.colorproviders.SamTagsTable;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,31 +26,27 @@ import com.jidesoft.combobox.ColorComboBox;
 import cytoscape.visual.ui.editors.continuous.ColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientEditorPanel;
+import net.miginfocom.layout.CC;
+import net.miginfocom.swing.MigLayout;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.AbstractDocument;
-import net.miginfocom.layout.CC;
-import net.miginfocom.swing.MigLayout;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -120,8 +119,11 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     continue;
                 }
             }
-            if(cp instanceof Property || cp instanceof PropertyFilter)
+            if(cp instanceof Property || cp instanceof PropertyFilter) {
                 refreshProps(((IParameters) cp).getParametersPossibleValues("property"));
+            }else if(cp instanceof SamTagsFilter || cp instanceof SamTagsColor){
+                refreshSAMTAGS(((IParameters) cp).getParametersPossibleValues("tag"));
+            }
             comboBox.addItem(cp);
         }
         if(tierLabelManager != null){
@@ -187,6 +189,13 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         properties.add(ToolTipConstants.SCORE);
         properties.add(ToolTipConstants.TITLE);
     }
+    private void refreshSAMTAGS(List<Object> tags){
+        tags.clear();
+        tags.add(ToolTipConstants.CR);
+        tags.add(ToolTipConstants.CB);
+        tags.add(ToolTipConstants.MI);
+        tags.add(ToolTipConstants.UB);
+    }
 
     private void addOptions(final IParameters iParameters, final JPanel paramsPanel) {
         paramMap = new HashMap<>();
@@ -205,156 +214,16 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     cb.setRenderer(new IDListCellRenderer());
                     possibleValues.forEach(cb::addItem);
                     cb.setSelectedItem(iParameters.getParameterValue(label));
-
                     cb.addItemListener(e -> ConfigureOptionsPanel.this.setParameter(iParameters, label, cb.getSelectedItem()));
-
-                    //cb.setMaximumSize(new java.awt.Dimension(70, 60));
-//                    cb.setPreferredSize(new java.awt.Dimension(70, 60));
-//                    cb.setMinimumSize(new java.awt.Dimension(70, 60));
                     component = cb;
+                }else if(HashMap.class.isAssignableFrom(clazz)){
+                    component = HashMapCondition(iParameters,label);
                 } else if (Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz)) {
-                    final JTextField tf;
-                    if (Number.class.isAssignableFrom(clazz)) {
-                        tf = new JTextField();
-                        if (Integer.class.isAssignableFrom(clazz)) {
-                            ((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter(Integer.MIN_VALUE, Integer.MAX_VALUE));
-                        } else {
-                            ((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
-                        }
-
-                    } else {
-                        tf = new JTextField();
-                    }
-                    tf.setText(String.valueOf(iParameters.getParameterValue(label)));
-                    tf.getDocument().addDocumentListener(new DocumentListener() {
-                        @Override
-                        public void insertUpdate(DocumentEvent e) {
-                            setParameter();
-                        }
-
-                        @Override
-                        public void removeUpdate(DocumentEvent e) {
-                            setParameter();
-                        }
-
-                        @Override
-                        public void changedUpdate(DocumentEvent e) {
-                            setParameter();
-                        }
-
-                        private void setParameter() {
-                            if (Number.class.isAssignableFrom(clazz)) {
-                                if (tf.getText() != null && tf.getText().length() > 0) {
-                                    try {
-                                        if (Integer.class.isAssignableFrom(clazz)) {
-                                            int value = Integer.valueOf(tf.getText());
-                                            ConfigureOptionsPanel.this.setParameter(iParameters, label, value);
-                                        } else {
-                                            float value = Float.valueOf(tf.getText());
-                                            ConfigureOptionsPanel.this.setParameter(iParameters, label, value);
-                                        }
-                                    } catch (NumberFormatException ex) {
-                                    }
-                                }
-                            } else {
-                                ConfigureOptionsPanel.this.setParameter(iParameters, label, tf.getText().trim());
-                            }
-                        }
-                    });
-
-//                    tf.setMaximumSize(new java.awt.Dimension(40, 20));
-//                    tf.setPreferredSize(new java.awt.Dimension(40, 20));
-                    tf.setMinimumSize(new java.awt.Dimension(40, 20));
-                    component = tf;
+                    component = NumberOrStringCondition(iParameters,label,clazz);
                 } else if (Color.class.isAssignableFrom(clazz)) {
-                    final ColorComboBox colorComboBox = new ColorComboBox();
-                    colorComboBox.setSelectedColor((Color) iParameters.getParameterValue(label));
-                    colorComboBox.addItemListener(e -> setParameter(iParameters, label, e.getItem()));
-                    colorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
-                    colorComboBox.setButtonVisible(false);
-                    colorComboBox.setColorValueVisible(false);
-                    colorComboBox.setMaximumSize(new java.awt.Dimension(20, 20));
-                    colorComboBox.setPreferredSize(new java.awt.Dimension(20, 20));
-                    colorComboBox.setMinimumSize(new java.awt.Dimension(20, 20));
-                    //colorComboBox.setStretchToFit(true);
-                    component = colorComboBox;
+                    component = ColorConditon(iParameters,label);
                 } else if (HeatMapExtended.class.isAssignableFrom(clazz)) {
-                    final GradientEditorPanel editor = new GradientEditorPanel(null);
-                    Object hm = iParameters.getParameterValue(label);
-                    float[] positions;
-                    Color[] colorRanges;
-                    String colorByPropName = ((ColorProviderI) iParameters).getName();
-                    String[] heatMapTitle = {"HeatMapExtended"};
-//                    Preferences[] currentLabelPreferences = new Preferences[]{null};
-                    if (hm instanceof HeatMapExtended) {
-                        positions = ((HeatMapExtended) hm).getValues();
-                        colorRanges = ((HeatMapExtended) hm).getRangeColors();
-                        heatMapTitle[0] = ((HeatMapExtended) hm).getName();
-                    } else {
-                        HeatMapExtended hme = (HeatMapExtended) iParameters.getParameterValue(label);
-                        positions = hme.getValues();
-                        colorRanges = hme.getColors();
-                        heatMapTitle[0] = hme.getName();
-                    }
-                    //Initial values of heatmap are set to the ones found in preferences of first selected track.
-                    List<String> previosPrefs = new ArrayList<>();
-                    if (preferenceNodes != null && preferenceNodes.size() > 0) {
-                        Preferences preferenceNode = preferenceNodes.get(0);
-                        try {
-                            previosPrefs = Arrays.asList(preferenceNode.childrenNames());
-                        } catch (BackingStoreException ex) {
-                            //Preferences store not available
-                        }
-                        if (previosPrefs.contains(colorByPropName)) {
-                            // read json from pref and create values and colors
-                            Preferences node = preferenceNode.node(colorByPropName);
-                            float[] pos = new Gson().fromJson(node.get("values", ""), float[].class);
-                            Color[] color = new GsonBuilder().registerTypeAdapter(Color.class, (InstanceCreator<Color>) (Type type) -> new Color(0)).create().fromJson(node.get("colors", ""), Color[].class);;
-                            if (pos != null && color != null) {
-                                positions = pos;
-                                colorRanges = color;
-                            }
-
-                        }
-                    }
-                    editor.setVirtualRange(positions, colorRanges);
-                    ColorInterpolator colorInterpolator1 = new GradientColorInterpolator(editor.getVirtualRange());
-                    setParameter(iParameters, label, new HeatMapExtended(heatMapTitle[0],
-                            colorInterpolator1.getColorRange(HeatMap.BINS),
-                            positions, colorRanges));
-
-                    final JButton editButton = new JButton("Edit");
-                    editButton.addActionListener(evt -> {
-                        editor.setTitle("Configure Heatmap");
-                        editor.setModal(true);
-                        editor.setAlwaysOnTop(false);
-                        editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
-                        editor.setDefaultCloseOperation(GradientEditorPanel.DISPOSE_ON_CLOSE);
-                        Object value = editor.showDialog();
-                        if (value.equals(JOptionPane.OK_OPTION)) {
-                            ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
-                            setParameter(iParameters, label, new HeatMapExtended(heatMapTitle[0],
-                                    colorInterpolator.getColorRange(HeatMap.BINS),
-                                    editor.getVirtualRange().getVirtualValues(),
-                                    editor.getVirtualRange().getColors()));
-                            // This is used to keep track of preferences update once result is accepted by user,
-                            // ie. getReturnValue called with parameter true.
-                            //Here we create a function that will save heatmap preferences if user clicks "Ok" on "color by" dialog.
-                            commitPreferences = () -> {
-                                if (preferenceNodes != null) {
-                                    // Convert to JSON and save to preferences.
-                                    String values = new Gson().toJson(editor.getVirtualRange().getVirtualValues());
-                                    String colors = new Gson().toJson(editor.getVirtualRange().getColors());
-                                    preferenceNodes.forEach(node -> {
-                                        node = node.node(colorByPropName);
-                                        node.put("values", values);
-                                        node.put("colors", colors);
-                                    });
-                                }
-                            };
-                        }
-                    });
-                    component = editButton;
+                    component = HeatMapCondition(iParameters,label);
                 }
 
                 if (component != null) {
@@ -369,7 +238,188 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             paramsPanel.add(panel, "growx");
         }
     }
+    private ColorComboBox ColorConditon(IParameters iParameters, String label){
+        final ColorComboBox colorComboBox = new ColorComboBox();
+        colorComboBox.setSelectedColor((Color) iParameters.getParameterValue(label));
+        colorComboBox.addItemListener(e -> setParameter(iParameters, label, e.getItem()));
+        colorComboBox.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+        colorComboBox.setButtonVisible(false);
+        colorComboBox.setColorValueVisible(false);
+        colorComboBox.setMaximumSize(new java.awt.Dimension(20, 20));
+        colorComboBox.setPreferredSize(new java.awt.Dimension(20, 20));
+        colorComboBox.setMinimumSize(new java.awt.Dimension(20, 20));
+        //colorComboBox.setStretchToFit(true);
+        return colorComboBox;
+    }
+    private JTextField NumberOrStringCondition(IParameters iParameters,String label,Class clazz){
+        final JTextField tf;
+        if (Number.class.isAssignableFrom(clazz)) {
+            tf = new JTextField();
+            if (Integer.class.isAssignableFrom(clazz)) {
+                ((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.IntegerNumericFilter(Integer.MIN_VALUE, Integer.MAX_VALUE));
+            } else {
+                ((AbstractDocument) tf.getDocument()).setDocumentFilter(new NumericFilter.FloatNumericFilter());
+            }
 
+        } else {
+            tf = new JTextField();
+        }
+        tf.setText(String.valueOf(iParameters.getParameterValue(label)));
+        tf.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                setParameter();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                setParameter();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                setParameter();
+            }
+
+            private void setParameter() {
+                if (Number.class.isAssignableFrom(clazz)) {
+                    if (tf.getText() != null && tf.getText().length() > 0) {
+                        try {
+                            if (Integer.class.isAssignableFrom(clazz)) {
+                                int value = Integer.valueOf(tf.getText());
+                                ConfigureOptionsPanel.this.setParameter(iParameters, label, value);
+                            } else {
+                                float value = Float.valueOf(tf.getText());
+                                ConfigureOptionsPanel.this.setParameter(iParameters, label, value);
+                            }
+                        } catch (NumberFormatException ex) {
+                        }
+                    }
+                } else {
+                    ConfigureOptionsPanel.this.setParameter(iParameters, label, tf.getText().trim());
+                }
+            }
+        });
+        tf.setMinimumSize(new java.awt.Dimension(40, 20));
+        return tf;
+    }
+    private JButton HashMapCondition(IParameters iParameters,String label){
+        JButton editTagsColor = new JButton("Edit Tags and Color");
+        JDialog editor = new JDialog();
+        JButton save_btn = new JButton("Save and Apply");
+        JButton cancelBtn = new JButton("Cancel");
+        cancelBtn.addActionListener((ActionListener)e ->editor.setVisible(false));
+        editor.setLayout(new MigLayout("insets 4 4 4 4",
+                "[fill,30%][fill,40%][fill,30%]", "[fill,grow]"));
+        SamTagsTable table = createSamTagsTable(iParameters);
+        save_btn.addActionListener((ActionListener) e ->{
+            ConfigureOptionsPanel.this.setParameter(iParameters, label,table.saveAndApply());
+            editor.setVisible(false);
+
+        });
+        editor.add(table.getTableHeader(),"span 4,wrap");
+        editor.add(table,"span 4,wrap");
+        editor.add(save_btn,"cell 0 2");
+        editor.add(cancelBtn,"cell 2 2");
+        editor.setMinimumSize(new Dimension(350,350));
+        editTagsColor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editor.setTitle("Edit Tags and Color");
+                editor.setModal(true);
+                editor.setAlwaysOnTop(false);
+                editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
+                editor.pack();
+                editor.setVisible(true);
+            }
+        });
+        return editTagsColor;
+    }
+    private JButton HeatMapCondition(IParameters iParameters,String label){
+        final GradientEditorPanel editor = new GradientEditorPanel(null);
+        Object hm = iParameters.getParameterValue(label);
+        float[] positions;
+        Color[] colorRanges;
+        String colorByPropName = ((ColorProviderI) iParameters).getName();
+        String[] heatMapTitle = {"HeatMapExtended"};
+//                    Preferences[] currentLabelPreferences = new Preferences[]{null};
+        if (hm instanceof HeatMapExtended) {
+            positions = ((HeatMapExtended) hm).getValues();
+            colorRanges = ((HeatMapExtended) hm).getRangeColors();
+            heatMapTitle[0] = ((HeatMapExtended) hm).getName();
+        } else {
+            HeatMapExtended hme = (HeatMapExtended) iParameters.getParameterValue(label);
+            positions = hme.getValues();
+            colorRanges = hme.getColors();
+            heatMapTitle[0] = hme.getName();
+        }
+        //Initial values of heatmap are set to the ones found in preferences of first selected track.
+        List<String> previosPrefs = new ArrayList<>();
+        if (preferenceNodes != null && preferenceNodes.size() > 0) {
+            Preferences preferenceNode = preferenceNodes.get(0);
+            try {
+                previosPrefs = Arrays.asList(preferenceNode.childrenNames());
+            } catch (BackingStoreException ex) {
+                //Preferences store not available
+            }
+            if (previosPrefs.contains(colorByPropName)) {
+                // read json from pref and create values and colors
+                Preferences node = preferenceNode.node(colorByPropName);
+                float[] pos = new Gson().fromJson(node.get("values", ""), float[].class);
+                Color[] color = new GsonBuilder().registerTypeAdapter(Color.class, (InstanceCreator<Color>) (Type type) -> new Color(0)).create().fromJson(node.get("colors", ""), Color[].class);;
+                if (pos != null && color != null) {
+                    positions = pos;
+                    colorRanges = color;
+                }
+
+            }
+        }
+        editor.setVirtualRange(positions, colorRanges);
+        ColorInterpolator colorInterpolator1 = new GradientColorInterpolator(editor.getVirtualRange());
+        setParameter(iParameters, label, new HeatMapExtended(heatMapTitle[0],
+                colorInterpolator1.getColorRange(HeatMap.BINS),
+                positions, colorRanges));
+
+        final JButton editButton = new JButton("Edit");
+        editButton.addActionListener(evt -> {
+            editor.setTitle("Configure Heatmap");
+            editor.setModal(true);
+            editor.setAlwaysOnTop(false);
+            editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
+            editor.setDefaultCloseOperation(GradientEditorPanel.DISPOSE_ON_CLOSE);
+            Object value = editor.showDialog();
+            if (value.equals(JOptionPane.OK_OPTION)) {
+                ColorInterpolator colorInterpolator = new GradientColorInterpolator(editor.getVirtualRange());
+                setParameter(iParameters, label, new HeatMapExtended(heatMapTitle[0],
+                        colorInterpolator.getColorRange(HeatMap.BINS),
+                        editor.getVirtualRange().getVirtualValues(),
+                        editor.getVirtualRange().getColors()));
+                // This is used to keep track of preferences update once result is accepted by user,
+                // ie. getReturnValue called with parameter true.
+                //Here we create a function that will save heatmap preferences if user clicks "Ok" on "color by" dialog.
+                commitPreferences = () -> {
+                    if (preferenceNodes != null) {
+                        // Convert to JSON and save to preferences.
+                        String values = new Gson().toJson(editor.getVirtualRange().getVirtualValues());
+                        String colors = new Gson().toJson(editor.getVirtualRange().getColors());
+                        preferenceNodes.forEach(node -> {
+                            node = node.node(colorByPropName);
+                            node.put("values", values);
+                            node.put("colors", colors);
+                        });
+                    }
+                };
+            }
+        });
+        return editButton;
+    }
+    private SamTagsTable createSamTagsTable(IParameters iParameters){
+        String[] columns = {"Tag Value","Color",""};
+        SamTagsTable samtags_table = new SamTagsTable(iParameters);
+        samtags_table.setMinimumSize(new Dimension(350,450));
+        samtags_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        return samtags_table;
+    }
     private void setParameter(IParameters cp, String key, Object value) {
 //		boolean isValid = cp.setParameterValue(key, value);
 //		okOption.setEnabled(isValid);

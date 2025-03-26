@@ -13,21 +13,23 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.shared.Selections;
 import com.affymetrix.igb.tiers.TierLabelManager;
-import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
 import com.affymetrix.igb.util.ConfigureFilters;
-import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import org.lorainelab.igb.genoviz.extensions.glyph.TierGlyph;
+
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -115,6 +117,7 @@ public class FilterAction extends SeqMapViewActionA {
         JDialog dialog = optionPane.createDialog("Add/Remove/Edit Filters");
         dialog.setModal(false);
         dialog.setResizable(true);
+        dialog.setSize(new Dimension(400,500));
         dialog.setVisible(true);
     }
 

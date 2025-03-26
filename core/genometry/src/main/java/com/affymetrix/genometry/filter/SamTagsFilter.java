@@ -8,7 +8,6 @@ import com.affymetrix.genometry.operator.comparator.NotEqualMathComparisonOperat
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class SamTagsFilter extends SymmetryFilter{
     private final static String TAG_VALUE = "value";
     private final static List<String> TAG_VALUES = new LinkedList<>();
     private final static String COMPARATOR = "comparator";
-    public final static String DEFAULT_PROPERTY_VALUE = "";
+    public final static String DEFAULT_TAG_VALUE = "";
     private Parameter<MathComparisonOperator> comparator = new BoundedParameter<>(COMPARATOR_VALUES);
     protected Parameter<String> tags = new BoundedParameter<>(TAG_VALUES);
     static {
@@ -27,17 +26,16 @@ public class SamTagsFilter extends SymmetryFilter{
         COMPARATOR_VALUES.add(new com.affymetrix.genometry.operator.comparator.NotEqualMathComparisonOperator());
     }
     static {
-        TAG_VALUES.add("CR");
-        TAG_VALUES.add("CB");
+        TAG_VALUES.add("");
     }
-    private Object given_property_value;
+    private Object given_tag_value;
     protected Parameter<String> tag = new BoundedParameter<>(TAG_VALUES);
-    protected Parameter<String> tag_value = new Parameter<String>(DEFAULT_PROPERTY_VALUE) {
+    protected Parameter<String> tag_value = new Parameter<String>(DEFAULT_TAG_VALUE) {
         @Override
         public boolean set(Object e) {
             if (e != null) {
                 try {
-                    given_property_value = e;
+                    given_tag_value = e;
                 } catch (Exception ex) {
                 }
                 return super.set(e.toString());
@@ -47,7 +45,7 @@ public class SamTagsFilter extends SymmetryFilter{
     };
 
     public SamTagsFilter() {
-        parameters.addParameter(TAG, String.class, tags);
+        parameters.addParameter(TAG, String.class, tag);
         parameters.addParameter(TAG_VALUE, String.class, tag_value);
         parameters.addParameter(COMPARATOR,MathComparisonOperator.class,comparator);
     }
@@ -59,7 +57,7 @@ public class SamTagsFilter extends SymmetryFilter{
             if(value==null){
                 return false;
             } else if (value instanceof String str) {
-                List<String> value_List = Arrays.asList(((String) given_property_value).toUpperCase().split(";"));
+                List<String> value_List = Arrays.asList(((String) given_tag_value).toUpperCase().split(";"));
                 boolean bool = value_List.contains(str.toUpperCase());
                 if(comparator.get() instanceof NotEqualMathComparisonOperator){
                     return !bool;

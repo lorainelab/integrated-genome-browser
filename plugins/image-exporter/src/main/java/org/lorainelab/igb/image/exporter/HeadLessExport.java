@@ -24,6 +24,11 @@ import javax.imageio.stream.ImageOutputStream;
 import org.jfree.svg.SVGGraphics2D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 /**
  *
@@ -38,11 +43,12 @@ public class HeadLessExport {
     protected static final String PREF_DIR = "Dir";
     protected static final String PREF_RESOLUTION = "Resolution"; // same resolution for horizontal and vertical
     protected static final String PREF_UNIT = "Unit";
-    protected static final String[] EXTENSION = {".svg", ".png", ".jpeg", ".jpg"};
+    protected static final String[] EXTENSION = {".svg", ".png", ".jpeg", ".jpg", ".pdf"};
     protected static final String[] DESCRIPTION = {
         "Scalable Vector Graphics (*.svg)",
         "Portable Network Graphics (*.png)",
-        "Joint Photographic Experts Group (*.jpeg)",};
+        "Joint Photographic Experts Group (*.jpeg)",
+        "Portable Document Format (*.pdf)"};
 
     protected final Properties svgProperties;
     protected BufferedImage exportImage;
@@ -76,31 +82,57 @@ public class HeadLessExport {
 
 
 
-            } else {
-                exportImage = GraphicsUtil.resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());
-                Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
-                while (iw.hasNext()) {
-                    ImageWriter writer = iw.next();
-                    ImageWriteParam writeParam = writer.getDefaultWriteParam();
-                    ImageTypeSpecifier typeSpecifier
-                            = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
-                    IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
-                    if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
-                        continue;
+            } else if (ext.equals(EXTENSION[2]) && f.getAbsolutePath().endsWith(EXTENSION[4])) {
+
+                try {
+
+                    //Creating a jpeg image
+                    String newPath = f.getAbsolutePath().substring(0, f.getAbsolutePath().length() - 4) + EXTENSION[2];
+                    f = new File(newPath);
+                    exportImage(EXTENSION[2], f);
+
+                    // Load PDF document
+                    PDDocument document = new PDDocument();
+
+                    // Load image
+                    PDImageXObject image = PDImageXObject.createFromFile(f.getAbsolutePath(), document);
+                    PDRectangle rectangle = new PDRectangle(image.getWidth(), image.getHeight());
+
+                    // Create a PDF page with the same size as the image
+                    PDPage page = new PDPage(rectangle);
+                    document.addPage(page);
+
+                    // Draw image on PDF page
+                    try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                        contentStream.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
                     }
 
-                    if (ext.equals(EXTENSION[1])) {
-                        setPngDpi(metadata);
-                    } else {
-                        setJpegDpi(metadata);
+                    String imagePath = f.getAbsolutePath();
+
+                    if (imagePath.toLowerCase().endsWith(EXTENSION[2])) {
+                        // Replace ".jpeg" with ".pdf"
+                        imagePath = imagePath.substring(0, imagePath.length() - 5) + EXTENSION[4];
                     }
 
-                    try (ImageOutputStream stream = ImageIO.createImageOutputStream(f)) {
-                        writer.setOutput(stream);
-                        writer.write(metadata, new IIOImage(exportImage, null, metadata), writeParam);
+                    // Save and close document
+                    document.save(imagePath);
+                    document.close();
+
+                    if (f.exists()) {
+
+                        f.delete();
+
                     }
-                    break;
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+            } else {
+
+                exportImage(ext, f);
+
             }
         } catch (IOException ex) {
             logger.error("Error while attempting to export an image.", ex);
@@ -143,6 +175,35 @@ public class HeadLessExport {
         jfif.setAttribute("Ydensity", Integer.toString(imageInfo.getResolution()));
         jfif.setAttribute("resUnits", "1"); // density is dots per inch
         metadata.setFromTree("javax_imageio_jpeg_image_1.0", tree);
+    }
+
+    private void exportImage(String ext, File f) throws IOException {
+
+        exportImage = GraphicsUtil.resizeImage(exportImage, (int) imageInfo.getWidth(), (int) imageInfo.getHeight());
+        Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(ext.substring(1)); // need to remove "."
+        while (iw.hasNext()) {
+            ImageWriter writer = iw.next();
+            ImageWriteParam writeParam = writer.getDefaultWriteParam();
+            ImageTypeSpecifier typeSpecifier
+                    = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
+            IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+            if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
+                continue;
+            }
+
+            if (ext.equals(EXTENSION[1])) {
+                setPngDpi(metadata);
+            } else {
+                setJpegDpi(metadata);
+            }
+
+            try (ImageOutputStream stream = ImageIO.createImageOutputStream(f)) {
+                writer.setOutput(stream);
+                writer.write(metadata, new IIOImage(exportImage, null, metadata), writeParam);
+            }
+            break;
+        }
+
     }
 
 }

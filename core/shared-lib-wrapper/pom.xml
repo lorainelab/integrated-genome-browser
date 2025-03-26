@@ -93,6 +93,10 @@
             <groupId>fi.iki.elonen</groupId>
             <artifactId>NanoHTTPD</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+        </dependency>
     </dependencies>
 
 
@@ -365,7 +369,9 @@
                             org.apache.http.*,
                             lombok.*,
                             org.broad.igv.bbfile.*,
-                            org.jfree.svg
+                            org.jfree.svg,
+                            org.apache.pdfbox.*,
+                            org.apache.pdfbox.pdfbox
                         </Export-Package>
                     </instructions>
                     <archive>

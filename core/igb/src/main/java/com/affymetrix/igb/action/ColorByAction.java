@@ -2,6 +2,7 @@ package com.affymetrix.igb.action;
 
 import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.event.GenericActionHolder;
+import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.general.SupportsFileTypeCategory;
 import com.affymetrix.genometry.parsers.FileTypeCategory;
 import com.affymetrix.genometry.style.ITrackStyleExtended;
@@ -26,6 +27,7 @@ public class ColorByAction extends SeqMapViewActionA {
     private static final long serialVersionUID = 1L;
     private static final ColorByAction ACTION = new ColorByAction("colorByAction");
     private static String colorsRootNodeName = "";
+    private IParameters iParameters = null;
 
     static {
         GenericActionHolder.getInstance().addGenericAction(ACTION);
@@ -68,16 +70,28 @@ public class ColorByAction extends SeqMapViewActionA {
 
         ConfigureOptionsDialog<ColorProviderI> colorByDialog = new ConfigureOptionsDialog<>(ColorProviderI.class, "Color By", configureFilter, trackroots, tierLabelManager);
         colorByDialog.setTitle("Color By");
+        colorByDialog.setiParameters(iParameters);
         colorByDialog.setLocationRelativeTo(getSeqMapView());
         colorByDialog.setInitialValue(cp);
         ColorProviderI newCp = colorByDialog.showDialog();
         Object value = -1;
-        if(!colorByDialog.getValue().toString().equalsIgnoreCase("uninitializedvalue"))
+        if(!colorByDialog.getValue().toString().equalsIgnoreCase("uninitializedvalue")) {
             value = colorByDialog.getValue();
+            if(colorByDialog.getiParameters() != null)
+                setiParameters(colorByDialog.getiParameters());
+        }
         //set color provider to all selected tiers only if it is changed..
         if ((Integer) value == javax.swing.JOptionPane.OK_OPTION && (newCp == null || !newCp.equals(cp))) {
             tierLabelManager.getSelectedTiers().forEach(tm -> tm.getAnnotStyle().setColorProvider(newCp));
             refreshMap(false, false);
         }
+    }
+
+    public IParameters getiParameters() {
+        return iParameters;
+    }
+
+    public void setiParameters(IParameters iParameters) {
+        this.iParameters = iParameters;
     }
 }

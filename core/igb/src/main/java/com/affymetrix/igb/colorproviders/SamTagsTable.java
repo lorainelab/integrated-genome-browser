@@ -20,11 +20,10 @@ public final class SamTagsTable extends JRPStyledTable {
     public Map<String,Object> samtoolsData;
     private IParameters iParameters;
 
-    public SamTagsTable(IParameters iParameters) {
+    public SamTagsTable() {
         super("SamTagsTable");
         this.setRowHeight(this.getRowHeight()+10);
         samtoolsData = new HashMap<>();
-        this.iParameters = iParameters;
         DefaultTableModel dm = new DefaultTableModel();
         this.setModel(dm);
         dm.setDataVector(new Object[20][3],new Object[]{"Tag Value","Color",""});
@@ -50,8 +49,23 @@ public final class SamTagsTable extends JRPStyledTable {
         }
         return samtoolsData;
     }
+
+    public IParameters getiParameters() {
+        return iParameters;
+    }
+
+    public void populateUserData(IParameters iParameters) {
+        this.iParameters = iParameters;
+        Map<String, Color> params = (Map<String, Color>) iParameters.getParameterValue("values");
+        int i = 0;
+        for(String tag : params.keySet()){
+            this.setValueAt(tag,i,0);
+            this.setValueAt(params.get(tag),i,1);
+            i++;
+        }
+    }
+
 }
-//TCGGTAATCTGCGGCA;TTTACTGGTACTCTCC;GCCAAATGTCTGATTG;TACACGAAGACTAAGT;GTACTTTAGGTAGCTC;TAAGCGTAGGAGTACC
 class ColorComboBoxCellRenderer extends DefaultTableCellRenderer {
     private final ColorComboBox ccb;
     public ColorComboBoxCellRenderer() {

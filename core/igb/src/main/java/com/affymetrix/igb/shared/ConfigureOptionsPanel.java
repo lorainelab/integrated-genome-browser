@@ -196,6 +196,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         tags.add(ToolTipConstants.CB);
         tags.add(ToolTipConstants.MI);
         tags.add(ToolTipConstants.UB);
+        tags.add(ToolTipConstants.UR);
     }
 
     public IParameters getSaved_IParameters() {

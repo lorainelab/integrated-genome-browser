@@ -288,7 +288,7 @@ public class Activator implements BundleActivator {
         //bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometry.color.Strand(), null);
         bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Length(), null);
         bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.Property(), null);
-        bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.SamTagsColor(), null);
+        bundleContext.registerService(ColorProviderI.class, new com.affymetrix.igb.colorproviders.SAMTagsColor(), null);
         bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometry.color.Duplicate(), null);
         bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometry.color.Paired(), null);
         bundleContext.registerService(ColorProviderI.class, new com.affymetrix.genometry.color.PariedByRunNo(), null);
@@ -307,7 +307,7 @@ public class Activator implements BundleActivator {
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.MappingQualityFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.ScoreFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.PropertyFilter(), null);
-        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.SamTagsFilter(), null);
+        bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.SAMTagsFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.PairedFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.PairedByRunNoFilter(), null);
         bundleContext.registerService(SymmetryFilterI.class, new com.affymetrix.genometry.filter.DuplicateFilter(), null);

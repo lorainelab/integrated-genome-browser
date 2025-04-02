@@ -3,7 +3,7 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.filter.PropertyFilter;
-import com.affymetrix.genometry.filter.SamTagsFilter;
+import com.affymetrix.genometry.filter.SAMTagsFilter;
 import com.affymetrix.genometry.general.ID;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.general.NewInstance;
@@ -16,8 +16,8 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.igb.colorproviders.Property;
-import com.affymetrix.igb.colorproviders.SamTagsColor;
-import com.affymetrix.igb.colorproviders.SamTagsTable;
+import com.affymetrix.igb.colorproviders.SAMTagsColor;
+import com.affymetrix.igb.colorproviders.SAMTagsTable;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -122,7 +122,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             }
             if(cp instanceof Property || cp instanceof PropertyFilter) {
                 refreshProps(((IParameters) cp).getParametersPossibleValues("property"));
-            }else if(cp instanceof SamTagsFilter || cp instanceof SamTagsColor){
+            }else if(cp instanceof SAMTagsFilter || cp instanceof SAMTagsColor){
                 refreshSAMTAGS(((IParameters) cp).getParametersPossibleValues("tag"));
             }
             comboBox.addItem(cp);
@@ -320,7 +320,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         cancelBtn.addActionListener((ActionListener)e ->editor.setVisible(false));
         editor.setLayout(new MigLayout("insets 4 4 4 4",
                 "[fill,30%][fill,40%][fill,30%]", "[fill,grow]"));
-        SamTagsTable table = createSamTagsTable(getSaved_IParameters());
+        SAMTagsTable table = createSAMTagsTable(getSaved_IParameters());
         save_btn.addActionListener((ActionListener) e ->{
             Map<String, Object> savedColors = new HashMap<>();
             savedColors.put(label,table.saveAndApply());
@@ -427,9 +427,9 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         });
         return editButton;
     }
-    private SamTagsTable createSamTagsTable(IParameters iParameters){
+    private SAMTagsTable createSAMTagsTable(IParameters iParameters){
         String[] columns = {"Tag Value","Color",""};
-        SamTagsTable samtags_table = new SamTagsTable();
+        SAMTagsTable samtags_table = new SAMTagsTable();
         if(iParameters != null)
             samtags_table.populateUserData(iParameters);
         samtags_table.setMinimumSize(new Dimension(300,400));

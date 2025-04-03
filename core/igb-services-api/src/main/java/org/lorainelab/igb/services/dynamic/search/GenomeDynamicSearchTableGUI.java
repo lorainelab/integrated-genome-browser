@@ -4,6 +4,12 @@
  */
 package org.lorainelab.igb.services.dynamic.search;
 
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 /**
  *
  * @author sravani
@@ -14,7 +20,9 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
     private final GenomeDynamicSearchTable genomeDynamicSearchTable;
     private final ExternalGenomeDataProvider externalGenomeDataProvider;
     private int currentPage = 0;
-    private final int rowsPerPage = 5;
+    private final int rowsPerPage = 100;
+    private String sortedColumn = "Common Name";
+    private boolean ascending = true;
 
     /**
      * Creates new form GenomeDynamicSearchTableGUI
@@ -25,8 +33,45 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
         genomeDynamicSearchTable = new GenomeDynamicSearchTable(genomeDynamicSearchTableModel, externalGenomeDataProvider);
         initComponents();
         refreshTable();
+        updateTableHeader(0, ascending);
+        genomeDynamicSearchTable.getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int columnIndex = genomeDynamicSearchTable.columnAtPoint(e.getPoint());
+                String columnName = genomeDynamicSearchTable.getColumnName(columnIndex);
+                if(!columnName.isBlank()) {
+                    if(columnName.equals(sortedColumn))
+                        ascending = !ascending;
+                    else {
+                        sortedColumn = columnName;
+                        ascending = true;
+                    }
+                    externalGenomeDataProvider.setSorting(columnName, ascending);
+                    currentPage = 0;
+                    refreshTable();
+                    updateTableHeader(columnIndex, ascending);
+                }
+            }
+        });
     }
-    
+
+    private void updateTableHeader(int columnIndex, boolean ascending) {
+        JTableHeader header = genomeDynamicSearchTable.getTableHeader();
+        TableColumnModel columnModel = genomeDynamicSearchTable.getColumnModel();
+
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            TableColumn column = columnModel.getColumn(i);
+            String columnName = genomeDynamicSearchTable.getColumnName(i);
+            if (i == columnIndex) {
+                column.setHeaderValue(columnName + (ascending ? " ▲" : " ▼"));
+            } else {
+                column.setHeaderValue(columnName);
+            }
+        }
+
+        header.repaint();
+    }
+
     private void refreshTable() {
         genomeDynamicSearchTableModel.setData(externalGenomeDataProvider.getPageData(currentPage, rowsPerPage));
         updateVisibility();
@@ -69,6 +114,8 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
         });
 
         searchResultsTable.setModel(genomeDynamicSearchTableModel);
+        searchResultsTable.setSelectionBackground(new java.awt.Color(51, 153, 255));
+        searchResultsTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(searchResultsTable);
 
         clearSearchButton.setText("Clear Search");
@@ -99,18 +146,19 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(previousButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nextButton))
                     .addComponent(jScrollPane1)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(searchText, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(204, 204, 204)
-                        .addComponent(previousButton)
+                        .addComponent(searchText, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(nextButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(clearSearchButton)))
+                        .addComponent(clearSearchButton)
+                        .addGap(0, 110, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -119,12 +167,12 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(searchText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(searchText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(clearSearchButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(clearSearchButton)
                     .addComponent(nextButton)
                     .addComponent(previousButton))
                 .addContainerGap())
@@ -137,14 +185,14 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 706, Short.MAX_VALUE)
+                .addComponent(jScrollPane2)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 

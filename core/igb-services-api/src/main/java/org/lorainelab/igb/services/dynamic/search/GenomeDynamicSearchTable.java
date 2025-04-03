@@ -35,6 +35,7 @@ public class GenomeDynamicSearchTable extends StyledJTable {
         this.dataProvider = dataProvider;
 
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setRowSelectionAllowed(true);
         setCellSelectionEnabled(false);
 
         super.list.add(LOAD_COLUMN);

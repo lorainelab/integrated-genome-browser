@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class SAMTagsColor extends ColorProvider {
+public class SAMtagsColor extends ColorProvider {
     private final static String TAG = "tag";
     private final static List<String> TAG_VALUE = new LinkedList<>();
     public final static String TABLE = "values";
@@ -40,7 +40,7 @@ public class SAMTagsColor extends ColorProvider {
         }
     };
 
-    public SAMTagsColor() {
+    public SAMtagsColor() {
         super();
         parameters.addParameter(TAG, String.class, samTags);
         parameters.addParameter(TABLE, HashMap.class, color_values);

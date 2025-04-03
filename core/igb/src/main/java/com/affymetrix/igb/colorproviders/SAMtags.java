@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author hiralv
  */
-public class SAMTags extends ColorProvider {
+public class SAMtags extends ColorProvider {
 
     private final static String SAMTAGS = "samtags";
     private final static List<String> SAMTAGS_VALUES = new LinkedList<>();
@@ -52,7 +52,7 @@ public class SAMTags extends ColorProvider {
     private Parameter<Color> notMatchColor = new Parameter<>(DEFAULT_NOT_MATCH_COLOR);
 
     //	private ColorPalette cp = new ColorPalette(ColorScheme.ACCENT8);
-    public SAMTags() {
+    public SAMtags() {
         super();
         parameters.addParameter(SAMTAGS, String.class, property);
         parameters.addParameter(SAMTAGS_VALUE, String.class, property_value);

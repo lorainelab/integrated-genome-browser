@@ -16,12 +16,12 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class SAMTagsTable extends JRPStyledTable {
+public final class SAMtagsTable extends JRPStyledTable {
     public Map<String,Object> samtoolsData;
     private IParameters iParameters;
 
-    public SAMTagsTable() {
-        super("SAMTagsTable");
+    public SAMtagsTable() {
+        super("SAMtagsTable");
         this.setRowHeight(this.getRowHeight()+10);
         samtoolsData = new HashMap<>();
         DefaultTableModel dm = new DefaultTableModel();
@@ -29,14 +29,14 @@ public final class SAMTagsTable extends JRPStyledTable {
         dm.setDataVector(new Object[20][3],new Object[]{"Tag Value","Color",""});
 
         //Color
-        this.getColumnModel().getColumn(SAMTagsTableModel.COL_COLOR).setCellRenderer(new ColorComboBoxCellRenderer());
-        this.getColumnModel().getColumn(SAMTagsTableModel.COL_COLOR).setCellEditor(new ColorComboBoxCellEditor());
-        this.getColumnModel().getColumn(SAMTagsTableModel.COL_COLOR).setMaxWidth(60);
+        this.getColumnModel().getColumn(SAMtagsTableModel.COL_COLOR).setCellRenderer(new ColorComboBoxCellRenderer());
+        this.getColumnModel().getColumn(SAMtagsTableModel.COL_COLOR).setCellEditor(new ColorComboBoxCellEditor());
+        this.getColumnModel().getColumn(SAMtagsTableModel.COL_COLOR).setMaxWidth(60);
 
         // Delete
-        this.getColumnModel().getColumn(SAMTagsTableModel.COL_DELETE).setCellRenderer(new DeleteButtonCellRenderer());
-        this.getColumnModel().getColumn(SAMTagsTableModel.COL_DELETE).setCellEditor(new DeleteButtonCellEditor(dm));
-        this.getColumnModel().getColumn(SAMTagsTableModel.COL_DELETE).setMaxWidth(20);
+        this.getColumnModel().getColumn(SAMtagsTableModel.COL_DELETE).setCellRenderer(new DeleteButtonCellRenderer());
+        this.getColumnModel().getColumn(SAMtagsTableModel.COL_DELETE).setCellEditor(new DeleteButtonCellEditor(dm));
+        this.getColumnModel().getColumn(SAMtagsTableModel.COL_DELETE).setMaxWidth(20);
     }
     public Map<String, Object> saveAndApply(){
         for(int i = 0;i<this.getRowCount();i++){
@@ -157,8 +157,8 @@ class DeleteButtonCellEditor extends DefaultCellEditor {
     public Object getCellEditorValue() {
         SwingUtilities.invokeLater(() ->{
             if(row < model.getRowCount()){
-                model.setValueAt("",row,SAMTagsTableModel.COL_VALUE);
-                model.setValueAt(null,row, SAMTagsTableModel.COL_COLOR);
+                model.setValueAt("",row,SAMtagsTableModel.COL_VALUE);
+                model.setValueAt(null,row, SAMtagsTableModel.COL_COLOR);
             }
         });
         return new String(label);
@@ -172,7 +172,7 @@ class DeleteButtonCellEditor extends DefaultCellEditor {
 }
 
 
-class SAMTagsTableModel extends DefaultTableModel{
+class SAMtagsTableModel extends DefaultTableModel{
     public static final int COL_VALUE = 0;
     public static final int COL_COLOR = 1;
     public static final int COL_DELETE = 2;
@@ -183,7 +183,7 @@ class SAMTagsTableModel extends DefaultTableModel{
     private Map<String,Object> samtoolsData;
     private static int default_rows =20;
 
-    public SAMTagsTableModel(Map<String,Object> samtoolsData) {
+    public SAMtagsTableModel(Map<String,Object> samtoolsData) {
         this.samtoolsData = samtoolsData;
     }
 

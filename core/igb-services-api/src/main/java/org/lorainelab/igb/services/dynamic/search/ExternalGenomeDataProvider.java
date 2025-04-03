@@ -7,4 +7,5 @@ public interface ExternalGenomeDataProvider {
     int getTotalGenomes();
     void search(String query);
     void performLoadGenome(ExternalGenomeData genomeData);
+    void setSorting(String columnName, Boolean ascending);
 }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExternalGenomeData {
+    private String id;
     private String commonName;
     private String scientificName;
     private String assemblyVersion;

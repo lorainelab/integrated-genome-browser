@@ -4,9 +4,14 @@
  */
 package org.lorainelab.igb.services.dynamic.search;
 
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -19,10 +24,13 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
     private final GenomeDynamicSearchTableModel genomeDynamicSearchTableModel;
     private final GenomeDynamicSearchTable genomeDynamicSearchTable;
     private final ExternalGenomeDataProvider externalGenomeDataProvider;
-    private int currentPage = 0;
-    private final int rowsPerPage = 100;
+    private int currentPage = 1;
+    private final int ROWS_PER_PAGE = 100;
+    private int totalPages;
     private String sortedColumn = "Common Name";
     private boolean ascending = true;
+    private javax.swing.JLabel resultsLabel;         // Left side label
+    private javax.swing.JPanel rightPaginationPanel; // Right side panel for page numbers
 
     /**
      * Creates new form GenomeDynamicSearchTableGUI
@@ -47,7 +55,7 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
                         ascending = true;
                     }
                     externalGenomeDataProvider.setSorting(columnName, ascending);
-                    currentPage = 0;
+                    currentPage = 1;
                     refreshTable();
                     updateTableHeader(columnIndex, ascending);
                 }
@@ -73,14 +81,78 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
     }
 
     private void refreshTable() {
-        genomeDynamicSearchTableModel.setData(externalGenomeDataProvider.getPageData(currentPage, rowsPerPage));
-        updateVisibility();
+        genomeDynamicSearchTableModel.setData(externalGenomeDataProvider.getPageData(currentPage, ROWS_PER_PAGE));
+    }
+
+    private void updatePagination() {
+        // Update total pages count
+        int totalResults = externalGenomeDataProvider.getTotalGenomes();
+        totalPages = (int) Math.ceil(totalResults / (double) ROWS_PER_PAGE);
+
+        // Update result range label on the left
+        String resultRange = String.format("%d-%d of %d results",
+                (currentPage - 1) * ROWS_PER_PAGE + 1,
+                Math.min(currentPage * ROWS_PER_PAGE, totalResults),
+                totalResults);
+        resultsLabel.setText(resultRange);
+
+        // Clear the right side pagination panel before re-adding components
+        rightPaginationPanel.removeAll();
+
+        // Previous button
+        JLabel prev = createPageLabel("<", currentPage > 1, () -> updatePage(currentPage - 1));
+        rightPaginationPanel.add(prev);
+
+        // Display a small range of page numbers (e.g., current - 1, current, current + 1)
+        int startPage = Math.max(1, currentPage - 1);
+        int endPage = Math.min(totalPages, currentPage + 1);
+        for (int i = startPage; i <= endPage; i++) {
+            final int pageNo = i;
+            JLabel label = createPageLabel(String.valueOf(pageNo), true, () -> updatePage(pageNo));
+            if (pageNo == currentPage) {
+                label.setOpaque(true);
+                label.setBackground(new Color(30, 80, 200));
+                label.setForeground(Color.WHITE);
+                label.setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 8));
+            }
+            rightPaginationPanel.add(label);
+        }
+
+        // Next button
+        JLabel next = createPageLabel(">", currentPage < totalPages, () -> updatePage(currentPage + 1));
+        rightPaginationPanel.add(next);
+
+        // Repaint the pagination panel
+        paginationWrapper.revalidate();
+        paginationWrapper.repaint();
+        refreshTable();
+    }
+
+    private void updatePage(int newPage) {
+        if (newPage < 1 || newPage > totalPages) {
+            return;
+        }
+        currentPage = newPage;
+        refreshTable();
+        updatePagination();
+    }
+
+    private JLabel createPageLabel(String text, boolean enabled, Runnable action) {
+        JLabel label = new JLabel(text);
+        label.setCursor(enabled ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
+        label.setForeground(enabled ? Color.BLACK : Color.GRAY);
+        label.setFont(new Font("Dialog", Font.PLAIN, 12));
+        label.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (enabled) {
+                    action.run();
+                }
+            }
+        });
+        label.setBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6));
+        return label;
     }
     
-    private void updateVisibility() {
-        previousButton.setEnabled(currentPage != 0);
-        nextButton.setEnabled(((currentPage + 1) * rowsPerPage) < externalGenomeDataProvider.getTotalGenomes());
-    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -97,8 +169,7 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         searchResultsTable = genomeDynamicSearchTable;
         clearSearchButton = new javax.swing.JButton();
-        nextButton = new javax.swing.JButton();
-        previousButton = new javax.swing.JButton();
+        paginationWrapper = new javax.swing.JPanel();
 
         jLabel1.setText("Start typing a genome name:");
 
@@ -114,7 +185,7 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
         });
 
         searchResultsTable.setModel(genomeDynamicSearchTableModel);
-        searchResultsTable.setSelectionBackground(new java.awt.Color(51, 153, 255));
+        searchResultsTable.setSelectionBackground(new java.awt.Color(0, 51, 255));
         searchResultsTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(searchResultsTable);
 
@@ -125,34 +196,26 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
             }
         });
 
-        nextButton.setText("Next");
-        nextButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextButtonActionPerformed(evt);
-            }
-        });
+        paginationWrapper.setLayout(new java.awt.BorderLayout());
+        resultsLabel = new javax.swing.JLabel();
+        resultsLabel.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+        paginationWrapper.add(resultsLabel, java.awt.BorderLayout.WEST);
 
-        previousButton.setText("Previous");
-        previousButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                previousButtonActionPerformed(evt);
-            }
-        });
+        rightPaginationPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 5, 5));
+        paginationWrapper.add(rightPaginationPanel, java.awt.BorderLayout.EAST);
+
+        updatePagination();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(previousButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(nextButton))
-                    .addComponent(jScrollPane1)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(paginationWrapper, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(searchText, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -170,11 +233,9 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
                     .addComponent(searchText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(clearSearchButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(nextButton)
-                    .addComponent(previousButton))
+                .addComponent(paginationWrapper, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -191,7 +252,7 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane2)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -204,27 +265,15 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
         searchText.setText("");
         externalGenomeDataProvider.search("");
         refreshTable();
+        updatePagination();
     }//GEN-LAST:event_clearSearchButtonActionPerformed
-
-    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-        if ((currentPage + 1) * rowsPerPage < externalGenomeDataProvider.getTotalGenomes()) {
-            currentPage++;
-            refreshTable();
-        }
-    }//GEN-LAST:event_nextButtonActionPerformed
-
-    private void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousButtonActionPerformed
-        if (currentPage > 0) {
-            currentPage--;
-            refreshTable();
-        }
-    }//GEN-LAST:event_previousButtonActionPerformed
 
     private void searchTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextKeyReleased
         String text = searchText.getText().trim();
         externalGenomeDataProvider.search(text);
-        currentPage = 0;
+        currentPage = 1;
         refreshTable();
+        updatePagination();
     }//GEN-LAST:event_searchTextKeyReleased
 
 
@@ -234,8 +283,7 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JButton nextButton;
-    private javax.swing.JButton previousButton;
+    private javax.swing.JPanel paginationWrapper;
     private javax.swing.JTable searchResultsTable;
     private javax.swing.JTextField searchText;
     // End of variables declaration//GEN-END:variables

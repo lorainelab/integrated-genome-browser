@@ -35,8 +35,6 @@ public class GenomeDynamicSearchTable extends StyledJTable {
         this.dataProvider = dataProvider;
 
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        setRowSelectionAllowed(true);
-        setCellSelectionEnabled(false);
 
         super.list.add(LOAD_COLUMN);
         getColumnModel().getColumn(LOAD_COLUMN).setCellRenderer(new ButtonRenderer());
@@ -59,8 +57,12 @@ public class GenomeDynamicSearchTable extends StyledJTable {
     @Override
     public Component prepareRenderer(TableCellRenderer tcr, int r, int c) {
         Component component = super.prepareRenderer(tcr, r, c);
-        if (!list.contains(c)) {
+        if (!list.contains(c) && !isRowSelected(r)) {
             component.setBackground(Color.WHITE);
+            component.setForeground(getForeground());
+        } else if (!list.contains(c) && isRowSelected(r)) {
+            component.setBackground(getSelectionBackground());
+            component.setForeground(getSelectionForeground());
         }
         return component;
     }
@@ -127,6 +129,7 @@ class ButtonEditor extends DefaultCellEditor {
         genomeData = model.getData().get(row);
         button.setText("Load");
         button.setBackground(new Color(30, 80, 200));
+        table.setRowSelectionInterval(row, row);
         return button;
     }
 

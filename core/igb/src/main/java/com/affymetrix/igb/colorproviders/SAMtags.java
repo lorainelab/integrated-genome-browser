@@ -5,11 +5,8 @@ import com.affymetrix.genometry.general.BoundedParameter;
 import com.affymetrix.genometry.general.Parameter;
 import com.affymetrix.genometry.symmetry.SymWithProps;
 import com.affymetrix.genometry.symmetry.impl.SeqSymmetry;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.ID;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.NAME;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.SCORE;
-import static com.affymetrix.genometry.tooltip.ToolTipConstants.TITLE;
 import com.affymetrix.igb.IGBConstants;
+
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +15,7 @@ import java.util.List;
  *
  * @author hiralv
  */
-public class SamTags extends ColorProvider {
+public class SAMtags extends ColorProvider {
 
     private final static String SAMTAGS = "samtags";
     private final static List<String> SAMTAGS_VALUES = new LinkedList<>();
@@ -55,7 +52,7 @@ public class SamTags extends ColorProvider {
     private Parameter<Color> notMatchColor = new Parameter<>(DEFAULT_NOT_MATCH_COLOR);
 
     //	private ColorPalette cp = new ColorPalette(ColorScheme.ACCENT8);
-    public SamTags() {
+    public SAMtags() {
         super();
         parameters.addParameter(SAMTAGS, String.class, property);
         parameters.addParameter(SAMTAGS_VALUE, String.class, property_value);

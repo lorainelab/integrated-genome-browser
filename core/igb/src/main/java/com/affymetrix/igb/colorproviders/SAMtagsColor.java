@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class SamTagsColor extends ColorProvider {
+public class SAMtagsColor extends ColorProvider {
     private final static String TAG = "tag";
     private final static List<String> TAG_VALUE = new LinkedList<>();
     public final static String TABLE = "values";
@@ -40,7 +40,7 @@ public class SamTagsColor extends ColorProvider {
         }
     };
 
-    public SamTagsColor() {
+    public SAMtagsColor() {
         super();
         parameters.addParameter(TAG, String.class, samTags);
         parameters.addParameter(TABLE, HashMap.class, color_values);
@@ -59,14 +59,20 @@ public class SamTagsColor extends ColorProvider {
     @Override
     public Color getColor(SeqSymmetry sym) {
         if (sym instanceof SymWithProps) {
-            Object value = ((SymWithProps) sym).getProperty(samTags.get());
-            if(value!=null) {
-                String key = value.toString().toUpperCase();
+            Object read_tag_value = ((SymWithProps) sym).getProperty(samTags.get());
+            if(read_tag_value!=null) {
+                String rtv_upcase = read_tag_value.toString().toUpperCase();
                 if (color_values instanceof Parameter<HashMap<String, Object>>) {
-                    HashMap<String, Object> key_val = color_values.get();
-                    if (key_val != null) {
-                        if (key_val.containsKey(key)) {
-                            return (Color) key_val.get(key);
+                    HashMap<String, Object> input_table_values = color_values.get();
+                    HashMap<String, Color> itv_temp = new HashMap<>();
+                    input_table_values.forEach((smtg,col) -> {
+                        for (String smtg_val: smtg.toString().toUpperCase().split(";")) {
+                            itv_temp.put(smtg_val,(Color) col);
+                        }
+                    });
+                    if (itv_temp != null) {
+                        if (itv_temp.containsKey(rtv_upcase)) {
+                            return itv_temp.get(rtv_upcase);
                         } else {
                             return Color.lightGray;
                         }

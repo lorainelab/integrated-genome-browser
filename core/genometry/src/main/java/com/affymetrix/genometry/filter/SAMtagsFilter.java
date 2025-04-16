@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SamTagsFilter extends SymmetryFilter{
+public class SAMtagsFilter extends SymmetryFilter{
     private final static List<MathComparisonOperator> COMPARATOR_VALUES = new LinkedList<>();
     private final static String TAG = "tag";
     private final static String TAG_VALUE = "value";
@@ -44,7 +44,7 @@ public class SamTagsFilter extends SymmetryFilter{
         }
     };
 
-    public SamTagsFilter() {
+    public SAMtagsFilter() {
         parameters.addParameter(TAG, String.class, tag);
         parameters.addParameter(TAG_VALUE, String.class, tag_value);
         parameters.addParameter(COMPARATOR,MathComparisonOperator.class,comparator);

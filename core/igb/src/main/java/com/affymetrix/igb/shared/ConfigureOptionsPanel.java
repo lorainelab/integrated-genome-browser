@@ -3,7 +3,7 @@ package com.affymetrix.igb.shared;
 import com.affymetrix.common.ExtensionPointHandler;
 import com.affymetrix.genometry.color.ColorProviderI;
 import com.affymetrix.genometry.filter.PropertyFilter;
-import com.affymetrix.genometry.filter.SamTagsFilter;
+import com.affymetrix.genometry.filter.SAMtagsFilter;
 import com.affymetrix.genometry.general.ID;
 import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.general.NewInstance;
@@ -16,8 +16,8 @@ import com.affymetrix.genometry.util.GeneralUtils;
 import com.affymetrix.genometry.util.IDComparator;
 import com.affymetrix.genoviz.swing.NumericFilter;
 import com.affymetrix.igb.colorproviders.Property;
-import com.affymetrix.igb.colorproviders.SamTagsColor;
-import com.affymetrix.igb.colorproviders.SamTagsTable;
+import com.affymetrix.igb.colorproviders.SAMtagsColor;
+import com.affymetrix.igb.colorproviders.SAMtagsTable;
 import com.affymetrix.igb.tiers.TierLabelManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -68,6 +68,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
     // This is used to keep track of preferences update once result is accepted bu user,
     // ie. getReturnValue called with parameter true.
     private Runnable commitPreferences = null;
+    private IParameters saved_IParameters = null;
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle("igb");
 
     /**
@@ -121,7 +122,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             }
             if(cp instanceof Property || cp instanceof PropertyFilter) {
                 refreshProps(((IParameters) cp).getParametersPossibleValues("property"));
-            }else if(cp instanceof SamTagsFilter || cp instanceof SamTagsColor){
+            }else if(cp instanceof SAMtagsFilter || cp instanceof SAMtagsColor){
                 refreshSAMTAGS(((IParameters) cp).getParametersPossibleValues("tag"));
             }
             comboBox.addItem(cp);
@@ -195,6 +196,15 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         tags.add(ToolTipConstants.CB);
         tags.add(ToolTipConstants.MI);
         tags.add(ToolTipConstants.UB);
+        tags.add(ToolTipConstants.UR);
+    }
+
+    public IParameters getSaved_IParameters() {
+        return saved_IParameters;
+    }
+
+    public void setSaved_IParameters(IParameters saved_IParameters) {
+        this.saved_IParameters = saved_IParameters;
     }
 
     private void addOptions(final IParameters iParameters, final JPanel paramsPanel) {
@@ -311,9 +321,14 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         cancelBtn.addActionListener((ActionListener)e ->editor.setVisible(false));
         editor.setLayout(new MigLayout("insets 4 4 4 4",
                 "[fill,30%][fill,40%][fill,30%]", "[fill,grow]"));
-        SamTagsTable table = createSamTagsTable(iParameters);
+        SAMtagsTable table = createSAMtagsTable(getSaved_IParameters());
         save_btn.addActionListener((ActionListener) e ->{
-            ConfigureOptionsPanel.this.setParameter(iParameters, label,table.saveAndApply());
+            Map<String, Object> savedColors = new HashMap<>();
+            savedColors.put(label,table.saveAndApply());
+            if(savedColors.get(label)!=null)
+                iParameters.setParametersValue(savedColors);
+                setSaved_IParameters(iParameters);
+            ConfigureOptionsPanel.this.setParameter(iParameters, label, savedColors.get(label));
             editor.setVisible(false);
 
         });
@@ -413,13 +428,16 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         });
         return editButton;
     }
-    private SamTagsTable createSamTagsTable(IParameters iParameters){
+    private SAMtagsTable createSAMtagsTable(IParameters iParameters){
         String[] columns = {"Tag Value","Color",""};
-        SamTagsTable samtags_table = new SamTagsTable(iParameters);
-        samtags_table.setMinimumSize(new Dimension(350,450));
+        SAMtagsTable samtags_table = new SAMtagsTable();
+        if(iParameters != null)
+            samtags_table.populateUserData(iParameters);
+        samtags_table.setMinimumSize(new Dimension(300,400));
         samtags_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return samtags_table;
     }
+
     private void setParameter(IParameters cp, String key, Object value) {
 //		boolean isValid = cp.setParameterValue(key, value);
 //		okOption.setEnabled(isValid);

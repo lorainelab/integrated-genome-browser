@@ -1,18 +1,19 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometry.general.ID;
+import com.affymetrix.genometry.general.IParameters;
 import com.affymetrix.genometry.general.NewInstance;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.shared.ConfigureOptionsPanel.Filter;
 import com.affymetrix.igb.tiers.TierLabelManager;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.prefs.Preferences;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -26,6 +27,7 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
     private ConfigureOptionsPanel<T> configureOptionPanel;
     private JOptionPane optionPane;
     private JButton okOption, cancelOption;
+    private IParameters iParameters = null;
 
     /**
      * Creates the reusable dialog.
@@ -67,7 +69,6 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
                 ConfigureOptionsDialog.this.pack();
             }
         };
-
         okOption = new JButton("OK");
         cancelOption = new JButton("Cancel");
         Object[] options = new Object[]{okOption, cancelOption};
@@ -83,6 +84,15 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 
         addListeners();
         pack();
+    }
+
+    public IParameters getiParameters() {
+        return iParameters;
+    }
+
+    public void setiParameters(IParameters iParameters) {
+        this.iParameters = iParameters;
+        configureOptionPanel.setSaved_IParameters(iParameters);
     }
 
     private void addListeners() {
@@ -116,6 +126,8 @@ public class ConfigureOptionsDialog<T extends ID & NewInstance> extends JDialog 
 
     public Object getValue() {
         configureOptionPanel.getReturnValue(optionPane.getValue() instanceof Integer && (Integer) optionPane.getValue() == JOptionPane.OK_OPTION);
+        if(configureOptionPanel.getSaved_IParameters() != null)
+           setiParameters(configureOptionPanel.getSaved_IParameters());
         return optionPane.getValue();
     }
 

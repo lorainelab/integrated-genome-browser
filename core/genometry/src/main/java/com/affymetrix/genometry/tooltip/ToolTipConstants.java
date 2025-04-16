@@ -175,6 +175,7 @@ public class ToolTipConstants {
     public static final String CB = "CB";
     public static final String MI = "MI";
     public static final String UB = "UB";
+    public static final String UR = "UR";
 
     static {
         BAM_PROP_LIST.addAll(BAM_INFO_GRP);

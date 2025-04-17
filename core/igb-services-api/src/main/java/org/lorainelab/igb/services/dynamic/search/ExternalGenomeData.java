@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExternalGenomeData {
     private String id;
-    private String commonName;
-    private String scientificName;
-    private String assemblyVersion;
+    private Map<String, String> columnValueMap;
     private String infoLinkUrl;
 }

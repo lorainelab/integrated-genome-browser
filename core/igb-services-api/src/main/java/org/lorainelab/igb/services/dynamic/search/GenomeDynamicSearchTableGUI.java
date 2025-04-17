@@ -7,9 +7,11 @@ package org.lorainelab.igb.services.dynamic.search;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
@@ -27,7 +29,7 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
     private int currentPage = 1;
     private final int ROWS_PER_PAGE = 100;
     private int totalPages;
-    private String sortedColumn = "Common Name";
+    private String sortedColumn;
     private boolean ascending = true;
     private javax.swing.JLabel resultsLabel;         // Left side label
     private javax.swing.JPanel rightPaginationPanel; // Right side panel for page numbers
@@ -82,6 +84,24 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
 
     private void refreshTable() {
         genomeDynamicSearchTableModel.setData(externalGenomeDataProvider.getPageData(currentPage, ROWS_PER_PAGE));
+        resizeColumnWidths();
+    }
+
+    private void resizeColumnWidths() {
+        for (int col = 0; col < genomeDynamicSearchTable.getColumnCount(); col++) {
+            int width = 50, maxWidth=200;
+            TableCellRenderer headerRenderer = genomeDynamicSearchTable.getTableHeader().getDefaultRenderer();
+            Component headerComp = headerRenderer.getTableCellRendererComponent(
+                    genomeDynamicSearchTable, genomeDynamicSearchTable.getColumnName(col), false, false, 0, col);
+            width = Math.max(headerComp.getPreferredSize().width + 10, width);
+
+            for (int row = 0; row < genomeDynamicSearchTable.getRowCount(); row++) {
+                TableCellRenderer renderer = genomeDynamicSearchTable.getCellRenderer(row, col);
+                Component comp = genomeDynamicSearchTable.prepareRenderer(renderer, row, col);
+                width = Math.max(comp.getPreferredSize().width + 10, width);
+            }
+            genomeDynamicSearchTable.getColumnModel().getColumn(col).setPreferredWidth(Math.min(width, maxWidth));
+        }
     }
 
     private void updatePagination() {

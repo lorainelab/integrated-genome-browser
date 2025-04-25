@@ -40,7 +40,7 @@ public class GenomeDynamicSearchTableGUI extends javax.swing.JPanel {
     public GenomeDynamicSearchTableGUI(ExternalGenomeDataProvider externalGenomeDataProvider) {
         this.externalGenomeDataProvider = externalGenomeDataProvider;
         genomeDynamicSearchTableModel = new GenomeDynamicSearchTableModel(externalGenomeDataProvider);
-        genomeDynamicSearchTable = new GenomeDynamicSearchTable(genomeDynamicSearchTableModel, externalGenomeDataProvider);
+        genomeDynamicSearchTable = new GenomeDynamicSearchTable(genomeDynamicSearchTableModel);
         initComponents();
         refreshTable();
         updateTableHeader(0, ascending);

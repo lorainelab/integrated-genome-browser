@@ -74,6 +74,8 @@ public class GenomeDynamicSearchTableModel extends AbstractTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if(data != null && rowIndex < data.size()) {
             ExternalGenomeData genomeData = data.get(rowIndex);
+            if(columnIndex == LOAD_COLUMN)
+                externalGenomeDataProvider.performLoadGenome(genomeData);
             if(columnIndex == INFO_COLUMN)
                 openExternalInfoLink(genomeData);
         }

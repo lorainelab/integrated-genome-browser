@@ -442,13 +442,17 @@ public class IgbServiceImpl implements IgbService {
         f.setVisible(true);
     }
 
+    @Override
+    public void addDataSourcesEndpoint(String url, String name) {
+        addDataSourcesEndpoint(url, name, null);
+    }
     /**
      * Adds Quickload data source in IGB Preferences.
      * @param url : the quickloadurl provided by the user or converted UCSC trackhub url from the trackhub page
      * @param name : the quickloadname(shortLabel) provided by the user or from the hub.txt file
      */
     @Override
-    public void addDataSourcesEndpoint(String url, String name) {
+    public void addDataSourcesEndpoint(String url, String name, String selectGenomeVersion) {
         org.slf4j.Logger LOG = LoggerFactory.getLogger(IgbServiceImpl.class);
         BundleContext bundleContext = FrameworkUtil.getBundle(IgbServiceImpl.class).getBundleContext();
         ServiceReference serviceRef = bundleContext.getServiceReference(DataProviderManager.class.getName());
@@ -483,11 +487,23 @@ public class IgbServiceImpl implements IgbService {
                 }
                 GenometryModel gmodel = GenometryModel.getInstance();
                 GenomeVersion genomeVersion = gmodel.getSelectedGenomeVersion();
-                if (serverAdded && genomeVersion != null) {
-                    ModalUtils.infoPanel("<html>Your data source <b>" + name.trim() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
+                if(selectGenomeVersion == null)
+                {
+                    if (serverAdded && genomeVersion != null) {
+                        ModalUtils.infoPanel("<html>Your data source <b>" + name.trim() + "</b> is now available in <b>Data Access Tab</b> under <b>Available Data</b>.</html>", "", false);
+                    }
+                    if (isUnavailable) {
+                        ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
+                    }
                 }
-                if (isUnavailable) {
-                    ModalUtils.infoPanel("Your newly added Data Source is not responding, please confirm you have entered everything correctly.");
+                else {
+                    if(serverAdded){
+                        ModalUtils.infoPanel("<html>Your data source <b>" + name.trim() + "</b> has been added as a <b>Quickload</b>, please wait while the genome loads.</html>", "", false);
+                        SeqGroupView.getInstance().setSelectedGenomeVersion(selectGenomeVersion);
+                    }
+                    if (isUnavailable) {
+                        ModalUtils.infoPanel("External Data Provider is not responding, please try again later.");
+                    }
                 }
             }
         };

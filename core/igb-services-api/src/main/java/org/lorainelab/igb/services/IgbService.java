@@ -232,6 +232,7 @@ public interface IgbService {
      * @param name : the quickloadname(shortLabel) provided by the user or from the hub.txt file
      */
     public void addDataSourcesEndpoint(String url,String name);
+    public void addDataSourcesEndpoint(String url,String name, String selectGenomeVersion);
 
     public void openPreferencesPanelTab(Class<? extends PreferencesPanelProvider> cls);
 

@@ -34,7 +34,7 @@ public class SchemaData {
 
     public Map<String, String> getFeaturePropsMap() {
         Map<String, String> featureProps =  new HashMap<>();
-        if(BED_FORMATS.contains(type.split(" ")[0])){
+        if(BED_FORMATS.contains(type.split(" ")[0].toLowerCase())){
             StringBuilder stringBuilder = new StringBuilder();
             columnTypes.stream().filter(columnType -> !PROPERTIES.contains(columnType.name)).forEach(columnType -> {
                 stringBuilder.append(columnType.name);

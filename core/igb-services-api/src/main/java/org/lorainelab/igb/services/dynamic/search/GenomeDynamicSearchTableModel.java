@@ -8,21 +8,25 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GenomeDynamicSearchTableModel extends AbstractTableModel {
     private static final Logger LOG = LoggerFactory.getLogger(GenomeDynamicSearchTableModel.class);
-    public static final int COMMON_NAME_COLUMN = 0;
-    public static final int SCIENTIFIC_NAME_COLUMN = 1;
-    public static final int ASSEMBLY_COLUMN = 2;
-    public static final int LOAD_COLUMN = 3;
-    public static final int INFO_COLUMN = 4;
+    public static int LOAD_COLUMN = 0;
+    public static int INFO_COLUMN = 0;
     private List<ExternalGenomeData> data;
     private final ExternalGenomeDataProvider externalGenomeDataProvider;
-    private final String[] columnNames = {"Common Name", "Scientific Name", "Assembly Version", "", ""};
+    private final String[] columnNames;
 
     public GenomeDynamicSearchTableModel(ExternalGenomeDataProvider externalGenomeDataProvider) {
         this.externalGenomeDataProvider = externalGenomeDataProvider;
+        List<String> dataProviderColumnNames = new ArrayList<>(externalGenomeDataProvider.getColumnNames());
+        dataProviderColumnNames.add("");
+        dataProviderColumnNames.add("");
+        columnNames = dataProviderColumnNames.toArray(new String[0]);
+        LOAD_COLUMN = columnNames.length - 2;
+        INFO_COLUMN = columnNames.length - 1;
     }
 
     public void setData(List<ExternalGenomeData> data) {
@@ -54,20 +58,24 @@ public class GenomeDynamicSearchTableModel extends AbstractTableModel {
         if (data == null || rowIndex >= data.size())
             return null;
         ExternalGenomeData genomeData = data.get(rowIndex);
-        return switch (columnIndex) {
-            case COMMON_NAME_COLUMN -> genomeData.getCommonName();
-            case SCIENTIFIC_NAME_COLUMN -> genomeData.getScientificName();
-            case ASSEMBLY_COLUMN -> genomeData.getAssemblyVersion();
-            case LOAD_COLUMN -> "Load";
-            case INFO_COLUMN -> "";
-            default -> null;
-        };
+        if(columnIndex < genomeData.getColumnValueMap().size()) {
+            String colName = columnNames[columnIndex];
+            return genomeData.getColumnValueMap().getOrDefault(colName, "");
+        }
+        else if (columnIndex == LOAD_COLUMN)
+            return "Load";
+        else if (columnIndex == INFO_COLUMN)
+            return "";
+        else
+            return null;
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if(data != null && rowIndex < data.size()) {
             ExternalGenomeData genomeData = data.get(rowIndex);
+            if(columnIndex == LOAD_COLUMN)
+                externalGenomeDataProvider.performLoadGenome(genomeData);
             if(columnIndex == INFO_COLUMN)
                 openExternalInfoLink(genomeData);
         }

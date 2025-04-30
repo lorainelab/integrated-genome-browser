@@ -31,11 +31,9 @@ public class DasServerInfoTest {
         try{
             Optional<DasDsn> dasSources = DasServerUtils.retrieveDsnResponse(UCSC_DAS_URL);
             dasSources.ifPresent(ds -> {
-                ds.getDSN().forEach(dsn -> {
-                    String mapMaster = dsn.getMapMaster();
-                    String sourceId = dsn.getSOURCE().getId();
-                    logger.info(sourceId + ":" + mapMaster);
-                });
+                if(ds.getDSN().stream().anyMatch(dsn -> dsn != null && dsn.getMapMaster() != null)){
+                    logger.info("Successful connection while getting Dsn Response");
+                }
             });
         } catch (HttpRequest.HttpRequestException e) {
             logger.warn("Connection failed to DAS Server while getting Dsn Response");
@@ -61,9 +59,9 @@ public class DasServerInfoTest {
             String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
             Optional<DasEp> retrieveDasEpResponse = DasServerUtils.retrieveDasEpResponse(contextRoot);
             DasEp entryPointInfo = retrieveDasEpResponse.get();
-            entryPointInfo.getENTRYPOINTS().getSEGMENT().stream().forEach(segment -> {
-                logger.info(segment.getId() + ":" + segment.getStop());
-            });
+            if(entryPointInfo.getENTRYPOINTS().getSEGMENT().stream().anyMatch(segment -> segment != null && segment.getId() != null)){
+                logger.info("Successful connection while getting Entry points Response");
+            }
         } catch (HttpRequest.HttpRequestException e) {
             logger.warn("Connection failed to DAS Server while getting Entry points Response");
         }
@@ -75,9 +73,9 @@ public class DasServerInfoTest {
             String contextRoot = "http://genome.cse.ucsc.edu:80/cgi-bin/das/hg38";
             Optional<DasTypes> retrieveDasTypesResponse = DasServerUtils.retrieveDasTypesResponse(contextRoot);
             DasTypes entryPointInfo = retrieveDasTypesResponse.get();
-            entryPointInfo.getGFF().getSEGMENT().getTYPE().forEach(type -> {
-                logger.info(type.getId());
-            });
+            if(entryPointInfo.getGFF().getSEGMENT().getTYPE().stream().anyMatch(type -> type != null && type.getId() != null)) {
+                logger.info("Successful connection while getting Types Response");
+            }
         } catch (HttpRequest.HttpRequestException e){
             logger.warn("Connection failed to DAS Server while getting Types Response");
         }
@@ -92,9 +90,11 @@ public class DasServerInfoTest {
             Optional<DasGff> retrieveDasFeatureResponse = DasServerUtils.retrieveDasGffResponse(contextRoot, type, seqSpan);
             DasGff dasGff = retrieveDasFeatureResponse.get();
             Optional<Segment> segment = dasGff.getGFF().getSEGMENT().stream().findFirst();
-            if (segment.isPresent()) {
-                segment.get().getFEATURE().stream().forEach(feature -> logger.info(feature.getId()));
-            }
+            segment.ifPresent(value -> {
+                if(value.getFEATURE().stream().anyMatch(feature -> feature != null && feature.getId()!=null)){
+                    logger.info("Successful connection while getting Feature Response");
+                }
+            });
         } catch (HttpRequest.HttpRequestException e){
             logger.warn("Connection failed to DAS Server while getting Feature Response");
         }

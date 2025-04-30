@@ -11,22 +11,22 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class SAMtagsTable extends JRPStyledTable {
     public Map<String,Object> samtoolsData;
     private IParameters iParameters;
+    DefaultTableModel dm;
 
     public SAMtagsTable() {
         super("SAMtagsTable");
         this.setRowHeight(this.getRowHeight()+10);
         samtoolsData = new HashMap<>();
-        DefaultTableModel dm = new DefaultTableModel();
+        dm = new DefaultTableModel();
         this.setModel(dm);
-        dm.setDataVector(new Object[20][3],new Object[]{"Tag Value","Color",""});
+        dm.setDataVector(new Object[100][3],new Object[]{"Tag Value","Color",""});
 
         //Color
         this.getColumnModel().getColumn(SAMtagsTableModel.COL_COLOR).setCellRenderer(new ColorComboBoxCellRenderer());
@@ -40,6 +40,12 @@ public final class SAMtagsTable extends JRPStyledTable {
         if(iParameters != null)
             populateUserData(iParameters);
     }
+    public void addEmptyRow(int rows){
+        for(int i =0 ; i<rows;i++){
+            dm.addRow(new Object[]{"",Color.lightGray,""});
+        }
+    }
+
     public Map<String, Object> saveAndApply(){
         for(int i = 0;i<this.getRowCount();i++){
             if(this.getValueAt(i,0) != null && this.getValueAt(i,1) != null){
@@ -48,19 +54,32 @@ public final class SAMtagsTable extends JRPStyledTable {
         }
         return samtoolsData;
     }
-
     public IParameters getiParameters() {
         return iParameters;
     }
 
     public void populateUserData(IParameters iParameters) {
+        int i = 0;
         this.iParameters = iParameters;
         Map<String, Color> params = (Map<String, Color>) iParameters.getParameterValue("values");
+        if(!params.isEmpty()) {
+            addEmptyRow(params.size());
+            for (String tag : params.keySet()) {
+                this.setValueAt(tag, i, 0);
+                this.setValueAt(params.get(tag), i, 1);
+                i++;
+            }
+        }
+    }
+    public void populateImportUserData(HashMap<String, Object> colorHashMap) {
         int i = 0;
-        for(String tag : params.keySet()){
-            this.setValueAt(tag,i,0);
-            this.setValueAt(params.get(tag),i,1);
-            i++;
+        if(!colorHashMap.isEmpty()) {
+            addEmptyRow(colorHashMap.size());
+            for (String tag : colorHashMap.keySet()) {
+                this.setValueAt(tag, i, 0);
+                this.setValueAt(colorHashMap.get(tag), i, 1);
+                i++;
+            }
         }
     }
 

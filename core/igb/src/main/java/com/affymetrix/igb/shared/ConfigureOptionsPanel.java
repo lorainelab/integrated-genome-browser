@@ -323,6 +323,9 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                 "[fill,30%][fill,40%][fill,30%]", "[fill,grow]"));
         SAMtagsTable table = createSAMtagsTable(getSaved_IParameters());
         save_btn.addActionListener((ActionListener) e ->{
+            //Table cell editing mode needs to be stopped for the cell value to be available in getValueAt() fn
+            if (table.isEditing())
+                table.getCellEditor().stopCellEditing();
             Map<String, Object> savedColors = new HashMap<>();
             savedColors.put(label,table.saveAndApply());
             if(savedColors.get(label)!=null)

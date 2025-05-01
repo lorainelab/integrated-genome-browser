@@ -37,14 +37,13 @@ public final class SAMtagsTable extends JRPStyledTable {
         this.getColumnModel().getColumn(SAMtagsTableModel.COL_DELETE).setCellRenderer(new DeleteButtonCellRenderer());
         this.getColumnModel().getColumn(SAMtagsTableModel.COL_DELETE).setCellEditor(new DeleteButtonCellEditor(dm));
         this.getColumnModel().getColumn(SAMtagsTableModel.COL_DELETE).setMaxWidth(20);
+        if(iParameters != null)
+            populateUserData(iParameters);
     }
     public Map<String, Object> saveAndApply(){
         for(int i = 0;i<this.getRowCount();i++){
             if(this.getValueAt(i,0) != null && this.getValueAt(i,1) != null){
-//                String[] tag_array=this.getValueAt(i,0).toString().toUpperCase().split(";");
-//                for (String tag:tag_array) {
                     samtoolsData.put(this.getValueAt(i,0).toString(),this.getValueAt(i,1));
-//                }
             }
         }
         return samtoolsData;

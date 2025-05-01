@@ -65,6 +65,7 @@ public class SAMtagsColor extends ColorProvider {
                 if (color_values instanceof Parameter<HashMap<String, Object>>) {
                     HashMap<String, Object> input_table_values = color_values.get();
                     HashMap<String, Color> itv_temp = new HashMap<>();
+                    if(input_table_values != null)
                     input_table_values.forEach((smtg,col) -> {
                         for (String smtg_val: smtg.toString().toUpperCase().split(";")) {
                             itv_temp.put(smtg_val,(Color) col);

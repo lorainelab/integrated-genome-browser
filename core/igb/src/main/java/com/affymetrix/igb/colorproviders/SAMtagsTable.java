@@ -42,7 +42,7 @@ public final class SAMtagsTable extends JRPStyledTable {
     }
     public void addEmptyRow(int rows){
         for(int i =0 ; i<rows;i++){
-            dm.addRow(new Object[]{"",Color.lightGray,""});
+            dm.addRow(new Object[]{"",null,""});
         }
     }
 

@@ -41,6 +41,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.*;
@@ -313,7 +314,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         tf.setMinimumSize(new java.awt.Dimension(40, 20));
         return tf;
     }
-    private JButton HashMapCondition(IParameters iParameters,String label){
+    private JPanel HashMapCondition(IParameters iParameters,String label){
         JButton editTagsColor = new JButton("Edit Tags and Color");
         JDialog editor = new JDialog();
         JButton save_btn = new JButton("Save and Apply");
@@ -327,33 +328,77 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             if (table.isEditing())
                 table.getCellEditor().stopCellEditing();
             Map<String, Object> savedColors = new HashMap<>();
-            savedColors.put(label,table.saveAndApply());
-            if(savedColors.get(label)!=null)
+            savedColors.put(label, table.saveAndApply());
+            if (savedColors.get(label) != null)
                 iParameters.setParametersValue(savedColors);
-                setSaved_IParameters(iParameters);
+            setSaved_IParameters(iParameters);
             ConfigureOptionsPanel.this.setParameter(iParameters, label, savedColors.get(label));
             editor.setVisible(false);
 
         });
-        editor.add(table.getTableHeader(),"span 4,wrap");
-        editor.add(table,"span 4,wrap");
-        editor.add(save_btn,"cell 0 2");
-        editor.add(cancelBtn,"cell 2 2");
-        editor.setMinimumSize(new Dimension(350,350));
+        JScrollPane table_pane = new JScrollPane();
+        table.setMinimumSize(new Dimension(350,350));
+        table_pane.getViewport().add(table);
+        editor.add(table_pane, "spanx, grow, wrap");
+
+        JPanel save_panel = new JPanel();
+        save_panel.add(save_btn);
+        save_panel.add(cancelBtn);
+        editor.add(save_panel);
+        save_panel.setMaximumSize(new Dimension(350,350));
+        editor.setMinimumSize(new Dimension(350, 350));
+        editor.setTitle("Edit Tags and Colors");
+        editor.setModal(true);
+        editor.setAlwaysOnTop(false);
+        editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
+        editor.pack();
         editTagsColor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                editor.setTitle("Edit Tags and Color");
-                editor.setModal(true);
-                editor.setAlwaysOnTop(false);
-                editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
-                editor.pack();
                 editor.setVisible(true);
             }
         });
-        return editTagsColor;
+
+        JButton importTagsColor = new JButton("Import...");
+        HashMap<String, Object> file_color_map = new HashMap<>();
+        importTagsColor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        JFileChooser fileChooser = new JFileChooser();
+                        int result = fileChooser.showOpenDialog(null);
+                        File file = null;
+                        if(result == JFileChooser.APPROVE_OPTION){
+                            file = fileChooser.getSelectedFile();
+                        }
+                        if(file != null)
+                        try {
+                            BufferedReader reader = new BufferedReader(new FileReader(file.getAbsoluteFile()));
+                            String[] headers = reader.readLine().split("\t");
+                            String line;
+                            while ((line = reader.readLine()) != null) {
+                                file_color_map.put(line.split("\t")[0], Color.decode(line.split("\t")[1]));
+                            }
+                            table.populateImportUserData(file_color_map);
+                            editor.setVisible(true);
+                        } catch (FileNotFoundException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                });
+            }
+        });
+        JPanel editImportPane = new JPanel();
+        editImportPane.add(editTagsColor);
+        editImportPane.add(importTagsColor);
+        return editImportPane;
     }
-    private JButton HeatMapCondition(IParameters iParameters,String label){
+
+    private JButton HeatMapCondition(IParameters iParameters, String label) {
         final GradientEditorPanel editor = new GradientEditorPanel(null);
         Object hm = iParameters.getParameterValue(label);
         float[] positions;
@@ -431,13 +476,12 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         });
         return editButton;
     }
-    private SAMtagsTable createSAMtagsTable(IParameters iParameters){
-        String[] columns = {"Tag Value","Color",""};
+
+    private SAMtagsTable createSAMtagsTable(IParameters iParameters) {
+        String[] columns = {"Tag Value", "Color", ""};
         SAMtagsTable samtags_table = new SAMtagsTable();
-        if(iParameters != null)
+        if (iParameters != null)
             samtags_table.populateUserData(iParameters);
-        samtags_table.setMinimumSize(new Dimension(300,400));
-        samtags_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         return samtags_table;
     }
 

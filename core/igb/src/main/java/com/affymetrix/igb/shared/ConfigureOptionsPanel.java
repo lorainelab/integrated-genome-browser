@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 import com.jidesoft.combobox.ColorComboBox;
+import com.jidesoft.swing.JideScrollPane;
 import cytoscape.visual.ui.editors.continuous.ColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientColorInterpolator;
 import cytoscape.visual.ui.editors.continuous.GradientEditorPanel;
@@ -191,13 +192,14 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         properties.add(ToolTipConstants.SCORE);
         properties.add(ToolTipConstants.TITLE);
     }
-    private void refreshSAMTAGS(List<Object> tags){
+    private List<Object> refreshSAMTAGS(List<Object> tags){
         tags.clear();
         tags.add(ToolTipConstants.CR);
         tags.add(ToolTipConstants.CB);
         tags.add(ToolTipConstants.MI);
         tags.add(ToolTipConstants.UB);
         tags.add(ToolTipConstants.UR);
+        return tags;
     }
 
     public IParameters getSaved_IParameters() {
@@ -226,7 +228,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     possibleValues.forEach(cb::addItem);
                     cb.setSelectedItem(iParameters.getParameterValue(label));
                     cb.addItemListener(e -> ConfigureOptionsPanel.this.setParameter(iParameters, label, cb.getSelectedItem()));
-                    component = cb;
+                    if(label != "tag")
+                        component = cb;
                 }else if(HashMap.class.isAssignableFrom(clazz)){
                     component = HashMapCondition(iParameters,label);
                 } else if (Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz)) {
@@ -319,46 +322,45 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         JDialog editor = new JDialog();
         JButton save_btn = new JButton("Save and Apply");
         JButton cancelBtn = new JButton("Cancel");
+        JLabel error_msg = new JLabel();
+        error_msg.setVisible(false);
+
         cancelBtn.addActionListener((ActionListener)e ->editor.setVisible(false));
-        editor.setLayout(new MigLayout("insets 4 4 4 4",
-                "[fill,30%][fill,40%][fill,30%]", "[fill,grow]"));
         SAMtagsTable table = createSAMtagsTable(getSaved_IParameters());
+
+        JComboBox cb = new JComboBox();
+        cb.setRenderer(new IDListCellRenderer());
+        refreshSAMTAGS(new LinkedList<>()).forEach(cb::addItem);
+        cb.setSelectedItem(null);
+        cb.addItemListener(e -> {
+            error_msg.setVisible(false);
+            ConfigureOptionsPanel.this.setParameter(iParameters, "tag", cb.getSelectedItem());
+        });
+
         save_btn.addActionListener((ActionListener) e ->{
             //Table cell editing mode needs to be stopped for the cell value to be available in getValueAt() fn
-            if (table.isEditing())
-                table.getCellEditor().stopCellEditing();
-            Map<String, Object> savedColors = new HashMap<>();
-            savedColors.put(label, table.saveAndApply());
-            if (savedColors.get(label) != null)
-                iParameters.setParametersValue(savedColors);
-            setSaved_IParameters(iParameters);
-            ConfigureOptionsPanel.this.setParameter(iParameters, label, savedColors.get(label));
-            editor.setVisible(false);
-
-        });
-        JScrollPane table_pane = new JScrollPane();
-        table.setMinimumSize(new Dimension(350,350));
-        table_pane.getViewport().add(table);
-        editor.add(table_pane, "spanx, grow, wrap");
-
-        JPanel save_panel = new JPanel();
-        save_panel.add(save_btn);
-        save_panel.add(cancelBtn);
-        editor.add(save_panel);
-        save_panel.setMaximumSize(new Dimension(350,350));
-        editor.setMinimumSize(new Dimension(350, 350));
-        editor.setTitle("Edit Tags and Colors");
-        editor.setModal(true);
-        editor.setAlwaysOnTop(false);
-        editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
-        editor.pack();
-        editTagsColor.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editor.setVisible(true);
+            error_msg.setVisible(false);
+            if(cb.getSelectedItem() != null) {
+                if (table.isEditing())
+                    table.getCellEditor().stopCellEditing();
+                Map<String, Object> savedColors = new HashMap<>();
+                savedColors.put(label, table.saveAndApply());
+                if (savedColors.get(label) != null)
+                    iParameters.setParametersValue(savedColors);
+                setSaved_IParameters(iParameters);
+                ConfigureOptionsPanel.this.setParameter(iParameters, label, savedColors.get(label));
+                editor.setVisible(false);
+            }else{
+                error_msg.setText("No SAMtag selected!");
+                error_msg.setForeground(Color.red);
+                error_msg.setVisible(true);
             }
-        });
 
+        });
+        editor.setLayout(new MigLayout("","[fill][fill]push[fill]"));
+//        editor.add(new JSeparator(),"cell 0 0, span");
+        editor.add(new JLabel("SAMtag: "), "cell 0 1");
+        editor.add(cb,"cell 1 1");
         JButton importTagsColor = new JButton("Import...");
         HashMap<String, Object> file_color_map = new HashMap<>();
         importTagsColor.addActionListener(new ActionListener() {
@@ -392,9 +394,32 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                 });
             }
         });
+        editor.add(importTagsColor, "cell 3 1");
+        JideScrollPane table_pane = new JideScrollPane();
+//        table_pane.setFitToHeight(true);
+//        table_pane.setFitToWidth(true);
+//        table.setMinimumSize(new Dimension(350,350));
+        table_pane.getViewport().add(table);
+        editor.add(new JSeparator(),"cell 0 2, span");
+        editor.add(table_pane, "cell 0 3, span");
+        editor.add(error_msg, "cell 3 4");
+        editor.add(cancelBtn, "cell 3 5");
+        editor.add(save_btn,"cell 3 5");
+        editor.setMinimumSize(new Dimension(350, 350));
+        editor.setTitle("Edit Tags and Colors");
+        editor.setModal(true);
+        editor.setAlwaysOnTop(false);
+        editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
+        editor.pack();
+        editTagsColor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editor.setVisible(true);
+            }
+        });
         JPanel editImportPane = new JPanel();
         editImportPane.add(editTagsColor);
-        editImportPane.add(importTagsColor);
+
         return editImportPane;
     }
 

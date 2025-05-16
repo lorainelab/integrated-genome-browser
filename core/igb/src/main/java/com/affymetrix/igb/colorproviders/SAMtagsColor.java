@@ -16,7 +16,7 @@ import java.util.List;
 public class SAMtagsColor extends ColorProvider {
     private final static String TAG = "tag";
     private final static List<String> TAG_VALUE = new LinkedList<>();
-    public final static String TABLE = "values";
+    public final static String TABLE = " ";
 
     private HashMap<String,Object> TABLE_VALUES = null;
 

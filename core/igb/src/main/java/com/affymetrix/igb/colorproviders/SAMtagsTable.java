@@ -61,7 +61,7 @@ public final class SAMtagsTable extends JRPStyledTable {
     public void populateUserData(IParameters iParameters) {
         int i = 0;
         this.iParameters = iParameters;
-        Map<String, Color> params = (Map<String, Color>) iParameters.getParameterValue("values");
+        Map<String, Color> params = (Map<String, Color>) iParameters.getParameterValue(" ");
         if(!params.isEmpty()) {
             addEmptyRow(params.size());
             for (String tag : params.keySet()) {

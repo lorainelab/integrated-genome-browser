@@ -2,8 +2,11 @@ package com.affymetrix.igb.colorproviders;
 
 import com.affymetrix.common.CommonUtils;
 import com.affymetrix.genometry.general.IParameters;
+import com.affymetrix.igb.shared.ConfigureOptionsPanel;
 import com.affymetrix.igb.swing.jide.JRPStyledTable;
 import com.jidesoft.combobox.ColorComboBox;
+import com.jidesoft.swing.JideScrollPane;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -11,8 +14,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.*;
+import java.io.*;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public final class SAMtagsTable extends JRPStyledTable {
@@ -58,6 +64,70 @@ public final class SAMtagsTable extends JRPStyledTable {
         return iParameters;
     }
 
+    public JDialog generateModalUI(JComboBox cb, JLabel error_msg,SAMtagsTable table, JButton save_btn,JButton clear_btn){
+
+        JButton cancelBtn = new JButton("Cancel");
+
+        JDialog editor = new JDialog();
+
+        cancelBtn.addActionListener((ActionListener)e ->editor.setVisible(false));
+
+
+        editor.setLayout(new MigLayout("","[fill][fill]push[fill]"));
+//        editor.add(new JSeparator(),"cell 0 0, span");
+        editor.add(new JLabel("SAMtag: "), "cell 0 1");
+        editor.add(cb,"cell 1 1");
+        JButton importTagsColor = new JButton("Import...");
+        HashMap<String, Object> file_color_map = new HashMap<>();
+        importTagsColor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        JFileChooser fileChooser = new JFileChooser();
+                        int result = fileChooser.showOpenDialog(null);
+                        File file = null;
+                        if(result == JFileChooser.APPROVE_OPTION){
+                            file = fileChooser.getSelectedFile();
+                        }
+                        if(file != null)
+                            try {
+                                BufferedReader reader = new BufferedReader(new FileReader(file.getAbsoluteFile()));
+                                String[] headers = reader.readLine().split("\t");
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    file_color_map.put(line.split("\t")[0], Color.decode(line.split("\t")[1]));
+                                }
+                                table.populateImportUserData(file_color_map);
+                                editor.setVisible(true);
+                            } catch (FileNotFoundException ex) {
+                                throw new RuntimeException(ex);
+                            } catch (IOException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                    }
+                });
+            }
+        });
+        editor.add(clear_btn, "cell 3 1");
+        editor.add(importTagsColor, "cell 3 1");
+        JideScrollPane table_pane = new JideScrollPane();
+        table_pane.getViewport().add(table);
+        editor.add(new JSeparator(),"cell 0 2, span");
+        editor.add(table_pane, "cell 0 3, span");
+        editor.add(error_msg, "cell 3 4");
+        editor.add(cancelBtn, "cell 3 5");
+        editor.add(save_btn,"cell 3 5");
+        editor.setMinimumSize(new Dimension(350, 350));
+        editor.setTitle("Edit Tags and Colors");
+        editor.setModal(true);
+        editor.setAlwaysOnTop(false);
+//        editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
+        editor.pack();
+        return editor;
+
+    }
     public void populateUserData(IParameters iParameters) {
         int i = 0;
         this.iParameters = iParameters;

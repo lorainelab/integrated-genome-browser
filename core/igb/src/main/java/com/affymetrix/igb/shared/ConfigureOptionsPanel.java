@@ -51,7 +51,6 @@ import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author hiralv
  */
 @SuppressWarnings("unchecked")
@@ -122,14 +121,14 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     continue;
                 }
             }
-            if(cp instanceof Property || cp instanceof PropertyFilter) {
+            if (cp instanceof Property || cp instanceof PropertyFilter) {
                 refreshProps(((IParameters) cp).getParametersPossibleValues("property"));
-            }else if(cp instanceof SAMtagsFilter || cp instanceof SAMtagsColor){
+            } else if (cp instanceof SAMtagsFilter || cp instanceof SAMtagsColor) {
                 refreshSAMTAGS(((IParameters) cp).getParametersPossibleValues("tag"));
             }
             comboBox.addItem(cp);
         }
-        if(tierLabelManager != null){
+        if (tierLabelManager != null) {
             try {
                 List<TierGlyph> selectedTiers = tierLabelManager.getSelectedTiers();
                 List<TierGlyph> ucscRestTiers = selectedTiers.stream().filter(tierGlyph -> tierGlyph.getAnnotStyle().getFeature().getDataContainer().getDataProvider().getName().equalsIgnoreCase("UCSC REST"))
@@ -185,14 +184,15 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         }
     }
 
-    private void refreshProps(List<Object> properties){
+    private void refreshProps(List<Object> properties) {
         properties.clear();
         properties.add(ToolTipConstants.ID);
         properties.add(ToolTipConstants.NAME);
         properties.add(ToolTipConstants.SCORE);
         properties.add(ToolTipConstants.TITLE);
     }
-    private List<Object> refreshSAMTAGS(List<Object> tags){
+
+    private List<Object> refreshSAMTAGS(List<Object> tags) {
         tags.clear();
         tags.add(ToolTipConstants.CR);
         tags.add(ToolTipConstants.CB);
@@ -228,16 +228,16 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                     possibleValues.forEach(cb::addItem);
                     cb.setSelectedItem(iParameters.getParameterValue(label));
                     cb.addItemListener(e -> ConfigureOptionsPanel.this.setParameter(iParameters, label, cb.getSelectedItem()));
-                    if(label != "tag")
+                    if (label != "tag")
                         component = cb;
-                }else if(HashMap.class.isAssignableFrom(clazz)){
-                    component = HashMapCondition(iParameters,label);
+                } else if (HashMap.class.isAssignableFrom(clazz)) {
+                    component = HashMapCondition(iParameters, label);
                 } else if (Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz)) {
-                    component = NumberOrStringCondition(iParameters,label,clazz);
+                    component = NumberOrStringCondition(iParameters, label, clazz);
                 } else if (Color.class.isAssignableFrom(clazz)) {
-                    component = ColorConditon(iParameters,label);
+                    component = ColorConditon(iParameters, label);
                 } else if (HeatMapExtended.class.isAssignableFrom(clazz)) {
-                    component = HeatMapCondition(iParameters,label);
+                    component = HeatMapCondition(iParameters, label);
                 }
 
                 if (component != null) {
@@ -252,7 +252,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             paramsPanel.add(panel, "growx");
         }
     }
-    private ColorComboBox ColorConditon(IParameters iParameters, String label){
+
+    private ColorComboBox ColorConditon(IParameters iParameters, String label) {
         final ColorComboBox colorComboBox = new ColorComboBox();
         colorComboBox.setSelectedColor((Color) iParameters.getParameterValue(label));
         colorComboBox.addItemListener(e -> setParameter(iParameters, label, e.getItem()));
@@ -265,7 +266,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         //colorComboBox.setStretchToFit(true);
         return colorComboBox;
     }
-    private JTextField NumberOrStringCondition(IParameters iParameters,String label,Class clazz){
+
+    private JTextField NumberOrStringCondition(IParameters iParameters, String label, Class clazz) {
         final JTextField tf;
         if (Number.class.isAssignableFrom(clazz)) {
             tf = new JTextField();
@@ -317,110 +319,73 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         tf.setMinimumSize(new java.awt.Dimension(40, 20));
         return tf;
     }
-    private JPanel HashMapCondition(IParameters iParameters,String label){
-        JButton editTagsColor = new JButton("Edit Tags and Color");
-        JDialog editor = new JDialog();
-        JButton save_btn = new JButton("Save and Apply");
-        JButton cancelBtn = new JButton("Cancel");
-        JLabel error_msg = new JLabel();
-        error_msg.setVisible(false);
 
-        cancelBtn.addActionListener((ActionListener)e ->editor.setVisible(false));
+    private JPanel HashMapCondition(IParameters iParameters, String label) {
+        JButton editTagsColor = new JButton("Edit Tags and Color");
         SAMtagsTable table = createSAMtagsTable(getSaved_IParameters());
 
         JComboBox cb = new JComboBox();
-        cb.setRenderer(new IDListCellRenderer());
+        JLabel error_msg = new JLabel();
+        error_msg.setVisible(false);
+        cb.setRenderer(new ConfigureOptionsPanel.IDListCellRenderer());
         refreshSAMTAGS(new LinkedList<>()).forEach(cb::addItem);
         cb.setSelectedItem(null);
         cb.addItemListener(e -> {
             error_msg.setVisible(false);
             ConfigureOptionsPanel.this.setParameter(iParameters, "tag", cb.getSelectedItem());
         });
-
-        save_btn.addActionListener((ActionListener) e ->{
+        JButton save_btn = new JButton("Save and Apply");
+        JButton clear_btn = new JButton("Clear all");
+        JDialog editor = table.generateModalUI(cb, error_msg, table, save_btn, clear_btn);
+        save_btn.addActionListener((ActionListener) e -> {
             //Table cell editing mode needs to be stopped for the cell value to be available in getValueAt() fn
             error_msg.setVisible(false);
-            if(cb.getSelectedItem() != null) {
+            if (cb.getSelectedItem() != null) {
                 if (table.isEditing())
                     table.getCellEditor().stopCellEditing();
-                Map<String, Object> savedColors = new HashMap<>();
-                savedColors.put(label, table.saveAndApply());
-                if (savedColors.get(label) != null)
-                    iParameters.setParametersValue(savedColors);
-                setSaved_IParameters(iParameters);
-                ConfigureOptionsPanel.this.setParameter(iParameters, label, savedColors.get(label));
+                saveInIParameters(label, table, iParameters);
                 editor.setVisible(false);
             }else{
-                error_msg.setText("No SAMtag selected!");
-                error_msg.setForeground(Color.red);
-                error_msg.setVisible(true);
+                if(table.saveAndApply().isEmpty()){
+                    editor.setVisible(false);
+                }else {
+                    error_msg.setText("No SAMtag selected!");
+                    error_msg.setForeground(Color.red);
+                    error_msg.setVisible(true);
+                }
             }
-
         });
-        editor.setLayout(new MigLayout("","[fill][fill]push[fill]"));
-//        editor.add(new JSeparator(),"cell 0 0, span");
-        editor.add(new JLabel("SAMtag: "), "cell 0 1");
-        editor.add(cb,"cell 1 1");
-        JButton importTagsColor = new JButton("Import...");
-        HashMap<String, Object> file_color_map = new HashMap<>();
-        importTagsColor.addActionListener(new ActionListener() {
+        clear_btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        JFileChooser fileChooser = new JFileChooser();
-                        int result = fileChooser.showOpenDialog(null);
-                        File file = null;
-                        if(result == JFileChooser.APPROVE_OPTION){
-                            file = fileChooser.getSelectedFile();
-                        }
-                        if(file != null)
-                        try {
-                            BufferedReader reader = new BufferedReader(new FileReader(file.getAbsoluteFile()));
-                            String[] headers = reader.readLine().split("\t");
-                            String line;
-                            while ((line = reader.readLine()) != null) {
-                                file_color_map.put(line.split("\t")[0], Color.decode(line.split("\t")[1]));
-                            }
-                            table.populateImportUserData(file_color_map);
-                            editor.setVisible(true);
-                        } catch (FileNotFoundException ex) {
-                            throw new RuntimeException(ex);
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }
-                });
+                for (int i = 0; i < table.getRowCount(); i++) {
+                    table.setValueAt(null, i, 0);
+                    table.setValueAt(null, i, 1);
+                }
+                saveInIParameters(label, table, iParameters);
             }
         });
-        editor.add(importTagsColor, "cell 3 1");
-        JideScrollPane table_pane = new JideScrollPane();
-//        table_pane.setFitToHeight(true);
-//        table_pane.setFitToWidth(true);
-//        table.setMinimumSize(new Dimension(350,350));
-        table_pane.getViewport().add(table);
-        editor.add(new JSeparator(),"cell 0 2, span");
-        editor.add(table_pane, "cell 0 3, span");
-        editor.add(error_msg, "cell 3 4");
-        editor.add(cancelBtn, "cell 3 5");
-        editor.add(save_btn,"cell 3 5");
-        editor.setMinimumSize(new Dimension(350, 350));
-        editor.setTitle("Edit Tags and Colors");
-        editor.setModal(true);
-        editor.setAlwaysOnTop(false);
-        editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
-        editor.pack();
+
+
+        JPanel editImportPane = new JPanel();
         editTagsColor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                editor.setLocationRelativeTo(ConfigureOptionsPanel.this);
                 editor.setVisible(true);
             }
         });
-        JPanel editImportPane = new JPanel();
         editImportPane.add(editTagsColor);
-
         return editImportPane;
+    }
+
+    private void saveInIParameters(String label, SAMtagsTable table, IParameters iParameters) {
+        Map<String, Object> savedColors = new HashMap<>();
+        savedColors.put(label, table.saveAndApply());
+        if (savedColors.get(label) != null)
+            iParameters.setParametersValue(savedColors);
+        setSaved_IParameters(iParameters);
+        ConfigureOptionsPanel.this.setParameter(iParameters, label, savedColors.get(label));
     }
 
     private JButton HeatMapCondition(IParameters iParameters, String label) {
@@ -454,7 +419,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
                 // read json from pref and create values and colors
                 Preferences node = preferenceNode.node(colorByPropName);
                 float[] pos = new Gson().fromJson(node.get("values", ""), float[].class);
-                Color[] color = new GsonBuilder().registerTypeAdapter(Color.class, (InstanceCreator<Color>) (Type type) -> new Color(0)).create().fromJson(node.get("colors", ""), Color[].class);;
+                Color[] color = new GsonBuilder().registerTypeAdapter(Color.class, (InstanceCreator<Color>) (Type type) -> new Color(0)).create().fromJson(node.get("colors", ""), Color[].class);
+                ;
                 if (pos != null && color != null) {
                     positions = pos;
                     colorRanges = color;
@@ -524,13 +490,13 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         comboBox.addItemListener(e -> {
             T cp = (T) comboBox.getSelectedItem();
             // If a user selects same color provider as initial then reuses the same object
-            // this if-statement was removed in IGBF-1129 and 
+            // this if-statement was removed in IGBF-1129 and
             // it was restored (with modification) in IGBF-1232
             // The condition: !(cp instanceof ColorProviderI)
             // was added to address the needs of IGBF-1129
-            if (returnValue != null && cp != null 
+            if (returnValue != null && cp != null
                     && cp.getName().equals(returnValue.getName())
-                    && !(cp instanceof ColorProviderI)) { 
+                    && !(cp instanceof ColorProviderI)) {
                 cp = returnValue;
             } else {
                 cp = (cp == null) ? cp : (T) cp.newInstance();
@@ -596,7 +562,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             if (returnValue instanceof IParameters) {
                 boolean value = ((IParameters) returnValue).setParametersValue(paramMap);
                 if (!value && paramMap.size() >= 1) {
-                    String[] options = new String[] {"Ok", "Copy Error Message"};
+                    String[] options = new String[]{"Ok", "Copy Error Message"};
                     String message = MessageFormat.format(BUNDLE.getString("trackOperationError"), paramMap.get(paramMap.keySet().toArray()[0].toString()));
                     int response = JOptionPane.showOptionDialog(this, message, "Invalid Value", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
                     if (response == 1) {
@@ -643,7 +609,7 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
 
         @Override
         public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean isSelected, boolean cellHasFocus) {
+                                                      int index, boolean isSelected, boolean cellHasFocus) {
             if (value == null) {
                 return super.getListCellRendererComponent(list, "None", index, isSelected, cellHasFocus);
             }

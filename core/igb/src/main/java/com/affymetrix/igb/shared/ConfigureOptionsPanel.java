@@ -124,7 +124,9 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
             }
             if(cp instanceof Property || cp instanceof PropertyFilter) {
                 refreshProps(((IParameters) cp).getParametersPossibleValues("property"));
-            }else if(cp instanceof SAMtagsFilter || cp instanceof SAMtagsColor){
+            }else if(cp instanceof SAMtagsFilter){
+                refreshSAMTAGS(((IParameters) cp).getParametersPossibleValues("SAMtag"));
+            }else if(cp instanceof SAMtagsColor){
                 refreshSAMTAGS(((IParameters) cp).getParametersPossibleValues("tag"));
             }
             comboBox.addItem(cp);
@@ -193,7 +195,8 @@ public class ConfigureOptionsPanel<T extends ID & NewInstance> extends JPanel {
         properties.add(ToolTipConstants.TITLE);
     }
     private List<Object> refreshSAMTAGS(List<Object> tags){
-        tags.clear();
+        if(tags!=null)
+            tags.clear();
         tags.add(ToolTipConstants.CR);
         tags.add(ToolTipConstants.CB);
         tags.add(ToolTipConstants.MI);

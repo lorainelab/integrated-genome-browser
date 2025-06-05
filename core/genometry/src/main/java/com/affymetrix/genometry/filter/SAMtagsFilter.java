@@ -14,7 +14,7 @@ import java.util.List;
 
 public class SAMtagsFilter extends SymmetryFilter{
     private final static List<MathComparisonOperator> COMPARATOR_VALUES = new LinkedList<>();
-    private final static String TAG = "tag";
+    private final static String TAG = "SAMtag";
     private final static String TAG_VALUE = "value";
     private final static List<String> TAG_VALUES = new LinkedList<>();
     private final static String COMPARATOR = "comparator";
